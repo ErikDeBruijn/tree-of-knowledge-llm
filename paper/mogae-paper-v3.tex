@@ -183,31 +183,33 @@ For Qwen3-1.7B (28 layers), we partition the transformer into:
 Total specialist parameters: $\sim$6\,MB for 8 specialists, versus 800+\,MB for
 8 full expert copies in standard MoE.
 
-\subsection{Learntropy-Driven Splitting}
+\subsection{Learntropy-Driven Mitosis}
 
 \textbf{Definition: Learntropy.} We define \emph{learntropy} as the per-token prediction difficulty experienced by a specific expert:
 \begin{equation}
 \mathcal{L}_{\text{learn}}(e_i, t) = -\log P(t \mid \text{context}, e_i)
 \end{equation}
-where $e_i$ is expert $i$ and $t$ is the predicted token. This is the standard cross-entropy loss, but we use it as a \emph{diagnostic signal for the learning system itself}: not only as a training objective but as an instrument that determines when more capacity is needed. The term combines ``learning'' and ``entropy'' to reflect Shannon's insight that information content drives the allocation of representational resources~\cite{shannon1948}—and Piaget's observation that prediction failure (accommodation) triggers the creation of new cognitive structure~\cite{piaget1952}.
+where $e_i$ is expert $i$ and $t$ is the predicted token. This is the standard cross-entropy loss, but we use it as a \emph{diagnostic signal for the learning system itself}: not only as a training objective but as an instrument that determines when more capacity is needed. The term combines ``learning'' and ``entropy'' to reflect Shannon's insight that information content drives the allocation of representational resources~\cite{shannon1948}---and Piaget's observation that prediction failure (accommodation) triggers the creation of new cognitive structure~\cite{piaget1952}.
 
-An expert splits when the \emph{distribution} of learntropy across its assigned tokens is \textbf{bimodal}—the expert handles some tokens easily (low learntropy) and others poorly (high learntropy)—signaling two distinct populations that would benefit from separate treatment. Split procedure:
+When an expert's learntropy distribution is bimodal---some tokens easy, others hard---the expert must either adapt or divide. Following biological cells, we distinguish two responses:
+
+\textbf{Gene expression (rank increase).} The expert first attempts to handle both populations by increasing its rank---activating more parameters, like a cell expressing additional genes to handle a broader range of signals. This is the cheaper response: no routing overhead, no data partitioning.
+
+\textbf{Mitosis (expert split).} If rank increase does not resolve the bimodality, the expert undergoes \emph{mitosis}: it divides into two daughter experts, each inheriting the parent's weights plus a small random perturbation. Like biological daughter cells, they start genetically identical but \emph{differentiate} through exposure to different environments (data partitions) and explicit pressure to diverge (contrastive loss). The procedure:
 \begin{enumerate}
-    \item Score each expert's tokens by per-token loss.
-    \item Test for bimodality (Hartigan's dip test). If bimodal, the expert is a
-          split candidate.
-    \item Duplicate the expert's LoRA adapter. Each child inherits parent weights
-          plus a small random perturbation, starting at \textbf{rank-1}.
-    \item Train children on their respective data partitions.
-    \item Apply contrastive loss between siblings (Section~\ref{sec:contrastive}).
+    \item Score each expert's tokens by learntropy.
+    \item Test for bimodality (Hartigan's dip test).
+    \item If bimodal and rank increase insufficient: duplicate the LoRA adapter.
+          Each daughter inherits parent weights plus perturbation, starting at rank-1.
+    \item Daughter experts \emph{differentiate} through their data environment and contrastive loss (Section~\ref{sec:contrastive}).
 \end{enumerate}
-The split is triggered by an information-theoretic signal, not a schedule.
+The decision to divide is triggered by an information-theoretic signal, not a schedule---analogous to how cell division is triggered by growth signals, not a timer.
 
 \subsection{Variable Rank as Specialization Measure}
 
-After splitting, each child begins at rank-1. Rank grows when reconstruction
-error exceeds a threshold—the adapter needs more capacity to express what the
-data demands. The rank \emph{is} the measurement of specialization depth:
+After mitosis, each daughter expert begins at rank-1. Rank grows when reconstruction
+error exceeds a threshold---the adapter needs more capacity to express what the
+data demands. The rank \emph{is} the measurement of specialization depth, just as the number of active genes reflects a cell's degree of specialization:
 \begin{itemize}
     \item \textbf{Rank 1–4} (4–16\,KB): A lens. Small correction, close to parent.
     \item \textbf{Rank 16–64} (64–256\,KB): A crystal. Fundamentally different
