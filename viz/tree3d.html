@@ -494,6 +494,7 @@
       step: Math.round(a.step + (b.step - a.step) * frac),
       phase: frac < 0.5 ? a.phase : b.phase,
       experts: frac < 0.5 ? a.experts : b.experts,
+      rank: Math.round((a.rank || 4) + ((b.rank || 4) - (a.rank || 4)) * frac),
       cossim_fork1: lerp(a.cossim_fork1, b.cossim_fork1, frac),
       cossim_fork2: lerp(a.cossim_fork2, b.cossim_fork2, frac),
       ppl: a.ppl + (b.ppl - a.ppl) * frac
@@ -545,17 +546,16 @@
 
     createLabel("Fluid Core (L1-14)", new THREE.Vector3(0, trunkHeight + 0.5, 0), 13, '#88aacc');
 
-    // Layer markers along trunk
+    // Layer markers along trunk — one per layer (L1-L14)
     for (let i = 1; i <= 14; i++) {
-      const y = (i / 14) * trunkHeight * 0.9;
-      if (i % 3 === 0) {
-        const markerGeo = new THREE.TorusGeometry(trunkRadius + 0.03, 0.015, 8, 24);
-        const markerMat = new THREE.MeshStandardMaterial({ color: 0x6AA8E8, emissive: 0x223344 });
-        const marker = new THREE.Mesh(markerGeo, markerMat);
-        marker.position.set(0, y, 0);
-        marker.rotation.x = Math.PI / 2;
-        treeGroup.add(marker);
-      }
+      const y = (i / 15) * trunkHeight;
+      const thick = (i % 7 === 0) ? 0.02 : 0.01; // thicker at L7, L14
+      const markerGeo = new THREE.TorusGeometry(trunkRadius + 0.02, thick, 8, 24);
+      const markerMat = new THREE.MeshStandardMaterial({ color: 0x6AA8E8, emissive: 0x223344, transparent: true, opacity: i % 7 === 0 ? 0.8 : 0.4 });
+      const marker = new THREE.Mesh(markerGeo, markerMat);
+      marker.position.set(0, y, 0);
+      marker.rotation.x = Math.PI / 2;
+      treeGroup.add(marker);
     }
 
     // If no fork1 yet (pre-split), we're done
@@ -564,7 +564,9 @@
     // Fork 1 branches
     const fork1Angle = (1 - state.cossim_fork1) * Math.PI / 2;
     const branchLength1 = 3.0;
-    const expertRankRadius = 0.08;
+    // Branch thickness scales with rank: rank-4 = thin, rank-32 = thick
+    const curRankForThickness = state.rank || 4;
+    const expertRankRadius = 0.04 + (Math.log2(curRankForThickness) / Math.log2(64)) * 0.12;
     const expertSigns = [-1, 1];
     const expertLabels = ["Expert A", "Expert B"];
     const expertPositions = [];
@@ -578,21 +580,40 @@
 
       createBranch(fork1Pos, endPos, expertRankRadius, COL_DEPTH1);
 
+      // Rank and size from timeline data
+      const curRank = state.rank || 4;
+      const curSizeKB = curRank * 2 * 2048 * 2 / 1024; // A+B matrices in BF16
+
       createNode(endPos, 0.17, COL_DEPTH1, {
         label: label,
-        layerRange: "L15-21",
-        rank: "rank-4",
-        size_kb: 16,
+        layerRange: "L15-28",
+        rank: `rank-${curRank}`,
+        size_kb: Math.round(curSizeKB),
         cossim: state.cossim_fork1.toFixed(3),
-        tier: "Flash (loaded on demand)"
+        tier: curSizeKB > 128 ? "Flash (loaded on demand)" : "VRAM cache"
       });
 
       createLabel(
-        `${label} (r4, 16KB)`,
+        `${label} (r${curRank}, ${Math.round(curSizeKB)}KB)`,
         endPos.clone().add(new THREE.Vector3(sign * 0.8, 0.45, 0)),
         12,
         '#88ccbb'
       );
+
+      // Layer rings on branches — L15 through L28 (14 layers)
+      for (let layerNum = 15; layerNum <= 28; layerNum++) {
+        const t = (layerNum - 14) / 15;
+        const ringPos = fork1Pos.clone().lerp(endPos, t);
+        const thick = (layerNum % 7 === 0) ? 0.015 : 0.008;
+        const ringGeo = new THREE.TorusGeometry(expertRankRadius + 0.01, thick, 8, 24);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0x44aa88, emissive: 0x112222, transparent: true, opacity: layerNum % 7 === 0 ? 0.6 : 0.3 });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.position.copy(ringPos);
+        // Orient ring perpendicular to branch direction
+        const branchDir = endPos.clone().sub(fork1Pos).normalize();
+        ringMesh.lookAt(ringPos.clone().add(branchDir));
+        treeGroup.add(ringMesh);
+      }
 
       expertPositions.push({ pos: endPos, dx, dy, sign });
 
@@ -619,9 +640,9 @@
 
           createNode(specEnd, 0.14, leafColor, {
             label: specLabel,
-            layerRange: "L22-25",
-            rank: "rank-4",
-            size_kb: 16,
+            layerRange: "L22-28",
+            rank: `rank-${curRank}`,
+            size_kb: Math.round(curSizeKB),
             cossim: state.cossim_fork2.toFixed(3),
             tier: "Flash (loaded on demand)"
           });
