@@ -1,5 +1,4 @@
-% Tree of Knowledge: Modular Expert Specialization via Embedding Space Partitioning
-% Paper v3 — clean start focused on validated concepts only
+% Tree of Knowledge: Differentiating Fluid Intelligence from Modular Crystallized Knowledge in Language Models
 
 \documentclass{article}
 \usepackage[preprint]{neurips_2024}
@@ -20,7 +19,7 @@
 \newcommand{\placeholder}[1]{\textcolor{red}{\textbf{[#1]}}}
 \newcommand{\tok}{Tree of Knowledge}
 
-\title{Tree of Knowledge: Modular Expert Specialization \\ via Embedding Space Partitioning}
+\title{Tree of Knowledge: Differentiating Fluid Intelligence \\ from Modular Crystallized Knowledge in Language Models}
 
 \author{
   Erik de Bruijn \\
@@ -33,7 +32,7 @@
 
 % ============================================================================
 \begin{abstract}
-Mixture-of-Experts (MoE) models route tokens to a subset of experts, but the standard load-balancing loss produces near-identical experts (Gini $\approx$0.002) that are functionally interchangeable. We propose the \tok{} framework, which partitions a model's embedding space using a KD-tree to define disjoint expert domains. Each expert owns a region of the conceptual space, guaranteeing non-redundancy by construction. A developmental curriculum---guided by a dense teacher model operating in the zone of proximal development---progressively introduces harder material as experts are added, mirroring cognitive development from simple to complex. The resulting experts are modular: individually trainable on commodity GPUs without fast interconnect, hot-swappable at inference time, and naturally tiered by tree depth (shallow generalists in VRAM, deep specialists on NVMe). We ground this proposal in five preliminary experimental arms that establish what does and does not work for inducing expert specialization, and in analysis of prior art including Hash Layers, EMoE, and IDA-MoE. The key open question---whether KD-tree partitioning combined with developmental curriculum produces experts that are both non-redundant and high-quality---is the subject of ongoing experiments.
+Current language models entangle two fundamentally different capabilities: \emph{fluid intelligence}---general reasoning, abstraction, and language understanding---and \emph{crystallized intelligence}---the vast store of domain-specific knowledge accumulated during training. We propose the \tok{} framework, which separates these into a small dense core (fluid intelligence, always resident in memory) and a hierarchical tree of hot-loadable expert modules (crystallized knowledge, loaded on demand). The tree is constructed by partitioning the model's embedding space using a KD-tree, giving each expert a disjoint region of the conceptual space and guaranteeing non-redundancy by construction. Tree depth corresponds to specialization depth: shallow nodes are broad generalists, deep nodes are narrow domain specialists. A developmental curriculum---guided by a dense teacher model operating in the zone of proximal development---progressively introduces harder material as experts are added, mirroring cognitive development from simple to complex. The resulting architecture is modular: experts are individually trainable on commodity GPUs without fast interconnect, hot-swappable at inference time, and naturally tiered for hierarchical storage. We ground this proposal in five preliminary experimental arms on OLMoE-1B-7B that establish what does and does not work for inducing expert specialization, and in analysis of prior art including Hash Layers, EMoE, and IDA-MoE.
 \end{abstract}
 
 % ============================================================================
