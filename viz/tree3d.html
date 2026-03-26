@@ -173,36 +173,38 @@
   <span style="color:#5a6a7a;">Drag to rotate / Scroll to zoom</span>
 </div>
 
+<script src="tree_state.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 (function() {
-  // ─── Data ───────────────────────────────────────────────────────────
+  // ─── Data from tree_state.js (loaded via <script> tag) ─────────────
+  const D = window.TREE_DATA || {};
+  const tree = D.tree || {};
+
+  // Build treeData from the live JSON structure
+  function extractFork(node) {
+    if (!node.children || node.children.length < 2) return null;
+    const cossim = node.children[0].cossim_with_sibling || 0.5;
+    return {
+      depth: 1, layer: node.children[0].layer || 15, cossim: cossim,
+      children: node.children.map(c => {
+        const sub = extractFork(c);
+        return {
+          label: c.label, rank: c.rank || 4, size_kb: c.size_kb || 16,
+          ...(sub ? { fork2: { ...sub, depth: (sub.depth || 1) + 1 } } : {})
+        };
+      })
+    };
+  }
+
   const treeData = {
-    trunk: { layers: "1-14", label: "Fluid Core", height: 5, thickness: 0.3, color: "#4A90D9" },
-    fork1: {
+    trunk: { layers: (tree.layers || "1-14"), label: (tree.label || "Fluid Core"), height: 5, thickness: 0.3, color: "#4A90D9" },
+    fork1: extractFork(tree) || {
       depth: 1, layer: 15, cossim: 0.84,
       children: [
-        {
-          label: "Expert A", rank: 4, size_kb: 16,
-          fork2: {
-            depth: 2, layer: 22, cossim: 0.32,
-            children: [
-              { label: "Specialist A1", rank: 4, size_kb: 16 },
-              { label: "Specialist A2", rank: 4, size_kb: 16 }
-            ]
-          }
-        },
-        {
-          label: "Expert B", rank: 4, size_kb: 16,
-          fork2: {
-            depth: 2, layer: 22, cossim: 0.32,
-            children: [
-              { label: "Specialist B1", rank: 4, size_kb: 16 },
-              { label: "Specialist B2", rank: 4, size_kb: 16 }
-            ]
-          }
-        }
+        { label: "Expert A", rank: 4, size_kb: 16 },
+        { label: "Expert B", rank: 4, size_kb: 16 }
       ]
     }
   };
