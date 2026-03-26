@@ -1,73 +1,114 @@
-# Tree of Knowledge
+# Tree of Knowledge LLM
 
-**Modular Expert Specialization via Embedding Space Partitioning for Mixture-of-Experts Models**
+**A small dense core for reasoning. A tree of hot-loadable experts for knowledge. Load only what you need.**
 
-## The Problem
+## Beyond Mixture-of-Experts
 
-Mixture-of-Experts (MoE) models activate a small subset of experts per token, promising parameter efficiency. But the standard load-balancing loss makes all experts nearly identical (Gini coefficient ~0.002). Experts are interchangeable — you can't add, remove, or update one without affecting the rest.
+Traditional MoE models use a router to select from a flat pool of interchangeable experts. The load-balancing loss makes all experts nearly identical — you can't tell what any single expert "knows."
 
-## Our Approach
+Tree of Knowledge is a different architecture:
 
-We partition the model's embedding space using a KD-tree, giving each expert a disjoint region of the "conceptual space." This guarantees non-redundancy by construction: experts are different because they own different parts of the space.
+```
+┌─────────────────────────────────────────┐
+│  Fluid Core (small dense model)          │
+│  Always in memory. Handles reasoning,    │
+│  language understanding, common patterns.│
+│  No world knowledge — just intelligence. │
+└──────────────────┬──────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        │    Tree of Knowledge │
+        │                      │
+        │      [root]          │  ← Broad generalists (VRAM)
+        │      /    \          │
+        │   [tech]  [human]    │  ← Domain level (VRAM/NVMe)
+        │   /  \     /  \     │
+        │ [code][sci][med][law]│  ← Specialist (NVMe)
+        │ / \                  │
+        │[py][rs]              │  ← Deep specialist (NVMe/SSD)
+        │                      │
+        └──────────────────────┘
+```
 
-A developmental curriculum — guided by a dense teacher model — progressively introduces harder material as experts are added, mirroring cognitive development from simple to complex (Piaget). Early generalists learn common patterns; later specialists handle progressively rarer knowledge.
+- **Fluid intelligence** (the core): a small dense model that reasons well but doesn't memorize the world. Always loaded, fast, cheap.
+- **Crystallized intelligence** (the tree): hot-loadable expert modules, organized by depth of specialization. Shallow nodes are broad generalists. Deep nodes are narrow specialists. Load only the branches you need.
+
+The analogy is cognitive science, not hardware. A child develops fluid intelligence first (reasoning, pattern recognition), then accumulates crystallized intelligence (facts, domain expertise) through education. The tree grows as knowledge is added.
 
 ## Key Properties
 
-| Property | How |
-|----------|-----|
-| **Non-redundant experts** | KD-tree partitioning ensures disjoint domains |
-| **Hot-loadable** | Add/remove/update experts without retraining the core |
-| **Distributed training** | Experts train independently on commodity GPUs — no fast interconnect needed |
-| **Natural storage tiers** | Tree depth = access frequency = VRAM / NVMe / SSD |
-| **Developmental curriculum** | Teacher guides data from "children's books" to "PhD dissertations" |
+| Property | How it works |
+|----------|-------------|
+| **Non-redundant experts** | KD-tree over embedding space ensures disjoint knowledge domains |
+| **Hot-loadable** | Add a medical expert without retraining. Remove the Rust expert if you don't need it. Update the Python expert for the new version. |
+| **Train anywhere** | Experts train independently on commodity GPUs — no fast interconnect, no datacenter. A 64-expert model costs ~$30 on vast.ai. |
+| **Natural storage tiers** | Tree depth = specialization depth = access frequency. Shallow = VRAM, deep = NVMe/SSD. Not imposed — it follows from the structure. |
+| **Developmental training** | A dense teacher model guides the curriculum from simple to complex, like a tutor adapting to the student. |
+
+## How It Differs from MoE
+
+| | Standard MoE | Tree of Knowledge |
+|---|---|---|
+| Expert identity | Interchangeable (Gini ~0.002) | Each expert owns a knowledge domain |
+| Add/remove experts | Requires full retraining | Hot-swap, like installing an app |
+| Training | Synchronized, all experts together | Embarrassingly parallel, independent |
+| Storage tiers | Post-hoc placement (KTransformers, etc.) | Structural — tree depth IS the tier |
+| What the router does | Learned soft assignment (converges to uniform) | Tree traversal with soft refinement |
+| Core model | All experts share compute equally | Small dense core + specialized extensions |
 
 ## How It Evolved
 
-This work grew from a tiered deployment optimization (MoGaE) through five experimental arms that taught us **routing concentration is the wrong metric** — what matters is whether experts contribute unique value when activated. See [paper/lessons-learned.tex](paper/lessons-learned.tex) for the full journey.
+This started as "MoGaE" — an attempt to make MoE routing cache-friendly for tiered storage. Five experimental arms and 30+ hours of GPU training taught us that **routing concentration is the wrong metric**. What matters is whether experts contribute unique value.
 
-The original research repo with all experimental data: [Eriks-AI-research/inference-moe-opt](https://github.com/ErikDeBruijn/Eriks-AI-research) (branch `arms-a-e-archive`).
+The key insights:
+1. Prescriptive cost losses shift routing but the effect dilutes as experts are added
+2. Without cost signals, no specialization emerges at all (Béna & Goodman 2025)
+3. NVMe-only deployment makes routing concentration irrelevant — post-hoc placement works fine
+4. The real question is: **how do you train experts that are genuinely different?**
+
+Tree of Knowledge answers this by defining expert domains from the geometry of the embedding space, not from a learned router that converges to uniformity.
+
+See [paper/lessons-learned.tex](paper/lessons-learned.tex) for the detailed experimental journey.
 
 ## Repository Structure
 
 ```
 paper/
-  mogae-paper-v3.tex    — Current paper draft
-  lessons-learned.tex   — What Arms A-E taught us (paper v2)
-  prior-art.md          — Analysis of Hash Layers, EMoE, IDA-MoE, MoCE, etc.
+  mogae-paper-v3.tex    — Current paper (NeurIPS format)
+  lessons-learned.tex   — What five experimental arms taught us
+  prior-art.md          — Hash Layers, EMoE, IDA-MoE, MoCE analysis
 plans/
-  design.md             — Tree of Knowledge architecture
-  economics.md          — Training cost analysis and distributed training model
+  design.md             — Architecture and training design
+  economics.md          — Cost analysis, distributed training model
   research-loop.md      — Experimental roadmap
 scripts/
-  tiny_moe_testbed.py   — Fast ablation testbed (10M params, minutes per experiment)
-  (more to come)
+  tiny_moe_testbed.py   — Fast ablation testbed (~3 min per experiment)
 results/
-  ablation-1/           — Routing strategy comparison (learned vs hash vs KD-tree vs k-means)
-  (more to come)
+  ablation-1/           — Routing strategy comparison
 ```
 
 ## Status
 
-**Phase: Validation.** The framework is proposed with theoretical motivation and preliminary evidence. Key experiments in progress:
+**Phase: Validation.** Framework proposed with theoretical motivation. Key experiments in progress:
 
-- [ ] PCA + KD-tree analysis of OLMoE embedding space
-- [ ] KD-tree routing with fine-tuned router on OLMoE
-- [ ] Developmental curriculum ablation
-- [ ] Dense teacher (Qwen 30B) guided curriculum
+- [ ] PCA + KD-tree analysis of embedding space structure
+- [ ] KD-tree routing with fine-tuned router
+- [ ] Developmental curriculum with dense teacher (Qwen 30B)
 - [ ] Hot-loading validation
 - [ ] Distributed training validation
 
-## Prior Art
+## Prior Art and Positioning
 
-The individual components exist; the combination is novel:
-- **Hash Layers** (NeurIPS 2021) — deterministic geometric routing
-- **EMoE** (2026) — eigenbasis routing
-- **IDA-MoE** (ACM MM 2025) — GMM-based latent space partitioning
-- **MoCE** (EMNLP 2025) — clustered expert assignment
-- **DS-MoE** (MIT/IBM 2024) — dense training, sparse inference
-- **Elastic MoE** (2025) — variable expert count at inference
-- **Béna & Goodman** (Nature Communications 2025) — resource constraints required for specialization
+Tree of Knowledge combines ideas from multiple lines of work in a novel way:
+
+- **Hash Layers** (NeurIPS 2021) — deterministic routing works, but random beats clustering
+- **EMoE** (2026) — eigenbasis routing in feature space
+- **IDA-MoE** (ACM MM 2025) — Gaussian mixture latent space partitioning
+- **DS-MoE** (MIT/IBM 2024) — dense training produces better experts (complementary)
+- **Elastic MoE** (2025) — variable expert count at inference (orthogonal)
+- **Béna & Goodman** (Nature Comms 2025) — resource constraints required for specialization
+
+What's new: hierarchical spatial partitioning → storage tier mapping → embarrassingly parallel training → hot-loadable modules → developmental curriculum. The combination enables a training and deployment paradigm that none of the above achieve individually.
 
 ## License
 
