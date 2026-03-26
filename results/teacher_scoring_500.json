@@ -1,0 +1,4034 @@
+{
+  "metadata": {
+    "teacher_model": "qwen3:30b-a3b",
+    "student_model": "Qwen3-0.6B (from curriculum_scored.json)",
+    "sample_size": 500,
+    "valid_results": 500,
+    "errors": 0,
+    "total_time_seconds": 660.2880659103394,
+    "chunks_per_minute": 45.43471485985286,
+    "seed": 42,
+    "zpd_threshold": 2.0,
+    "context_size": 2048,
+    "timestamp": "2026-03-26T22:48:54"
+  },
+  "summary": {
+    "spearman_rho": 0.9579677047660372,
+    "spearman_p": 3.1874804922950795e-272,
+    "pearson_r": 0.966675678373125,
+    "pearson_p": 7.495277207983698e-297,
+    "zpd_fraction": 0.142,
+    "student_ppl_mean": 29.95003125,
+    "student_ppl_median": 26.625,
+    "teacher_ppl_mean": 16.99841746837611,
+    "teacher_ppl_median": 15.064984713640623,
+    "zpd_mean": 1.789595175751757,
+    "zpd_median": 1.7387615246356731
+  },
+  "pre_registered": {
+    "spearman_rho_pass": false,
+    "zpd_fraction_in_range": false
+  },
+  "results": [
+    {
+      "text_preview": " test to see as to how quickly and efficiently one can find answers to simple and advanced questions",
+      "student_ppl": 18.25,
+      "teacher_ppl": 8.745247736601378,
+      "zpd_score": 2.086847685700029,
+      "token_count": 512,
+      "difficulty_percentile": 20.95
+    },
+    {
+      "text_preview": "When the homeowner is officially in pre-foreclosure they usually are given anywhere from 3 to 10 mon",
+      "student_ppl": 10.125,
+      "teacher_ppl": 6.396979341328026,
+      "zpd_score": 1.5827782863994726,
+      "token_count": 512,
+      "difficulty_percentile": 3.65
+    },
+    {
+      "text_preview": " a Circuit in a Data Network,\u201d filed Jan. 21, 2003. This patent is also related to U.S. patent appli",
+      "student_ppl": 5.8125,
+      "teacher_ppl": 4.195704104696332,
+      "zpd_score": 1.385345547483665,
+      "token_count": 512,
+      "difficulty_percentile": 0.82
+    },
+    {
+      "text_preview": " jobs are regularly posted and updated. Create free profile on ChatpataDun and keep up to date with ",
+      "student_ppl": 19.5,
+      "teacher_ppl": 13.253168048550755,
+      "zpd_score": 1.4713463172401515,
+      "token_count": 510,
+      "difficulty_percentile": 24.3
+    },
+    {
+      "text_preview": ". Surf on over to learn how to draw this landscape in just five steps., where , boundary of the cube",
+      "student_ppl": 14.0,
+      "teacher_ppl": 8.36535903492162,
+      "zpd_score": 1.6735683359860927,
+      "token_count": 511,
+      "difficulty_percentile": 9.01
+    },
+    {
+      "text_preview": " then grouped individuals based on the neurotransmitter system that was targeted by the mother's med",
+      "student_ppl": 13.375,
+      "teacher_ppl": 9.038743799754448,
+      "zpd_score": 1.4797410233447876,
+      "token_count": 512,
+      "difficulty_percentile": 8.02
+    },
+    {
+      "text_preview": " the Meaningful Use (MU) program, which offered financial incentives for adopting electronic health ",
+      "student_ppl": 12.9375,
+      "teacher_ppl": 6.512661356812153,
+      "zpd_score": 1.9865150805772445,
+      "token_count": 511,
+      "difficulty_percentile": 7.31
+    },
+    {
+      "text_preview": " identifying issues early and, where possible, avoiding costly and stressful disputes, while protect",
+      "student_ppl": 10.9375,
+      "teacher_ppl": 6.04435174966815,
+      "zpd_score": 1.8095406179166353,
+      "token_count": 511,
+      "difficulty_percentile": 4.57
+    },
+    {
+      "text_preview": " speculation is that Ultron may have somehow embedded himself in the mind of Vision.\nWe already know",
+      "student_ppl": 19.5,
+      "teacher_ppl": 11.088828371635154,
+      "zpd_score": 1.7585266311705514,
+      "token_count": 511,
+      "difficulty_percentile": 24.13
+    },
+    {
+      "text_preview": ", and shops and just one short block to the F/G at 7th Avenue. Prospect Park is also an easy stroll ",
+      "student_ppl": 9.8125,
+      "teacher_ppl": 4.093467280941604,
+      "zpd_score": 2.397112112190346,
+      "token_count": 511,
+      "difficulty_percentile": 3.36
+    },
+    {
+      "text_preview": "it has been nationally recognized for its revitalization efforts. Here you will find the historic, e",
+      "student_ppl": 18.875,
+      "teacher_ppl": 10.96736630435909,
+      "zpd_score": 1.7210148249081407,
+      "token_count": 512,
+      "difficulty_percentile": 22.17
+    },
+    {
+      "text_preview": ". J. Shultz and Lance Faidley put the Eagles up by a 24-6 margin.\nGreg Sleek decisioned Somerset's B",
+      "student_ppl": 19.5,
+      "teacher_ppl": 10.059874096683089,
+      "zpd_score": 1.938394040779246,
+      "token_count": 511,
+      "difficulty_percentile": 24.27
+    },
+    {
+      "text_preview": " was posted on Tuesday, May 1st, 2012 at 6:55 PM\tand is filed under All, Porsche Cup. You can follow",
+      "student_ppl": 17.5,
+      "teacher_ppl": 9.402076388260566,
+      "zpd_score": 1.8612909826866013,
+      "token_count": 511,
+      "difficulty_percentile": 17.87
+    },
+    {
+      "text_preview": ". Uniforms are provided and employees must comply with uniform dress code. Valid driver\u2019s license re",
+      "student_ppl": 9.1875,
+      "teacher_ppl": 6.105375728616525,
+      "zpd_score": 1.5048213915709137,
+      "token_count": 512,
+      "difficulty_percentile": 2.85
+    },
+    {
+      "text_preview": " news when you have Hashimoto\u2019s hypothyroidism, as toxins can trigger the immune system to contribut",
+      "student_ppl": 18.0,
+      "teacher_ppl": 11.351827542660502,
+      "zpd_score": 1.5856477674943061,
+      "token_count": 509,
+      "difficulty_percentile": 19.35
+    },
+    {
+      "text_preview": "21), second in passing efficiency (143.0) and third in yards per game (248.2). Most importantly, he ",
+      "student_ppl": 15.875,
+      "teacher_ppl": 9.704229181270883,
+      "zpd_score": 1.6358846955756854,
+      "token_count": 511,
+      "difficulty_percentile": 13.82
+    },
+    {
+      "text_preview": "oglobulin A. Chronobiology international 16, 359\u2013371 (1999).\nDimitriou, L., Sharp, N. C. & Doherty, ",
+      "student_ppl": 6.3125,
+      "teacher_ppl": 4.133518635119089,
+      "zpd_score": 1.527149278188299,
+      "token_count": 512,
+      "difficulty_percentile": 1.04
+    },
+    {
+      "text_preview": " to time by the Board of Directors. Any two or more offices may be held by the same person. A direct",
+      "student_ppl": 6.21875,
+      "teacher_ppl": 2.673736512041965,
+      "zpd_score": 2.3258649354534433,
+      "token_count": 512,
+      "difficulty_percentile": 0.98
+    },
+    {
+      "text_preview": "\u2013behavioural intervention for indicated prevention of depression in university students: a randomize",
+      "student_ppl": 9.5,
+      "teacher_ppl": 4.490584750875261,
+      "zpd_score": 2.1155374025951414,
+      "token_count": 511,
+      "difficulty_percentile": 3.07
+    },
+    {
+      "text_preview": " and helps us address issues of personal well being and worldwide concern, such as environmental dep",
+      "student_ppl": 12.9375,
+      "teacher_ppl": 8.467846661528151,
+      "zpd_score": 1.527838247092825,
+      "token_count": 512,
+      "difficulty_percentile": 7.16
+    },
+    {
+      "text_preview": "\u201cCan C60 and antioxidants help?\u201d you think. If you\u2019ve been wanting to improve your health beyond you",
+      "student_ppl": 13.1875,
+      "teacher_ppl": 8.249200143657113,
+      "zpd_score": 1.598639840268634,
+      "token_count": 512,
+      "difficulty_percentile": 7.62
+    },
+    {
+      "text_preview": "ickly Pear for years and will continue to do so. The service is amazing!\nI have used your company fo",
+      "student_ppl": 16.875,
+      "teacher_ppl": 12.082398975639368,
+      "zpd_score": 1.3966597224626924,
+      "token_count": 512,
+      "difficulty_percentile": 16.56
+    },
+    {
+      "text_preview": " following online car insurance rates tips will help you streamline your search for the best coverag",
+      "student_ppl": 18.0,
+      "teacher_ppl": 11.607675885597834,
+      "zpd_score": 1.5506980189146573,
+      "token_count": 512,
+      "difficulty_percentile": 19.73
+    },
+    {
+      "text_preview": " such breach within thirty (30) days from interpret4london's notice to you thereof; provided that, i",
+      "student_ppl": 5.9375,
+      "teacher_ppl": 2.1038386940739646,
+      "zpd_score": 2.8222220727875134,
+      "token_count": 512,
+      "difficulty_percentile": 0.87
+    },
+    {
+      "text_preview": " into a large size heavy pan or pot. Position a cooking thermometer in the oil but not touching the ",
+      "student_ppl": 17.75,
+      "teacher_ppl": 9.179680299237667,
+      "zpd_score": 1.9336185380523614,
+      "token_count": 512,
+      "difficulty_percentile": 18.39
+    },
+    {
+      "text_preview": " curries in Kerala is added in.\nYou can also add in water, some Kerala garam masala and salt to tast",
+      "student_ppl": 12.375,
+      "teacher_ppl": 6.950304237296874,
+      "zpd_score": 1.780497598017797,
+      "token_count": 512,
+      "difficulty_percentile": 6.51
+    },
+    {
+      "text_preview": "G wireless system and video content while Sharp provided the ultra-high definition video transmissio",
+      "student_ppl": 19.125,
+      "teacher_ppl": 11.757853591482991,
+      "zpd_score": 1.626572388505801,
+      "token_count": 512,
+      "difficulty_percentile": 23.46
+    },
+    {
+      "text_preview": " the non-surgical method is that there is no surgery involved. Being able to affectively change the ",
+      "student_ppl": 18.625,
+      "teacher_ppl": 11.78087429551594,
+      "zpd_score": 1.5809522733884942,
+      "token_count": 512,
+      "difficulty_percentile": 21.29
+    },
+    {
+      "text_preview": " as home remodeling or roof replacement in Sterling will likely need a larger dumpster size such as ",
+      "student_ppl": 19.125,
+      "teacher_ppl": 12.73637970779856,
+      "zpd_score": 1.5016041009117882,
+      "token_count": 511,
+      "difficulty_percentile": 22.98
+    },
+    {
+      "text_preview": " as home remodeling projects, people are left with the task of discarding their own personal waste. ",
+      "student_ppl": 17.5,
+      "teacher_ppl": 12.012841698990803,
+      "zpd_score": 1.4567743784944882,
+      "token_count": 511,
+      "difficulty_percentile": 17.86
+    },
+    {
+      "text_preview": " would be a good idea to provide a message that says \u201ctemporarily out of stock\u201d and give the user th",
+      "student_ppl": 15.875,
+      "teacher_ppl": 9.878874593361212,
+      "zpd_score": 1.6069644219057397,
+      "token_count": 511,
+      "difficulty_percentile": 13.75
+    },
+    {
+      "text_preview": " approved method will be fixed for a maximum period of three years within the terms and conditions o",
+      "student_ppl": 12.9375,
+      "teacher_ppl": 7.407619385127522,
+      "zpd_score": 1.746512520064809,
+      "token_count": 512,
+      "difficulty_percentile": 7.22
+    },
+    {
+      "text_preview": " wheelbarrow access, eliminating the need to lift the load over the sides of the bin. Our skip bins ",
+      "student_ppl": 16.375,
+      "teacher_ppl": 10.747889048956104,
+      "zpd_score": 1.5235549906974926,
+      "token_count": 511,
+      "difficulty_percentile": 14.72
+    },
+    {
+      "text_preview": " Public Opinion newspaper the Thursday prior to each primary or election in the classified section.\n",
+      "student_ppl": 18.0,
+      "teacher_ppl": 9.848281868955729,
+      "zpd_score": 1.8277299776258988,
+      "token_count": 511,
+      "difficulty_percentile": 19.31
+    },
+    {
+      "text_preview": ", exemption of dividends received by the Dutch subsidiary from foreign companies by the participatio",
+      "student_ppl": 14.0,
+      "teacher_ppl": 8.395189338470734,
+      "zpd_score": 1.6676217099530284,
+      "token_count": 512,
+      "difficulty_percentile": 9.11
+    },
+    {
+      "text_preview": "15 August 1990.\nSocial Security number 580-52-5785 was issued to ANIBAL GARCIA, who was born 08 Febr",
+      "student_ppl": 3.296875,
+      "teacher_ppl": 2.794577003323813,
+      "zpd_score": 1.1797402598242108,
+      "token_count": 512,
+      "difficulty_percentile": 0.21
+    },
+    {
+      "text_preview": " benefits and high folic acid acid content \u2013 make sure you source a formula sans aloin (the bitter t",
+      "student_ppl": 19.5,
+      "teacher_ppl": 13.08065691020578,
+      "zpd_score": 1.4907508188511331,
+      "token_count": 512,
+      "difficulty_percentile": 24.86
+    },
+    {
+      "text_preview": " suppress noise, the resistor plug caps were introduced. NGK Resistor Spark Plug caps are designed t",
+      "student_ppl": 11.4375,
+      "teacher_ppl": 8.285069045707953,
+      "zpd_score": 1.3804954354514585,
+      "token_count": 512,
+      "difficulty_percentile": 5.23
+    },
+    {
+      "text_preview": " staff. Awaiting you is a comfortable and quiet customer lounge where you can enjoy WiFi, television",
+      "student_ppl": 19.125,
+      "teacher_ppl": 12.485638304762489,
+      "zpd_score": 1.5317598935014007,
+      "token_count": 511,
+      "difficulty_percentile": 22.88
+    },
+    {
+      "text_preview": "ence and pelvic organ prolapse. The lawsuit alleges that she suffered a number of health consequence",
+      "student_ppl": 16.125,
+      "teacher_ppl": 9.32523299558756,
+      "zpd_score": 1.72917931462194,
+      "token_count": 512,
+      "difficulty_percentile": 13.85
+    },
+    {
+      "text_preview": " of The Attractor Factor and Zero Limits, television guest star on Larry King Live and CNN, ABC, FOX",
+      "student_ppl": 14.9375,
+      "teacher_ppl": 7.31928997075301,
+      "zpd_score": 2.0408400349881517,
+      "token_count": 512,
+      "difficulty_percentile": 11.15
+    },
+    {
+      "text_preview": ". In compare to all Agricultural Pesticides Manufacturers in India Jayant Vitamins Limited ranks as ",
+      "student_ppl": 14.0,
+      "teacher_ppl": 9.905234969448443,
+      "zpd_score": 1.4133940328706374,
+      "token_count": 512,
+      "difficulty_percentile": 9.1
+    },
+    {
+      "text_preview": " i.e. you cancel after we have ordered stock and material from supplier, but we may deduct or charge",
+      "student_ppl": 11.4375,
+      "teacher_ppl": 6.447754051599576,
+      "zpd_score": 1.7738734927649038,
+      "token_count": 512,
+      "difficulty_percentile": 5.09
+    },
+    {
+      "text_preview": " are found mostly between the orbits of Jupiter and Mars, while comets are found mostly between Venu",
+      "student_ppl": 12.75,
+      "teacher_ppl": 3.173896952629953,
+      "zpd_score": 4.017143653462063,
+      "token_count": 512,
+      "difficulty_percentile": 7.05
+    },
+    {
+      "text_preview": " Frankel had no problem getting through rabbinical school at Yeshiva University or law school at Har",
+      "student_ppl": 14.9375,
+      "teacher_ppl": 9.660486361163704,
+      "zpd_score": 1.5462472013883808,
+      "token_count": 512,
+      "difficulty_percentile": 11.03
+    },
+    {
+      "text_preview": "13Esau's wife Adah bore him one son, Eliphaz, and Eliphaz had five sons: Teman, Omar, Zepho, Gatam, ",
+      "student_ppl": 9.8125,
+      "teacher_ppl": 2.581782238148551,
+      "zpd_score": 3.8006691095050464,
+      "token_count": 512,
+      "difficulty_percentile": 3.35
+    },
+    {
+      "text_preview": " to board the boat, which set a world record in 1998 as the fastest motored vessel to circumnavigate",
+      "student_ppl": 9.5,
+      "teacher_ppl": 4.493534258453009,
+      "zpd_score": 2.1141487865879918,
+      "token_count": 510,
+      "difficulty_percentile": 3.04
+    },
+    {
+      "text_preview": " build one-of-a-kind brands. The brands in its portfolio, Michael Angelo\u2019s and Rao\u2019s Homemade are, r",
+      "student_ppl": 15.375,
+      "teacher_ppl": 7.386887778896738,
+      "zpd_score": 2.081390764311343,
+      "token_count": 512,
+      "difficulty_percentile": 12.45
+    },
+    {
+      "text_preview": "0; 43:296\u2013299.\n4. Ahn JM, Lee JM, Hwang YJ, et al. A case of acquired coronary-cameral fistulae. Kor",
+      "student_ppl": 9.625,
+      "teacher_ppl": 5.884928888577641,
+      "zpd_score": 1.6355337816709483,
+      "token_count": 511,
+      "difficulty_percentile": 3.17
+    },
+    {
+      "text_preview": " depression, grief, loss, and divorce. I'm sensitive to issues of diversity and inclusion, am intere",
+      "student_ppl": 15.1875,
+      "teacher_ppl": 7.849775135065379,
+      "zpd_score": 1.9347687976635917,
+      "token_count": 511,
+      "difficulty_percentile": 11.76
+    },
+    {
+      "text_preview": " He had been impressed by her passion in her \u201cLetters Written during a Short Residence in Sweden, No",
+      "student_ppl": 14.9375,
+      "teacher_ppl": 6.474829699866439,
+      "zpd_score": 2.307010484045337,
+      "token_count": 512,
+      "difficulty_percentile": 11.27
+    },
+    {
+      "text_preview": " and YPJ symbols. It seems that the German state didn\u2019t only sell weapons to Erdogan\u2019s Regime but al",
+      "student_ppl": 18.0,
+      "teacher_ppl": 10.014986609423534,
+      "zpd_score": 1.7973064470264015,
+      "token_count": 509,
+      "difficulty_percentile": 19.78
+    },
+    {
+      "text_preview": " located in the state of California within Amador County. This location serves 4,680 Sutter Creek re",
+      "student_ppl": 13.8125,
+      "teacher_ppl": 9.577913147497764,
+      "zpd_score": 1.4421199886959222,
+      "token_count": 512,
+      "difficulty_percentile": 8.67
+    },
+    {
+      "text_preview": "12. X.Song, Z. Qiu, X. Yang, H. Gong, S. Zheng, B. Q. Cao,* H. Q. Wang,* H. Moehwald, D. Shchukin, \u201c",
+      "student_ppl": 7.09375,
+      "teacher_ppl": 4.800320423555646,
+      "zpd_score": 1.477765935205131,
+      "token_count": 512,
+      "difficulty_percentile": 1.42
+    },
+    {
+      "text_preview": " not come across. What a perfect web site.\nWhat i do not understood is actually how you\u2019re no longer",
+      "student_ppl": 19.125,
+      "teacher_ppl": 3.083985057354744,
+      "zpd_score": 6.201391914785822,
+      "token_count": 512,
+      "difficulty_percentile": 23.91
+    },
+    {
+      "text_preview": ". Projects that could be fully financed by commercial banks are viewed unfavorably in the review pro",
+      "student_ppl": 16.375,
+      "teacher_ppl": 11.174426987854146,
+      "zpd_score": 1.4653995249866978,
+      "token_count": 512,
+      "difficulty_percentile": 15.05
+    },
+    {
+      "text_preview": " count income and expenses for your business. With the cash method, you report income in the year it",
+      "student_ppl": 17.5,
+      "teacher_ppl": 8.811207026270468,
+      "zpd_score": 1.9861070052972356,
+      "token_count": 512,
+      "difficulty_percentile": 17.57
+    },
+    {
+      "text_preview": " In addition to monitor 172, personal computers typically include other peripheral output devices (n",
+      "student_ppl": 10.5625,
+      "teacher_ppl": 5.848535940464874,
+      "zpd_score": 1.806007538898775,
+      "token_count": 512,
+      "difficulty_percentile": 4.09
+    },
+    {
+      "text_preview": " was not in the group.\nThe police have not identified the attackers. Philippine press reports say Ma",
+      "student_ppl": 15.375,
+      "teacher_ppl": 8.741578854428242,
+      "zpd_score": 1.7588355897758046,
+      "token_count": 511,
+      "difficulty_percentile": 12.4
+    },
+    {
+      "text_preview": "871.10 in April 2017, which further illustrates the strength of the labor market right now.\nThe Cens",
+      "student_ppl": 8.9375,
+      "teacher_ppl": 5.888797037796868,
+      "zpd_score": 1.5177123515439956,
+      "token_count": 512,
+      "difficulty_percentile": 2.58
+    },
+    {
+      "text_preview": " as brands, types of models, price range and etc. Online shopping is one of the best ways to purchas",
+      "student_ppl": 17.5,
+      "teacher_ppl": 9.078580385997789,
+      "zpd_score": 1.9276141484621163,
+      "token_count": 511,
+      "difficulty_percentile": 18.09
+    },
+    {
+      "text_preview": " This ultra-light, non-greasy, non-staining and fragrant oil is prepared by eliminating the long-cha",
+      "student_ppl": 14.25,
+      "teacher_ppl": 10.384230949875437,
+      "zpd_score": 1.372273023277755,
+      "token_count": 512,
+      "difficulty_percentile": 9.61
+    },
+    {
+      "text_preview": " & Pink. The colors might differ in shades but we\u2019ll get the confirmation about it in 24 hours from ",
+      "student_ppl": 18.25,
+      "teacher_ppl": 11.066890841160264,
+      "zpd_score": 1.6490629809163864,
+      "token_count": 509,
+      "difficulty_percentile": 20.6
+    },
+    {
+      "text_preview": " Joe Sugg and Jana Vlogs as his favorites. He loves listening to music by Drake, Tayyib Ali, Skepta ",
+      "student_ppl": 18.25,
+      "teacher_ppl": 9.66075354063239,
+      "zpd_score": 1.8890865938399004,
+      "token_count": 512,
+      "difficulty_percentile": 20.27
+    },
+    {
+      "text_preview": " organizer for California Pipevine Swallowtail Conservation.\nI raise locally rare California Pipevin",
+      "student_ppl": 15.1875,
+      "teacher_ppl": 9.908853589287933,
+      "zpd_score": 1.532720194434864,
+      "token_count": 512,
+      "difficulty_percentile": 11.85
+    },
+    {
+      "text_preview": " Selected artists also have the opportunity to be rewarded for their talents, with a top cash prize ",
+      "student_ppl": 17.75,
+      "teacher_ppl": 10.16442046450347,
+      "zpd_score": 1.746287460459467,
+      "token_count": 512,
+      "difficulty_percentile": 18.92
+    },
+    {
+      "text_preview": "PE RDX Removable Disk Backup System provides a backup solution that backs up and retrieves data quic",
+      "student_ppl": 12.375,
+      "teacher_ppl": 8.608012969133434,
+      "zpd_score": 1.4376140050409087,
+      "token_count": 512,
+      "difficulty_percentile": 6.3
+    },
+    {
+      "text_preview": " Crosspolymer, Rumex Occidentalis Extract, Menthol (L), Citrus Grandis (Pink Grapefruit) Peel Oil, P",
+      "student_ppl": 19.125,
+      "teacher_ppl": 10.723327440693764,
+      "zpd_score": 1.783494918510357,
+      "token_count": 511,
+      "difficulty_percentile": 23.09
+    },
+    {
+      "text_preview": " 6.8], 4% SDS, and 20% glycerol). Part of the lysate samples was removed and used to determine the p",
+      "student_ppl": 8.5,
+      "teacher_ppl": 6.014848586008233,
+      "zpd_score": 1.4131694054232284,
+      "token_count": 512,
+      "difficulty_percentile": 2.28
+    },
+    {
+      "text_preview": " the nuclear age: a technical history of Atomic Energy of Canada Limited. Montreal: McGill-Queen's U",
+      "student_ppl": 7.28125,
+      "teacher_ppl": 4.933060879216872,
+      "zpd_score": 1.4760105699639987,
+      "token_count": 512,
+      "difficulty_percentile": 1.5
+    },
+    {
+      "text_preview": " so popular.\nBecause Chris chan liked it and said Bring the whole family.\nHonestly I'm not sure why;",
+      "student_ppl": 18.625,
+      "teacher_ppl": 12.044511458437551,
+      "zpd_score": 1.5463474848498413,
+      "token_count": 510,
+      "difficulty_percentile": 21.67
+    },
+    {
+      "text_preview": " in Pyong Gap Min (Ed), Younger-Generation Korean Experiences in the U.S. and Canada. Lexington Book",
+      "student_ppl": 12.9375,
+      "teacher_ppl": 7.097613773628531,
+      "zpd_score": 1.8227957187625228,
+      "token_count": 511,
+      "difficulty_percentile": 7.47
+    },
+    {
+      "text_preview": " Bridgeport, CT 06605.Businesses use shared services to streamline HR activities, concentrating tran",
+      "student_ppl": 14.25,
+      "teacher_ppl": 9.444264077821881,
+      "zpd_score": 1.5088523449342661,
+      "token_count": 511,
+      "difficulty_percentile": 9.48
+    },
+    {
+      "text_preview": " to protect the data that resides on servers under our control. We also use secure server software (",
+      "student_ppl": 8.9375,
+      "teacher_ppl": 5.0862334243597225,
+      "zpd_score": 1.757194224943597,
+      "token_count": 512,
+      "difficulty_percentile": 2.61
+    },
+    {
+      "text_preview": " dioxide in the blood is excretedat the alveoli and expelled in the air we breathe out.\nWhat is the ",
+      "student_ppl": 13.1875,
+      "teacher_ppl": 8.055810197442659,
+      "zpd_score": 1.6370172182291995,
+      "token_count": 511,
+      "difficulty_percentile": 7.63
+    },
+    {
+      "text_preview": "2). Lee J, Kang J, Rhie S, Chae KY. Impact of sleep duration on emotional status in adolescents. J K",
+      "student_ppl": 9.8125,
+      "teacher_ppl": 6.70712548448541,
+      "zpd_score": 1.462996334673891,
+      "token_count": 512,
+      "difficulty_percentile": 3.31
+    },
+    {
+      "text_preview": " and praying therein and constructing over them and other such affairs all come under that which the",
+      "student_ppl": 15.375,
+      "teacher_ppl": 6.173404763037683,
+      "zpd_score": 2.4905219388910735,
+      "token_count": 512,
+      "difficulty_percentile": 12.45
+    },
+    {
+      "text_preview": " Emily Thorne on Revenge which was warmly welcomed. According to Margarita Levieva bio, she was born",
+      "student_ppl": 14.0,
+      "teacher_ppl": 7.922971168668829,
+      "zpd_score": 1.7670138767338464,
+      "token_count": 512,
+      "difficulty_percentile": 9.11
+    },
+    {
+      "text_preview": " marketing are dedicating almost half of their total marketing budget to content marketing tactics.\n",
+      "student_ppl": 16.375,
+      "teacher_ppl": 10.033762421374707,
+      "zpd_score": 1.6319900065718809,
+      "token_count": 512,
+      "difficulty_percentile": 14.86
+    },
+    {
+      "text_preview": " are also durably constructed for a reliable design.Keep in mind that the job possibilities listed a",
+      "student_ppl": 18.25,
+      "teacher_ppl": 12.045792275881325,
+      "zpd_score": 1.5150518606020662,
+      "token_count": 512,
+      "difficulty_percentile": 20.83
+    },
+    {
+      "text_preview": "entary life or have no regular exercise before pregnancy, they need to discuss with their doctor bef",
+      "student_ppl": 15.375,
+      "teacher_ppl": 9.548104465079595,
+      "zpd_score": 1.6102672584104192,
+      "token_count": 511,
+      "difficulty_percentile": 11.95
+    },
+    {
+      "text_preview": " control in a combination of online and offline storage. As a result, it may be necessary for Dasset",
+      "student_ppl": 11.625,
+      "teacher_ppl": 7.59334333115361,
+      "zpd_score": 1.5309461844436165,
+      "token_count": 512,
+      "difficulty_percentile": 5.33
+    },
+    {
+      "text_preview": " or biological studies run through the Children\u2019s Oncology Group (COG). The PTs integrated the molec",
+      "student_ppl": 15.375,
+      "teacher_ppl": 9.649554467088254,
+      "zpd_score": 1.5933378118585193,
+      "token_count": 512,
+      "difficulty_percentile": 12.13
+    },
+    {
+      "text_preview": " works!\nAfter plugging in my panini press and melting the dark chocolate in the microwave, I fold a ",
+      "student_ppl": 15.1875,
+      "teacher_ppl": 6.786219316427439,
+      "zpd_score": 2.2379913309367314,
+      "token_count": 512,
+      "difficulty_percentile": 11.64
+    },
+    {
+      "text_preview": " families and their communities in search of justice. This and other healing ceremonies can be both ",
+      "student_ppl": 12.75,
+      "teacher_ppl": 8.142114814999093,
+      "zpd_score": 1.5659322288740558,
+      "token_count": 511,
+      "difficulty_percentile": 6.86
+    },
+    {
+      "text_preview": " structure around me as I do. Our loving is at the border of our oppositions.\nOn November 18, 2013, ",
+      "student_ppl": 18.875,
+      "teacher_ppl": 13.041426830131206,
+      "zpd_score": 1.4473109611281778,
+      "token_count": 512,
+      "difficulty_percentile": 21.96
+    },
+    {
+      "text_preview": " prescribed minimum essential qualifications required for a particular post to get shortlisted. Howe",
+      "student_ppl": 13.8125,
+      "teacher_ppl": 7.846347236690833,
+      "zpd_score": 1.760373277314371,
+      "token_count": 512,
+      "difficulty_percentile": 8.75
+    },
+    {
+      "text_preview": " time hit leader, into the HOF, for fear that it will do nothing but contribute to an already sordid",
+      "student_ppl": 19.125,
+      "teacher_ppl": 9.859941956473603,
+      "zpd_score": 1.9396665907798136,
+      "token_count": 512,
+      "difficulty_percentile": 23.0
+    },
+    {
+      "text_preview": " mission is to serve you dutifully so you can be our loyal customers. Call us today via 888-548-5870",
+      "student_ppl": 18.875,
+      "teacher_ppl": 8.998316087303097,
+      "zpd_score": 2.097614688889759,
+      "token_count": 512,
+      "difficulty_percentile": 22.4
+    },
+    {
+      "text_preview": ".\nI thought it would be great to have my own domain name, so I bought mine and have been trying to a",
+      "student_ppl": 18.625,
+      "teacher_ppl": 9.782754120230399,
+      "zpd_score": 1.90386058681411,
+      "token_count": 511,
+      "difficulty_percentile": 21.23
+    },
+    {
+      "text_preview": " and its products and services.\n3.3. Jenny Craig will only collect your personal and sensitive infor",
+      "student_ppl": 8.5,
+      "teacher_ppl": 5.142557852820514,
+      "zpd_score": 1.6528739672492059,
+      "token_count": 512,
+      "difficulty_percentile": 2.34
+    },
+    {
+      "text_preview": ".\nThank you for the detailed review. I'm glad that there are some improvements that you like.\nSpecif",
+      "student_ppl": 18.0,
+      "teacher_ppl": 11.810676562048386,
+      "zpd_score": 1.5240447831616997,
+      "token_count": 512,
+      "difficulty_percentile": 19.96
+    },
+    {
+      "text_preview": " operate on rules of thumb. In an inductive argument, if the premise is true, it is probable the con",
+      "student_ppl": 18.25,
+      "teacher_ppl": 11.29516299325939,
+      "zpd_score": 1.6157358694948487,
+      "token_count": 512,
+      "difficulty_percentile": 20.81
+    },
+    {
+      "text_preview": "10 years. Operating on the Playtech platform they offer the very latest casino games, some that you ",
+      "student_ppl": 11.8125,
+      "teacher_ppl": 7.744369598366895,
+      "zpd_score": 1.525301685303214,
+      "token_count": 512,
+      "difficulty_percentile": 5.61
+    },
+    {
+      "text_preview": "ulations, mathematical derivations and numerical computation. The aim here is to teach the qualitati",
+      "student_ppl": 17.5,
+      "teacher_ppl": 12.007801967460539,
+      "zpd_score": 1.457385793621726,
+      "token_count": 512,
+      "difficulty_percentile": 17.5
+    },
+    {
+      "text_preview": " King John II of Portugal, as part of a plan to misdirect Portugal's rivals concerning India. This t",
+      "student_ppl": 19.125,
+      "teacher_ppl": 10.324085571163401,
+      "zpd_score": 1.8524643047727898,
+      "token_count": 512,
+      "difficulty_percentile": 23.89
+    },
+    {
+      "text_preview": "ling at home. Next, gadget guru Lisa McManus uncovers the best waiter\u2019s corkscrews. Finally, test co",
+      "student_ppl": 13.375,
+      "teacher_ppl": 5.878242821393049,
+      "zpd_score": 2.275339826269773,
+      "token_count": 512,
+      "difficulty_percentile": 8.02
+    },
+    {
+      "text_preview": "2007 - Journal of Scottish Philosophy 5 (1):47-63.\nPublic and Private Meaning in Hume: Comments on T",
+      "student_ppl": 11.625,
+      "teacher_ppl": 6.617480562749347,
+      "zpd_score": 1.756710864469875,
+      "token_count": 512,
+      "difficulty_percentile": 5.35
+    },
+    {
+      "text_preview": " the importance of a healthy lifestyle to reduce the likelihood of contracting breast cancer.Simply ",
+      "student_ppl": 16.375,
+      "teacher_ppl": 10.25311584284483,
+      "zpd_score": 1.5970754891477548,
+      "token_count": 513,
+      "difficulty_percentile": 15.15
+    },
+    {
+      "text_preview": " proportion of cars equipped with catalytic converters (about 40 percent in 1991). There was also no",
+      "student_ppl": 15.375,
+      "teacher_ppl": 10.230016616974781,
+      "zpd_score": 1.5029301100535937,
+      "token_count": 512,
+      "difficulty_percentile": 12.43
+    },
+    {
+      "text_preview": " nominated adviser and co-broker to Mercator, acted with Old Park Lane Capital plc, co-broker to the",
+      "student_ppl": 13.8125,
+      "teacher_ppl": 7.117480066598507,
+      "zpd_score": 1.9406447044116684,
+      "token_count": 511,
+      "difficulty_percentile": 8.84
+    },
+    {
+      "text_preview": " and for recreational fishing. Overnight (24 hour) camping is permitted by the jetty for travellers ",
+      "student_ppl": 18.25,
+      "teacher_ppl": 12.403597308044628,
+      "zpd_score": 1.4713473476088714,
+      "token_count": 511,
+      "difficulty_percentile": 20.97
+    },
+    {
+      "text_preview": " Let us take a look at some simplest and quickest ways to recover the lost data with the help of a g",
+      "student_ppl": 18.875,
+      "teacher_ppl": 12.635119370100288,
+      "zpd_score": 1.4938521312798791,
+      "token_count": 511,
+      "difficulty_percentile": 22.55
+    },
+    {
+      "text_preview": " (London), Ph.D. (London), serves as Non-Executive Independent Director of Sun International Ltd., s",
+      "student_ppl": 17.5,
+      "teacher_ppl": 10.138134110197464,
+      "zpd_score": 1.7261558990818229,
+      "token_count": 512,
+      "difficulty_percentile": 18.25
+    },
+    {
+      "text_preview": " Numbers. Why?\nMagnus Carlsson, Manager of Treasury and Payments at the Association for Financial Pr",
+      "student_ppl": 12.9375,
+      "teacher_ppl": 7.897974097156757,
+      "zpd_score": 1.6380783022139127,
+      "token_count": 512,
+      "difficulty_percentile": 7.2
+    },
+    {
+      "text_preview": " in Vastas management. This is not just an ethical workplace but a safe, trusted environment where p",
+      "student_ppl": 18.875,
+      "teacher_ppl": 12.003067692369521,
+      "zpd_score": 1.5725146673961556,
+      "token_count": 510,
+      "difficulty_percentile": 22.43
+    },
+    {
+      "text_preview": "\u2026perhaps conveying the root of Cushner\u2019s passions and spontaneity.\nCushner was born in Cleveland, an",
+      "student_ppl": 14.6875,
+      "teacher_ppl": 8.631004866858367,
+      "zpd_score": 1.7017137895956442,
+      "token_count": 511,
+      "difficulty_percentile": 10.63
+    },
+    {
+      "text_preview": "28, aaronsek \u2013 wh0cd as example august 28, alfredvar \u2013 wh0cd buy cafergot buy neurontin august 28, a",
+      "student_ppl": 7.875,
+      "teacher_ppl": 5.175557819143371,
+      "zpd_score": 1.5215751181200068,
+      "token_count": 512,
+      "difficulty_percentile": 1.83
+    },
+    {
+      "text_preview": "58 per cent in 2011.\n(3) Cases of MRSA and C difficile had decreased significantly before the coalit",
+      "student_ppl": 13.1875,
+      "teacher_ppl": 6.552974391362885,
+      "zpd_score": 2.0124449162172398,
+      "token_count": 512,
+      "difficulty_percentile": 7.5
+    },
+    {
+      "text_preview": ", 2009, pp. 666-673.\nVelasco-\u00c1lvarez F., Ron-Angev\u00edn R., \"Asynchronous Brain-Computer Interface to N",
+      "student_ppl": 6.375,
+      "teacher_ppl": 4.499150526308412,
+      "zpd_score": 1.4169341440617984,
+      "token_count": 512,
+      "difficulty_percentile": 1.05
+    },
+    {
+      "text_preview": " great need. We can do so much more together than we can alone. We ask you to please prayerfully con",
+      "student_ppl": 14.6875,
+      "teacher_ppl": 7.357250522608905,
+      "zpd_score": 1.9963300087261082,
+      "token_count": 512,
+      "difficulty_percentile": 10.34
+    },
+    {
+      "text_preview": " interactions with objects and displays, creating a hybrid physical-digital experience. In this lect",
+      "student_ppl": 15.625,
+      "teacher_ppl": 10.50601325744633,
+      "zpd_score": 1.487243506848375,
+      "token_count": 510,
+      "difficulty_percentile": 13.14
+    },
+    {
+      "text_preview": " for promoting quality of life in Mayo.\nWe in Mayo County Council are committed to providing a servi",
+      "student_ppl": 13.8125,
+      "teacher_ppl": 9.82416447821822,
+      "zpd_score": 1.4059719817013012,
+      "token_count": 511,
+      "difficulty_percentile": 8.77
+    },
+    {
+      "text_preview": "). Phylogeny and evolution of ferns (monilophytes) with a focus on the early leptosporangiate diverg",
+      "student_ppl": 8.375,
+      "teacher_ppl": 3.9270137284680278,
+      "zpd_score": 2.132663794701625,
+      "token_count": 512,
+      "difficulty_percentile": 2.17
+    },
+    {
+      "text_preview": " Outstanding Lead Actor in a Drama Series (Kyle MacLachlan), Outstanding Supporting Actress in a Dra",
+      "student_ppl": 12.75,
+      "teacher_ppl": 5.423761510374358,
+      "zpd_score": 2.3507670784587966,
+      "token_count": 512,
+      "difficulty_percentile": 6.91
+    },
+    {
+      "text_preview": " about certificate programs to find out more about how you can make a transformative impact through ",
+      "student_ppl": 17.75,
+      "teacher_ppl": 10.449344602259941,
+      "zpd_score": 1.6986711296860764,
+      "token_count": 510,
+      "difficulty_percentile": 18.58
+    },
+    {
+      "text_preview": " concept of space, understand money and learn how to tell time. They can also enjoy reading books on",
+      "student_ppl": 19.125,
+      "teacher_ppl": 11.333081672679851,
+      "zpd_score": 1.6875374723632122,
+      "token_count": 511,
+      "difficulty_percentile": 23.52
+    },
+    {
+      "text_preview": " in that \u2018hard to reach\u2019 cupboard. The cobek ulek ulek can be purchased at your local pasar, some Ja",
+      "student_ppl": 14.4375,
+      "teacher_ppl": 9.094587988974842,
+      "zpd_score": 1.5874825794749852,
+      "token_count": 512,
+      "difficulty_percentile": 10.31
+    },
+    {
+      "text_preview": "\u2019ve undermined the whole point.\u2191 National Cotton Council of America \u2013 Rankings. Cotton.org (2011-03-",
+      "student_ppl": 12.75,
+      "teacher_ppl": 7.476565929797993,
+      "zpd_score": 1.7053283713027443,
+      "token_count": 511,
+      "difficulty_percentile": 6.97
+    },
+    {
+      "text_preview": " spark off long forgotten memories of matches and players or of pleasant afternoons spent watching t",
+      "student_ppl": 18.625,
+      "teacher_ppl": 12.407631650333714,
+      "zpd_score": 1.501092273278363,
+      "token_count": 511,
+      "difficulty_percentile": 21.48
+    },
+    {
+      "text_preview": " camaraderie and being part of a friendly and supportive company culture. My fellow team-members and",
+      "student_ppl": 16.875,
+      "teacher_ppl": 9.318318846407935,
+      "zpd_score": 1.8109489789035331,
+      "token_count": 512,
+      "difficulty_percentile": 16.36
+    },
+    {
+      "text_preview": " One person who requires full time care emphasised independence of the mind as an important aspect o",
+      "student_ppl": 15.625,
+      "teacher_ppl": 9.702794812797064,
+      "zpd_score": 1.6103607570256055,
+      "token_count": 512,
+      "difficulty_percentile": 12.96
+    },
+    {
+      "text_preview": "' latest win felt like so much more than a normal game in early May.\n\"I'm telling you, we never feel",
+      "student_ppl": 18.625,
+      "teacher_ppl": 9.71855441142806,
+      "zpd_score": 1.9164372818758764,
+      "token_count": 511,
+      "difficulty_percentile": 21.06
+    },
+    {
+      "text_preview": " if he went to work in-house or for the government. The restriction was not confined just to clients",
+      "student_ppl": 16.375,
+      "teacher_ppl": 8.846914297816287,
+      "zpd_score": 1.8509278431737375,
+      "token_count": 512,
+      "difficulty_percentile": 15.03
+    },
+    {
+      "text_preview": "00S, E300 and E300S. This article will provide a detailed comparison of these scooters so you can ea",
+      "student_ppl": 11.0625,
+      "teacher_ppl": 7.634355925548303,
+      "zpd_score": 1.449041688373402,
+      "token_count": 512,
+      "difficulty_percentile": 4.68
+    },
+    {
+      "text_preview": ".\nThe messages, says Cloudmark, are targeted at affluent people in the cities of New York City, Los ",
+      "student_ppl": 22.0,
+      "teacher_ppl": 11.520123470707716,
+      "zpd_score": 1.909701754146952,
+      "token_count": 510,
+      "difficulty_percentile": 33.68
+    },
+    {
+      "text_preview": " support networks to provide essential practical and emotional help.\nOn the pages below you can find",
+      "student_ppl": 21.0,
+      "teacher_ppl": 12.853664187976952,
+      "zpd_score": 1.633775372756584,
+      "token_count": 511,
+      "difficulty_percentile": 29.57
+    },
+    {
+      "text_preview": "Please don\u2019t hesitate to contact us to find out more about pet vaccines or wellness plans at The Blu",
+      "student_ppl": 21.75,
+      "teacher_ppl": 11.19496276949122,
+      "zpd_score": 1.942838082434148,
+      "token_count": 512,
+      "difficulty_percentile": 33.08
+    },
+    {
+      "text_preview": " a CEU?\nPlease contact ALTA's CEU Chair, .\nI don't have 10 CEUs yet. Can I still renew?\nIt's not acc",
+      "student_ppl": 26.25,
+      "teacher_ppl": 13.1366975150618,
+      "zpd_score": 1.9982191087145933,
+      "token_count": 511,
+      "difficulty_percentile": 49.41
+    },
+    {
+      "text_preview": " However, this time the dog takes a Polaroid snapshot of the cat, astride the trash with a chicken b",
+      "student_ppl": 24.625,
+      "teacher_ppl": 15.832581555928085,
+      "zpd_score": 1.5553370063506686,
+      "token_count": 512,
+      "difficulty_percentile": 43.39
+    },
+    {
+      "text_preview": ". Sure, billions of dollars in investment are pouring into ML projects. Yes, machine learning is a c",
+      "student_ppl": 24.25,
+      "teacher_ppl": 13.956829014429612,
+      "zpd_score": 1.737500686934585,
+      "token_count": 511,
+      "difficulty_percentile": 42.66
+    },
+    {
+      "text_preview": " twice a week, the first time I used this, it hurt my poor sensitive skin but then I read that if it",
+      "student_ppl": 22.0,
+      "teacher_ppl": 11.885349544334662,
+      "zpd_score": 1.8510183413567878,
+      "token_count": 510,
+      "difficulty_percentile": 33.61
+    },
+    {
+      "text_preview": "Ants?Content Management Systems (CMS) provide many records indexing and management functions, while ",
+      "student_ppl": 26.25,
+      "teacher_ppl": 15.590346177049415,
+      "zpd_score": 1.6837342610546189,
+      "token_count": 511,
+      "difficulty_percentile": 49.48
+    },
+    {
+      "text_preview": " local delivery service. Ask for more details when you visit.\nUuni 3 is the world's first portable w",
+      "student_ppl": 24.625,
+      "teacher_ppl": 15.095989916248138,
+      "zpd_score": 1.6312279046699405,
+      "token_count": 512,
+      "difficulty_percentile": 44.15
+    },
+    {
+      "text_preview": " Finnish at elementary level, the rest of the course are offered by Aalto university.The band are wo",
+      "student_ppl": 23.5,
+      "teacher_ppl": 12.435751670233385,
+      "zpd_score": 1.8897128716594072,
+      "token_count": 510,
+      "difficulty_percentile": 39.04
+    },
+    {
+      "text_preview": "\u2026.fixed or mobile..so including tablet or IOS devices.\nHave a look to this video that is quite expla",
+      "student_ppl": 24.625,
+      "teacher_ppl": 15.465307667597807,
+      "zpd_score": 1.592273527903564,
+      "token_count": 512,
+      "difficulty_percentile": 44.12
+    },
+    {
+      "text_preview": " Lanterns empowering them with access to financial services, and control over their expenses, and se",
+      "student_ppl": 23.125,
+      "teacher_ppl": 15.265763485764092,
+      "zpd_score": 1.5148276089541768,
+      "token_count": 512,
+      "difficulty_percentile": 38.09
+    },
+    {
+      "text_preview": " make a profit, generally by making changes to the property and reselling it as soon as possible (co",
+      "student_ppl": 22.75,
+      "teacher_ppl": 14.819672408111977,
+      "zpd_score": 1.5351216527260838,
+      "token_count": 512,
+      "difficulty_percentile": 36.86
+    },
+    {
+      "text_preview": " building repair and improvement, Mark will be very pleased to discuss your requirements and advise ",
+      "student_ppl": 21.75,
+      "teacher_ppl": 10.836698519600352,
+      "zpd_score": 2.0070688467212356,
+      "token_count": 511,
+      "difficulty_percentile": 32.19
+    },
+    {
+      "text_preview": " by Ted Kavadas.My immediate thought for mine was romantic objects or things you'd get on a romantic",
+      "student_ppl": 21.0,
+      "teacher_ppl": 12.269456710736193,
+      "zpd_score": 1.7115672270659126,
+      "token_count": 510,
+      "difficulty_percentile": 29.53
+    },
+    {
+      "text_preview": " where you can play a role in deciding the future of these worlds. Bleach: Awakening of the Elder On",
+      "student_ppl": 24.25,
+      "teacher_ppl": 15.54684341418751,
+      "zpd_score": 1.5598021639473316,
+      "token_count": 511,
+      "difficulty_percentile": 41.7
+    },
+    {
+      "text_preview": " new performance. Refunds are not available to guests who elect to apply the value of their ticket t",
+      "student_ppl": 23.875,
+      "teacher_ppl": 12.319419328525184,
+      "zpd_score": 1.9379971866627086,
+      "token_count": 511,
+      "difficulty_percentile": 41.17
+    },
+    {
+      "text_preview": " historic opposition is primarily based on three principled grounds: the application of the Geneva C",
+      "student_ppl": 20.375,
+      "teacher_ppl": 11.557910014871625,
+      "zpd_score": 1.7628619684513356,
+      "token_count": 512,
+      "difficulty_percentile": 27.98
+    },
+    {
+      "text_preview": "30pm. Labor and delivery were wonderfully smooth and easy. We have been loving on this sweetie since",
+      "student_ppl": 26.25,
+      "teacher_ppl": 14.431627462037387,
+      "zpd_score": 1.8189216752615753,
+      "token_count": 512,
+      "difficulty_percentile": 49.76
+    },
+    {
+      "text_preview": ", applications and technologies.\nC\u00daRAM aims to radically improve health outcomes for patients by dev",
+      "student_ppl": 20.125,
+      "teacher_ppl": 9.875766076969743,
+      "zpd_score": 2.0378165950013174,
+      "token_count": 511,
+      "difficulty_percentile": 26.54
+    },
+    {
+      "text_preview": " need to satisfy your tastebuds. From local gourmet food, including country bakers, fishmongers and ",
+      "student_ppl": 20.75,
+      "teacher_ppl": 10.991325920802602,
+      "zpd_score": 1.88785230731151,
+      "token_count": 511,
+      "difficulty_percentile": 28.59
+    },
+    {
+      "text_preview": " friendly resin , fine aggregate , inorganic oxides pigment and some special additive materials for ",
+      "student_ppl": 21.0,
+      "teacher_ppl": 10.684536835521433,
+      "zpd_score": 1.9654572138479736,
+      "token_count": 511,
+      "difficulty_percentile": 30.01
+    },
+    {
+      "text_preview": "ization programme.Nay Canyon, Clark County, Nevada.\nEastern Mojave Vegetation Nay Canyon, Clark Coun",
+      "student_ppl": 25.0,
+      "teacher_ppl": 15.039387860948935,
+      "zpd_score": 1.6623016994537825,
+      "token_count": 509,
+      "difficulty_percentile": 45.56
+    },
+    {
+      "text_preview": " would add the harmony to Himself, and provide the music for His family, the music that the Father w",
+      "student_ppl": 21.0,
+      "teacher_ppl": 11.694736516993556,
+      "zpd_score": 1.7956796178763854,
+      "token_count": 512,
+      "difficulty_percentile": 30.24
+    },
+    {
+      "text_preview": " where's your head?\nWhere's your head? Your eyes and your beak?\nHey, hey, you, where are your feelin",
+      "student_ppl": 25.75,
+      "teacher_ppl": 14.751429150257234,
+      "zpd_score": 1.745593578609363,
+      "token_count": 512,
+      "difficulty_percentile": 47.3
+    },
+    {
+      "text_preview": " also be available providing an opportunity to see the 2008 Art Department Faculty Exhibition. Paint",
+      "student_ppl": 23.5,
+      "teacher_ppl": 14.20010703396543,
+      "zpd_score": 1.654917103356336,
+      "token_count": 510,
+      "difficulty_percentile": 38.83
+    },
+    {
+      "text_preview": " \u201cJustice for Sandra Stevens,\u201d has more than 3,000 likes.\n\u201cShe loved life, and she knew she was love",
+      "student_ppl": 25.0,
+      "teacher_ppl": 15.506511798404906,
+      "zpd_score": 1.6122259038665068,
+      "token_count": 510,
+      "difficulty_percentile": 44.54
+    },
+    {
+      "text_preview": " www.goodmarkindustries.com. Harwood is THE name in auto fiberglass and Lexan, and they can be reach",
+      "student_ppl": 20.375,
+      "teacher_ppl": 12.080477722587162,
+      "zpd_score": 1.68660548596554,
+      "token_count": 512,
+      "difficulty_percentile": 27.08
+    },
+    {
+      "text_preview": " the app function. The collaborating function present needs foo and bar. Consequently, we have to pa",
+      "student_ppl": 23.125,
+      "teacher_ppl": 14.078140560882089,
+      "zpd_score": 1.6426174962520097,
+      "token_count": 512,
+      "difficulty_percentile": 37.61
+    },
+    {
+      "text_preview": " get the house painted and the roof redone. It makes it look so much better right off the bat. Now f",
+      "student_ppl": 23.125,
+      "teacher_ppl": 12.105278715070664,
+      "zpd_score": 1.910323631888802,
+      "token_count": 511,
+      "difficulty_percentile": 37.5
+    },
+    {
+      "text_preview": " Please email your questions to info@creativecaremanagement.com.Voters Block Community is convenient",
+      "student_ppl": 25.0,
+      "teacher_ppl": 12.122723457730586,
+      "zpd_score": 2.062242868706013,
+      "token_count": 510,
+      "difficulty_percentile": 44.53
+    },
+    {
+      "text_preview": " topic of conversation because the township has decisions to make.\n\u201cWe need to take a look at what h",
+      "student_ppl": 23.875,
+      "teacher_ppl": 12.539090845994481,
+      "zpd_score": 1.9040455399225926,
+      "token_count": 511,
+      "difficulty_percentile": 40.34
+    },
+    {
+      "text_preview": "ic beings are bound by the laws of nature just as much as humans, animals, and rocks are, but they h",
+      "student_ppl": 24.25,
+      "teacher_ppl": 13.269555422744288,
+      "zpd_score": 1.8274915193040309,
+      "token_count": 510,
+      "difficulty_percentile": 42.34
+    },
+    {
+      "text_preview": " see the inside so read Curb Appeal, A Quick Checklist.\nFor many homeowners, buying and selling a ho",
+      "student_ppl": 21.75,
+      "teacher_ppl": 12.836529448568173,
+      "zpd_score": 1.6943832121559979,
+      "token_count": 512,
+      "difficulty_percentile": 33.24
+    },
+    {
+      "text_preview": " of time. Click here for a list of locations where you can buy your pass ahead of time. The Sportlan",
+      "student_ppl": 24.625,
+      "teacher_ppl": 12.951314397660019,
+      "zpd_score": 1.9013514183895595,
+      "token_count": 512,
+      "difficulty_percentile": 43.13
+    },
+    {
+      "text_preview": " in articles. Here is one of their most popular articles of all time with more than 15 million views",
+      "student_ppl": 19.75,
+      "teacher_ppl": 10.847676924437282,
+      "zpd_score": 1.8206663175511675,
+      "token_count": 511,
+      "difficulty_percentile": 25.38
+    },
+    {
+      "text_preview": " benefits of exercise combined with the additional vulnerability, camaraderie and fun has increased ",
+      "student_ppl": 25.75,
+      "teacher_ppl": 12.557807439565988,
+      "zpd_score": 2.0505171881254736,
+      "token_count": 512,
+      "difficulty_percentile": 47.29
+    },
+    {
+      "text_preview": " and industries, and generating at least $3.3 billion in insurance claims.\nThe Pit Crew Roofing team",
+      "student_ppl": 26.25,
+      "teacher_ppl": 15.62447978830551,
+      "zpd_score": 1.680055935023667,
+      "token_count": 512,
+      "difficulty_percentile": 48.62
+    },
+    {
+      "text_preview": " at immediate effect.\nThe portrait on the front of the 20-franc note shows Arthur Honegger (1892-195",
+      "student_ppl": 20.75,
+      "teacher_ppl": 12.142306470424508,
+      "zpd_score": 1.7089010272094176,
+      "token_count": 511,
+      "difficulty_percentile": 28.75
+    },
+    {
+      "text_preview": " mudwall, top of wingwalls and diaphragms. The ends of the pre-stressed concrete I-beams were encase",
+      "student_ppl": 25.75,
+      "teacher_ppl": 14.473186290205364,
+      "zpd_score": 1.779152115068549,
+      "token_count": 511,
+      "difficulty_percentile": 47.34
+    },
+    {
+      "text_preview": ", North Carolina, Pennsylvania, and Virginia by Joshua Fry and Peter Jefferson in 1775; with origina",
+      "student_ppl": 24.25,
+      "teacher_ppl": 12.785371895926003,
+      "zpd_score": 1.8966988365608,
+      "token_count": 512,
+      "difficulty_percentile": 42.59
+    },
+    {
+      "text_preview": " phishing email scams that don\u2019t target the dumb and easily fooled. Instead, they\u2019re business-savvy,",
+      "student_ppl": 26.25,
+      "teacher_ppl": 16.309403576370897,
+      "zpd_score": 1.6095009162708478,
+      "token_count": 512,
+      "difficulty_percentile": 49.6
+    },
+    {
+      "text_preview": " the project has produced a demographic map of the Euro-Turks in two countries; Germany and France, ",
+      "student_ppl": 22.0,
+      "teacher_ppl": 12.487475130486349,
+      "zpd_score": 1.7617652704100455,
+      "token_count": 512,
+      "difficulty_percentile": 33.74
+    },
+    {
+      "text_preview": ". See attachment below.\nSee attachment below for details of school holiday programme.\nCoding, Roboti",
+      "student_ppl": 25.375,
+      "teacher_ppl": 13.74190304790677,
+      "zpd_score": 1.846541917195758,
+      "token_count": 510,
+      "difficulty_percentile": 46.0
+    },
+    {
+      "text_preview": " the next month, after the injection of lipolytic cocktail, it is necessary that the patient adheres",
+      "student_ppl": 22.75,
+      "teacher_ppl": 13.127573941288254,
+      "zpd_score": 1.7329934763077377,
+      "token_count": 510,
+      "difficulty_percentile": 36.15
+    },
+    {
+      "text_preview": " to browse as well as compare several update schemes Ikea Kitchens Cabinets that match your requirem",
+      "student_ppl": 20.75,
+      "teacher_ppl": 12.082044658621955,
+      "zpd_score": 1.7174245408199549,
+      "token_count": 511,
+      "difficulty_percentile": 28.65
+    },
+    {
+      "text_preview": " range of issues related to cystic fibrosis, from transplants to bacterial infections and gene thera",
+      "student_ppl": 22.375,
+      "teacher_ppl": 14.95814883148094,
+      "zpd_score": 1.4958401772891539,
+      "token_count": 511,
+      "difficulty_percentile": 34.62
+    },
+    {
+      "text_preview": "ess the different vowel-signs and marks (commonly called diacritical) for the varying pronunciation ",
+      "student_ppl": 23.5,
+      "teacher_ppl": 11.04305874806913,
+      "zpd_score": 2.1280335943253905,
+      "token_count": 512,
+      "difficulty_percentile": 39.25
+    },
+    {
+      "text_preview": " requires an expert petrographer or environmental scientist to characterise the samples manually, a ",
+      "student_ppl": 21.0,
+      "teacher_ppl": 11.398686667399167,
+      "zpd_score": 1.8423175066353115,
+      "token_count": 512,
+      "difficulty_percentile": 30.18
+    },
+    {
+      "text_preview": "-geeks, there\u2019s no way I should succeed with such a small following. In fact, some would warn to nev",
+      "student_ppl": 23.5,
+      "teacher_ppl": 14.597666855144972,
+      "zpd_score": 1.6098463016860387,
+      "token_count": 512,
+      "difficulty_percentile": 39.87
+    },
+    {
+      "text_preview": " security in it.\nAs you are aware GST is a value-added tax which is expected to replace all indirect",
+      "student_ppl": 19.75,
+      "teacher_ppl": 11.47201294016463,
+      "zpd_score": 1.7215810427526048,
+      "token_count": 512,
+      "difficulty_percentile": 25.11
+    },
+    {
+      "text_preview": " into national education sector plans. The initiative is focused on two cornerstones of school healt",
+      "student_ppl": 26.25,
+      "teacher_ppl": 15.765322325365842,
+      "zpd_score": 1.6650468324243954,
+      "token_count": 512,
+      "difficulty_percentile": 48.66
+    },
+    {
+      "text_preview": " as a model for your sewing projects. Like American Girl dolls, they have vinyl faces and limbs and ",
+      "student_ppl": 26.25,
+      "teacher_ppl": 14.342922933698356,
+      "zpd_score": 1.8301708878548215,
+      "token_count": 512,
+      "difficulty_percentile": 48.58
+    },
+    {
+      "text_preview": ".\nAs we know Wireless Doorbells needs a battery which is the biggest disadvantage of using Wireless ",
+      "student_ppl": 22.0,
+      "teacher_ppl": 15.334974827862576,
+      "zpd_score": 1.4346290259327679,
+      "token_count": 512,
+      "difficulty_percentile": 33.63
+    },
+    {
+      "text_preview": " obviously getting the hang of it! Working faster and looser is something I've been working towards ",
+      "student_ppl": 23.875,
+      "teacher_ppl": 12.607813971182962,
+      "zpd_score": 1.893666900112095,
+      "token_count": 512,
+      "difficulty_percentile": 41.4
+    },
+    {
+      "text_preview": " remote held sideways.\ndifficult and borderline frustrating trying to find out where you need to go ",
+      "student_ppl": 26.25,
+      "teacher_ppl": 15.995335427219173,
+      "zpd_score": 1.6411034404024138,
+      "token_count": 513,
+      "difficulty_percentile": 49.97
+    },
+    {
+      "text_preview": ". From start to finish, the guitar riffs are fast and very tight. At times, you feel like you are on",
+      "student_ppl": 21.375,
+      "teacher_ppl": 12.86837325534139,
+      "zpd_score": 1.6610491144347004,
+      "token_count": 511,
+      "difficulty_percentile": 30.85
+    },
+    {
+      "text_preview": " in our development? I thought about it... Dana Roblee (the professor who was Lee's best friend) use",
+      "student_ppl": 24.25,
+      "teacher_ppl": 13.905356850852954,
+      "zpd_score": 1.7439322313049814,
+      "token_count": 512,
+      "difficulty_percentile": 41.63
+    },
+    {
+      "text_preview": " of Android ever, Android 9 Pie introduces some big changes to navigation and multitasking that some",
+      "student_ppl": 20.75,
+      "teacher_ppl": 12.465665030756766,
+      "zpd_score": 1.664572242941162,
+      "token_count": 512,
+      "difficulty_percentile": 28.49
+    },
+    {
+      "text_preview": " place the little pepperoni slices in a nice decorative manner.\nI love the look of the pepperoni rol",
+      "student_ppl": 25.0,
+      "teacher_ppl": 12.12791262512336,
+      "zpd_score": 2.0613604972888493,
+      "token_count": 510,
+      "difficulty_percentile": 45.49
+    },
+    {
+      "text_preview": ", it\u2019s one of the most affordable schools in the nation for those who can keep up with the curriculu",
+      "student_ppl": 22.375,
+      "teacher_ppl": 13.083220709507712,
+      "zpd_score": 1.7102058045798965,
+      "token_count": 511,
+      "difficulty_percentile": 34.78
+    },
+    {
+      "text_preview": " Fruit Pop: Party Time for PC.\nType Farm Fruit Pop: Party Time in the search bar to start finding th",
+      "student_ppl": 25.375,
+      "teacher_ppl": 12.887673534937196,
+      "zpd_score": 1.9689356602035974,
+      "token_count": 512,
+      "difficulty_percentile": 45.94
+    },
+    {
+      "text_preview": " use in your present experience for a lesson in user-centered style. The only way to supply the reco",
+      "student_ppl": 25.0,
+      "teacher_ppl": 16.836919527522614,
+      "zpd_score": 1.4848321843632701,
+      "token_count": 512,
+      "difficulty_percentile": 44.95
+    },
+    {
+      "text_preview": " your work and personal contacts.We\u2019ve always believed that, with the right approach, every school h",
+      "student_ppl": 21.375,
+      "teacher_ppl": 13.854784692307497,
+      "zpd_score": 1.5427883200428154,
+      "token_count": 510,
+      "difficulty_percentile": 31.52
+    },
+    {
+      "text_preview": "Yes, this is the firm foundation upon which we all may stand. This is the One by whom we may trust t",
+      "student_ppl": 22.75,
+      "teacher_ppl": 13.248148074936948,
+      "zpd_score": 1.717221144518969,
+      "token_count": 512,
+      "difficulty_percentile": 37.25
+    },
+    {
+      "text_preview": " Partner in Templeton & Company LLP\u2019s Tax Services Division. She has more than 30 years of experienc",
+      "student_ppl": 26.625,
+      "teacher_ppl": 14.071177566077452,
+      "zpd_score": 1.8921657320412957,
+      "token_count": 511,
+      "difficulty_percentile": 49.98
+    },
+    {
+      "text_preview": " The secretary of state would be required to review and consider the standards established by the Na",
+      "student_ppl": 21.0,
+      "teacher_ppl": 13.265651980635708,
+      "zpd_score": 1.583035649559808,
+      "token_count": 511,
+      "difficulty_percentile": 30.29
+    },
+    {
+      "text_preview": " was 10-5 in favour of Wang.\nThe second game was a closely-fought one and the two players were tied ",
+      "student_ppl": 24.25,
+      "teacher_ppl": 13.47588246492158,
+      "zpd_score": 1.7995110942176888,
+      "token_count": 513,
+      "difficulty_percentile": 42.67
+    },
+    {
+      "text_preview": "-year period Driver Certificate of Professional Competence (CPC) periodic training program. The CPC ",
+      "student_ppl": 24.25,
+      "teacher_ppl": 15.099423909667038,
+      "zpd_score": 1.6060215373167004,
+      "token_count": 512,
+      "difficulty_percentile": 42.38
+    },
+    {
+      "text_preview": " and junior debt), it is, of course, possible under German law to contractually agree on this kind o",
+      "student_ppl": 19.75,
+      "teacher_ppl": 11.424378428495492,
+      "zpd_score": 1.7287592601745538,
+      "token_count": 512,
+      "difficulty_percentile": 25.02
+    },
+    {
+      "text_preview": " preferring open-plan areas versus private ones.\nHaving a good outdoor space can be enticing to many",
+      "student_ppl": 25.0,
+      "teacher_ppl": 15.74901405085862,
+      "zpd_score": 1.5874009585150524,
+      "token_count": 512,
+      "difficulty_percentile": 44.63
+    },
+    {
+      "text_preview": " are some of the sizes that are used mostly without fail. Another advantage of these curlers is that",
+      "student_ppl": 22.375,
+      "teacher_ppl": 11.238363294879655,
+      "zpd_score": 1.9909482735973079,
+      "token_count": 511,
+      "difficulty_percentile": 35.62
+    },
+    {
+      "text_preview": "pine tundra is a windswept, rugged landscape wit a unique flora adapted to the harsh environment.\nIn",
+      "student_ppl": 23.875,
+      "teacher_ppl": 15.124305872290554,
+      "zpd_score": 1.5785848422797182,
+      "token_count": 510,
+      "difficulty_percentile": 41.01
+    },
+    {
+      "text_preview": " accident does occur. Unfortunately, these types of collisions can often result in fatalities. We ha",
+      "student_ppl": 19.75,
+      "teacher_ppl": 11.97184085441816,
+      "zpd_score": 1.6497045224846387,
+      "token_count": 510,
+      "difficulty_percentile": 25.64
+    },
+    {
+      "text_preview": " Kwikform was assessed on how it plans, executes and reviews its business and how its people work to",
+      "student_ppl": 20.75,
+      "teacher_ppl": 12.124107982105436,
+      "zpd_score": 1.711466116156829,
+      "token_count": 511,
+      "difficulty_percentile": 28.66
+    },
+    {
+      "text_preview": " understand this strong message. In seeing themselves in these adventures they begin to understand t",
+      "student_ppl": 22.75,
+      "teacher_ppl": 15.787928579644587,
+      "zpd_score": 1.4409743422155854,
+      "token_count": 512,
+      "difficulty_percentile": 36.89
+    },
+    {
+      "text_preview": " combined, in addition to providing us with the way to escape from everyday worries, relax us and gi",
+      "student_ppl": 22.375,
+      "teacher_ppl": 14.574787548093278,
+      "zpd_score": 1.5351853278250476,
+      "token_count": 512,
+      "difficulty_percentile": 35.08
+    },
+    {
+      "text_preview": " them. However they increased their power in coming years and Chandragupta II made a treaty by marry",
+      "student_ppl": 21.75,
+      "teacher_ppl": 12.055960363069186,
+      "zpd_score": 1.8040868869000597,
+      "token_count": 512,
+      "difficulty_percentile": 32.85
+    },
+    {
+      "text_preview": " edits to the JSON file and rerun! The numbers in your long table have changed? No need to manually ",
+      "student_ppl": 20.125,
+      "teacher_ppl": 12.209486599185079,
+      "zpd_score": 1.6483084556023218,
+      "token_count": 512,
+      "difficulty_percentile": 26.9
+    },
+    {
+      "text_preview": " market force that has pushed our industry to suddenly amplify, or surge ahead with our efforts of a",
+      "student_ppl": 21.75,
+      "teacher_ppl": 14.303855791039606,
+      "zpd_score": 1.5205690212302685,
+      "token_count": 512,
+      "difficulty_percentile": 32.89
+    },
+    {
+      "text_preview": " Padmanabha (another name of Lord Mahavishnu) and blessed him with salvation at the end of his life.",
+      "student_ppl": 24.625,
+      "teacher_ppl": 14.757261513443511,
+      "zpd_score": 1.6686700291627423,
+      "token_count": 512,
+      "difficulty_percentile": 43.59
+    },
+    {
+      "text_preview": " or any other device.\nIn Grafton (Significant Urban Areas), 51.4% of Aboriginal and/or Torres Strait",
+      "student_ppl": 20.375,
+      "teacher_ppl": 10.948861136151148,
+      "zpd_score": 1.8609241405688721,
+      "token_count": 511,
+      "difficulty_percentile": 27.58
+    },
+    {
+      "text_preview": " been revised through legislative action from 1900 until the early 1970s. The collection has been fi",
+      "student_ppl": 20.375,
+      "teacher_ppl": 12.58981225405942,
+      "zpd_score": 1.6183720288148338,
+      "token_count": 512,
+      "difficulty_percentile": 27.81
+    },
+    {
+      "text_preview": " year old Abiah Jones who died from a fall off the Giant Ferris Wheel on our amusement pier yesterda",
+      "student_ppl": 26.25,
+      "teacher_ppl": 13.919437404090134,
+      "zpd_score": 1.885852081369798,
+      "token_count": 512,
+      "difficulty_percentile": 48.98
+    },
+    {
+      "text_preview": " of seven straight, started preparations for Sunday's game against the Titans in Tennessee.\nThe 68-y",
+      "student_ppl": 23.875,
+      "teacher_ppl": 12.024151561771243,
+      "zpd_score": 1.9855870809135945,
+      "token_count": 511,
+      "difficulty_percentile": 40.92
+    },
+    {
+      "text_preview": " use the area belong to gives New South Scotland a strong sense of multiculturalism.\nClose by to New",
+      "student_ppl": 20.375,
+      "teacher_ppl": 9.387311171278558,
+      "zpd_score": 2.17048307318707,
+      "token_count": 512,
+      "difficulty_percentile": 27.27
+    },
+    {
+      "text_preview": " the gum, candy, tea and cute little buttons. What a terrific box! Thanks!\nComment: Thanks! a lovely",
+      "student_ppl": 26.25,
+      "teacher_ppl": 17.147762271760506,
+      "zpd_score": 1.5308119849100867,
+      "token_count": 512,
+      "difficulty_percentile": 49.92
+    },
+    {
+      "text_preview": "00 block of Irving Street, according to NBC10.\nFamily members reportedly said the boy was playing wi",
+      "student_ppl": 24.25,
+      "teacher_ppl": 13.243682560734348,
+      "zpd_score": 1.8310617072548865,
+      "token_count": 512,
+      "difficulty_percentile": 42.45
+    },
+    {
+      "text_preview": " inorganic phosphor.\n33. An object as in claim 31, wherein said coating comprises a color former, a ",
+      "student_ppl": 20.75,
+      "teacher_ppl": 13.423258568284266,
+      "zpd_score": 1.545824353635484,
+      "token_count": 511,
+      "difficulty_percentile": 29.12
+    },
+    {
+      "text_preview": " the word file.\n1. Acrobat is good but uses much system memory which affects the overall performance",
+      "student_ppl": 20.75,
+      "teacher_ppl": 13.607144529702557,
+      "zpd_score": 1.524934195760584,
+      "token_count": 512,
+      "difficulty_percentile": 29.21
+    },
+    {
+      "text_preview": " actually tampered or otherwise abused any aspect of the Contest. Sponsor reserves the right to remo",
+      "student_ppl": 25.375,
+      "teacher_ppl": 16.52483509533507,
+      "zpd_score": 1.5355675172312802,
+      "token_count": 510,
+      "difficulty_percentile": 46.62
+    },
+    {
+      "text_preview": " exceed the requirements of the DoD and the BSI. For a quick deletion you can also simply overwrite ",
+      "student_ppl": 23.875,
+      "teacher_ppl": 16.65623584914465,
+      "zpd_score": 1.4333970902090736,
+      "token_count": 512,
+      "difficulty_percentile": 40.57
+    },
+    {
+      "text_preview": " to give our couples exclusive inclusions based on availability, including romantic dinners, breakfa",
+      "student_ppl": 24.625,
+      "teacher_ppl": 13.269580732436818,
+      "zpd_score": 1.855748157875511,
+      "token_count": 512,
+      "difficulty_percentile": 43.01
+    },
+    {
+      "text_preview": " you e-mail or call them.This is an exclusive business profile of Jaisalmer Is Nice Place located in",
+      "student_ppl": 21.0,
+      "teacher_ppl": 10.743764221411363,
+      "zpd_score": 1.954622194532981,
+      "token_count": 510,
+      "difficulty_percentile": 30.41
+    },
+    {
+      "text_preview": " or some arcane aspect of public policy, is truly more entertaining than anything Trump explains. Cl",
+      "student_ppl": 22.0,
+      "teacher_ppl": 15.20106077725043,
+      "zpd_score": 1.4472674191872656,
+      "token_count": 512,
+      "difficulty_percentile": 33.68
+    },
+    {
+      "text_preview": " the consolidation of the curator as producer of artistic discourse with largely Western historical ",
+      "student_ppl": 24.25,
+      "teacher_ppl": 16.587415322362997,
+      "zpd_score": 1.46195169824357,
+      "token_count": 512,
+      "difficulty_percentile": 42.29
+    },
+    {
+      "text_preview": "ished, and Gani Lawal surprised many.\nIncluded are detailed breakdowns of the games top performers, ",
+      "student_ppl": 25.0,
+      "teacher_ppl": 11.966963833505316,
+      "zpd_score": 2.0890846122559976,
+      "token_count": 512,
+      "difficulty_percentile": 44.88
+    },
+    {
+      "text_preview": " evidence, regulation and monitoring. Companies selling supplements aren\u2019t the slightest bit interes",
+      "student_ppl": 23.5,
+      "teacher_ppl": 13.777477483648141,
+      "zpd_score": 1.705682337560782,
+      "token_count": 511,
+      "difficulty_percentile": 38.86
+    },
+    {
+      "text_preview": " reciprocated.\nIt's hard to choose just six in this country full of spectacular sites.\nTrondelag, an",
+      "student_ppl": 21.75,
+      "teacher_ppl": 13.276327486499493,
+      "zpd_score": 1.6382542553365953,
+      "token_count": 510,
+      "difficulty_percentile": 31.94
+    },
+    {
+      "text_preview": " as first steps, are neither going to win the election or provide Oregon with the leadership its nee",
+      "student_ppl": 24.25,
+      "teacher_ppl": 13.261319682493347,
+      "zpd_score": 1.8286264550286897,
+      "token_count": 511,
+      "difficulty_percentile": 42.67
+    },
+    {
+      "text_preview": " hostilities to come.\nThe Battle of Walla Walla was fought over terrain on the Touchet and Walla Wal",
+      "student_ppl": 26.25,
+      "teacher_ppl": 14.579750550298453,
+      "zpd_score": 1.8004423264609732,
+      "token_count": 512,
+      "difficulty_percentile": 49.75
+    },
+    {
+      "text_preview": " the Institute's mission and values, to highlight and develop the use of sport for achieving positiv",
+      "student_ppl": 26.25,
+      "teacher_ppl": 13.546141563684145,
+      "zpd_score": 1.937821177830714,
+      "token_count": 511,
+      "difficulty_percentile": 48.92
+    },
+    {
+      "text_preview": " they are in the facility. Don\u2019t forget to lock all server rooms.\nEnable mailbox journaling on your ",
+      "student_ppl": 25.75,
+      "teacher_ppl": 17.021941253321433,
+      "zpd_score": 1.512753429047083,
+      "token_count": 512,
+      "difficulty_percentile": 47.6
+    },
+    {
+      "text_preview": ". We have the equipment, experience and expertise needed to restore your fire damaged property. We c",
+      "student_ppl": 21.375,
+      "teacher_ppl": 12.665092565723178,
+      "zpd_score": 1.6877097335908406,
+      "token_count": 512,
+      "difficulty_percentile": 31.59
+    },
+    {
+      "text_preview": " At the launch, officials said only select markets would get the device. We knew the EU and India ar",
+      "student_ppl": 25.75,
+      "teacher_ppl": 9.710413273182658,
+      "zpd_score": 2.651792387777565,
+      "token_count": 511,
+      "difficulty_percentile": 48.36
+    },
+    {
+      "text_preview": " I have a little more money and can rent a car to drive around the country at my own pace. After all",
+      "student_ppl": 22.375,
+      "teacher_ppl": 13.309601842182415,
+      "zpd_score": 1.6811171562688239,
+      "token_count": 511,
+      "difficulty_percentile": 35.21
+    },
+    {
+      "text_preview": "-level module, which has been designed to support postgraduate tutors in developing their small-grou",
+      "student_ppl": 23.125,
+      "teacher_ppl": 13.325134468723322,
+      "zpd_score": 1.735442149141449,
+      "token_count": 511,
+      "difficulty_percentile": 38.07
+    },
+    {
+      "text_preview": "\u2019s Mahi\u2019s distributors\u2019 fulfillment centers receive products like Pooki\u2019s Mahi\u2019s 100% Kona coffee po",
+      "student_ppl": 25.375,
+      "teacher_ppl": 18.22620951646592,
+      "zpd_score": 1.3922258480061758,
+      "token_count": 511,
+      "difficulty_percentile": 47.01
+    },
+    {
+      "text_preview": "3, doi: 10.1111/j.1471-0528.2012.03310.x.Our Chakra Colored Swarovski Crystal and 24K Gold EarSeeds ",
+      "student_ppl": 25.375,
+      "teacher_ppl": 15.51762538581426,
+      "zpd_score": 1.6352373104197406,
+      "token_count": 510,
+      "difficulty_percentile": 46.29
+    },
+    {
+      "text_preview": " kind of spatial effects?\nEG: I\u2019ll try to figure out what kind of reverb the sound person has. I oft",
+      "student_ppl": 22.75,
+      "teacher_ppl": 12.614383654802275,
+      "zpd_score": 1.8034967559702462,
+      "token_count": 512,
+      "difficulty_percentile": 37.24
+    },
+    {
+      "text_preview": " plywood for any size so it doesn\u2019t matter what size your bed is, you can make this headboard for it",
+      "student_ppl": 23.5,
+      "teacher_ppl": 13.489714670968002,
+      "zpd_score": 1.7420679809170252,
+      "token_count": 510,
+      "difficulty_percentile": 39.35
+    },
+    {
+      "text_preview": " it online. You will be glad to hear that cheap auto insurance quotes in West Covina, CA is importan",
+      "student_ppl": 24.25,
+      "teacher_ppl": 12.66858067631431,
+      "zpd_score": 1.9141844394091265,
+      "token_count": 511,
+      "difficulty_percentile": 41.96
+    },
+    {
+      "text_preview": " in media and communication, and UNESCO\u2019s action in this field and dealt with Communication Developm",
+      "student_ppl": 23.5,
+      "teacher_ppl": 13.572624725469627,
+      "zpd_score": 1.731426343491338,
+      "token_count": 512,
+      "difficulty_percentile": 39.79
+    },
+    {
+      "text_preview": " miscarriage rates.\nWe learnt so much about organic farming, pest and water management. As someone w",
+      "student_ppl": 20.75,
+      "teacher_ppl": 13.322062702877213,
+      "zpd_score": 1.5575666068227219,
+      "token_count": 512,
+      "difficulty_percentile": 28.96
+    },
+    {
+      "text_preview": ", and having a good portion of my audience sign up for a free trial. Once a free trial turns into a ",
+      "student_ppl": 21.75,
+      "teacher_ppl": 12.77311153884974,
+      "zpd_score": 1.7027957466625754,
+      "token_count": 512,
+      "difficulty_percentile": 33.12
+    },
+    {
+      "text_preview": "0 nm or another wavelength). These calibration curves can then be used to determine the concentratio",
+      "student_ppl": 21.75,
+      "teacher_ppl": 11.870252748921565,
+      "zpd_score": 1.8323114477891826,
+      "token_count": 512,
+      "difficulty_percentile": 32.36
+    },
+    {
+      "text_preview": " a valve as the mouth is opened for the next gulp. Before starting to teach a patient glossopharynge",
+      "student_ppl": 20.375,
+      "teacher_ppl": 10.697365555354368,
+      "zpd_score": 1.9046745569802157,
+      "token_count": 512,
+      "difficulty_percentile": 27.1
+    },
+    {
+      "text_preview": " shot them let alone seen them since arriving her in Merida five years ago. I used to play darts a l",
+      "student_ppl": 22.75,
+      "teacher_ppl": 13.310680793075225,
+      "zpd_score": 1.7091537505606405,
+      "token_count": 512,
+      "difficulty_percentile": 36.08
+    },
+    {
+      "text_preview": "mission impossible\u201d until now. Batlle\u2019s team has also established the conditions for maintaining liv",
+      "student_ppl": 19.75,
+      "teacher_ppl": 12.498895110634896,
+      "zpd_score": 1.5801396703613728,
+      "token_count": 511,
+      "difficulty_percentile": 25.69
+    },
+    {
+      "text_preview": " Oil & Gas Conference\u00ae 17. Core Laboratories is a leading provider of proprietary and patented reser",
+      "student_ppl": 24.625,
+      "teacher_ppl": 13.971604573938555,
+      "zpd_score": 1.7625033595592439,
+      "token_count": 510,
+      "difficulty_percentile": 44.28
+    },
+    {
+      "text_preview": " probe other vital resources. NeuVector 1.3 also detects reverse shell connections, which attackers ",
+      "student_ppl": 24.625,
+      "teacher_ppl": 13.651402299475198,
+      "zpd_score": 1.8038439905141952,
+      "token_count": 510,
+      "difficulty_percentile": 43.15
+    },
+    {
+      "text_preview": " cause we champion; as more people get to hear about it and get involved the lighter the load will b",
+      "student_ppl": 21.75,
+      "teacher_ppl": 12.846795297596728,
+      "zpd_score": 1.693029233840817,
+      "token_count": 511,
+      "difficulty_percentile": 32.54
+    },
+    {
+      "text_preview": " including a withdrawal from the Gaza Strip and four West Bank settlements in 2005.\nHowever, U.S. of",
+      "student_ppl": 24.625,
+      "teacher_ppl": 14.816609366400288,
+      "zpd_score": 1.6619861799044429,
+      "token_count": 511,
+      "difficulty_percentile": 44.28
+    },
+    {
+      "text_preview": ".\n2. The \u2018work from home\u2019 trap.\nYes, you will have the freedom to wake up whenever you want to and t",
+      "student_ppl": 21.75,
+      "teacher_ppl": 13.577272368063664,
+      "zpd_score": 1.6019417899548183,
+      "token_count": 512,
+      "difficulty_percentile": 32.22
+    },
+    {
+      "text_preview": " and row compression. Both methods are used to compress table data and therefore save space in the d",
+      "student_ppl": 19.75,
+      "teacher_ppl": 9.998386356180175,
+      "zpd_score": 1.975318746088681,
+      "token_count": 512,
+      "difficulty_percentile": 25.23
+    },
+    {
+      "text_preview": " over how to address a problem, a misunderstanding on what was wanted, some feedback that is poorly ",
+      "student_ppl": 27.0,
+      "teacher_ppl": 14.305243852508898,
+      "zpd_score": 1.887419765673177,
+      "token_count": 511,
+      "difficulty_percentile": 52.33
+    },
+    {
+      "text_preview": " evidence that it will help you get better faster.\nPrevious articleDo You Know What Causes Arthritis",
+      "student_ppl": 34.75,
+      "teacher_ppl": 17.692183476202764,
+      "zpd_score": 1.9641442248629857,
+      "token_count": 511,
+      "difficulty_percentile": 73.19
+    },
+    {
+      "text_preview": " 4\u00d74 MY05 Dual Cab Green.Whole House Ventilation \u2013 Why Do We Need to Ventilate?\nThis installation wa",
+      "student_ppl": 33.75,
+      "teacher_ppl": 19.735894647749575,
+      "zpd_score": 1.710082091659747,
+      "token_count": 512,
+      "difficulty_percentile": 70.68
+    },
+    {
+      "text_preview": " (AP) \u2014 A 14-year-old boy is accused of shooting his mother and 8-year-old brother once each in the ",
+      "student_ppl": 27.0,
+      "teacher_ppl": 12.964370160150793,
+      "zpd_score": 2.0826310624014113,
+      "token_count": 511,
+      "difficulty_percentile": 51.93
+    },
+    {
+      "text_preview": " advised fund holders and supporting foundations have supported through their personal giving.\nSouth",
+      "student_ppl": 28.75,
+      "teacher_ppl": 16.6097271840293,
+      "zpd_score": 1.730913438942206,
+      "token_count": 511,
+      "difficulty_percentile": 57.5
+    },
+    {
+      "text_preview": " terminally ill or injured and are unable to communicate your wishes. A living will goes along with ",
+      "student_ppl": 27.0,
+      "teacher_ppl": 8.532252767405337,
+      "zpd_score": 3.1644632122415093,
+      "token_count": 511,
+      "difficulty_percentile": 52.21
+    },
+    {
+      "text_preview": " designed to showcase the most fascinating destinations across the globe. Our ships are all comforta",
+      "student_ppl": 26.625,
+      "teacher_ppl": 12.049290807579244,
+      "zpd_score": 2.2096736169113242,
+      "token_count": 511,
+      "difficulty_percentile": 51.03
+    },
+    {
+      "text_preview": " Solution is designed and developed for all Modern Sites available within SharePoint Online, such as",
+      "student_ppl": 29.625,
+      "teacher_ppl": 16.406533878365316,
+      "zpd_score": 1.805683041868178,
+      "token_count": 512,
+      "difficulty_percentile": 60.83
+    },
+    {
+      "text_preview": " amount of debt, there are some consolidation alternatives. One alternative that has become popular ",
+      "student_ppl": 27.0,
+      "teacher_ppl": 18.015787639940893,
+      "zpd_score": 1.4986855162602584,
+      "token_count": 511,
+      "difficulty_percentile": 52.32
+    },
+    {
+      "text_preview": "ing round. Before I even sit down to add in color and brush strokes I usually have spent at least 30",
+      "student_ppl": 32.0,
+      "teacher_ppl": 19.81865694590681,
+      "zpd_score": 1.6146401891581774,
+      "token_count": 512,
+      "difficulty_percentile": 66.85
+    },
+    {
+      "text_preview": " out through our contact page. If you work in rescue and have found a year old dog that you believe ",
+      "student_ppl": 28.75,
+      "teacher_ppl": 18.985889057039714,
+      "zpd_score": 1.5142825239116144,
+      "token_count": 511,
+      "difficulty_percentile": 57.8
+    },
+    {
+      "text_preview": " intensive courses, attending every single monthly refresher day, joining toastmasters, attending do",
+      "student_ppl": 29.25,
+      "teacher_ppl": 17.10465588419656,
+      "zpd_score": 1.7100607108398387,
+      "token_count": 511,
+      "difficulty_percentile": 59.12
+    },
+    {
+      "text_preview": "ordarshan Kendra in Ahmedabad since 35 yrs and this year she has been felicitated as a senior most E",
+      "student_ppl": 34.25,
+      "teacher_ppl": 19.671990720568026,
+      "zpd_score": 1.7410540949569457,
+      "token_count": 511,
+      "difficulty_percentile": 71.92
+    },
+    {
+      "text_preview": "eat at the following meal.\nThere definitely are those of us who are not breakfast people. Some peopl",
+      "student_ppl": 31.625,
+      "teacher_ppl": 18.896095378780085,
+      "zpd_score": 1.6736261839318511,
+      "token_count": 512,
+      "difficulty_percentile": 65.91
+    },
+    {
+      "text_preview": ", cycling, walking etc. to keep yourselves agile and active. LED vest for running, as the name sugge",
+      "student_ppl": 28.375,
+      "teacher_ppl": 20.163817776691754,
+      "zpd_score": 1.407223588025077,
+      "token_count": 512,
+      "difficulty_percentile": 57.02
+    },
+    {
+      "text_preview": " criticism for his ride on Kauto Star earlier in his career.\nThere was better fortune for Kauto Star",
+      "student_ppl": 32.0,
+      "teacher_ppl": 9.247745368872877,
+      "zpd_score": 3.460302887199865,
+      "token_count": 512,
+      "difficulty_percentile": 67.67
+    },
+    {
+      "text_preview": " 100 breaststroke felt really good.\"\nThe Lakers had more success, too, with senior Michael Bell swim",
+      "student_ppl": 27.875,
+      "teacher_ppl": 15.995617635009374,
+      "zpd_score": 1.742664812078928,
+      "token_count": 510,
+      "difficulty_percentile": 54.33
+    },
+    {
+      "text_preview": " Southeastern University in Louisiana, & have a background in marketing & visual arts.\nWorking in mi",
+      "student_ppl": 34.75,
+      "teacher_ppl": 18.013206350488435,
+      "zpd_score": 1.929140172152513,
+      "token_count": 512,
+      "difficulty_percentile": 73.7
+    },
+    {
+      "text_preview": "00-34800/- + GP 4600/- of OPTG. DEPTT.\n21.09.2015: SELECT LIST FOR TO THE POST OF TTI FROM SR.TTE OF",
+      "student_ppl": 32.5,
+      "teacher_ppl": 19.453539291344118,
+      "zpd_score": 1.670647151310966,
+      "token_count": 510,
+      "difficulty_percentile": 68.71
+    },
+    {
+      "text_preview": " a grown man of 30.\nAnd the one today, on my 57th birthday and the last one at Vincent\u2019s Barber shop",
+      "student_ppl": 32.5,
+      "teacher_ppl": 18.14721980561858,
+      "zpd_score": 1.7909079378615143,
+      "token_count": 512,
+      "difficulty_percentile": 68.88
+    },
+    {
+      "text_preview": "mitter\u2019s Jack Threlfall has the news on their next event, and an exclusive on their 3B Records pre-p",
+      "student_ppl": 31.625,
+      "teacher_ppl": 15.058741404097004,
+      "zpd_score": 2.1001091094768283,
+      "token_count": 508,
+      "difficulty_percentile": 65.49
+    },
+    {
+      "text_preview": " Karman\u2019s own multi-faceted persona as Islahi, journalist and activist -- have been central to layin",
+      "student_ppl": 28.75,
+      "teacher_ppl": 17.04439871381172,
+      "zpd_score": 1.6867711488527188,
+      "token_count": 512,
+      "difficulty_percentile": 57.96
+    },
+    {
+      "text_preview": " and merchant solutions to help you get paid faster and make your business more profitable. GoEmerch",
+      "student_ppl": 31.625,
+      "teacher_ppl": 19.90397757695381,
+      "zpd_score": 1.588878397683566,
+      "token_count": 510,
+      "difficulty_percentile": 65.5
+    },
+    {
+      "text_preview": "?\nIn need of a cost-effective TV Recycling Disposal service for your property located at 1 Carter Co",
+      "student_ppl": 30.625,
+      "teacher_ppl": 16.81258678129213,
+      "zpd_score": 1.8215519359624872,
+      "token_count": 510,
+      "difficulty_percentile": 63.34
+    },
+    {
+      "text_preview": " they elected to concentrate on just one mare, Shock Attack. The Thomases leased her as a weanling i",
+      "student_ppl": 28.375,
+      "teacher_ppl": 12.362851399994781,
+      "zpd_score": 2.2951824851677807,
+      "token_count": 511,
+      "difficulty_percentile": 56.24
+    },
+    {
+      "text_preview": " thus important that you keep in mind before using your identity to browse the site or complete tran",
+      "student_ppl": 27.5,
+      "teacher_ppl": 17.441482712756386,
+      "zpd_score": 1.5767008145406696,
+      "token_count": 509,
+      "difficulty_percentile": 53.09
+    },
+    {
+      "text_preview": " the 20% of tasks that lead to 80% of your success. By minimising your workload and focusing on what",
+      "student_ppl": 27.5,
+      "teacher_ppl": 13.187848977592312,
+      "zpd_score": 2.085252875334385,
+      "token_count": 512,
+      "difficulty_percentile": 53.18
+    },
+    {
+      "text_preview": " make a difference is when there is also more representation at higher levels within institutions.\n\"",
+      "student_ppl": 33.75,
+      "teacher_ppl": 20.496426602009578,
+      "zpd_score": 1.6466284906799789,
+      "token_count": 511,
+      "difficulty_percentile": 71.59
+    },
+    {
+      "text_preview": ". This process is gradually refined over eons to allow them to distinguish movement, allowing predat",
+      "student_ppl": 30.625,
+      "teacher_ppl": 15.211262741053051,
+      "zpd_score": 2.0133108290442876,
+      "token_count": 511,
+      "difficulty_percentile": 64.12
+    },
+    {
+      "text_preview": " administrators understand the critical elements and nuances of assessment data and how that informa",
+      "student_ppl": 30.125,
+      "teacher_ppl": 15.517806671692775,
+      "zpd_score": 1.9413181667582784,
+      "token_count": 510,
+      "difficulty_percentile": 61.61
+    },
+    {
+      "text_preview": " avoid dangerous occasions of sin. If he has to sleep outside, he must do so, preferably in a parish",
+      "student_ppl": 30.625,
+      "teacher_ppl": 16.90282139729818,
+      "zpd_score": 1.8118276990665731,
+      "token_count": 512,
+      "difficulty_percentile": 63.88
+    },
+    {
+      "text_preview": " because from what I\u2019ve heard, it\u2019s a great lens with versatility. I was dissuaded from that and ult",
+      "student_ppl": 30.625,
+      "teacher_ppl": 17.909638322129172,
+      "zpd_score": 1.7099731133129423,
+      "token_count": 512,
+      "difficulty_percentile": 63.47
+    },
+    {
+      "text_preview": " Monday in light of a mixed day for economic news. First out from the Commerce Department came the o",
+      "student_ppl": 31.125,
+      "teacher_ppl": 15.061940686700504,
+      "zpd_score": 2.0664667752597756,
+      "token_count": 512,
+      "difficulty_percentile": 65.3
+    },
+    {
+      "text_preview": "jelly also gives individuals within the cast the chance to shine through solo songs, dancing or char",
+      "student_ppl": 34.75,
+      "teacher_ppl": 18.40179853341792,
+      "zpd_score": 1.8884023720232301,
+      "token_count": 511,
+      "difficulty_percentile": 73.89
+    },
+    {
+      "text_preview": " you are the best!!!\nGreetings from Romania. I'm your fan since 2005 and I LOVE YOU! I wasn't very s",
+      "student_ppl": 27.0,
+      "teacher_ppl": 12.903572062331842,
+      "zpd_score": 2.092443849623509,
+      "token_count": 512,
+      "difficulty_percentile": 51.77
+    },
+    {
+      "text_preview": " to flesh out his ideas. Vicens and alto saxophonist Jonathan Suazo often work in tandem, weaving th",
+      "student_ppl": 34.25,
+      "teacher_ppl": 21.391069017711388,
+      "zpd_score": 1.6011355005980143,
+      "token_count": 512,
+      "difficulty_percentile": 72.06
+    },
+    {
+      "text_preview": "4. Bookmark the permalink.\nThese are a series of articles that are well worth reading to understand ",
+      "student_ppl": 33.75,
+      "teacher_ppl": 20.12934916218232,
+      "zpd_score": 1.6766562956445334,
+      "token_count": 511,
+      "difficulty_percentile": 71.41
+    },
+    {
+      "text_preview": " and were rewarded with a swim in the river after our hot walk to the perilous pinnacles.\nAnd all al",
+      "student_ppl": 33.75,
+      "teacher_ppl": 20.49605521397739,
+      "zpd_score": 1.6466583275490014,
+      "token_count": 511,
+      "difficulty_percentile": 71.17
+    },
+    {
+      "text_preview": " roads.\nThese outer south-eastern roads are ready to go. And I can announce today that the request f",
+      "student_ppl": 27.5,
+      "teacher_ppl": 16.1499330329165,
+      "zpd_score": 1.7027934384588468,
+      "token_count": 512,
+      "difficulty_percentile": 53.22
+    },
+    {
+      "text_preview": " on your own thoroughly on the steroid to ensure accountable usage.\nWhere to Buy Dianabol in Amagasa",
+      "student_ppl": 27.0,
+      "teacher_ppl": 11.362279389566485,
+      "zpd_score": 2.3762837608792644,
+      "token_count": 512,
+      "difficulty_percentile": 51.99
+    },
+    {
+      "text_preview": " crampons weren't the best - this lightweight pair has smaller teeth, the front pair pointing down i",
+      "student_ppl": 30.625,
+      "teacher_ppl": 15.541914342824255,
+      "zpd_score": 1.9704779813137787,
+      "token_count": 512,
+      "difficulty_percentile": 63.19
+    },
+    {
+      "text_preview": ". I don't believe that the white screen indictes a loose connection or unattached connection.skilled",
+      "student_ppl": 34.75,
+      "teacher_ppl": 22.26190455311633,
+      "zpd_score": 1.560962581484769,
+      "token_count": 509,
+      "difficulty_percentile": 73.86
+    },
+    {
+      "text_preview": " your income by offering contactless payment. More than half of UK consumers say they choose contact",
+      "student_ppl": 29.625,
+      "teacher_ppl": 15.121428625427145,
+      "zpd_score": 1.9591402858711813,
+      "token_count": 511,
+      "difficulty_percentile": 61.12
+    },
+    {
+      "text_preview": " wish people buying a Free Taster Class membership to complete the Form. Note: Using 'All Except' ma",
+      "student_ppl": 27.5,
+      "teacher_ppl": 16.028987530519895,
+      "zpd_score": 1.7156417364252603,
+      "token_count": 510,
+      "difficulty_percentile": 53.58
+    },
+    {
+      "text_preview": ".\nThis is not the first movie about IZ. A little-known TV documentary in 2004, IZ: The Man Behind th",
+      "student_ppl": 28.75,
+      "teacher_ppl": 15.47914091316703,
+      "zpd_score": 1.8573382180108182,
+      "token_count": 512,
+      "difficulty_percentile": 58.15
+    },
+    {
+      "text_preview": " the Montavilla Farmers Market and has been a Montavilla resident since 2007 where she maintains her",
+      "student_ppl": 28.375,
+      "teacher_ppl": 15.49334114253044,
+      "zpd_score": 1.8314319512470034,
+      "token_count": 511,
+      "difficulty_percentile": 56.28
+    },
+    {
+      "text_preview": "fted headboards. Much like its glossy sister property in London, afternoon tea in the Palm Court is ",
+      "student_ppl": 28.375,
+      "teacher_ppl": 15.673434226859955,
+      "zpd_score": 1.810388175896579,
+      "token_count": 512,
+      "difficulty_percentile": 56.23
+    },
+    {
+      "text_preview": " fantasy to dress-up with the broadest selection of costumes and accessories, offering everything fr",
+      "student_ppl": 32.0,
+      "teacher_ppl": 18.39744242974664,
+      "zpd_score": 1.7393722047070805,
+      "token_count": 512,
+      "difficulty_percentile": 67.57
+    },
+    {
+      "text_preview": " fuzzy for my taste.\nSo yeah. So much for NaBloPoMo. BUT: The future: more shark mittens (three more",
+      "student_ppl": 31.125,
+      "teacher_ppl": 15.36443870344857,
+      "zpd_score": 2.025781780952008,
+      "token_count": 512,
+      "difficulty_percentile": 64.7
+    },
+    {
+      "text_preview": "., they became good friends. They went on to work as writer and director for One Saliva Bubble, a fi",
+      "student_ppl": 27.875,
+      "teacher_ppl": 14.268456367401678,
+      "zpd_score": 1.9536100670065761,
+      "token_count": 512,
+      "difficulty_percentile": 54.59
+    },
+    {
+      "text_preview": " very best in English elegance, and exports to over thirty countries across five continents.\nThis se",
+      "student_ppl": 30.625,
+      "teacher_ppl": 15.39727374218578,
+      "zpd_score": 1.9889884737252523,
+      "token_count": 509,
+      "difficulty_percentile": 63.82
+    },
+    {
+      "text_preview": " of my chronic shyness, has lead me to reflect on a time when it was at its peak: my teen years. Why",
+      "student_ppl": 28.375,
+      "teacher_ppl": 14.22443963119051,
+      "zpd_score": 1.9948061741413685,
+      "token_count": 512,
+      "difficulty_percentile": 56.01
+    },
+    {
+      "text_preview": " LACM vertebrate collection. Accessed 7/25/2014 http://www.gbif.org/dataset/.It\u2019s been some time sin",
+      "student_ppl": 29.25,
+      "teacher_ppl": 14.17539021492251,
+      "zpd_score": 2.0634352604423096,
+      "token_count": 511,
+      "difficulty_percentile": 59.13
+    },
+    {
+      "text_preview": " your time, coupled with perceived power to influence people around you, denotes the ultimate power.",
+      "student_ppl": 31.125,
+      "teacher_ppl": 19.690995075055167,
+      "zpd_score": 1.5806717680524736,
+      "token_count": 512,
+      "difficulty_percentile": 65.16
+    },
+    {
+      "text_preview": ", planted with love by the hands of a dedicated farmer.\nWho in their right mind would ever have thou",
+      "student_ppl": 28.75,
+      "teacher_ppl": 16.756662148767663,
+      "zpd_score": 1.7157354934266764,
+      "token_count": 511,
+      "difficulty_percentile": 58.18
+    },
+    {
+      "text_preview": " a great meal for busy nights!\nAnother great recipe to try. My favorite pasta shape! Thanks also for",
+      "student_ppl": 27.0,
+      "teacher_ppl": 14.996710932832931,
+      "zpd_score": 1.8003947746227316,
+      "token_count": 512,
+      "difficulty_percentile": 52.47
+    },
+    {
+      "text_preview": " is happening.\n\"... In 2005, the New York City Actuary noted that the city transit system contribute",
+      "student_ppl": 31.125,
+      "teacher_ppl": 18.464133772529625,
+      "zpd_score": 1.685700525323686,
+      "token_count": 512,
+      "difficulty_percentile": 64.52
+    },
+    {
+      "text_preview": " Super-Sizer Poses Post!\nThat\u2019s drawn by Jack Kirby, by the way.\nJack Kirby is cool. But when it com",
+      "student_ppl": 32.5,
+      "teacher_ppl": 20.16094313920877,
+      "zpd_score": 1.6120277595939634,
+      "token_count": 511,
+      "difficulty_percentile": 68.03
+    },
+    {
+      "text_preview": " Mourinho at the time.And former Manchester United midfielder Scholes did not see any reason for the",
+      "student_ppl": 27.5,
+      "teacher_ppl": 15.531394338398846,
+      "zpd_score": 1.7706072874610315,
+      "token_count": 512,
+      "difficulty_percentile": 53.21
+    },
+    {
+      "text_preview": " from Histoire Naturelle des Perroquets, c. 1805.\nJacques Barraband's engravings of birds are master",
+      "student_ppl": 27.0,
+      "teacher_ppl": 13.571223624556922,
+      "zpd_score": 1.9895037283995463,
+      "token_count": 511,
+      "difficulty_percentile": 51.66
+    },
+    {
+      "text_preview": " the exact same time, please follow @MondoNews on Twitter.\"What's that thing flailing above your hea",
+      "student_ppl": 33.75,
+      "teacher_ppl": 17.396663230954367,
+      "zpd_score": 1.9400272082032195,
+      "token_count": 510,
+      "difficulty_percentile": 71.37
+    },
+    {
+      "text_preview": " up businesses and became successful.\nAccording to Chinese news broadcaster CCTV, there have been se",
+      "student_ppl": 32.0,
+      "teacher_ppl": 20.597360474024057,
+      "zpd_score": 1.5535971242701776,
+      "token_count": 509,
+      "difficulty_percentile": 67.71
+    },
+    {
+      "text_preview": " in mortgage rates, or 5. Changes in the housing market.\nStay in contact to determine when to catego",
+      "student_ppl": 26.625,
+      "teacher_ppl": 17.309152185987564,
+      "zpd_score": 1.5382035881314846,
+      "token_count": 510,
+      "difficulty_percentile": 50.48
+    },
+    {
+      "text_preview": " be someone upstairs to supervise the children each Sunday until the end of June. If you would like ",
+      "student_ppl": 27.5,
+      "teacher_ppl": 14.465182934357857,
+      "zpd_score": 1.9011166415795342,
+      "token_count": 512,
+      "difficulty_percentile": 53.06
+    },
+    {
+      "text_preview": " of legal and forensic experts will carefully review each application to ensure that cases we suppor",
+      "student_ppl": 35.25,
+      "teacher_ppl": 17.853605672705626,
+      "zpd_score": 1.9743910919848402,
+      "token_count": 510,
+      "difficulty_percentile": 74.69
+    },
+    {
+      "text_preview": " system wakes in Windows 10 Pro. I can still see it highlighting when moving the mouse and the dialo",
+      "student_ppl": 28.75,
+      "teacher_ppl": 16.25782704578294,
+      "zpd_score": 1.7683790040968212,
+      "token_count": 510,
+      "difficulty_percentile": 57.74
+    },
+    {
+      "text_preview": " such as a Seniors Fishing Rodeo, Kids Fish for Fun Derby, or a Family Fishing Festival, which featu",
+      "student_ppl": 27.875,
+      "teacher_ppl": 16.86090157054943,
+      "zpd_score": 1.6532330660590924,
+      "token_count": 511,
+      "difficulty_percentile": 55.45
+    },
+    {
+      "text_preview": " of lubricant solution to the top and/or bottom of the coil stock. This enables custom tailoring of ",
+      "student_ppl": 30.625,
+      "teacher_ppl": 19.187584873557263,
+      "zpd_score": 1.5960841451289074,
+      "token_count": 512,
+      "difficulty_percentile": 63.32
+    },
+    {
+      "text_preview": " travelled to Serbia to establish Scottish.\nAug 19, 2014. Florence Nightingale was one of the most f",
+      "student_ppl": 31.625,
+      "teacher_ppl": 18.107298658783836,
+      "zpd_score": 1.7465332955481319,
+      "token_count": 512,
+      "difficulty_percentile": 65.91
+    },
+    {
+      "text_preview": " and activist meetings, exchanges and other programs that help instill a sense of the workers rights",
+      "student_ppl": 31.625,
+      "teacher_ppl": 18.548606390645958,
+      "zpd_score": 1.7049798423642464,
+      "token_count": 509,
+      "difficulty_percentile": 65.77
+    },
+    {
+      "text_preview": " is nothing really for them together once the children leave home. Sad, but, true. Acknowledge it. S",
+      "student_ppl": 28.375,
+      "teacher_ppl": 18.263200855136123,
+      "zpd_score": 1.553670696887734,
+      "token_count": 512,
+      "difficulty_percentile": 57.0
+    },
+    {
+      "text_preview": " fly-ash, addictive mobile concrete batching plant dosing is realized by three-point suspension sens",
+      "student_ppl": 30.625,
+      "teacher_ppl": 18.864715851391022,
+      "zpd_score": 1.6234010753860262,
+      "token_count": 510,
+      "difficulty_percentile": 63.14
+    },
+    {
+      "text_preview": " vendor-neutral, big-data, high-performance platform designed to store,manage,query, retrieve and ex",
+      "student_ppl": 27.0,
+      "teacher_ppl": 16.961324394766848,
+      "zpd_score": 1.5918568250678837,
+      "token_count": 512,
+      "difficulty_percentile": 51.92
+    },
+    {
+      "text_preview": " the region.\nThe event boasts a world-class line up of high-profile speakers exploring the congress ",
+      "student_ppl": 27.875,
+      "teacher_ppl": 16.734583805936477,
+      "zpd_score": 1.6657121756509736,
+      "token_count": 512,
+      "difficulty_percentile": 55.39
+    },
+    {
+      "text_preview": " your chosen occupation, is you need to prepare. I have been known to tell people to never stop prep",
+      "student_ppl": 30.125,
+      "teacher_ppl": 20.05715004667458,
+      "zpd_score": 1.501958151078131,
+      "token_count": 512,
+      "difficulty_percentile": 62.42
+    },
+    {
+      "text_preview": "0 in funding for summer internships.\nThe other winners from the GTA are: Elektra Dakogiannis, Georgi",
+      "student_ppl": 26.625,
+      "teacher_ppl": 16.47575876408822,
+      "zpd_score": 1.6160105510912077,
+      "token_count": 510,
+      "difficulty_percentile": 50.07
+    },
+    {
+      "text_preview": ". machine is securely fenced unless safe by position or construction.\nConveyor Belt Rollers, Industr",
+      "student_ppl": 30.625,
+      "teacher_ppl": 15.820665282239695,
+      "zpd_score": 1.9357593030161429,
+      "token_count": 510,
+      "difficulty_percentile": 62.79
+    },
+    {
+      "text_preview": " is what makes our pros so strong at offering outstanding customer support. Regardless of whether it",
+      "student_ppl": 29.25,
+      "teacher_ppl": 15.747388281458287,
+      "zpd_score": 1.8574508659598064,
+      "token_count": 511,
+      "difficulty_percentile": 58.69
+    },
+    {
+      "text_preview": " Program materials can be accessed through the iTeachU app on smartphones and tablets with iOS, Andr",
+      "student_ppl": 31.125,
+      "teacher_ppl": 17.577875626848297,
+      "zpd_score": 1.7706917866946301,
+      "token_count": 511,
+      "difficulty_percentile": 64.91
+    },
+    {
+      "text_preview": " to avoid \u201csmelling the sweat\u201d of other travelers.\nMadrid municipal statistics show that in 2010 the",
+      "student_ppl": 29.25,
+      "teacher_ppl": 16.415552646143585,
+      "zpd_score": 1.7818468028776078,
+      "token_count": 512,
+      "difficulty_percentile": 59.35
+    },
+    {
+      "text_preview": " the Emory Institute for Drug Development.\nThe company is supported through GRA Venture Lab, the Geo",
+      "student_ppl": 30.625,
+      "teacher_ppl": 18.161828073161757,
+      "zpd_score": 1.6862289344790915,
+      "token_count": 511,
+      "difficulty_percentile": 63.86
+    },
+    {
+      "text_preview": " a scholar and teacher, he has inspired others to become scholars themselves and has opened doors to",
+      "student_ppl": 34.25,
+      "teacher_ppl": 19.199537650560615,
+      "zpd_score": 1.7838971241580872,
+      "token_count": 512,
+      "difficulty_percentile": 72.82
+    },
+    {
+      "text_preview": " Hero Mulan\u2019. One of my favourite dolls when I was a kid.\nAll in all I think they should actually ta",
+      "student_ppl": 34.75,
+      "teacher_ppl": 18.81152025042065,
+      "zpd_score": 1.847272285142555,
+      "token_count": 511,
+      "difficulty_percentile": 73.94
+    },
+    {
+      "text_preview": " sufficient funds to compensate the victims of an at-fault accident. Liability car insurance is a ma",
+      "student_ppl": 32.5,
+      "teacher_ppl": 18.825087828963117,
+      "zpd_score": 1.726419568146583,
+      "token_count": 511,
+      "difficulty_percentile": 68.21
+    },
+    {
+      "text_preview": " the pond.\nMany thanks to the New York Botanical Garden for bringing a slice of Monet\u2019s inspiration,",
+      "student_ppl": 33.75,
+      "teacher_ppl": 18.475331942528246,
+      "zpd_score": 1.826760141846821,
+      "token_count": 511,
+      "difficulty_percentile": 71.69
+    },
+    {
+      "text_preview": " with Rahman's behaviour in the most testing times of his careers and feels he is a good and will ha",
+      "student_ppl": 34.75,
+      "teacher_ppl": 16.367862286762254,
+      "zpd_score": 2.123062828314762,
+      "token_count": 512,
+      "difficulty_percentile": 73.54
+    },
+    {
+      "text_preview": " trying to figure out what to eat for lunch or where the party would be this weekend. My weekends ar",
+      "student_ppl": 31.625,
+      "teacher_ppl": 19.02914000890899,
+      "zpd_score": 1.6619248155825188,
+      "token_count": 511,
+      "difficulty_percentile": 65.95
+    },
+    {
+      "text_preview": " the State of Maharashtra have different governments.We're proud to treat all patients the way we'd ",
+      "student_ppl": 27.875,
+      "teacher_ppl": 16.725589144583132,
+      "zpd_score": 1.6666079597577461,
+      "token_count": 511,
+      "difficulty_percentile": 55.07
+    },
+    {
+      "text_preview": " We then ask: What topic(s) must be known such that students could achieve the goal? Place these sub",
+      "student_ppl": 28.375,
+      "teacher_ppl": 15.068028740580743,
+      "zpd_score": 1.8831262196614569,
+      "token_count": 512,
+      "difficulty_percentile": 56.22
+    },
+    {
+      "text_preview": " to manhood...an era that was virtually \"in the shadows\". You will learn about his ancestry, childho",
+      "student_ppl": 29.25,
+      "teacher_ppl": 17.770535565754628,
+      "zpd_score": 1.645983031393117,
+      "token_count": 512,
+      "difficulty_percentile": 59.72
+    },
+    {
+      "text_preview": " and options for lower impact jumps will be offered as an alternative. A love of moving, music, and ",
+      "student_ppl": 28.75,
+      "teacher_ppl": 17.270436422834727,
+      "zpd_score": 1.6646944695611257,
+      "token_count": 512,
+      "difficulty_percentile": 57.13
+    },
+    {
+      "text_preview": "! Filled to the brim with Irish wildlife, nature, history and famous locations, there is so much in ",
+      "student_ppl": 27.0,
+      "teacher_ppl": 14.742727106411927,
+      "zpd_score": 1.8314115024388617,
+      "token_count": 512,
+      "difficulty_percentile": 51.92
+    },
+    {
+      "text_preview": " Church's annual Camp Meeting.\nThis is white man's country by every law of God and man, and was so d",
+      "student_ppl": 32.5,
+      "teacher_ppl": 14.175684249818211,
+      "zpd_score": 2.2926582891698355,
+      "token_count": 512,
+      "difficulty_percentile": 68.98
+    },
+    {
+      "text_preview": " in Felden HP3 who will come out to check and fix the gas leak. See our reviews on Rated People belo",
+      "student_ppl": 34.75,
+      "teacher_ppl": 20.996046817194635,
+      "zpd_score": 1.655073467046264,
+      "token_count": 511,
+      "difficulty_percentile": 74.11
+    },
+    {
+      "text_preview": "WX deal as a potential nice positive for NFLX in regards to picking up TWX talent and likely weakeni",
+      "student_ppl": 32.0,
+      "teacher_ppl": 20.471202181470755,
+      "zpd_score": 1.5631715087531297,
+      "token_count": 512,
+      "difficulty_percentile": 67.77
+    },
+    {
+      "text_preview": " a representative of us, to do what us, the people, want. So the facts from an article from the Dail",
+      "student_ppl": 27.0,
+      "teacher_ppl": 17.217121939600624,
+      "zpd_score": 1.5682063526481769,
+      "token_count": 511,
+      "difficulty_percentile": 52.0
+    },
+    {
+      "text_preview": ", visitors can experience our one of a kind, pleated technology. We will have product samples as wel",
+      "student_ppl": 35.25,
+      "teacher_ppl": 18.571262557845106,
+      "zpd_score": 1.8980938905044586,
+      "token_count": 512,
+      "difficulty_percentile": 74.51
+    },
+    {
+      "text_preview": " time to plan my weekly meals. Radishes and cucumbers coming in the box? I\u2019ll make sure I have some ",
+      "student_ppl": 29.625,
+      "teacher_ppl": 14.84882945665099,
+      "zpd_score": 1.9951067581782056,
+      "token_count": 511,
+      "difficulty_percentile": 60.28
+    },
+    {
+      "text_preview": ", whereas most of us really do define ourselves by what we surround ourselves with.\nThe Desert Fathe",
+      "student_ppl": 27.0,
+      "teacher_ppl": 17.29051723590609,
+      "zpd_score": 1.5615495841807936,
+      "token_count": 512,
+      "difficulty_percentile": 51.87
+    },
+    {
+      "text_preview": " broadcasts, early morning news channels or listen to popular songs every day. It\u2019s simple to operat",
+      "student_ppl": 27.0,
+      "teacher_ppl": 17.238324383614067,
+      "zpd_score": 1.5662775220580556,
+      "token_count": 512,
+      "difficulty_percentile": 51.64
+    },
+    {
+      "text_preview": " to find a legal basis to undermine the ASA's legitimacy as the UK's independent advertising regulat",
+      "student_ppl": 32.5,
+      "teacher_ppl": 18.786008854153298,
+      "zpd_score": 1.7300108954656832,
+      "token_count": 512,
+      "difficulty_percentile": 69.14
+    },
+    {
+      "text_preview": "Please contact me at cfo@chomun.org with any questions, and we will tailor a custom partnership pack",
+      "student_ppl": 31.625,
+      "teacher_ppl": 19.03884691406697,
+      "zpd_score": 1.6610774876620114,
+      "token_count": 509,
+      "difficulty_percentile": 65.62
+    },
+    {
+      "text_preview": " calls me to tell me how much she liked to read the publication with the stories of the Southsiders.",
+      "student_ppl": 31.625,
+      "teacher_ppl": 18.659263510577972,
+      "zpd_score": 1.694868609474952,
+      "token_count": 512,
+      "difficulty_percentile": 66.48
+    },
+    {
+      "text_preview": ". Max chose brunch at Americana for his birthday meal...but they only do brunch on the weekends. We ",
+      "student_ppl": 32.0,
+      "teacher_ppl": 19.54231009259405,
+      "zpd_score": 1.6374727372751618,
+      "token_count": 512,
+      "difficulty_percentile": 67.4
+    },
+    {
+      "text_preview": " larger volumes of mail or more control). I was pleased to see that The Bat! was in several ways as ",
+      "student_ppl": 27.875,
+      "teacher_ppl": 14.912178674852347,
+      "zpd_score": 1.8692774951126319,
+      "token_count": 511,
+      "difficulty_percentile": 55.16
+    },
+    {
+      "text_preview": " amount of pre-moistened peat moss. Mix it good.\nIf you are planting your bushes in raised beds, use",
+      "student_ppl": 27.0,
+      "teacher_ppl": 15.533749607772728,
+      "zpd_score": 1.7381508445642657,
+      "token_count": 512,
+      "difficulty_percentile": 51.86
+    },
+    {
+      "text_preview": " International and the FIFA 2010 World Cup Organising Committee South Africa, and serves on the boar",
+      "student_ppl": 31.625,
+      "teacher_ppl": 16.61233707357244,
+      "zpd_score": 1.9037056532106067,
+      "token_count": 513,
+      "difficulty_percentile": 66.64
+    },
+    {
+      "text_preview": " the government for their \"heroic contribution\" and \"their love for the Chinese people\".\nZhao also t",
+      "student_ppl": 27.0,
+      "teacher_ppl": 16.8432792756799,
+      "zpd_score": 1.6030132587652002,
+      "token_count": 512,
+      "difficulty_percentile": 52.62
+    },
+    {
+      "text_preview": " classic tracksuit, giving a catwalk-inspired twist to joggers, hoodies and jumpers. Take advantage ",
+      "student_ppl": 28.375,
+      "teacher_ppl": 16.881468119237717,
+      "zpd_score": 1.6808372233730389,
+      "token_count": 512,
+      "difficulty_percentile": 56.09
+    },
+    {
+      "text_preview": " in 68 children is diagnosed with autism spectrum disorder (ASD). In fact, almost every school and u",
+      "student_ppl": 27.0,
+      "teacher_ppl": 14.532787987525412,
+      "zpd_score": 1.8578678793894288,
+      "token_count": 511,
+      "difficulty_percentile": 52.24
+    },
+    {
+      "text_preview": ". \u201cI\u2019m really excited about it (the win) I just came out and am having fun, life\u2019s good and everythi",
+      "student_ppl": 33.0,
+      "teacher_ppl": 16.6117905073715,
+      "zpd_score": 1.9865408238417295,
+      "token_count": 512,
+      "difficulty_percentile": 69.5
+    },
+    {
+      "text_preview": " and still argue Wednesday over news coverage or access to records.\nSocial media relationships. You ",
+      "student_ppl": 27.0,
+      "teacher_ppl": 13.598426924401924,
+      "zpd_score": 1.985523777867968,
+      "token_count": 511,
+      "difficulty_percentile": 52.23
+    },
+    {
+      "text_preview": " there's the rub: all of that costs money. So does education, health care, and public institutions.\n",
+      "student_ppl": 34.25,
+      "teacher_ppl": 18.340198448946072,
+      "zpd_score": 1.8674825190873652,
+      "token_count": 512,
+      "difficulty_percentile": 72.12
+    },
+    {
+      "text_preview": " the task at hand. The result: You miss deadlines and the quality of your work suffers.\nLearn to val",
+      "student_ppl": 28.75,
+      "teacher_ppl": 16.498065972487122,
+      "zpd_score": 1.7426285025132475,
+      "token_count": 511,
+      "difficulty_percentile": 57.71
+    },
+    {
+      "text_preview": " our team calculates that it needs 14 sprints, plus or minus 2 sprints. We propose to the client tha",
+      "student_ppl": 30.625,
+      "teacher_ppl": 17.54236439848061,
+      "zpd_score": 1.7457737910547855,
+      "token_count": 512,
+      "difficulty_percentile": 63.23
+    },
+    {
+      "text_preview": " we do less? My assertion is that we shouldn\u2019t. We should completely forgive in the legal sense. How",
+      "student_ppl": 27.5,
+      "teacher_ppl": 15.330036174214007,
+      "zpd_score": 1.7938639992419956,
+      "token_count": 511,
+      "difficulty_percentile": 53.93
+    },
+    {
+      "text_preview": " Russian statesmen? Eventually, I had set my choice on you. It would not be inappropriate to address",
+      "student_ppl": 32.5,
+      "teacher_ppl": 21.301176627884672,
+      "zpd_score": 1.5257373133771077,
+      "token_count": 511,
+      "difficulty_percentile": 68.67
+    },
+    {
+      "text_preview": ". If you are feeding a dog that is trying to lose weight then either scoop the marrow out or choose ",
+      "student_ppl": 28.75,
+      "teacher_ppl": 16.876361350001428,
+      "zpd_score": 1.703566272595696,
+      "token_count": 511,
+      "difficulty_percentile": 58.07
+    },
+    {
+      "text_preview": " to ask around about children\u2019s literature. There\u2019s been a lot of talk about YA science fiction and ",
+      "student_ppl": 32.5,
+      "teacher_ppl": 18.44950668130703,
+      "zpd_score": 1.7615647161411028,
+      "token_count": 512,
+      "difficulty_percentile": 68.97
+    },
+    {
+      "text_preview": " lung capacities and more resilient lungs, meant to withstand the crushing pressures of the ocean de",
+      "student_ppl": 33.0,
+      "teacher_ppl": 18.763596214267128,
+      "zpd_score": 1.7587246934523164,
+      "token_count": 510,
+      "difficulty_percentile": 69.48
+    },
+    {
+      "text_preview": " colour, and will continue to darken and soften at my side. My personal bag is the medium size - per",
+      "student_ppl": 26.625,
+      "teacher_ppl": 13.717480115787273,
+      "zpd_score": 1.9409541530413903,
+      "token_count": 511,
+      "difficulty_percentile": 51.3
+    },
+    {
+      "text_preview": ", product will here help the 21st also. Charlie and the Chocolate Factory, another such from the sto",
+      "student_ppl": 33.0,
+      "teacher_ppl": 12.986687436551298,
+      "zpd_score": 2.5410636978234207,
+      "token_count": 512,
+      "difficulty_percentile": 70.29
+    },
+    {
+      "text_preview": "She may have forgotten emails describing an aggressive line of questioning in 2015 because of the sh",
+      "student_ppl": 27.0,
+      "teacher_ppl": 15.90638771752512,
+      "zpd_score": 1.6974312760056962,
+      "token_count": 512,
+      "difficulty_percentile": 52.69
+    },
+    {
+      "text_preview": " with it.For sale apartment of 96 sq.meters in Athens. The apartment is located on the 1st floor and",
+      "student_ppl": 30.625,
+      "teacher_ppl": 17.601544943585836,
+      "zpd_score": 1.7399040878601983,
+      "token_count": 510,
+      "difficulty_percentile": 63.74
+    },
+    {
+      "text_preview": " fundamental building-blocks of the subject. We will also study some applied mathematics: statistics",
+      "student_ppl": 33.75,
+      "teacher_ppl": 18.526772928805098,
+      "zpd_score": 1.821688004149179,
+      "token_count": 510,
+      "difficulty_percentile": 71.54
+    },
+    {
+      "text_preview": "90%twenty five. They also have thirty video games for you to choose from.The simplicity with which y",
+      "student_ppl": 54.5,
+      "teacher_ppl": 34.87891547125911,
+      "zpd_score": 1.5625485845426883,
+      "token_count": 510,
+      "difficulty_percentile": 94.12
+    },
+    {
+      "text_preview": " thing into place, tested the field inside with a flick of her dead wrist and a flicker of her blank",
+      "student_ppl": 53.75,
+      "teacher_ppl": 33.19323329782035,
+      "zpd_score": 1.619305944610389,
+      "token_count": 511,
+      "difficulty_percentile": 93.52
+    },
+    {
+      "text_preview": " are always looking for more qualified talented individuals who may want to cotribute to this renewe",
+      "student_ppl": 50.5,
+      "teacher_ppl": 24.550014439271894,
+      "zpd_score": 2.0570252667231315,
+      "token_count": 512,
+      "difficulty_percentile": 92.13
+    },
+    {
+      "text_preview": "This case was investigated by the Albuquerque office of the FBI. Assistant U.S. Attorney George C. K",
+      "student_ppl": 41.75,
+      "teacher_ppl": 22.52003044504268,
+      "zpd_score": 1.8539051313401045,
+      "token_count": 510,
+      "difficulty_percentile": 85.37
+    },
+    {
+      "text_preview": " Typically the time period is for people looking to buy private health insurance. There are multiple",
+      "student_ppl": 40.5,
+      "teacher_ppl": 22.438651998382436,
+      "zpd_score": 1.804921258323342,
+      "token_count": 511,
+      "difficulty_percentile": 83.54
+    },
+    {
+      "text_preview": ".Need Feeding Tree parking? You can reserve parking near Feeding Tree with SpotHero. Find low rates ",
+      "student_ppl": 39.25,
+      "teacher_ppl": 20.794766559888448,
+      "zpd_score": 1.8874941388238673,
+      "token_count": 510,
+      "difficulty_percentile": 81.69
+    },
+    {
+      "text_preview": " 3.83 km2, inc 1895, was set up as the village of C\u00f4te-Sainte-Catherine in 1875. Its present name re",
+      "student_ppl": 68.0,
+      "teacher_ppl": 32.48191025134391,
+      "zpd_score": 2.0934729353605843,
+      "token_count": 511,
+      "difficulty_percentile": 96.94
+    },
+    {
+      "text_preview": " better more information in 68 children in the United States and currently have. Broccoli extract ca",
+      "student_ppl": 93.0,
+      "teacher_ppl": 57.50973681664126,
+      "zpd_score": 1.6171174682386849,
+      "token_count": 512,
+      "difficulty_percentile": 98.47
+    },
+    {
+      "text_preview": "'t know a second awning was an option if it weren't for this forum. And additional options would add",
+      "student_ppl": 41.75,
+      "teacher_ppl": 21.48966489179467,
+      "zpd_score": 1.9427943716303024,
+      "token_count": 510,
+      "difficulty_percentile": 85.29
+    },
+    {
+      "text_preview": " Football Club), Keith Murray (father of Glen), Sid Tolentino (brother of Guanita Gower and father o",
+      "student_ppl": 40.0,
+      "teacher_ppl": 24.10923626465595,
+      "zpd_score": 1.6591151856037782,
+      "token_count": 511,
+      "difficulty_percentile": 82.82
+    },
+    {
+      "text_preview": " off to a great start!\nMy Famous Vegan Chocolate Chip Macaroon Recipe!\nThanks Deb! I\u2019m so happy you ",
+      "student_ppl": 40.5,
+      "teacher_ppl": 19.49196662611389,
+      "zpd_score": 2.0777790551796405,
+      "token_count": 511,
+      "difficulty_percentile": 83.7
+    },
+    {
+      "text_preview": " Gregor and Dave Rout have a long history in the Canadian electronic music scene that stems back dee",
+      "student_ppl": 44.5,
+      "teacher_ppl": 25.293511615781004,
+      "zpd_score": 1.759344478377442,
+      "token_count": 512,
+      "difficulty_percentile": 87.97
+    },
+    {
+      "text_preview": ". The marriage proposals even comprised some married women who have developed a liking for his muscu",
+      "student_ppl": 37.5,
+      "teacher_ppl": 21.000006816079487,
+      "zpd_score": 1.7857137061158779,
+      "token_count": 512,
+      "difficulty_percentile": 79.29
+    },
+    {
+      "text_preview": " not today but soon.\" This gives me hope that the update is almost ready and that we'll have it soon",
+      "student_ppl": 70.0,
+      "teacher_ppl": 36.16117366082776,
+      "zpd_score": 1.9357778775811352,
+      "token_count": 512,
+      "difficulty_percentile": 97.01
+    },
+    {
+      "text_preview": "wire #4 has an interview with an anarchist DREAMer about how to support undocumented folks.\nHotwire ",
+      "student_ppl": 63.75,
+      "teacher_ppl": 34.729916462452636,
+      "zpd_score": 1.8355932433330695,
+      "token_count": 511,
+      "difficulty_percentile": 96.15
+    },
+    {
+      "text_preview": " the Web. In which case, try your best to create your webpages and apps in a way that is different f",
+      "student_ppl": 41.25,
+      "teacher_ppl": 21.782993505783303,
+      "zpd_score": 1.8936791212396167,
+      "token_count": 511,
+      "difficulty_percentile": 84.83
+    },
+    {
+      "text_preview": " care less about the horrible epidemic of black people being shot by other black people or by Latino",
+      "student_ppl": 47.5,
+      "teacher_ppl": 23.835031408491812,
+      "zpd_score": 1.9928650055429322,
+      "token_count": 512,
+      "difficulty_percentile": 89.98
+    },
+    {
+      "text_preview": "15\u201316 deal between a subsidiary of the world\u2019s largest advertising company and a major hospital trus",
+      "student_ppl": 41.75,
+      "teacher_ppl": 22.548618054155117,
+      "zpd_score": 1.8515547116780655,
+      "token_count": 512,
+      "difficulty_percentile": 85.36
+    },
+    {
+      "text_preview": " and is divided in a K9 Carts for 17 readers. His download The Contemporary Caribbean: Life,, Debora",
+      "student_ppl": 216.0,
+      "teacher_ppl": 98.29326153991991,
+      "zpd_score": 2.1975056745092925,
+      "token_count": 512,
+      "difficulty_percentile": 99.64
+    },
+    {
+      "text_preview": " largest beer brewer, AB InBev\u2019s shift towards renewable energy is big deal. Budweiser sells roughly",
+      "student_ppl": 36.25,
+      "teacher_ppl": 20.476220171340824,
+      "zpd_score": 1.7703462698030892,
+      "token_count": 511,
+      "difficulty_percentile": 77.38
+    },
+    {
+      "text_preview": " in northern region as yet? Or if you did, why not expanding aggressively?\nWe want to reach out to p",
+      "student_ppl": 35.75,
+      "teacher_ppl": 20.92296877337937,
+      "zpd_score": 1.7086485377488734,
+      "token_count": 512,
+      "difficulty_percentile": 75.3
+    },
+    {
+      "text_preview": " We are waiting for the nose hair and ear hair verses!On this page we have shared the I.Robot Stock ",
+      "student_ppl": 47.5,
+      "teacher_ppl": 22.362722769690283,
+      "zpd_score": 2.1240705118600305,
+      "token_count": 512,
+      "difficulty_percentile": 90.02
+    },
+    {
+      "text_preview": " problem but minor annoyance.\nForum Topic \"How to clean thermal pads off of GPU?\"\nForum Topic \"2080'",
+      "student_ppl": 60.0,
+      "teacher_ppl": 30.942711829577615,
+      "zpd_score": 1.9390672779574225,
+      "token_count": 512,
+      "difficulty_percentile": 95.35
+    },
+    {
+      "text_preview": " world challenges. Compass or Keyhole Noticed \u2013 it is much like a coping saw for it additionally red",
+      "student_ppl": 53.75,
+      "teacher_ppl": 31.545171849906833,
+      "zpd_score": 1.7039057595166898,
+      "token_count": 510,
+      "difficulty_percentile": 93.45
+    },
+    {
+      "text_preview": " to end first class service that takes the hassle out of property settlement for all our clients.\nAs",
+      "student_ppl": 37.0,
+      "teacher_ppl": 18.056479936359775,
+      "zpd_score": 2.0491258612092076,
+      "token_count": 509,
+      "difficulty_percentile": 78.28
+    },
+    {
+      "text_preview": " immensely.\n9. Have Baskets for each child. We homeschool, but I think this would benefit any parent",
+      "student_ppl": 36.25,
+      "teacher_ppl": 20.058771209243908,
+      "zpd_score": 1.807189464491948,
+      "token_count": 512,
+      "difficulty_percentile": 77.4
+    },
+    {
+      "text_preview": " is a common presentation for a variety of diseases. Treatment of malabsorption is essentially the t",
+      "student_ppl": 51.25,
+      "teacher_ppl": 24.03627716366858,
+      "zpd_score": 2.1321937524279186,
+      "token_count": 513,
+      "difficulty_percentile": 92.62
+    },
+    {
+      "text_preview": " pattern of uncut photos.\nHere are two layouts from a Mosaic Scrapbook Pagekit called Adventure. All",
+      "student_ppl": 39.25,
+      "teacher_ppl": 23.803303219951484,
+      "zpd_score": 1.648930807515042,
+      "token_count": 512,
+      "difficulty_percentile": 81.98
+    },
+    {
+      "text_preview": " significance to the artist. She invites them to pause and reflect on her experience, focusing not o",
+      "student_ppl": 49.75,
+      "teacher_ppl": 23.015068832106508,
+      "zpd_score": 2.161627252254736,
+      "token_count": 510,
+      "difficulty_percentile": 91.58
+    },
+    {
+      "text_preview": "'t off gas and other things. So we bought hte first one for his benefit. Its like a mattress from a ",
+      "student_ppl": 40.5,
+      "teacher_ppl": 23.087151856346292,
+      "zpd_score": 1.7542224459734383,
+      "token_count": 512,
+      "difficulty_percentile": 83.69
+    },
+    {
+      "text_preview": " of memory can be free'd in one go. Example: in a 3d engine, all the memory allocated while renderin",
+      "student_ppl": 37.5,
+      "teacher_ppl": 21.461703472033555,
+      "zpd_score": 1.7472983935718673,
+      "token_count": 512,
+      "difficulty_percentile": 79.34
+    },
+    {
+      "text_preview": ". Bush is a public example of a life spent failing to learn from either his betters or his mistakes,",
+      "student_ppl": 43.25,
+      "teacher_ppl": 29.43133174647136,
+      "zpd_score": 1.4695223570773488,
+      "token_count": 511,
+      "difficulty_percentile": 86.44
+    },
+    {
+      "text_preview": "Yesterday i received an alert from EIS for one of those apps on my laptop, should we consider to get",
+      "student_ppl": 36.25,
+      "teacher_ppl": 21.110113435995274,
+      "zpd_score": 1.7171864144599718,
+      "token_count": 510,
+      "difficulty_percentile": 77.25
+    },
+    {
+      "text_preview": "ferencing, collaboration has become a more productive way of doing things. Collaboration in the work",
+      "student_ppl": 40.0,
+      "teacher_ppl": 21.406619553512368,
+      "zpd_score": 1.8685808798539074,
+      "token_count": 510,
+      "difficulty_percentile": 83.0
+    },
+    {
+      "text_preview": " again later.1.0 out of 5 starsBosch 250SX is very finickyByCharleson August 1, 2008This water heate",
+      "student_ppl": 43.75,
+      "teacher_ppl": 24.23152557877928,
+      "zpd_score": 1.8054991980494202,
+      "token_count": 511,
+      "difficulty_percentile": 87.11
+    },
+    {
+      "text_preview": " renovated. All new carpet, wall coverings, lighting and etc.\nGreat for small weddings, dinners, mee",
+      "student_ppl": 41.25,
+      "teacher_ppl": 23.09543747372119,
+      "zpd_score": 1.7860670553192906,
+      "token_count": 512,
+      "difficulty_percentile": 84.34
+    },
+    {
+      "text_preview": " say their work can help researchers address the unknowns and provides immediately useful informatio",
+      "student_ppl": 38.0,
+      "teacher_ppl": 18.810914783014248,
+      "zpd_score": 2.0201037768940924,
+      "token_count": 511,
+      "difficulty_percentile": 80.17
+    },
+    {
+      "text_preview": " you, that this scripture scares me, as frequently my own mouth runneth over\u2026.I have learned the har",
+      "student_ppl": 46.0,
+      "teacher_ppl": 25.101343521543683,
+      "zpd_score": 1.8325712311183529,
+      "token_count": 511,
+      "difficulty_percentile": 89.36
+    },
+    {
+      "text_preview": " acceleration and deceleration. Both ends of the motor and shaft ends are drilled and tapped for eas",
+      "student_ppl": 52.0,
+      "teacher_ppl": 26.986557430900774,
+      "zpd_score": 1.926885269940276,
+      "token_count": 512,
+      "difficulty_percentile": 92.8
+    },
+    {
+      "text_preview": " being forced blackjavk close because digarettes damage sustained during Hurricane Irma. Directed by",
+      "student_ppl": 84.5,
+      "teacher_ppl": 38.06077546740188,
+      "zpd_score": 2.220133430344113,
+      "token_count": 512,
+      "difficulty_percentile": 98.05
+    },
+    {
+      "text_preview": " to separate parts onto assigned pallets. The graphical layout of the sheet on the computer screen l",
+      "student_ppl": 41.75,
+      "teacher_ppl": 27.395507177368284,
+      "zpd_score": 1.5239725159930644,
+      "token_count": 511,
+      "difficulty_percentile": 84.91
+    },
+    {
+      "text_preview": ", we collaborated with Indieful ROK and shared our predictions for the winners. We have widened our ",
+      "student_ppl": 58.0,
+      "teacher_ppl": 32.4538725375009,
+      "zpd_score": 1.7871519009936394,
+      "token_count": 512,
+      "difficulty_percentile": 95.04
+    },
+    {
+      "text_preview": " old\u2019 on the health care system (pp 21-22 in the report)raises the question if medical research shou",
+      "student_ppl": 66.0,
+      "teacher_ppl": 36.58206580565424,
+      "zpd_score": 1.8041627378462273,
+      "token_count": 512,
+      "difficulty_percentile": 96.43
+    },
+    {
+      "text_preview": ", Dulse, Pepper Dulse, Dulaman and superfood Carrageen Moss, bringing an authentic and innovative \u201cu",
+      "student_ppl": 51.25,
+      "teacher_ppl": 29.890916432653288,
+      "zpd_score": 1.7145677053920543,
+      "token_count": 510,
+      "difficulty_percentile": 92.33
+    },
+    {
+      "text_preview": " Toluca Lake home with a new fence will command a higher appraisal than surrounding homes that have ",
+      "student_ppl": 35.25,
+      "teacher_ppl": 23.204179397806797,
+      "zpd_score": 1.519122887117988,
+      "token_count": 510,
+      "difficulty_percentile": 75.26
+    },
+    {
+      "text_preview": "-24, 2019 at the Ritz Carlton-New Orleans. Save the date for this popular event that brings together",
+      "student_ppl": 68.0,
+      "teacher_ppl": 33.9518988172664,
+      "zpd_score": 2.002833489990795,
+      "token_count": 509,
+      "difficulty_percentile": 96.88
+    },
+    {
+      "text_preview": " this hillside landscape. Many of them will grow to twice their size.WBT is a company created to off",
+      "student_ppl": 53.0,
+      "teacher_ppl": 32.67720973940783,
+      "zpd_score": 1.6219255077976698,
+      "token_count": 510,
+      "difficulty_percentile": 93.17
+    },
+    {
+      "text_preview": "2-7 and he hasn't played since the 1st Half?\nIt's pretty bad when you're cheering for the other team",
+      "student_ppl": 41.25,
+      "teacher_ppl": 23.603000733740092,
+      "zpd_score": 1.7476591415359242,
+      "token_count": 512,
+      "difficulty_percentile": 84.81
+    },
+    {
+      "text_preview": " effort to eradicate an infestation in the home. Concentrate on eliminating larval breeding sites fr",
+      "student_ppl": 68.0,
+      "teacher_ppl": 32.12221184287838,
+      "zpd_score": 2.1169152464535492,
+      "token_count": 511,
+      "difficulty_percentile": 96.74
+    },
+    {
+      "text_preview": " longstanding business here on Maui... This month\u2019s bag credit earnings will be donated to the Waika",
+      "student_ppl": 37.0,
+      "teacher_ppl": 21.6047081860079,
+      "zpd_score": 1.7125896670968563,
+      "token_count": 512,
+      "difficulty_percentile": 78.39
+    },
+    {
+      "text_preview": " Diet \u2013 5 star 10 April \u00b7 My dog was so fussy when it came to meals and was causing much stress for ",
+      "student_ppl": 37.5,
+      "teacher_ppl": 19.10298487021273,
+      "zpd_score": 1.963044008817372,
+      "token_count": 512,
+      "difficulty_percentile": 79.4
+    },
+    {
+      "text_preview": " might not default to images of 72-year-old rock n roll versions of Gandalf, but this dude can write",
+      "student_ppl": 40.5,
+      "teacher_ppl": 24.354185500805404,
+      "zpd_score": 1.6629585086580148,
+      "token_count": 512,
+      "difficulty_percentile": 83.67
+    },
+    {
+      "text_preview": " For anyone interested in retailing, Woolworths, architecture and places, this book is a treasure tr",
+      "student_ppl": 37.5,
+      "teacher_ppl": 18.70506577068482,
+      "zpd_score": 2.0048044984033795,
+      "token_count": 513,
+      "difficulty_percentile": 78.78
+    },
+    {
+      "text_preview": "15! It has stayed been the best video creator software for the last 4 years.\nIn my opinion Explaindi",
+      "student_ppl": 37.5,
+      "teacher_ppl": 21.93390638170813,
+      "zpd_score": 1.7096817752114268,
+      "token_count": 510,
+      "difficulty_percentile": 78.51
+    },
+    {
+      "text_preview": " findings while I work on day-to day basis. Also, I like to work on newly launched software and prov",
+      "student_ppl": 148.0,
+      "teacher_ppl": 117.73046397306014,
+      "zpd_score": 1.257108780560538,
+      "token_count": 513,
+      "difficulty_percentile": 99.33
+    },
+    {
+      "text_preview": " circulate that the shift is an \"unfair\" tactic that should be outlawed or legislated out of fashion",
+      "student_ppl": 53.0,
+      "teacher_ppl": 27.617338311408798,
+      "zpd_score": 1.919084286920784,
+      "token_count": 512,
+      "difficulty_percentile": 93.13
+    },
+    {
+      "text_preview": "cues qu'il s'agit de la voiture du principal suspect dans l'affaire, Nordhal Lelandais .\nExpanding o",
+      "student_ppl": 38.0,
+      "teacher_ppl": 22.467645184349344,
+      "zpd_score": 1.6913209946216474,
+      "token_count": 512,
+      "difficulty_percentile": 80.09
+    },
+    {
+      "text_preview": " throughout his career.Felix Padel is a musician and anthropologist living in the Preselis and Oriss",
+      "student_ppl": 40.5,
+      "teacher_ppl": 20.10368975253892,
+      "zpd_score": 2.0145555616170014,
+      "token_count": 511,
+      "difficulty_percentile": 83.92
+    },
+    {
+      "text_preview": " models can be created in AutoCAD, but they\u2019re not actually very helpful in any way.\nAnother step in",
+      "student_ppl": 41.25,
+      "teacher_ppl": 30.496511933099598,
+      "zpd_score": 1.352613705150622,
+      "token_count": 512,
+      "difficulty_percentile": 84.23
+    },
+    {
+      "text_preview": ": Tarsa is a trained master Loctician/natural hair professional dedicated to the evolution of natura",
+      "student_ppl": 58.0,
+      "teacher_ppl": 34.861730985667585,
+      "zpd_score": 1.663715436959945,
+      "token_count": 512,
+      "difficulty_percentile": 94.82
+    },
+    {
+      "text_preview": " poem and venue setting. There is such an allure and appeal to piers. I've shot on a few over the ye",
+      "student_ppl": 39.25,
+      "teacher_ppl": 19.830038340248596,
+      "zpd_score": 1.9793204292669033,
+      "token_count": 512,
+      "difficulty_percentile": 81.9
+    },
+    {
+      "text_preview": " values. The rest of the code is the same. GO GOLD. Whois report sysney options trading indicators i",
+      "student_ppl": 96.0,
+      "teacher_ppl": 55.83699367491996,
+      "zpd_score": 1.7192902712296252,
+      "token_count": 512,
+      "difficulty_percentile": 98.51
+    },
+    {
+      "text_preview": " in other words, no character development, no romantic angles, no supporting circumstances to make t",
+      "student_ppl": 42.5,
+      "teacher_ppl": 22.572817697288023,
+      "zpd_score": 1.8827955184835474,
+      "token_count": 511,
+      "difficulty_percentile": 86.23
+    },
+    {
+      "text_preview": " the shrines are really unique. I have been pretty remiss in my posting this past year. LOTs going o",
+      "student_ppl": 39.25,
+      "teacher_ppl": 22.088966487687703,
+      "zpd_score": 1.7769052265020089,
+      "token_count": 509,
+      "difficulty_percentile": 81.67
+    },
+    {
+      "text_preview": " brushing teeth \u2013 to the million things that blur into the background only to stand out as if alone ",
+      "student_ppl": 74.5,
+      "teacher_ppl": 52.12024423124389,
+      "zpd_score": 1.4293870088072302,
+      "token_count": 511,
+      "difficulty_percentile": 97.53
+    },
+    {
+      "text_preview": "\u00ae gas-tight suit range.\nOuter: Strong and flexible polyamide fabric coated with chloroprene rubber.\n",
+      "student_ppl": 61.75,
+      "teacher_ppl": 32.31821485276231,
+      "zpd_score": 1.9106872171413296,
+      "token_count": 511,
+      "difficulty_percentile": 95.78
+    },
+    {
+      "text_preview": ".\nor mail (PO Box 72, Dolgeville, NY 13329).\nGreen, eco friendly vegan adventure tours.\nTravel, expl",
+      "student_ppl": 40.5,
+      "teacher_ppl": 21.62909630154927,
+      "zpd_score": 1.8724776770770133,
+      "token_count": 510,
+      "difficulty_percentile": 83.65
+    },
+    {
+      "text_preview": " backing out and being a coward. Anyway, 6 hours feels like waiting for some sort of court (death) s",
+      "student_ppl": 49.75,
+      "teacher_ppl": 30.133629107755596,
+      "zpd_score": 1.650979369995487,
+      "token_count": 512,
+      "difficulty_percentile": 91.56
+    },
+    {
+      "text_preview": " the greatest metric in the world but your argument is not a meaningful critique of its flaws.\nWhy d",
+      "student_ppl": 49.0,
+      "teacher_ppl": 26.656776195837942,
+      "zpd_score": 1.8381817681183301,
+      "token_count": 512,
+      "difficulty_percentile": 91.01
+    },
+    {
+      "text_preview": "\u2019t even talked to Nick yet. I was trying to track Nick down this week which is always fun. So I call",
+      "student_ppl": 40.0,
+      "teacher_ppl": 23.733816155753825,
+      "zpd_score": 1.6853589720885547,
+      "token_count": 509,
+      "difficulty_percentile": 83.23
+    },
+    {
+      "text_preview": " job of multiple interpretations of one bean. For a consumer interested in roasting and conching, sa",
+      "student_ppl": 36.25,
+      "teacher_ppl": 19.758163762778448,
+      "zpd_score": 1.8346846617543382,
+      "token_count": 512,
+      "difficulty_percentile": 76.66
+    },
+    {
+      "text_preview": " this around before his life and career spiral out of control?These high-rise Mississauga condos wer",
+      "student_ppl": 37.0,
+      "teacher_ppl": 17.25443052555797,
+      "zpd_score": 2.1443767700819842,
+      "token_count": 511,
+      "difficulty_percentile": 78.02
+    },
+    {
+      "text_preview": "000 00000000 put the three numbers in the three x spots take off the first 0 you will find casino ma",
+      "student_ppl": 61.75,
+      "teacher_ppl": 35.8552224370455,
+      "zpd_score": 1.7222037907705212,
+      "token_count": 512,
+      "difficulty_percentile": 95.78
+    },
+    {
+      "text_preview": " Case 794153 is your ticket with Ruckus. I'll keep this thread open if you don't mind sharing a 'sho",
+      "student_ppl": 46.0,
+      "teacher_ppl": 25.034834862920455,
+      "zpd_score": 1.8374397215669847,
+      "token_count": 510,
+      "difficulty_percentile": 88.88
+    },
+    {
+      "text_preview": " to the method and the systems science behind it is in preparation.\nIt\u2019s easy for people to talk abo",
+      "student_ppl": 41.25,
+      "teacher_ppl": 24.2551776046803,
+      "zpd_score": 1.700667819148039,
+      "token_count": 512,
+      "difficulty_percentile": 84.07
+    },
+    {
+      "text_preview": " trend is exacerbated in neighborhoods desirable to tourists. I\u2019d also like to point out that it is ",
+      "student_ppl": 36.25,
+      "teacher_ppl": 19.27258251349463,
+      "zpd_score": 1.8809103541062964,
+      "token_count": 512,
+      "difficulty_percentile": 76.44
+    },
+    {
+      "text_preview": " in lime juice, lemon grass, fresh chilies, and vegetables.\nRoasted duck tossed with onions, lime ju",
+      "student_ppl": 35.25,
+      "teacher_ppl": 19.406875914746916,
+      "zpd_score": 1.8163665370382565,
+      "token_count": 511,
+      "difficulty_percentile": 75.12
+    },
+    {
+      "text_preview": " mistake, the focus didn\u2019t quite come out right. Nonetheless Ms. Tatiana Gutierrez was one of the mo",
+      "student_ppl": 42.5,
+      "teacher_ppl": 24.391602205149507,
+      "zpd_score": 1.742402964862533,
+      "token_count": 511,
+      "difficulty_percentile": 85.93
+    },
+    {
+      "text_preview": " Hansel and Gretel, or Snow White would look like.\nTo see the first part of the series check out Bro",
+      "student_ppl": 37.5,
+      "teacher_ppl": 21.946424027999633,
+      "zpd_score": 1.708706618998924,
+      "token_count": 511,
+      "difficulty_percentile": 79.29
+    },
+    {
+      "text_preview": " the 1st of May - a military display of revolutionary force of world proletariate.\nGiant of agricult",
+      "student_ppl": 61.75,
+      "teacher_ppl": 38.03253735305249,
+      "zpd_score": 1.6236097903955373,
+      "token_count": 512,
+      "difficulty_percentile": 95.88
+    },
+    {
+      "text_preview": ":GMF.\nRadio Interference Filter: 120 or 277 volt, 50 or 60 Hz. One per fixture: Suffix:R. One per ba",
+      "student_ppl": 40.5,
+      "teacher_ppl": 22.666514653493184,
+      "zpd_score": 1.7867766888350636,
+      "token_count": 511,
+      "difficulty_percentile": 83.58
+    },
+    {
+      "text_preview": "ville Nissan dealership has plenty of new Nissan sedans, trucks and SUVs for sale, so don't hesitate",
+      "student_ppl": 38.0,
+      "teacher_ppl": 22.79296576197042,
+      "zpd_score": 1.6671810240421714,
+      "token_count": 511,
+      "difficulty_percentile": 80.29
+    },
+    {
+      "text_preview": " but maybe it\u2019s now as good as they say.\nIt\u2019s a sharp-looking car and a great update successor to on",
+      "student_ppl": 144.0,
+      "teacher_ppl": 77.34951543624626,
+      "zpd_score": 1.861679406623937,
+      "token_count": 512,
+      "difficulty_percentile": 99.29
+    },
+    {
+      "text_preview": "OME!After many years of being in storage I have the urge to bust out my Necrons in BFG again. The on",
+      "student_ppl": 46.75,
+      "teacher_ppl": 28.004001005929954,
+      "zpd_score": 1.6694043108376018,
+      "token_count": 512,
+      "difficulty_percentile": 89.48
+    },
+    {
+      "text_preview": " babie being subjected to the delights of my good self. Hope the little fella has recovered Keith. Y",
+      "student_ppl": 53.0,
+      "teacher_ppl": 23.43120564275769,
+      "zpd_score": 2.2619407984403774,
+      "token_count": 512,
+      "difficulty_percentile": 93.08
+    },
+    {
+      "text_preview": " the kindhearted and types of questions and causes provided for answers made my standards crystal cl",
+      "student_ppl": 84.5,
+      "teacher_ppl": 39.58956217853931,
+      "zpd_score": 2.1344009721280957,
+      "token_count": 512,
+      "difficulty_percentile": 98.12
+    },
+    {
+      "text_preview": " Winner of the GT category was the 2.4-litre ASA Cachia car of Couroul/Anselme (battling an oil-leak",
+      "student_ppl": 46.0,
+      "teacher_ppl": 17.704863544427088,
+      "zpd_score": 2.598156144190069,
+      "token_count": 511,
+      "difficulty_percentile": 89.01
+    },
+    {
+      "text_preview": " learn more? Join our chat session with Statistics Canada experts on these findings!My writing routi",
+      "student_ppl": 53.75,
+      "teacher_ppl": 25.24538025893144,
+      "zpd_score": 2.1291024119545217,
+      "token_count": 512,
+      "difficulty_percentile": 93.38
+    },
+    {
+      "text_preview": " to Find. \u201d You need to state throughout her authorship. We can discourse why subsequently.\nNeed to ",
+      "student_ppl": 35.75,
+      "teacher_ppl": 15.309341121428512,
+      "zpd_score": 2.335175610527135,
+      "token_count": 512,
+      "difficulty_percentile": 75.32
+    },
+    {
+      "text_preview": "engers: Annihilation. If you\u2019ll recall, the Russo brothers posted a photo a while back telling fans ",
+      "student_ppl": 37.5,
+      "teacher_ppl": 19.275872772607684,
+      "zpd_score": 1.9454372023709365,
+      "token_count": 510,
+      "difficulty_percentile": 78.66
+    },
+    {
+      "text_preview": " alley. I am on the edge of my seat reading it all with great interest!\nReally enjoying this communi",
+      "student_ppl": 36.25,
+      "teacher_ppl": 24.378608223582003,
+      "zpd_score": 1.4869593730512687,
+      "token_count": 511,
+      "difficulty_percentile": 77.46
+    },
+    {
+      "text_preview": "asures 1 x 0 Double Sided Cooling Towel. That experience a little more comfortable with this WinCraf",
+      "student_ppl": 77.0,
+      "teacher_ppl": 37.47645158861409,
+      "zpd_score": 2.054623549882555,
+      "token_count": 512,
+      "difficulty_percentile": 97.64
+    },
+    {
+      "text_preview": "!\nHave you finished recording and mastering your album and are ready for the next step? Disc2day can",
+      "student_ppl": 38.0,
+      "teacher_ppl": 18.706260991103836,
+      "zpd_score": 2.031405421856977,
+      "token_count": 511,
+      "difficulty_percentile": 79.88
+    },
+    {
+      "text_preview": " her career. She runs a theatre company to keep kids off the street and interested in the arts in Wi",
+      "student_ppl": 52.0,
+      "teacher_ppl": 33.558339387722604,
+      "zpd_score": 1.549540321385042,
+      "token_count": 512,
+      "difficulty_percentile": 92.88
+    },
+    {
+      "text_preview": " with intellectual integrity, based on reason, evidence, and a desire to do and be good--that does n",
+      "student_ppl": 35.75,
+      "teacher_ppl": 17.597688750086856,
+      "zpd_score": 2.0315167808513235,
+      "token_count": 511,
+      "difficulty_percentile": 76.18
+    },
+    {
+      "text_preview": "iting and practising.\nIf you\u2019re not sure exactly what or how you sound be practising, ask your thera",
+      "student_ppl": 43.75,
+      "teacher_ppl": 21.242199428897845,
+      "zpd_score": 2.0595795716183036,
+      "token_count": 512,
+      "difficulty_percentile": 87.1
+    },
+    {
+      "text_preview": "Thu, Apr 11 2019 :4 PM Sara Bartlett. Title ii action guide standards for accessible design checklis",
+      "student_ppl": 54.5,
+      "teacher_ppl": 29.195111024026886,
+      "zpd_score": 1.8667509075457116,
+      "token_count": 512,
+      "difficulty_percentile": 94.09
+    },
+    {
+      "text_preview": ". Arrive at S gates go up elevators/escalators, walk a relatively long distance on a walkway to get ",
+      "student_ppl": 53.0,
+      "teacher_ppl": 30.743577609063742,
+      "zpd_score": 1.7239372942846665,
+      "token_count": 512,
+      "difficulty_percentile": 93.1
+    },
+    {
+      "text_preview": " didn't check declaration of counter var in For-loop. (1.22 did this, but wrongly).\nNote that it als",
+      "student_ppl": 38.0,
+      "teacher_ppl": 21.184865373732045,
+      "zpd_score": 1.7937333718966044,
+      "token_count": 512,
+      "difficulty_percentile": 79.85
+    },
+    {
+      "text_preview": "s') for the Yellow Salon. I like the contrast of informal garden flowers and pot to the somewhat for",
+      "student_ppl": 46.0,
+      "teacher_ppl": 22.6416153545499,
+      "zpd_score": 2.031657162250845,
+      "token_count": 512,
+      "difficulty_percentile": 89.08
+    },
+    {
+      "text_preview": ". you can store your complete backup files. You can use Dropbox, Wasabi, Google Drive or Amazon S3. ",
+      "student_ppl": 37.5,
+      "teacher_ppl": 24.338054608729603,
+      "zpd_score": 1.5407969372601151,
+      "token_count": 512,
+      "difficulty_percentile": 79.18
+    },
+    {
+      "text_preview": " a wonderful and patient support. Everything is up and going, beautifully! Now for that latte, sit b",
+      "student_ppl": 36.25,
+      "teacher_ppl": 20.89310445594748,
+      "zpd_score": 1.7350221972245485,
+      "token_count": 512,
+      "difficulty_percentile": 76.37
+    },
+    {
+      "text_preview": "ensed Soups, nLA to print, or:.00 on any eight (8).Scaling your licensing business while maintaining",
+      "student_ppl": 41.75,
+      "teacher_ppl": 28.855080871672694,
+      "zpd_score": 1.4468855653420252,
+      "token_count": 511,
+      "difficulty_percentile": 85.1
+    },
+    {
+      "text_preview": " was $594 million.\nIf you haven\u2019t filed your Multnomah County income tax return you should strongly ",
+      "student_ppl": 43.25,
+      "teacher_ppl": 24.688115024285963,
+      "zpd_score": 1.7518550913042374,
+      "token_count": 511,
+      "difficulty_percentile": 86.95
+    },
+    {
+      "text_preview": " look forward to reading more of your work.\nIt appears we both have a hand dipped in the alt-right a",
+      "student_ppl": 35.75,
+      "teacher_ppl": 19.550912960744707,
+      "zpd_score": 1.8285591098369995,
+      "token_count": 510,
+      "difficulty_percentile": 76.31
+    },
+    {
+      "text_preview": " The New York Times, p. 17, June 25, 1920.\n^ HYDE NAMED SOLICITOR.; Washington Lawyer Succeeds F.K. ",
+      "student_ppl": 43.25,
+      "teacher_ppl": 20.225678318997865,
+      "zpd_score": 2.1383708035826676,
+      "token_count": 511,
+      "difficulty_percentile": 86.72
+    },
+    {
+      "text_preview": "Only flaw is that top bolts needed extra washers for secusing my effects. Grant, thank you for takin",
+      "student_ppl": 39.25,
+      "teacher_ppl": 23.944589441999803,
+      "zpd_score": 1.6392012105730187,
+      "token_count": 511,
+      "difficulty_percentile": 81.88
+    },
+    {
+      "text_preview": " to me, Louisiana swamp blues on the jukebox, a chill 64F outside, overcaast, and unfriendly outdoor",
+      "student_ppl": 72.5,
+      "teacher_ppl": 40.84107948765601,
+      "zpd_score": 1.7751734505918906,
+      "token_count": 512,
+      "difficulty_percentile": 97.35
+    },
+    {
+      "text_preview": " cool! I love public art, like this quality installation.Live music is an excellent way to add anoth",
+      "student_ppl": 40.0,
+      "teacher_ppl": 21.694500432035092,
+      "zpd_score": 1.8437852544847804,
+      "token_count": 511,
+      "difficulty_percentile": 83.18
+    },
+    {
+      "text_preview": " for the info.\nHelp me please, I got this problem as seen on the screenshot: Got everything on high ",
+      "student_ppl": 68.0,
+      "teacher_ppl": 40.72167094901912,
+      "zpd_score": 1.6698725375275383,
+      "token_count": 512,
+      "difficulty_percentile": 96.85
+    },
+    {
+      "text_preview": " online town references to find direct links to census extracts, indexes, or other name lists online",
+      "student_ppl": 37.0,
+      "teacher_ppl": 22.064912055178954,
+      "zpd_score": 1.6768704949954951,
+      "token_count": 511,
+      "difficulty_percentile": 78.37
+    },
+    {
+      "text_preview": " differ in terms of the number of ii Your body can successfully break down the specific sequence. Mo",
+      "student_ppl": 43.25,
+      "teacher_ppl": 17.133062798353258,
+      "zpd_score": 2.5243589257232495,
+      "token_count": 512,
+      "difficulty_percentile": 86.59
+    },
+    {
+      "text_preview": ".\nDo you think the whole statue thing has gone to his head?\nRoughly $85M in revenue in 2014.\nYes, re",
+      "student_ppl": 53.0,
+      "teacher_ppl": 34.92411605928,
+      "zpd_score": 1.5175759898987304,
+      "token_count": 512,
+      "difficulty_percentile": 93.35
+    },
+    {
+      "text_preview": " Center in Warren, Michigan.\nThe Design Dome at the General Motors Technical Center in Warren, Michi",
+      "student_ppl": 45.25,
+      "teacher_ppl": 29.552074262177744,
+      "zpd_score": 1.531195394223588,
+      "token_count": 511,
+      "difficulty_percentile": 88.32
+    },
+    {
+      "text_preview": " place in the freezer for about 5 minutes to gel.\nRemove, place in the blender again and pulse until",
+      "student_ppl": 60.0,
+      "teacher_ppl": 34.002269384169715,
+      "zpd_score": 1.7645881021086767,
+      "token_count": 512,
+      "difficulty_percentile": 95.34
+    },
+    {
+      "text_preview": " ongoing health issues and so should on as coal and gas. Global Reach Intertek is the the most rever",
+      "student_ppl": 197.0,
+      "teacher_ppl": 128.15854708328686,
+      "zpd_score": 1.5371585000255574,
+      "token_count": 512,
+      "difficulty_percentile": 99.56
+    },
+    {
+      "text_preview": " to her side after the accident and lived with her and Ed for 14 months to care for her. He wasn\u2019t p",
+      "student_ppl": 38.0,
+      "teacher_ppl": 22.55467225344317,
+      "zpd_score": 1.6847950425969487,
+      "token_count": 512,
+      "difficulty_percentile": 80.06
+    },
+    {
+      "text_preview": " is to stick to the enemy and not separate from him. When you approach the enemy, stick firmly with ",
+      "student_ppl": 40.0,
+      "teacher_ppl": 25.00079425793128,
+      "zpd_score": 1.5999491691073118,
+      "token_count": 512,
+      "difficulty_percentile": 82.76
+    },
+    {
+      "text_preview": " the most skills and practical experience around. When you need Soundproofing in Sharon Springs, con",
+      "student_ppl": 38.0,
+      "teacher_ppl": 23.238023050211375,
+      "zpd_score": 1.6352509814579235,
+      "token_count": 508,
+      "difficulty_percentile": 80.32
+    },
+    {
+      "text_preview": " the world then you will simply find many of them are from the United Arab Emirates.\nSeven at least ",
+      "student_ppl": 38.75,
+      "teacher_ppl": 27.59411800996936,
+      "zpd_score": 1.4042847822133753,
+      "token_count": 512,
+      "difficulty_percentile": 80.8
+    },
+    {
+      "text_preview": " require a place to become thrown away. You don't want old waste wood as well as cabinet areas to be",
+      "student_ppl": 45.25,
+      "teacher_ppl": 29.5090700586485,
+      "zpd_score": 1.533426838259112,
+      "token_count": 512,
+      "difficulty_percentile": 88.51
+    },
+    {
+      "text_preview": " runs numerous online home-searching-and-buying sites, reports that the average residence buyer spen",
+      "student_ppl": 35.75,
+      "teacher_ppl": 23.50404842932741,
+      "zpd_score": 1.5210145651075406,
+      "token_count": 512,
+      "difficulty_percentile": 75.81
+    },
+    {
+      "text_preview": " forever retaining the original defective fabric, but removing the deck would prove far too destruct",
+      "student_ppl": 38.75,
+      "teacher_ppl": 22.408868094103692,
+      "zpd_score": 1.7292261187523368,
+      "token_count": 512,
+      "difficulty_percentile": 80.88
+    },
+    {
+      "text_preview": " Order Tracking Area within 3 hours after placing your order and within 1 hour for orders with urgen",
+      "student_ppl": 131.0,
+      "teacher_ppl": 79.30812692566664,
+      "zpd_score": 1.651785322364034,
+      "token_count": 512,
+      "difficulty_percentile": 99.13
+    },
+    {
+      "text_preview": " the middle of the year. Actually we are not quite completed the pack up, but in the next two weeks ",
+      "student_ppl": 42.5,
+      "teacher_ppl": 25.22079873228836,
+      "zpd_score": 1.6851171309491613,
+      "token_count": 512,
+      "difficulty_percentile": 85.88
+    }
+  ]
+}

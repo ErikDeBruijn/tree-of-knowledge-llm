@@ -1,5 +1,43 @@
 # AGENTS.md — Working Norms for Tree of Knowledge Research
 
+## Research Team Structure
+
+The research loop runs as a team of specialized agents, coordinated by a team
+lead (Claude in the main conversation). The flow is strictly sequential — each
+phase depends on the output of the previous.
+
+### Flow: Orientation → Generator → Critic → Runner
+
+```
+Orientation ──→ Generator ──→ Critic ──→ Team Lead ──→ Runner
+(state)         (proposals)   (ranking)   (decision)   (execution)
+```
+
+**Do NOT run phases in parallel.** Generator needs orientation output.
+Critic needs generator proposals. Runner needs team lead approval.
+
+### Roles
+
+| Role | Responsibility | Owns |
+|------|---------------|------|
+| **Team Lead** | Coordinates cycle, paper regie, final decisions, CHARTER enforcement | Paper, viz, architecture decisions |
+| **Orientation** | Snapshot current state, update beliefs, flag changes | `viz/tree_state.js`, beliefs JSON |
+| **Generator** | Propose experiments based on orientation output | Proposals with pre-registered predictions |
+| **Critic** | Rank proposals by information/GPU-hour, challenge overclaims | Go/no-go recommendation |
+| **Runner** | Execute approved experiment on GPU, monitor, report | Logs, results JSON, Telegram alerts |
+
+### Paper regie (team lead only)
+
+The team lead owns the paper (`paper/mogae-paper-v3.tex`). Agents do not edit
+the paper directly. Orientation flags what needs updating ("placeholder X can
+be filled", "table Y has new numbers"). The team lead writes the text, builds
+with `tectonic`, reviews the PDF, and ensures CHARTER compliance.
+
+### Prompts
+
+Agent prompts live in `loop/prompts/`. Each prompt includes the CHARTER
+discipline relevant to that role.
+
 ## Baseline Before Experiment
 
 **ALWAYS measure and record the baseline before starting any experiment.**
@@ -23,6 +61,8 @@ This prevents post-hoc rationalization of results.
 
 ## Claim Discipline (from autoresearcher2 Charter)
 
+Full reference: `/Users/erik/github.com/erikdebruijn/autoresearcher2/CHARTER.md`
+
 Before making a claim:
 1. What is the evidence? (logs, artifacts — not reasoning alone)
 2. What kind of evidence? (pilot or clean evaluation?)
@@ -41,6 +81,23 @@ Do NOT convert:
 - excitement into evidence
 - novelty into progress
 - elegant stories into justified claims
+
+## Speculative Claims in the Paper
+
+The paper must clearly label what is observed vs. hypothesized. Biological
+analogies (mitosis, kiembladen, gene expression) are useful for intuition but
+are NOT evidence. When writing the paper:
+
+- **Observed**: label with data (CosSim, PPL, token routing percentages)
+- **Supported**: multiple independent measurements converge on same conclusion
+- **Plausible**: one measurement consistent with hypothesis, alternatives not ruled out
+- **Speculative**: no measurement yet, only theoretical motivation
+
+Example violation: claiming "level-1 Structure/Content split is the correct
+first split" when we only observe that it IS the first split. We have zero
+evidence about whether level-2 will produce domain modularity, whether
+hot-loading will work at level-2, or whether the tree metaphor accurately
+describes the learning dynamics.
 
 ## Anti-Slop
 
