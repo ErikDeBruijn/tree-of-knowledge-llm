@@ -1,0 +1,388 @@
+% MoGaE v2: Developmental Expert Specialization in Mixture-of-Experts Models
+% Fresh start based on insights from Arms A-E experiments
+
+\documentclass{article}
+\usepackage[preprint]{neurips_2024}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\newcommand{\placeholder}[1]{\textcolor{red}{\textbf{[#1]}}}
+
+\title{Developmental Expert Specialization in Mixture-of-Experts:\\ From Uniform Routing to Functional Differentiation}
+
+\author{
+  Erik de Bruijn \\
+  Independent Researcher \\
+  \texttt{erik@erikdebruijn.nl}
+}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+% ABSTRACT
+% ============================================================================
+\begin{abstract}
+Mixture-of-Experts (MoE) models route tokens to a subset of expert networks, yet the standard load-balancing loss enforces near-uniform activation across all experts (Gini coefficient $\approx$0.002), preventing functional specialization.
+We present a systematic investigation of five approaches to inducing expert specialization in OLMoE-1B-7B, revealing that the commonly used metrics---routing concentration (Gini) and cache miss rate---fail to capture what actually matters: whether experts contribute \emph{unique value} when activated.
+
+Our key findings: (1)~prescriptive cost losses shift routing concentration but the effect dilutes as experts are added (Gini 0.60$\to$0.46 across 32 introduction rounds); (2)~removing the cost signal entirely produces better perplexity but zero routing structure; (3)~biologically-inspired mechanisms (co-training, expert mitosis, sleep consolidation) slow Gini dilution by $\sim$0.03 but do not prevent it; (4)~routing concentration is irrelevant for NVMe-only deployment---baseline and cost-trained models converge to identical throughput.
+
+These results expose a deeper question: \textbf{how do we train MoE experts that are genuinely different from each other?}
+We propose developmental curriculum training---inspired by cognitive development from sensorimotor to formal operational stages---where data complexity increases progressively as experts are introduced.
+Early experts see simple, high-frequency patterns (``children's books''); later experts are born into an environment where easy patterns are already solved and must specialize on progressively harder material (``PhD dissertations'').
+This curriculum co-evolution, rather than routing penalties, may be the mechanism that produces experts worth loading from slower storage.
+\end{abstract}
+
+% ============================================================================
+% 1. INTRODUCTION
+% ============================================================================
+\section{Introduction}
+
+The promise of Mixture-of-Experts (MoE) is parameter efficiency: a 400B-parameter model activates only 17B parameters per token, achieving quality comparable to much larger dense models at a fraction of the compute. But this promise depends on experts doing \emph{different things}. If all 64 experts learn the same features---as the load-balancing loss encourages---then MoE is merely an expensive way to ensemble 64 copies of the same network.
+
+The standard load-balancing auxiliary loss~\cite{fedus2022switch} prevents expert collapse (where all tokens route to a single expert) but also prevents expert specialization. On OLMoE-1B-7B~\cite{muennighoff2024olmoe}, we measure a Gini coefficient of 0.002 across 64 experts: effectively perfect uniformity. This is adversarial to two goals simultaneously:
+
+\begin{enumerate}
+    \item \textbf{Tiered deployment.} Uniform routing means every expert is equally likely to be needed, making caching and prefetching ineffective. Post-hoc systems like KTransformers~\cite{ktransformers2025}, FlashMoE~\cite{flashmoe2026}, and SliceMoE~\cite{slicemoe2026} work around this, but our experiments show that for NVMe-only hierarchies, their throughput matches baseline regardless of routing concentration.
+    \item \textbf{Functional specialization.} Uniform routing means experts are interchangeable. The model cannot develop a ``code expert'' or a ``reasoning expert'' if load-balancing forces every expert to handle every domain equally.
+\end{enumerate}
+
+We initially framed this work as a tiered deployment optimization---training MoE models with cost-aware routing to make caching more effective. Five experimental arms and 30+ hours of GPU training later, our understanding has fundamentally shifted. The tiered deployment story is real but narrow: it matters only when the storage hierarchy includes genuinely slow tiers (HDD at 20ms latency). With NVMe-only deployment ($\sim$50$\mu$s), routing concentration is irrelevant for throughput.
+
+The deeper contribution is about \textbf{expert specialization itself}. Our experiments reveal that:
+
+\begin{itemize}
+    \item Resource constraints are \emph{necessary} for specialization to emerge (confirming Béna \& Goodman~\cite{bena2025modularity}), but static cost penalties produce diminishing returns as expert count grows.
+    \item The metrics we used---Gini coefficient, cache miss rate---measure routing \emph{concentration} but not routing \emph{quality}. An expert that receives 30\% of traffic but computes the same features as its neighbors adds no unique value.
+    \item The missing ingredient may not be a better loss function but a better \emph{curriculum}: developmental training where data complexity co-evolves with expert introduction.
+\end{itemize}
+
+% ============================================================================
+% 2. WHAT WE THOUGHT VS WHAT WE LEARNED
+% ============================================================================
+\section{Evolution of Understanding}
+
+This section is unusual for a research paper. We include it because the trajectory of our understanding---from an optimization story to a specialization story---is itself informative. Table~\ref{tab:evolution} summarizes how our beliefs changed across five experimental arms.
+
+\begin{table}[h]
+\centering
+\caption{How our understanding evolved across five experimental arms. Each row represents a belief we held, when it changed, and what replaced it.}
+\label{tab:evolution}
+\begin{tabular}{@{}p{4cm}p{3cm}p{5cm}@{}}
+\toprule
+Initial belief & Refuted by & Current understanding \\
+\midrule
+``Routing concentration (Gini) is the key metric'' & Arms C, E (Gini dilutes despite all interventions) & Inter-expert redundancy and per-load unique value matter more \\
+\addlinespace
+``Prescriptive cost loss solves the routing problem'' & Arm C (Gini 0.60$\to$0.49 across 25 rounds) & Cost loss creates initial structure but cannot maintain it against the router's tendency toward uniformity \\
+\addlinespace
+``Biological mechanisms can prevent Gini dilution'' & Arm E (Gini 0.60$\to$0.46 with all 6 mechanisms) & Co-training, sleep, mitosis slow dilution by $\sim$0.03 Gini but do not fundamentally change the dynamic \\
+\addlinespace
+``Data structure alone produces routing skew'' & Arm D (Gini 0.11, no skew without cost) & Confirms Béna \& Goodman: resource constraints are necessary for specialization \\
+\addlinespace
+``Tiered deployment is the main practical benefit'' & Inner loop world model: NVMe-only baseline = MoGaE throughput & Routing concentration only matters with HDD in the hierarchy. The real benefit is functional specialization \\
+\addlinespace
+``Per-access miss rate measures cache performance'' & Analysis: top-8 routing $\to$ $1{-}(0.9)^8{=}57\%$ per-token miss probability & Loads-per-token and per-load unique value are the correct metrics \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================================
+% 3. EXPERIMENTAL SETUP
+% ============================================================================
+\section{Experimental Setup}
+
+\subsection{Model and Data}
+All experiments use OLMoE-1B-7B-0924~\cite{muennighoff2024olmoe}: 64 experts, top-8 routing, 16 transformer layers, 6.9B total parameters (1.3B active). Training data is the English split of C4~\cite{raffel2020c4}.
+
+\subsection{Hardware}
+Two NVIDIA RTX PRO 6000 Blackwell GPUs (96GB VRAM each), Intel Core Ultra 7 265KF, 252GB DDR5, 2$\times$ Samsung 990 PRO 4TB NVMe in RAID0.
+
+\subsection{Metrics}
+
+We track three categories of metrics, in order of importance:
+
+\textbf{Quality:} Perplexity (PPL) on held-out C4 validation set. Baseline (B1) PPL = 14.0.
+
+\textbf{Routing structure:}
+\begin{itemize}
+    \item Gini coefficient of expert activation distribution (0 = uniform, 1 = single expert)
+    \item Per-access miss rate under LRU cache simulation ($n_{\text{slots}}$=20)
+    \item \placeholder{Loads-per-token: average SSD loads per token across all 16 layers (not yet measured)}
+    \item \placeholder{Inter-expert redundancy: pairwise cosine similarity of expert weight vectors (not yet measured)}
+\end{itemize}
+
+\textbf{Deployment:} Simulated throughput (tok/s) under 3-tier (VRAM/NVMe/HDD) and 2-tier (VRAM/NVMe) configurations.
+
+% ============================================================================
+% 4. FIVE EXPERIMENTAL ARMS
+% ============================================================================
+\section{Five Experimental Arms}
+
+\subsection{Overview}
+
+\begin{table}[h]
+\centering
+\caption{Summary of all experimental arms. Each arm tests a different hypothesis about what drives expert specialization. No single arm achieves both good quality and strong routing structure.}
+\label{tab:arms}
+\begin{tabular}{@{}llrrrrp{4cm}@{}}
+\toprule
+Arm & Approach & Experts & PPL & Gini & Miss & Key finding \\
+\midrule
+B1 & Pretrained baseline & 64 & 14.0 & 0.002 & 43.7\% & Uniform routing \\
+A & Prescriptive cost, fixed staging & 64 & 19.5 & 0.53 & 18.4\% & Cost loss works but PPL degrades \\
+B & Reuse-distance proxy & 64 & 11.0 & 0.05 & 40\% & \textit{Negative:} descriptive loss fails \\
+C & Adaptive + cost & 41 & 20.5 & 0.49 & 21.1\% & Gini dilutes as experts added \\
+D & Pure data-driven & 22 & 13.1 & 0.11 & 42\% & \textit{Negative:} no skew without cost \\
+E & Bio-integrated & 48 & 28.5 & 0.46 & 7.6\% & Bio helps miss rate, not Gini \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Arm A: Prescriptive Tier-Cost Loss}
+
+Replacing the load-balancing loss with per-expert cost penalties shifts the Gini coefficient from 0.002 to 0.60 within 200 training steps---a 300$\times$ increase. The mechanism is a learnable per-expert router bias (64 scalars per layer) combined with a cost function that penalizes routing to ``expensive'' experts. At 200M C4 tokens, PPL degrades from 14.0 to 19.5 (1.39$\times$ baseline), with the quality gap closing over training. At 50M tokens the ratio was 1.72$\times$, suggesting convergence toward $\sim$1.2$\times$ with sufficient data.
+
+\textbf{What we learned:} Prescriptive loss is sufficient to shift routing. The cost is PPL degradation that closes with more data. The routing shift is real and immediate.
+
+\subsection{Arm B: Reuse-Distance Proxy Loss (Negative Result)}
+
+We tested whether a descriptive loss---cosine similarity between consecutive routing distributions plus soft top-K overlap---could induce routing skew without explicit expert labels. After 7000 steps on 50M tokens, the Gini coefficient moved from 0.091 to 0.05: \emph{more uniform} than baseline. PPL improved to 11.0 (better than baseline).
+
+\textbf{What we learned:} Descriptive proxy losses that reward temporal consistency do not produce routing concentration. The task loss dominates the proxy signal. An explicit prescriptive signal is necessary. This confirms Béna \& Goodman~\cite{bena2025modularity}: structural modularity alone (the MoE architecture) does not guarantee functional specialization without resource constraints.
+
+\subsection{Arm C: PPL-Driven Adaptive Expert Introduction}
+
+Inspired by Piaget's accommodation mechanism~\cite{piaget1952}, we introduce experts one at a time when validation PPL converges, with prescriptive tier-cost loss still active. Starting from 16 generalists, 25 specialist rounds produced 41 experts in 480 minutes.
+
+The key finding is a \textbf{quality--cacheability Pareto frontier}: early in training (21 experts), Gini reaches 0.66 with miss rate 7.4\% but PPL is 26.2. By 41 experts, PPL improves to 20.5 but Gini has declined to 0.49 and miss rate increased to 21.1\%. The prescriptive loss cannot maintain routing concentration against the router's natural tendency to distribute traffic.
+
+The hard token fraction remains constant at $\sim$25.8\% regardless of expert count, suggesting new experts do not reduce the fraction of difficult tokens---they redistribute the difficulty rather than resolving it.
+
+\subsection{Arm D: Pure Data-Driven (Negative Result)}
+
+We removed the prescriptive cost signal entirely, relying only on task loss and freeze-on-convergence to produce routing structure. After 6 rounds (22 experts), PPL was 13.1 (0.94$\times$ baseline---\emph{better} than pretrained) but Gini remained flat at 0.11. No routing skew emerged whatsoever.
+
+\textbf{What we learned:} Language's Zipf distribution is \emph{not} sufficient to produce heavy-tailed expert routing. The router distributes traffic uniformly because there is no gradient signal favoring concentration. Resource constraints (Arm A/C/E) or architectural constraints are required.
+
+\subsection{Arm E: Biologically-Integrated Training}
+
+We combined six biologically-inspired mechanisms: (1) co-training at 0.1$\times$ LR for previously frozen experts, (2) expert mitosis (copy overloaded expert + noise), (3) neuromodulated per-expert LR, (4) sleep/consolidation phases (200 steps router-only with KL penalty), (5) dynamic tier reassignment, (6) active data selection (50\% hard batches). Training budget: 1B tokens, 48 experts introduced across 32 rounds.
+
+Final metrics: PPL 28.5 (2.04$\times$), Gini 0.46, miss rate 7.6\%. The biological mechanisms improved miss rate significantly (7.6\% vs Arm C's 21.1\%) and slowed Gini decline ($\sim$0.003/round vs $\sim$0.01/round in Arm C), but did not prevent the fundamental dilution trend.
+
+\textbf{What we learned:} Co-training and sleep consolidation help preserve routing structure across expert introductions, but the effect is modest ($\Delta$Gini $\approx$ 0.03). The miss rate improvement is real but driven by the same mechanism (dynamic tier reassignment keeps hot experts cached). The underlying problem---experts becoming redundant---remains unsolved.
+
+% ============================================================================
+% 5. THE WRONG METRIC
+% ============================================================================
+\section{We Were Measuring the Wrong Thing}
+
+\subsection{Why Gini Misleads}
+
+The Gini coefficient measures how \emph{concentrated} routing is, not how \emph{useful} that concentration is. A model where 16 experts each learn identical features but receive 80\% of traffic has high Gini and zero functional specialization. Conversely, a model where 48 experts each learn genuinely different features but receive relatively uniform traffic has low Gini but high functional value.
+
+\subsection{Why Per-Access Miss Rate Misleads}
+
+With top-8 routing, a 10\% per-access miss rate translates to:
+\begin{equation}
+P(\text{any miss in one layer}) = 1 - (1 - 0.10)^8 = 57\%
+\end{equation}
+Across 16 layers: $1 - (0.43)^{16} \approx 100\%$. Virtually every token triggers at least one cache miss regardless of routing concentration. The relevant metric is not \emph{whether} a miss occurs but \emph{how many} loads per token and whether each load provides unique information.
+
+\subsection{The Metric That Matters: Unique Value Per Load}
+
+We propose that the correct objective for MoE training is not routing concentration but \textbf{unique value per expert activation}. This can be decomposed as:
+\begin{enumerate}
+    \item \textbf{Inter-expert redundancy:} pairwise cosine similarity of expert weight matrices. Lower = more differentiated experts = each load provides unique computation.
+    \item \textbf{Loads-per-token:} average number of non-cached expert activations per token. With a resident ``fluid core'' of generalists, this measures how often specialists are needed.
+    \item \textbf{Marginal PPL contribution:} the PPL improvement attributable to each expert. Experts that contribute little marginal improvement are candidates for pruning.
+\end{enumerate}
+
+\placeholder{These metrics have not yet been measured on our checkpoints. Measuring them is the critical next step.}
+
+% ============================================================================
+% 6. THE DEPLOYMENT REALITY
+% ============================================================================
+\section{The Deployment Reality}
+
+Our inner training loop independently discovered---through simulated inference benchmarks---that routing concentration is largely irrelevant for NVMe-only deployment:
+
+\begin{table}[h]
+\centering
+\caption{Simulated inference throughput. With HDD removed from the hierarchy, MoGaE and baseline converge to identical throughput. The 30\% MoGaE advantage comes entirely from avoiding 20ms HDD loads.}
+\label{tab:deployment}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Configuration & MoGaE (tok/s) & Baseline (tok/s) & Gap \\
+\midrule
+3-tier (VRAM + NVMe + HDD) & 56.3 & 43.3 & MoGaE +30\% \\
+2-tier (VRAM + NVMe only) & 105.8 & 105.3 & MoGaE +0.5\% \\
+All VRAM (B5 ceiling) & 134.0 & 134.0 & Identical \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Post-hoc systems (KTransformers, FlashMoE, SliceMoE) already achieve near-optimal placement for standard MoE models on NVMe. Training-time routing optimization adds value only when:
+\begin{enumerate}
+    \item The storage hierarchy includes genuinely slow tiers (HDD, network storage)
+    \item The goal is functional specialization beyond deployment speed
+    \item Edge devices with severely limited VRAM need to select a subset of experts
+\end{enumerate}
+
+This motivates reframing MoGaE from a deployment optimization to a training methodology for expert specialization.
+
+% ============================================================================
+% 7. DEVELOPMENTAL CURRICULUM: THE MISSING MECHANISM
+% ============================================================================
+\section{Developmental Curriculum: The Missing Mechanism}
+
+\subsection{The Biological Analogy, Properly Applied}
+
+Our earlier work drew on Piaget's accommodation mechanism (new schemas created in response to prediction failure) and synaptic pruning (unused connections eliminated). These biological mechanisms were implemented in Arms C and E. They produced modest improvements but did not solve the fundamental problem: \textbf{experts trained on the same data distribution learn redundant features}.
+
+The deeper biological insight we missed is about the \emph{environment}, not the organism. A developing brain does not receive PhD-level stimuli from birth. Cognitive development unfolds in stages because the environment is structured:
+
+\begin{enumerate}
+    \item \textbf{Sensorimotor} (0--2 years): blurry vision, mother's face, basic sounds. High-frequency, low-complexity patterns.
+    \item \textbf{Preoperational} (2--7): language acquisition, symbolic play. Medium-frequency patterns, increasing complexity.
+    \item \textbf{Concrete operational} (7--11): logical reasoning about concrete objects. Domain-specific knowledge.
+    \item \textbf{Formal operational} (11+): abstract reasoning, scientific thinking. Rare, high-complexity patterns.
+\end{enumerate}
+
+In each stage, the child's neural circuits specialize for the current level of complexity. When the next stage arrives, \emph{existing circuits are already occupied}, so new capacity must develop for the new challenges. This is the mechanism that produces non-redundant specialization: \textbf{the curriculum forces each stage's learning to be different from the previous stages'}.
+
+\subsection{Developmental Curriculum for MoE}
+
+We propose training MoE experts with a curriculum that increases in complexity as experts are introduced:
+
+\begin{enumerate}
+    \item \textbf{Score all training data by difficulty.} One forward pass through the pretrained baseline model assigns a PPL score to each chunk. Chunks are sorted into difficulty buckets.
+    \item \textbf{Train initial generalists on easy data.} The first 16 experts see only high-frequency, predictable text (the ``children's books'' bucket). They learn common syntax, frequent collocations, basic patterns.
+    \item \textbf{Progressively introduce harder data with each new expert.} When generalists converge (PPL stabilizes on their difficulty level), the data window shifts rightward. New experts are introduced into an environment where easy patterns are already solved.
+    \item \textbf{Domain-intensive phases.} Analogous to a student entering a degree program, a batch of experts can be unfrozen simultaneously and trained intensively on domain-specific data (code, mathematics, scientific text). This corresponds to Piaget's concrete operational stage.
+\end{enumerate}
+
+\textbf{Why this reduces inter-expert redundancy:} If expert 17 is trained exclusively on data that experts 1--16 already handle well (PPL $<$ threshold), it would learn nothing new. The curriculum ensures expert 17 sees data that is \emph{hard for the existing experts}, forcing it to learn different features.
+
+\textbf{Why this produces experts worth loading:} Each expert represents a distinct difficulty level or domain. Loading a specialist from NVMe is justified because it contributes computation that no resident expert can provide. The ``SSD Offloading Considered Harmful'' concern~\cite{ssd_harmful2025}---that SSD loads waste energy on redundant computation---is addressed at the source: experts are trained to be non-redundant.
+
+\subsection{Connection to ``Unfreeze a Cohort'' Pattern}
+
+In human education, a student doesn't learn one fact at a time---they immerse in a domain (a semester of organic chemistry, a year of machine learning). The knowledge is interrelated and must be learned together.
+
+This suggests that expert introduction should sometimes be \emph{batch-wise}: unfreeze 4--8 experts simultaneously when the curriculum shifts to a new domain, let them co-specialize through competition for sub-domains within the larger domain. This avoids the sequential one-at-a-time introduction that our critic identified as a design flaw in Arms C and E.
+
+% ============================================================================
+% 8. WHAT REMAINS TO BE MEASURED
+% ============================================================================
+\section{What Remains to Be Measured}
+
+Before the developmental curriculum can be validated, we need baseline measurements on our existing checkpoints that our current metrics missed:
+
+\begin{enumerate}
+    \item \textbf{Inter-expert redundancy.} Pairwise cosine similarity of expert weight matrices across Arms A, C, D, E. If Arm A (prescriptive) has lower redundancy than Arm D (uniform), the cost loss is producing real differentiation, not just routing concentration.
+    \item \textbf{Loads-per-token.} Average non-cached expert loads per token. With a 20-slot LRU cache and top-8 routing across 16 layers, what is the actual load count? Is it 2 (prefetchable) or 40 (hopeless)?
+    \item \textbf{Per-expert marginal PPL contribution.} Ablate each expert: how much does PPL increase when a single expert is removed? Experts with negligible marginal contribution are redundant.
+    \item \textbf{Domain-conditional routing.} Do experts trained with cost loss route differently for code vs prose vs mathematics? The inner loop's world model suggests yes (expert 25 specializes on Python/Rust, expert 26 on prose/Dutch), but this needs systematic measurement.
+\end{enumerate}
+
+% ============================================================================
+% 9. RELATED WORK
+% ============================================================================
+\section{Related Work}
+
+\textbf{Expert offloading systems.} KTransformers~\cite{ktransformers2025} implements 3-tier caching with AMX-optimized CPU kernels. FlashMoE~\cite{flashmoe2026} uses ML-based cache replacement (2.6$\times$ over LRU). SliceMoE~\cite{slicemoe2026} applies bit-sliced caching with dynamic precision. DALI~\cite{dali2026} targets local PCs with workload-aware offloading. All operate post-hoc on standard models; none modify training.
+
+\textbf{Routing consistency analysis.} The ``Not All Models Suit Expert Offloading'' study~\cite{notallmodels2025} benchmarks 20 MoE models on routing consistency, finding Qwen3 (SRP 54) and DeepSeek-V3 in the best group. They analyze but do not train.
+
+\textbf{Modularity and specialization.} Béna \& Goodman~\cite{bena2025modularity} prove that structural modularity requires resource constraints for functional specialization---directly confirmed by our Arm D negative result. MiCRo~\cite{micro2025} partitions an LM into cognitive modules with staged curriculum training, closest to our developmental curriculum proposal.
+
+\textbf{Curriculum learning.} Bengio et al.~\cite{bengio2009curriculum} introduced curriculum learning for neural networks. Recent work applies it to LLM pretraining~\cite{curriculum_llm2025} but not to MoE expert introduction.
+
+\textbf{Loss of plasticity.} Lyle et al.~\cite{plasticity2024nature} show deep networks gradually lose plasticity in continual learning. Our freeze-and-unfreeze mechanism is a coarse-grained version of the continual backpropagation they propose.
+
+% ============================================================================
+% 10. CONCLUSION
+% ============================================================================
+\section{Conclusion}
+
+Five experimental arms and 30+ hours of training taught us that we were solving the wrong problem. The question is not ``how do we concentrate routing for caching'' but ``how do we train experts that are genuinely different from each other.''
+
+Our prescriptive cost loss produces strong initial routing shifts (Gini 0.002$\to$0.60) that reliably dilute as experts are added. Six biologically-inspired mechanisms slow the dilution but do not prevent it. Without any cost signal, no routing structure emerges at all. The deployment benefit is narrow: it matters only with HDD-tier storage.
+
+The path forward is developmental curriculum training: co-evolving data complexity with expert introduction so that each new expert is forced to learn something the existing experts cannot do. This is not merely an optimization of our previous approach---it is a different theory of how specialization should arise. Instead of penalizing experts for being expensive (prescriptive loss) or hoping they specialize on their own (data-driven), we structure the environment so that specialization is the only viable strategy.
+
+The analogy to cognitive development is structural, not metaphorical: both systems must allocate finite capacity across a heavy-tailed distribution of demands, and in both cases, the progressive revelation of complexity---not a top-down cost function---is what drives functional differentiation.
+
+% ============================================================================
+% REFERENCES
+% ============================================================================
+\bibliographystyle{plainnat}
+
+\begin{thebibliography}{99}
+
+\bibitem{fedus2022switch}
+W. Fedus, B. Zoph, N. Shazeer. Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity. \textit{JMLR}, 2022.
+
+\bibitem{muennighoff2024olmoe}
+N. Muennighoff et al. OLMoE: Open Mixture-of-Experts Language Models. \textit{arXiv:2409.02060}, 2024.
+
+\bibitem{piaget1952}
+J. Piaget. \textit{The Origins of Intelligence in Children}. International Universities Press, 1952.
+
+\bibitem{bena2025modularity}
+G. Béna, D. Goodman. The Dynamics of Specialization in Neural Modules Under Resource Constraints. \textit{Nature Communications}, 2025.
+
+\bibitem{ktransformers2025}
+KVCache.AI. KTransformers: Flexible Framework for Experiencing Cutting-edge LLM Inference Optimizations. \textit{SOSP}, 2025.
+
+\bibitem{flashmoe2026}
+FlashMoE: ML-Based Cache Replacement for Efficient MoE Inference. \textit{arXiv:2601.17063}, 2026.
+
+\bibitem{slicemoe2026}
+SliceMoE: Bit-Sliced Expert Caching for MoE Inference. \textit{arXiv:2512.12990}, 2026.
+
+\bibitem{dali2026}
+DALI: Workload-Aware Local MoE Inference. \textit{arXiv:2602.03495}, 2026.
+
+\bibitem{notallmodels2025}
+Not All Models Suit Expert Offloading: A Routing Consistency Perspective. \textit{arXiv:2505.16056}, 2025.
+
+\bibitem{micro2025}
+MiCRo: Mixture of Cognitive Reasoners. EPFL, 2025.
+
+\bibitem{bengio2009curriculum}
+Y. Bengio et al. Curriculum Learning. \textit{ICML}, 2009.
+
+\bibitem{curriculum_llm2025}
+Curriculum Learning for Large Language Model Pretraining. 2025.
+
+\bibitem{plasticity2024nature}
+C. Lyle et al. Loss of Plasticity in Deep Continual Learning. \textit{Nature}, 2024.
+
+\bibitem{ssd_harmful2025}
+SSD Offloading Considered Harmful: Energy Analysis of MoE Inference. \textit{arXiv:2508.06978}, 2025.
+
+\bibitem{raffel2020c4}
+C. Raffel et al. Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer. \textit{JMLR}, 2020.
+
+\bibitem{shannon1948}
+C. Shannon. A Mathematical Theory of Communication. \textit{Bell System Technical Journal}, 1948.
+
+\bibitem{zipf_training2025}
+Zipf's Law in Training Data and Its Impact on Language Model Scaling. 2025.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,260 @@
+% Tree of Knowledge: Modular Expert Specialization via Embedding Space Partitioning
+% Paper v3 — clean start focused on validated concepts only
+
+\documentclass{article}
+\usepackage[preprint]{neurips_2024}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\newcommand{\placeholder}[1]{\textcolor{red}{\textbf{[#1]}}}
+\newcommand{\tok}{Tree of Knowledge}
+
+\title{Tree of Knowledge: Modular Expert Specialization \\ via Embedding Space Partitioning}
+
+\author{
+  Erik de Bruijn \\
+  Independent Researcher \\
+  \texttt{erik@erikdebruijn.nl}
+}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+Mixture-of-Experts (MoE) models route tokens to a subset of experts, but the standard load-balancing loss produces near-identical experts (Gini $\approx$0.002) that are functionally interchangeable. We propose the \tok{} framework, which partitions a model's embedding space using a KD-tree to define disjoint expert domains. Each expert owns a region of the conceptual space, guaranteeing non-redundancy by construction. A developmental curriculum---guided by a dense teacher model operating in the zone of proximal development---progressively introduces harder material as experts are added, mirroring cognitive development from simple to complex. The resulting experts are modular: individually trainable on commodity GPUs without fast interconnect, hot-swappable at inference time, and naturally tiered by tree depth (shallow generalists in VRAM, deep specialists on NVMe). We ground this proposal in five preliminary experimental arms that establish what does and does not work for inducing expert specialization, and in analysis of prior art including Hash Layers, EMoE, and IDA-MoE. The key open question---whether KD-tree partitioning combined with developmental curriculum produces experts that are both non-redundant and high-quality---is the subject of ongoing experiments.
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+
+The promise of Mixture-of-Experts is that different experts learn different things. In practice, this promise is unfulfilled: the load-balancing auxiliary loss enforces near-uniform expert utilization, making all experts approximately interchangeable \cite{fedus2022switch}. On OLMoE-1B-7B, we measure a Gini coefficient of 0.002---effectively perfect uniformity across 64 experts.
+
+This has two consequences. First, \textbf{experts are redundant}: pairwise cosine similarity of expert weights is high, meaning each expert computes approximately the same function. Loading a specialist from slower storage provides no unique computation that resident experts cannot approximate. Second, \textbf{the model cannot be modular}: you cannot add, remove, or update individual experts without affecting the whole system, because every expert handles every domain equally.
+
+Post-hoc solutions exist. KTransformers \cite{ktransformers2025}, FlashMoE \cite{flashmoe2026}, and SliceMoE \cite{slicemoe2026} optimize expert placement after training. Our own experiments (Section~\ref{sec:lessons}) confirm that for NVMe-only hierarchies, these post-hoc approaches achieve identical throughput to models trained with routing awareness---the standard uniform-routing model is already ``good enough'' for caching because NVMe latency ($\sim$50$\mu$s) is small relative to compute time.
+
+The problem we address is therefore not deployment optimization but \textbf{expert specialization itself}: how to train MoE models where experts are genuinely, measurably different from each other.
+
+\subsection{Contributions}
+
+\begin{enumerate}
+    \item \textbf{Embedding space partitioning for expert assignment.} We propose using a KD-tree over hidden state representations to define disjoint expert domains. Unlike learned routing (which converges to uniformity) or flat clustering (which groups similar tokens counterproductively \cite{roller2021hash}), hierarchical spatial partitioning preserves diversity within each domain while ensuring experts cover non-overlapping regions.
+
+    \item \textbf{Developmental curriculum for progressive specialization.} Inspired by Piagetian cognitive development \cite{piaget1952}, we structure training data from simple to complex. Early generalist experts learn high-frequency patterns; later specialists are introduced into an environment where easy patterns are already solved.
+
+    \item \textbf{Dense teacher for curriculum navigation.} A pre-trained dense model (not MoE) serves as teacher, selecting training batches in the student's zone of proximal development \cite{vygotsky1978}. We argue this requires a dense teacher because MoE routing artifacts would contaminate the teaching signal. We use Qwen~3.5 30B \cite{qwen2025} (dense, 30B parameters) running on a separate device.
+
+    \item \textbf{Architectural properties that follow from modularity.} Disjoint expert domains enable: (a)~embarrassingly parallel training on commodity GPUs without fast interconnect, (b)~hot-loadable experts that can be added, removed, or updated without retraining the core, and (c)~natural tier assignment where tree depth corresponds to storage tier.
+\end{enumerate}
+
+% ============================================================================
+\section{Lessons from Five Experimental Arms}
+\label{sec:lessons}
+
+Before proposing the \tok{} framework, we conducted five experimental arms on OLMoE-1B-7B to understand what drives---and what fails to drive---expert specialization. These experiments informed every design decision in \tok{}.
+
+\begin{table}[h]
+\centering
+\caption{Five preliminary arms. Each tested a different hypothesis about expert specialization. The key lesson: routing concentration (Gini) is the wrong metric; inter-expert redundancy matters.}
+\label{tab:lessons}
+\begin{tabular}{@{}llrrrl@{}}
+\toprule
+Arm & Approach & PPL & Gini & Miss & Lesson \\
+\midrule
+A & Prescriptive cost loss & 19.5 & 0.53 & 18\% & Cost loss works but dilutes over time \\
+B & Reuse-distance proxy & 11.0 & 0.05 & 40\% & Descriptive loss fails entirely \\
+C & Adaptive + cost & 20.5 & 0.49 & 21\% & Piaget mechanism works, Gini still dilutes \\
+D & Pure data-driven & 13.1 & 0.11 & 42\% & No skew without resource constraint \\
+E & Bio-integrated (6 mechanisms) & 28.5 & 0.46 & 8\% & Modest improvement, not fundamental \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key findings:}
+
+\begin{enumerate}
+    \item \textbf{Resource constraints are necessary for specialization} (Arms B, D). Without explicit cost signals, the router distributes traffic uniformly regardless of data structure. This confirms B\'{e}na \& Goodman \cite{bena2025modularity}: structural modularity alone does not produce functional specialization.
+
+    \item \textbf{Routing concentration is the wrong metric} (Arms C, E). The Gini coefficient measures how \emph{concentrated} routing is, not how \emph{useful} that concentration is. With top-8 routing, even a 10\% per-access miss rate produces 57\% per-token miss probability per layer ($1 - 0.9^8$). What matters is not concentration but \emph{unique value per expert activation}.
+
+    \item \textbf{NVMe-only deployment makes routing concentration irrelevant.} Our inner training loop independently discovered that without HDD in the storage hierarchy, models with concentrated routing (MoGaE, 56.3~tok/s) and uniform routing (baseline, 43.3~tok/s with HDD) converge to identical throughput ($\sim$105~tok/s) when only NVMe is used.
+
+    \item \textbf{Gini dilutes as experts are added despite all interventions.} Across Arms C (0.60$\to$0.49) and E (0.60$\to$0.46), the Gini coefficient declined monotonically as specialists were introduced. Six biological mechanisms (co-training, expert mitosis, sleep consolidation, neuromodulated LR, dynamic tiers, active data selection) slowed the decline by $\sim$0.03 but did not prevent it.
+
+    \item \textbf{Experts specialize by domain when given the opportunity.} The inner loop's expert specialization analysis found that cost-trained experts develop domain preferences: expert~25 specializes on Python/Rust code, expert~26 on English prose/Dutch, expert~30 on structural punctuation. This domain specialization exists but is fragile and undirected.
+\end{enumerate}
+
+These findings motivate every component of \tok{}: the KD-tree ensures experts are non-redundant \emph{by construction} (addressing finding~2), the developmental curriculum directs specialization (addressing finding~5), and the dense teacher provides a quality reference (addressing findings~1 and~4).
+
+% ============================================================================
+\section{Method: Tree of Knowledge}
+
+\subsection{Embedding Space Partitioning via KD-Tree}
+
+Given a pre-trained model with hidden dimension $d$ and $n$ desired experts, we construct a spatial partition of the embedding space:
+
+\begin{enumerate}
+    \item \textbf{Collect hidden states.} Run the pre-trained model on a representative data sample, collecting hidden states $\mathbf{h} \in \mathbb{R}^d$ at each MoE layer.
+    \item \textbf{Dimensionality reduction.} Apply PCA to reduce to $k = \lceil \log_2 n \rceil$ principal components, capturing the major axes of variation.
+    \item \textbf{Build adaptive KD-tree.} Recursively split the data along the dimension with highest variance at the median, producing $n$ leaf nodes. Each leaf defines a region of the embedding space.
+    \item \textbf{Assign experts to leaves.} Expert $i$ is responsible for tokens whose hidden states fall in leaf $i$'s region.
+\end{enumerate}
+
+\textbf{Why KD-tree, not k-means?} Hash Layers \cite{roller2021hash} found that k-means clustering of similar tokens \emph{hurts} performance (PPL~23.90 vs 23.22 for random hashing). The authors argue that experts need to distinguish \emph{between} similar tokens, not just handle tokens that are \emph{already similar}. A KD-tree addresses this by splitting on variance axes rather than grouping by proximity: each leaf contains a diverse cross-section of the embedding space, not a homogeneous cluster. More recent work (MoCE \cite{moce2025}, IDA-MoE \cite{idamoe2025}, EMoE \cite{emoe2026}) shows that more sophisticated spatial methods can overcome the anti-clustering effect, particularly at larger scales where the Hash Layers result (tested at $<$5B parameters) may not hold.
+
+\textbf{KD-tree as warm start, not hard constraint.} The tree provides an initial expert-to-region mapping. After expert training, the router is fine-tuned with learned weights initialized from the tree structure. This allows soft boundaries: a token near a partition boundary can be routed to multiple experts (leaf + parent + sibling), while the tree structure ensures the initial training produces non-redundant experts.
+
+\subsection{Tree Depth as Storage Tier}
+
+The KD-tree structure provides a natural mapping to hardware memory hierarchies:
+
+\begin{itemize}
+    \item \textbf{Shallow nodes} (depth 1--2): generalist experts covering broad, high-frequency regions. Always resident in VRAM.
+    \item \textbf{Medium nodes} (depth 3--4): domain-level specialists. Cached in NVMe, loaded on demand ($\sim$50$\mu$s).
+    \item \textbf{Deep nodes} (depth 5+): narrow specialists for rare patterns. Stored on SSD or network storage.
+\end{itemize}
+
+This mapping follows from the population density of the embedding space: shallow partitions split densely-populated regions (common patterns, high frequency), while deep partitions subdivide sparse regions (rare patterns, low frequency). The Zipf distribution of language ensures that most tokens fall in shallow partitions, requiring specialist loading only for rare tokens.
+
+\subsection{Developmental Curriculum}
+\label{sec:curriculum}
+
+Training data is ordered by difficulty, measured by perplexity under the teacher model. The curriculum co-evolves with expert introduction:
+
+\begin{enumerate}
+    \item \textbf{Stage 1 (Sensorimotor):} Train initial generalist experts on the easiest data---high-frequency patterns, common syntax, predictable continuations.
+    \item \textbf{Stage 2 (Concrete):} As generalists converge, shift the data window toward medium-difficulty material. Introduce new experts for domains that generalists handle poorly.
+    \item \textbf{Stage 3 (Formal):} For each domain (code, mathematics, scientific text), intensively train a cohort of experts. This mirrors a student entering a degree program---multiple related concepts learned together.
+\end{enumerate}
+
+The curriculum guarantees that each new expert sees data that existing experts already handle well (because easy data was filtered), forcing the new expert to learn something genuinely different. This is the mechanism that reduces inter-expert redundancy.
+
+\subsection{Dense Teacher for Curriculum Navigation}
+
+\textbf{Why a dense teacher, not an MoE teacher?} The teacher's role is to score data difficulty and select batches in the student's zone of proximal development. An MoE teacher would introduce routing artifacts into this scoring: tokens that happen to be routed to a weak expert appear ``harder'' than they actually are. A dense model provides unbiased difficulty estimates because every token uses the same parameters.
+
+\textbf{Why a strong external teacher?} Our preliminary experiments (Section~\ref{sec:lessons}) showed that self-distillation (using the student as its own teacher) produces unreliable difficulty estimates---the model's blind spots cannot detect themselves. A strong external teacher (we use Qwen~3.5 30B dense \cite{qwen2025}, running on a separate device) provides a quality reference that the student genuinely cannot match, making the zone of proximal development meaningful.
+
+\textbf{The teacher is not a bottleneck.} The teacher's task is batch scoring, not generation. Scoring WikiText-2 at batch granularity requires $\sim$100 forward passes, which Qwen~30B completes in minutes. The training loop is: teacher scores $\to$ batches ranked $\to$ student trains on selected batches $\to$ repeat. The expensive step is student expert training (GPU-bound), not teacher scoring.
+
+\subsection{Modular Expert Training}
+
+Because each expert's training data is determined by its KD-tree region, and the fluid core (attention layers) is frozen during expert training, experts train independently:
+
+\begin{enumerate}
+    \item \textbf{Phase 1: Core training.} Train the fluid core (attention layers + initial generalist experts) on the full dataset. This requires standard multi-GPU training.
+    \item \textbf{Phase 2: Expert training (parallel).} Freeze the core. Distribute expert training across $n$ GPUs. Each GPU receives: the frozen core ($\sim$2.6~GB for OLMoE), one expert's weights ($\sim$100~MB), and that expert's data partition. No inter-GPU communication except periodic router synchronization ($\sim$32~MB per sync).
+    \item \textbf{Phase 3: Router fine-tuning.} Unfreeze only the router ($\sim$2M parameters). Fine-tune on the full dataset to learn optimal expert combinations. This is cheap: minutes on a single GPU.
+\end{enumerate}
+
+\textbf{Training economics.} Phase~2 maps directly to marketplace GPU rental (vast.ai, RunPod) at \$0.40--2.00/GPU-hr. A 64-expert model requires 64 independent $\sim$1-hour jobs, costing $\sim$\$26--128 at marketplace rates. No NVLink, no InfiniBand, no datacenter---commodity GPUs in different locations suffice.
+
+\subsection{Hot-Loadable Experts}
+
+Because experts occupy disjoint embedding regions, they can be independently managed after training:
+
+\begin{itemize}
+    \item \textbf{Install:} Train a new expert for a new domain (e.g., medical terminology). Identify the relevant embedding region, train on domain data, plug into the tree.
+    \item \textbf{Update:} Retrain a single expert on updated data (new Python version, new API docs) without touching other experts.
+    \item \textbf{Remove:} Prune a leaf node. Tokens that would have been routed there fall back to the parent node's generalist expert.
+    \item \textbf{Share:} Experts are independently distributable. A community can contribute domain experts to a shared registry.
+\end{itemize}
+
+% ============================================================================
+\section{The Frozen Core Bottleneck and Its Resolution}
+
+If the core is frozen during expert training, experts can only learn transformations that the core's representations support. If the core represents a domain poorly (e.g., mathematical notation), no expert can compensate.
+
+The teacher detects this: high learntropy (prediction difficulty) that persists despite expert training signals inadequate core representations. The response is a \textbf{critical period}---temporarily unfreezing the core for targeted fine-tuning on the problematic domain, analogous to biological critical periods where fundamental neural circuits restructure.
+
+The three-phase cycle becomes:
+\begin{enumerate}
+    \item \textbf{Expert phase:} Core frozen, experts train independently (parallelizable).
+    \item \textbf{Critical period:} Experts frozen, core fine-tunes on domains where experts cannot converge (teacher-identified). This is expensive but rare.
+    \item \textbf{Integration:} Brief joint training to align router with updated core and experts.
+\end{enumerate}
+
+% ============================================================================
+\section{Prior Art and Positioning}
+
+\textbf{Deterministic routing.} Hash Layers \cite{roller2021hash} replace learned routers with fixed hash functions, showing competitive performance with random assignment. Our KD-tree routing is a structured version of this idea: deterministic, geometry-based, but informed by the embedding space structure rather than random.
+
+\textbf{Embedding-space routing.} EMoE \cite{emoe2026} projects tokens onto learned eigenbases for routing; IDA-MoE \cite{idamoe2025} uses Gaussian Mixture Models over latent space. Both demonstrate that geometric approaches to routing are viable. \tok{} differs in using hierarchical rather than flat partitioning, enabling the tree-depth-to-tier mapping.
+
+\textbf{Clustered expert assignment.} MoCE \cite{moce2025} clusters sequences by embedding similarity for coarse-grained routing. Unlike \tok{}, MoCE operates at sequence level and uses external encoders.
+
+\textbf{Semantic priors for routing.} ``Guiding the Experts'' \cite{guidingexperts2025} uses auxiliary losses to align routing with semantic features. \tok{} goes further: the KD-tree defines expert domains a priori, rather than using an auxiliary loss to nudge them post-hoc.
+
+\textbf{Dense training, sparse inference.} DS-MoE \cite{dsmoe2024} trains all experts on all tokens (dense), then sparsifies at inference. This produces better-trained experts but is computationally expensive and produces a monolithic model. \tok{} is complementary: experts could be pre-trained with DS-MoE-style dense passes, then organized into a tree for modular deployment.
+
+\textbf{Elastic inference.} Elastic MoE \cite{elasticmoe2025} trains models tolerant of variable expert counts at inference. This is orthogonal to \tok{}: variable activation within VRAM-resident experts, combined with tree-based specialist loading, provides two dimensions of elasticity.
+
+\textbf{Specialization theory.} B\'{e}na \& Goodman \cite{bena2025modularity} prove that structural modularity requires resource constraints for functional specialization. Our Arm~D negative result (Gini~0.11 without cost signal) provides direct empirical confirmation.
+
+\textbf{What is novel.} The specific combination of: (1)~hierarchical spatial data structure for partitioning, (2)~tree depth as hardware tier, (3)~embarrassingly parallel expert training, (4)~hot-loadable modular experts, (5)~developmental curriculum via teacher-guided tree navigation. No prior work combines these five properties.
+
+% ============================================================================
+\section{Experimental Plan}
+
+The \tok{} framework is a proposal supported by preliminary evidence and theoretical motivation. The key experiments required to validate it are:
+
+\begin{enumerate}
+    \item \textbf{Embedding space structure analysis.} PCA + KD-tree construction on OLMoE hidden states. Does the embedding space have sufficient structure for meaningful partitioning? Do tree leaves correspond to interpretable domains?
+
+    \item \textbf{KD-tree routing with fine-tuned router.} Compare KD-tree-initialized routing (with subsequent router fine-tuning) against learned routing on OLMoE. Measure both PPL and inter-expert redundancy.
+
+    \item \textbf{Developmental curriculum ablation.} Compare uniform data vs.\ difficulty-sorted curriculum on expert specialization quality. Measure inter-expert cosine similarity as the primary metric.
+
+    \item \textbf{Teacher-guided vs.\ self-paced curriculum.} Using Qwen~3.5 30B as teacher on a separate device, compare interactive batch selection against static difficulty sorting.
+
+    \item \textbf{Hot-loading validation.} Train experts independently, merge, and verify that combined quality matches joint training. This validates the modularity claim.
+
+    \item \textbf{Distributed training validation.} Train experts on separate GPU instances (vast.ai) and verify convergence matches co-located training.
+\end{enumerate}
+
+% ============================================================================
+\section{Conclusion}
+
+Five experimental arms taught us that routing concentration is a poor proxy for expert quality. The question is not ``how do we make routing skewed'' but ``how do we make experts genuinely different.'' The \tok{} framework addresses this by defining expert domains from the geometry of the embedding space, training experts on disjoint data partitions guided by a developmental curriculum, and enabling modular deployment where experts are independently trainable, updatable, and shareable.
+
+The practical implications extend beyond deployment efficiency: a model whose experts are truly modular can be collaboratively trained by a community of contributors, each adding domain expertise on commodity hardware. This is a fundamentally different training paradigm from the centralized, synchronized approach of current MoE training.
+
+Whether this vision is realizable depends on a single empirical question: does KD-tree partitioning combined with developmental curriculum produce experts that are both non-redundant \emph{and} high-quality? The experiments in Section~7 are designed to answer this.
+
+% ============================================================================
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem{fedus2022switch} W. Fedus, B. Zoph, N. Shazeer. Switch Transformers. \textit{JMLR}, 2022.
+\bibitem{piaget1952} J. Piaget. \textit{The Origins of Intelligence in Children}. 1952.
+\bibitem{vygotsky1978} L. Vygotsky. \textit{Mind in Society}. Harvard University Press, 1978.
+\bibitem{bena2025modularity} G. B\'{e}na, D. Goodman. Dynamics of Specialization in Neural Modules Under Resource Constraints. \textit{Nature Communications}, 2025.
+\bibitem{roller2021hash} S. Roller et al. Hash Layers For Large Sparse Models. \textit{NeurIPS}, 2021.
+\bibitem{moce2025} Mixture-of-Clustered-Experts. \textit{EMNLP}, 2025.
+\bibitem{idamoe2025} IDA-MoE: Decoupled Routing via Gaussian Mixture Models. \textit{ACM MM}, 2025.
+\bibitem{emoe2026} EMoE: Eigenbasis Routing for MoE. \textit{arXiv:2601.12137}, 2026.
+\bibitem{guidingexperts2025} Min et al. Guiding the Experts: Semantic Priors for MoE Routing. 2025.
+\bibitem{dsmoe2024} Pan et al. DS-MoE: Dense Training, Sparse Inference. \textit{arXiv:2404.05567}, 2024.
+\bibitem{elasticmoe2025} Gu et al. Elastic MoE: Unlocking Inference-Time Scalability. \textit{arXiv:2509.21892}, 2025.
+\bibitem{ktransformers2025} KVCache.AI. KTransformers. \textit{SOSP}, 2025.
+\bibitem{flashmoe2026} FlashMoE: ML-Based Cache Replacement. \textit{arXiv:2601.17063}, 2026.
+\bibitem{slicemoe2026} SliceMoE: Bit-Sliced Expert Caching. \textit{arXiv:2512.12990}, 2026.
+\bibitem{qwen2025} Qwen Team. Qwen 3.5 Technical Report. 2025.
+\bibitem{ssd_harmful2025} SSD Offloading Considered Harmful. \textit{arXiv:2508.06978}, 2025.
+\bibitem{muennighoff2024olmoe} N. Muennighoff et al. OLMoE. \textit{arXiv:2409.02060}, 2024.
+
+\end{thebibliography}
+
+\end{document}
