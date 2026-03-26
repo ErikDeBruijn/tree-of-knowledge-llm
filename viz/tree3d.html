@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tree of Knowledge — Expert Orthogonality Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+  #canvas-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+  }
+  #header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    text-align: center;
+    padding: 18px 20px 12px;
+    pointer-events: none;
+    z-index: 10;
+    background: linear-gradient(to bottom, rgba(26,26,46,0.92) 0%, rgba(26,26,46,0.6) 70%, transparent 100%);
+  }
+  #header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #c8d6e5;
+  }
+  #header p {
+    font-size: 13px;
+    color: #8899aa;
+    margin-top: 4px;
+    font-style: italic;
+  }
+  #legend {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    background: rgba(26,26,46,0.88);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    line-height: 1.8;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+  }
+  #legend h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #aab8c8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .legend-line-thin {
+    width: 20px; height: 2px; border-radius: 1px; flex-shrink: 0;
+  }
+  .legend-line-thick {
+    width: 20px; height: 6px; border-radius: 3px; flex-shrink: 0;
+  }
+  #tooltip {
+    position: absolute;
+    display: none;
+    background: rgba(20,20,40,0.94);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    line-height: 1.7;
+    pointer-events: none;
+    z-index: 20;
+    backdrop-filter: blur(8px);
+    max-width: 260px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  #tooltip .tt-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+  #tooltip .tt-row {
+    color: #99aabb;
+  }
+  #tooltip .tt-row span {
+    color: #d0dde8;
+    font-weight: 500;
+  }
+  #info-panel {
+    position: absolute;
+    top: 90px;
+    right: 24px;
+    background: rgba(26,26,46,0.88);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+    color: #8899aa;
+    max-width: 200px;
+    text-align: center;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div id="canvas-container"></div>
+
+<div id="header">
+  <h1>Tree of Knowledge — Expert Orthogonality Visualization</h1>
+  <p>Branch angle = (1 - cosine_similarity) x 90deg. Orthogonal experts branch at 90deg.</p>
+</div>
+
+<div id="legend">
+  <h3>Legend</h3>
+  <div class="legend-row">
+    <div class="legend-swatch" style="background:#4A90D9;"></div>
+    <span>Trunk — Fluid Core (L1-14)</span>
+  </div>
+  <div class="legend-row">
+    <div class="legend-swatch" style="background:#3CBBB1;"></div>
+    <span>Depth 1 — Expert fork (L15)</span>
+  </div>
+  <div class="legend-row">
+    <div class="legend-swatch" style="background:#E8964D;"></div>
+    <span>Depth 2 — Specialist fork (L22)</span>
+  </div>
+  <div class="legend-row" style="margin-top: 6px;">
+    <div class="legend-line-thick" style="background:#888;"></div>
+    <span>Thick = high rank adapter</span>
+  </div>
+  <div class="legend-row">
+    <div class="legend-line-thin" style="background:#888;"></div>
+    <span>Thin = low rank adapter</span>
+  </div>
+  <div class="legend-row" style="margin-top: 6px;">
+    <div style="width:20px; text-align:center; flex-shrink:0; font-size:14px; color:#aaa;">&#x2220;</div>
+    <span>Wide angle = low cosine sim (different)</span>
+  </div>
+  <div class="legend-row">
+    <div style="width:20px; text-align:center; flex-shrink:0; font-size:10px; color:#aaa;">&#x2220;</div>
+    <span>Narrow angle = high cosine sim (similar)</span>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<div id="info-panel">
+  Click a node to highlight its<br>path from root to leaf.<br>
+  <span style="color:#5a6a7a;">Drag to rotate / Scroll to zoom</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function() {
+  // ─── Data ───────────────────────────────────────────────────────────
+  const treeData = {
+    trunk: { layers: "1-14", label: "Fluid Core", height: 5, thickness: 0.3, color: "#4A90D9" },
+    fork1: {
+      depth: 1, layer: 15, cossim: 0.84,
+      children: [
+        {
+          label: "Expert A", rank: 4, size_kb: 16,
+          fork2: {
+            depth: 2, layer: 22, cossim: 0.32,
+            children: [
+              { label: "Specialist A1", rank: 4, size_kb: 16 },
+              { label: "Specialist A2", rank: 4, size_kb: 16 }
+            ]
+          }
+        },
+        {
+          label: "Expert B", rank: 4, size_kb: 16,
+          fork2: {
+            depth: 2, layer: 22, cossim: 0.32,
+            children: [
+              { label: "Specialist B1", rank: 4, size_kb: 16 },
+              { label: "Specialist B2", rank: 4, size_kb: 16 }
+            ]
+          }
+        }
+      ]
+    }
+  };
+
+  // ─── Colors ─────────────────────────────────────────────────────────
+  const COL_TRUNK    = 0x4A90D9;
+  const COL_DEPTH1   = 0x3CBBB1;
+  const COL_DEPTH2   = 0xE8964D;
+  const COL_LEAF_A   = 0xE85D75;
+  const COL_LEAF_B   = 0xB67CE8;
+  const COL_HIGHLIGHT = 0xFFDD44;
+  const COL_BG       = 0x1a1a2e;
+
+  const leafColors = {
+    "Specialist A1": 0xE85D75,
+    "Specialist A2": 0xF0A050,
+    "Specialist B1": 0xB67CE8,
+    "Specialist B2": 0x6BC5E8
+  };
+
+  // ─── Scene Setup ────────────────────────────────────────────────────
+  const container = document.getElementById('canvas-container');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(COL_BG);
+  scene.fog = new THREE.FogExp2(COL_BG, 0.018);
+
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(6, 7, 10);
+  camera.lookAt(0, 4, 0);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 4.5, 0);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 4;
+  controls.maxDistance = 30;
+  controls.update();
+
+  // ─── Lighting ───────────────────────────────────────────────────────
+  const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xffeedd, 0.8);
+  dirLight.position.set(5, 12, 8);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+  scene.add(dirLight);
+
+  const fillLight = new THREE.DirectionalLight(0x8888cc, 0.3);
+  fillLight.position.set(-4, 6, -6);
+  scene.add(fillLight);
+
+  const rimLight = new THREE.PointLight(0x4488ff, 0.4, 20);
+  rimLight.position.set(-3, 8, -4);
+  scene.add(rimLight);
+
+  // ─── Ground plane ──────────────────────────────────────────────────
+  const groundGeo = new THREE.CircleGeometry(6, 64);
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: 0x12122a,
+    roughness: 0.9,
+    metalness: 0.1
+  });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.01;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Grid rings on ground
+  for (let r = 1; r <= 5; r++) {
+    const ringGeo = new THREE.RingGeometry(r - 0.01, r + 0.01, 64);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0x222244, side: THREE.DoubleSide });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.001;
+    scene.add(ring);
+  }
+
+  // ─── Helpers ────────────────────────────────────────────────────────
+  const allNodes = [];      // { mesh, data } for raycasting
+  const allBranches = [];   // { mesh, pathId } for highlighting
+  const pathMap = {};        // nodeId -> array of mesh references in path
+
+  let nodeIdCounter = 0;
+  function nextId() { return nodeIdCounter++; }
+
+  function makeBranchMaterial(color) {
+    return new THREE.MeshStandardMaterial({
+      color: color,
+      roughness: 0.55,
+      metalness: 0.25,
+      emissive: new THREE.Color(color).multiplyScalar(0.08)
+    });
+  }
+
+  function makeNodeMaterial(color) {
+    return new THREE.MeshStandardMaterial({
+      color: color,
+      roughness: 0.3,
+      metalness: 0.4,
+      emissive: new THREE.Color(color).multiplyScalar(0.15)
+    });
+  }
+
+  // Create a branch (cylinder) between two points
+  function createBranch(start, end, radius, color) {
+    const dir = new THREE.Vector3().subVectors(end, start);
+    const length = dir.length();
+    const geo = new THREE.CylinderGeometry(radius * 0.85, radius, length, 12, 1);
+    const mat = makeBranchMaterial(color);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.castShadow = true;
+
+    const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+    mesh.position.copy(mid);
+
+    const axis = new THREE.Vector3(0, 1, 0);
+    const normalized = dir.clone().normalize();
+    const quat = new THREE.Quaternion().setFromUnitVectors(axis, normalized);
+    mesh.quaternion.copy(quat);
+
+    scene.add(mesh);
+    return mesh;
+  }
+
+  // Create a node sphere
+  function createNode(position, radius, color, data) {
+    const geo = new THREE.SphereGeometry(radius, 24, 24);
+    const mat = makeNodeMaterial(color);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.copy(position);
+    mesh.castShadow = true;
+    scene.add(mesh);
+
+    const id = nextId();
+    mesh.userData = { nodeId: id, ...data };
+    allNodes.push({ mesh, data: { nodeId: id, ...data } });
+    return { mesh, id };
+  }
+
+  // Create floating label
+  function createLabel(text, position, fontSize, color) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const scale = 3;
+    ctx.font = `${fontSize * scale}px 'Segoe UI', system-ui, sans-serif`;
+    const metrics = ctx.measureText(text);
+    const w = metrics.width + 20 * scale;
+    const h = (fontSize + 10) * scale;
+    canvas.width = w;
+    canvas.height = h;
+
+    ctx.font = `${fontSize * scale}px 'Segoe UI', system-ui, sans-serif`;
+    ctx.fillStyle = 'rgba(20,20,40,0.7)';
+    const r = 4 * scale;
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(w - r, 0);
+    ctx.quadraticCurveTo(w, 0, w, r);
+    ctx.lineTo(w, h - r);
+    ctx.quadraticCurveTo(w, h, w - r, h);
+    ctx.lineTo(r, h);
+    ctx.quadraticCurveTo(0, h, 0, h - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.fill();
+
+    ctx.fillStyle = color || '#c8d6e5';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 10 * scale, h / 2);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.position.copy(position);
+    const spriteScale = 0.0035;
+    sprite.scale.set(w * spriteScale, h * spriteScale, 1);
+    scene.add(sprite);
+    return sprite;
+  }
+
+  // ─── Build Tree ─────────────────────────────────────────────────────
+  const trunkRadius = treeData.trunk.thickness;
+  const trunkHeight = treeData.trunk.height;
+  const trunkStart = new THREE.Vector3(0, 0, 0);
+  const trunkEnd = new THREE.Vector3(0, trunkHeight, 0);
+
+  // Trunk
+  const trunkMesh = createBranch(trunkStart, trunkEnd, trunkRadius, COL_TRUNK);
+
+  // Root node
+  createNode(trunkStart, 0.18, COL_TRUNK, {
+    label: "Root",
+    layerRange: "L0",
+    rank: "-",
+    size_kb: "-",
+    cossim: "-",
+    tier: "VRAM (always loaded)"
+  });
+
+  // Trunk top node (fork1)
+  const fork1Pos = trunkEnd.clone();
+  const fork1Node = createNode(fork1Pos, 0.22, COL_TRUNK, {
+    label: "Fluid Core",
+    layerRange: "L1-14",
+    rank: "Dense (shared)",
+    size_kb: "~40,000 (full model)",
+    cossim: "-",
+    tier: "VRAM (always loaded)"
+  });
+
+  createLabel("Fluid Core (L1-14)", new THREE.Vector3(0, trunkHeight + 0.5, 0), 13, '#88aacc');
+
+  // Layer markers along trunk
+  for (let i = 1; i <= 14; i++) {
+    const y = (i / 14) * trunkHeight * 0.9;
+    if (i % 3 === 0) {
+      const markerGeo = new THREE.TorusGeometry(trunkRadius + 0.03, 0.015, 8, 24);
+      const markerMat = new THREE.MeshStandardMaterial({ color: 0x6AA8E8, emissive: 0x223344 });
+      const marker = new THREE.Mesh(markerGeo, markerMat);
+      marker.position.set(0, y, 0);
+      marker.rotation.x = Math.PI / 2;
+      scene.add(marker);
+    }
+  }
+
+  // Fork 1: Expert A and Expert B
+  const fork1Data = treeData.fork1;
+  const fork1Angle = (1 - fork1Data.cossim) * Math.PI / 2; // radians
+  const branchLength1 = 3.0;
+  const expertRankRadius = 0.08; // rank-4 thin
+
+  // Place Expert A and B symmetrically in the XZ plane
+  const expertBranches = [];
+  const expertPositions = [];
+  const expertLabels = ["Expert A", "Expert B"];
+  const expertSigns = [-1, 1];
+
+  fork1Data.children.forEach((expert, i) => {
+    const sign = expertSigns[i];
+    // Direction: tilt from vertical by fork1Angle, spread along X axis
+    const dx = Math.sin(fork1Angle) * sign;
+    const dy = Math.cos(fork1Angle);
+    const dir = new THREE.Vector3(dx, dy, 0).normalize();
+    const endPos = fork1Pos.clone().add(dir.multiplyScalar(branchLength1));
+
+    const branchMesh = createBranch(fork1Pos, endPos, expertRankRadius, COL_DEPTH1);
+
+    const expertNode = createNode(endPos, 0.17, COL_DEPTH1, {
+      label: expert.label,
+      layerRange: "L15-21",
+      rank: `rank-${expert.rank}`,
+      size_kb: expert.size_kb,
+      cossim: fork1Data.cossim,
+      tier: "Flash (loaded on demand)"
+    });
+
+    createLabel(
+      `${expert.label} (r${expert.rank}, ${expert.size_kb}KB)`,
+      endPos.clone().add(new THREE.Vector3(sign * 0.8, 0.45, 0)),
+      12,
+      '#88ccbb'
+    );
+
+    expertPositions.push(endPos);
+
+    // Fork 2: Specialists
+    const fork2 = expert.fork2;
+    const fork2Angle = (1 - fork2.cossim) * Math.PI / 2;
+    const branchLength2 = 2.5;
+
+    fork2.children.forEach((spec, j) => {
+      const specSign = j === 0 ? -1 : 1;
+      // Specialists branch in a plane perpendicular to the expert branch direction
+      // Use a rotated reference frame
+      const baseDir = new THREE.Vector3(dx, dy, 0).normalize();
+      // Perpendicular in XZ plane
+      const perpX = new THREE.Vector3(0, 0, specSign);
+      // Tilt from the expert branch direction by fork2Angle
+      const specDir = new THREE.Vector3()
+        .addScaledVector(baseDir, Math.cos(fork2Angle))
+        .addScaledVector(perpX, Math.sin(fork2Angle))
+        .normalize();
+      const specEnd = endPos.clone().add(specDir.clone().multiplyScalar(branchLength2));
+
+      const leafColor = leafColors[spec.label] || COL_LEAF_A;
+      createBranch(endPos, specEnd, expertRankRadius * 0.7, COL_DEPTH2);
+
+      createNode(specEnd, 0.14, leafColor, {
+        label: spec.label,
+        layerRange: "L22-25",
+        rank: `rank-${spec.rank}`,
+        size_kb: spec.size_kb,
+        cossim: fork2.cossim,
+        tier: "Flash (loaded on demand)"
+      });
+
+      createLabel(
+        `${spec.label}`,
+        specEnd.clone().add(new THREE.Vector3(0, 0.4, specSign * 0.3)),
+        11,
+        new THREE.Color(leafColor).getStyle()
+      );
+    });
+  });
+
+  // ─── Angle annotation arcs ─────────────────────────────────────────
+  function createAngleArc(center, angle, radius, color, label, rotationMatrix) {
+    const points = [];
+    const segments = 32;
+    const halfAngle = angle;
+    for (let i = 0; i <= segments; i++) {
+      const t = -halfAngle + (2 * halfAngle * i / segments);
+      const x = Math.sin(t) * radius;
+      const y = Math.cos(t) * radius;
+      const p = new THREE.Vector3(x, y, 0);
+      if (rotationMatrix) p.applyMatrix4(rotationMatrix);
+      p.add(center);
+      points.push(p);
+    }
+    const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+    const arcMat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.5 });
+    const arc = new THREE.Line(arcGeo, arcMat);
+    scene.add(arc);
+
+    // Label for the angle
+    const midPoint = points[Math.floor(segments / 2)];
+    const labelPos = midPoint.clone().add(
+      midPoint.clone().sub(center).normalize().multiplyScalar(0.3)
+    );
+    createLabel(label, labelPos, 10, new THREE.Color(color).getStyle());
+  }
+
+  // Fork 1 angle arc
+  createAngleArc(
+    fork1Pos,
+    fork1Angle,
+    1.2,
+    0x3CBBB1,
+    `${((1 - fork1Data.cossim) * 90).toFixed(1)}deg (cos=${fork1Data.cossim})`
+  );
+
+  // Fork 2 angle arcs (in ZY plane at each expert position)
+  const fork2Angle = (1 - treeData.fork1.children[0].fork2.cossim) * Math.PI / 2;
+  expertPositions.forEach((pos, i) => {
+    const rotMat = new THREE.Matrix4();
+    // Rotate to align with the expert branch direction
+    const sign = expertSigns[i];
+    const dx = Math.sin(fork1Angle) * sign;
+    const dy = Math.cos(fork1Angle);
+    const baseDir = new THREE.Vector3(dx, dy, 0).normalize();
+    // Build rotation: Y-axis -> baseDir, then rotate arc into ZY plane of branch
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), baseDir);
+    const rotMat2 = new THREE.Matrix4().makeRotationFromQuaternion(q);
+    // Rotate 90 around baseDir to put arc in the branching plane (XZ)
+    const rotMat3 = new THREE.Matrix4().makeRotationAxis(baseDir, Math.PI / 2);
+    rotMat.multiplyMatrices(rotMat3, rotMat2);
+
+    // Simplified: draw in the plane of the specialist branches
+    const arcPoints = [];
+    const segs = 32;
+    const r = 0.9;
+    for (let j = 0; j <= segs; j++) {
+      const t = -fork2Angle + (2 * fork2Angle * j / segs);
+      const p = new THREE.Vector3(0, 0, 0);
+      p.addScaledVector(baseDir, Math.cos(t) * r);
+      p.addScaledVector(new THREE.Vector3(0, 0, 1), Math.sin(t) * r);
+      p.add(pos);
+      arcPoints.push(p);
+    }
+    const arcGeo = new THREE.BufferGeometry().setFromPoints(arcPoints);
+    const arcMat = new THREE.LineBasicMaterial({ color: 0xE8964D, transparent: true, opacity: 0.4 });
+    scene.add(new THREE.Line(arcGeo, arcMat));
+
+    const midPt = arcPoints[Math.floor(segs / 2)];
+    createLabel(
+      `${((1 - 0.32) * 90).toFixed(1)}deg (cos=0.32)`,
+      midPt.clone().add(new THREE.Vector3(0, 0.3, sign * 0.2)),
+      10,
+      '#E8964D'
+    );
+  });
+
+  // ─── Subtle particle dust ──────────────────────────────────────────
+  const particleCount = 200;
+  const particleGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 14;
+    positions[i * 3 + 1] = Math.random() * 12;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 14;
+  }
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particleMat = new THREE.PointsMaterial({
+    color: 0x4466aa,
+    size: 0.04,
+    transparent: true,
+    opacity: 0.4,
+    depthWrite: false
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
+  // ─── Tooltip / Hover ───────────────────────────────────────────────
+  const tooltip = document.getElementById('tooltip');
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  let hoveredNode = null;
+  let selectedNode = null;
+  const originalMaterials = new Map();
+
+  function onMouseMove(e) {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const meshes = allNodes.map(n => n.mesh);
+    const intersects = raycaster.intersectObjects(meshes);
+
+    if (intersects.length > 0) {
+      const hit = intersects[0].object;
+      const data = hit.userData;
+
+      if (hoveredNode !== hit) {
+        if (hoveredNode && hoveredNode !== selectedNode?.mesh) {
+          restoreMaterial(hoveredNode);
+        }
+        hoveredNode = hit;
+        if (hoveredNode !== selectedNode?.mesh) {
+          highlightMesh(hoveredNode, 1.15);
+        }
+      }
+
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 16) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+
+      // Keep tooltip on screen
+      const rect = tooltip.getBoundingClientRect();
+      if (rect.right > window.innerWidth) {
+        tooltip.style.left = (e.clientX - rect.width - 16) + 'px';
+      }
+      if (rect.bottom > window.innerHeight) {
+        tooltip.style.top = (e.clientY - rect.height - 10) + 'px';
+      }
+
+      tooltip.innerHTML = `
+        <div class="tt-title">${data.label || 'Node'}</div>
+        <div class="tt-row">Layer range: <span>${data.layerRange || '-'}</span></div>
+        <div class="tt-row">Adapter rank: <span>${data.rank || '-'}</span></div>
+        <div class="tt-row">Size: <span>${data.size_kb ? data.size_kb + ' KB' : '-'}</span></div>
+        <div class="tt-row">CosSim (sibling): <span>${data.cossim || '-'}</span></div>
+        <div class="tt-row">Storage tier: <span>${data.tier || '-'}</span></div>
+      `;
+
+      renderer.domElement.style.cursor = 'pointer';
+    } else {
+      if (hoveredNode && hoveredNode !== selectedNode?.mesh) {
+        restoreMaterial(hoveredNode);
+      }
+      hoveredNode = null;
+      tooltip.style.display = 'none';
+      renderer.domElement.style.cursor = 'default';
+    }
+  }
+
+  function highlightMesh(mesh, emissiveScale) {
+    if (!originalMaterials.has(mesh)) {
+      originalMaterials.set(mesh, {
+        emissive: mesh.material.emissive.clone(),
+        emissiveIntensity: mesh.material.emissiveIntensity || 1
+      });
+    }
+    mesh.material.emissive.set(0xFFDD44);
+    mesh.material.emissiveIntensity = emissiveScale;
+  }
+
+  function restoreMaterial(mesh) {
+    const orig = originalMaterials.get(mesh);
+    if (orig) {
+      mesh.material.emissive.copy(orig.emissive);
+      mesh.material.emissiveIntensity = orig.emissiveIntensity;
+      originalMaterials.delete(mesh);
+    }
+  }
+
+  function onClick(e) {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const meshes = allNodes.map(n => n.mesh);
+    const intersects = raycaster.intersectObjects(meshes);
+
+    // Deselect previous
+    if (selectedNode) {
+      restoreMaterial(selectedNode.mesh);
+      selectedNode = null;
+    }
+
+    if (intersects.length > 0) {
+      const hit = intersects[0].object;
+      selectedNode = { mesh: hit };
+      highlightMesh(hit, 1.5);
+    }
+  }
+
+  window.addEventListener('mousemove', onMouseMove, false);
+  window.addEventListener('click', onClick, false);
+
+  // ─── Resize ─────────────────────────────────────────────────────────
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // ─── Animate ────────────────────────────────────────────────────────
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    // Gentle particle drift
+    const posArr = particleGeo.attributes.position.array;
+    for (let i = 0; i < particleCount; i++) {
+      posArr[i * 3 + 1] += Math.sin(t * 0.3 + i) * 0.0005;
+    }
+    particleGeo.attributes.position.needsUpdate = true;
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  animate();
+})();
+</script>
+</body>
+</html>
