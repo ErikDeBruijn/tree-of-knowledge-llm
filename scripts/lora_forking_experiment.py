@@ -150,8 +150,8 @@ class LoRAAdapter(nn.Module):
     def __init__(self, in_dim: int, out_dim: int, rank: int = 4):
         super().__init__()
         self.rank = rank
-        self.lora_A = nn.Parameter(torch.randn(in_dim, rank) * 0.01)
-        self.lora_B = nn.Parameter(torch.zeros(rank, out_dim))
+        self.lora_A = nn.Parameter(torch.randn(in_dim, rank, dtype=torch.bfloat16) * 0.01)
+        self.lora_B = nn.Parameter(torch.zeros(rank, out_dim, dtype=torch.bfloat16))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return x @ self.lora_A @ self.lora_B
@@ -335,61 +335,49 @@ class LoRAForkingModel(nn.Module):
                 num_experts=1,
             )
 
+        # Install hooks to intercept MLP forward calls
+        self._install_hooks()
+
+    def _install_hooks(self):
+        """Replace MLP layers with LoRA-augmented versions."""
+        self.last_aux = {"gate_logits": {}}
+        self._base_mlps = {}  # Store original MLPs BEFORE replacement
+
+        for layer_idx in range(self.cfg.expert_layer_start, self.cfg.num_layers):
+            layer = self.base_model.model.layers[layer_idx]
+            base_mlp = layer.mlp  # Save reference BEFORE replacing
+            self._base_mlps[layer_idx] = base_mlp
+            forking = self.forking_layers[str(layer_idx)]
+            wrapper = self
+
+            # Use a closure to avoid nn.Module child registration of base_mlp
+            def make_hook_fn(fork_layer, orig_mlp, idx, wr):
+                class LoRAHook(nn.Module):
+                    def __init__(self):
+                        super().__init__()
+                        # Store forking_layer as proper submodule (has trainable params)
+                        self.forking_layer = fork_layer
+
+                    def forward(self, hidden_states):
+                        # orig_mlp captured by closure, NOT registered as child
+                        result = self.forking_layer(hidden_states, orig_mlp)
+                        if isinstance(result, tuple):
+                            out, gate_logits = result
+                            wr.last_aux["gate_logits"][idx] = gate_logits
+                            return out
+                        return result
+                return LoRAHook()
+
+            hook = make_hook_fn(forking, base_mlp, layer_idx, wrapper)
+            layer.mlp = hook
+
     def forward(self, input_ids: torch.Tensor) -> Tuple[torch.Tensor, Dict]:
         """
-        Forward pass: standard transformer with LoRA-augmented FFN on layers 14-27.
-        Returns (logits, aux_info) where aux_info has gate_logits per layer.
+        Forward pass: uses HF's own forward with hooked MLP layers.
         """
-        # Get embeddings
-        model = self.base_model.model  # Qwen2Model inside Qwen2ForCausalLM
-        hidden_states = model.embed_tokens(input_ids)
-
-        # Rotary embedding setup
-        position_ids = torch.arange(input_ids.shape[1], device=input_ids.device).unsqueeze(0)
-        # Build causal mask
-        causal_mask = None  # Let the model handle it internally per layer
-
-        aux = {"gate_logits": {}}
-
-        for layer_idx, layer in enumerate(model.layers):
-            # Standard attention (frozen)
-            residual = hidden_states
-            hidden_states = layer.input_layernorm(hidden_states)
-
-            attn_output = layer.self_attn(
-                hidden_states=hidden_states,
-                position_ids=position_ids,
-            )
-            # Handle different return types
-            if isinstance(attn_output, tuple):
-                hidden_states = attn_output[0]
-            else:
-                hidden_states = attn_output
-            hidden_states = residual + hidden_states
-
-            # FFN
-            residual = hidden_states
-            hidden_states = layer.post_attention_layernorm(hidden_states)
-
-            if str(layer_idx) in self.forking_layers:
-                # Use LoRA-augmented FFN
-                forking = self.forking_layers[str(layer_idx)]
-                result = forking(hidden_states, layer.mlp)
-                if isinstance(result, tuple):
-                    hidden_states, gate_logits = result
-                    aux["gate_logits"][layer_idx] = gate_logits
-                else:
-                    hidden_states = result
-            else:
-                # Trunk layer: use original FFN
-                hidden_states = layer.mlp(hidden_states)
-
-            hidden_states = residual + hidden_states
-
-        hidden_states = model.norm(hidden_states)
-        logits = self.base_model.lm_head(hidden_states)
-
-        return logits, aux
+        self.last_aux = {"gate_logits": {}}
+        outputs = self.base_model(input_ids=input_ids)
+        return outputs.logits, self.last_aux
 
     def trainable_parameters(self):
         """Yield only trainable parameters (LoRA + routers)."""
@@ -576,7 +564,7 @@ class C4StreamingDataset(IterableDataset):
 
     def __iter__(self):
         from datasets import load_dataset
-        ds = load_dataset("allenai/c4", "en", split=self.split, streaming=True, trust_remote_code=True)
+        ds = load_dataset("allenai/c4", "en", split=self.split, streaming=True)
         buffer = []
         for example in ds:
             tokens = self.tokenizer(example["text"], add_special_tokens=False)["input_ids"]
@@ -616,7 +604,7 @@ def evaluate(model: LoRAForkingModel, eval_loader: DataLoader, cfg: ExperimentCo
 
         logits, aux = model(input_ids)
         loss = F.cross_entropy(logits.view(-1, logits.size(-1)), labels.view(-1), reduction="none")
-        all_per_token_losses.append(loss.cpu().numpy())
+        all_per_token_losses.append(loss.float().cpu().numpy())
         total_loss += loss.sum().item()
         total_tokens += labels.numel()
 
@@ -669,7 +657,7 @@ def compute_bimodality_per_expert(model: LoRAForkingModel, per_token_losses: np.
                 }
             continue
         gate_logits = aux["gate_logits"][layer_idx]
-        assignments = gate_logits.argmax(dim=-1).cpu().numpy()
+        assignments = gate_logits.argmax(dim=-1).float().cpu().numpy()
         expert_bcs = {}
         for e_idx in range(forking.num_experts):
             mask = assignments == e_idx
@@ -716,7 +704,7 @@ def attempt_splits(model: LoRAForkingModel, per_token_losses: np.ndarray,
             if layer_idx not in aux.get("gate_logits", {}):
                 continue
             gate_logits = aux["gate_logits"][layer_idx]
-            assignments = gate_logits.argmax(dim=-1).cpu().numpy()
+            assignments = gate_logits.argmax(dim=-1).float().cpu().numpy()
             n = min(len(per_token_losses), len(assignments))
 
             # Iterate in reverse so indices stay valid after splits
@@ -1021,7 +1009,7 @@ def evaluate_and_maybe_split(model: LoRAForkingModel, eval_loader: DataLoader,
 
         logits, aux = model(input_ids)
         loss = F.cross_entropy(logits.view(-1, logits.size(-1)), labels.view(-1), reduction="none")
-        all_per_token_losses.append(loss.cpu().numpy())
+        all_per_token_losses.append(loss.float().cpu().numpy())
         total_loss += loss.sum().item()
         total_tokens += labels.numel()
 

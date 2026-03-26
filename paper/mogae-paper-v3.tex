@@ -42,7 +42,17 @@ Current language models entangle \emph{fluid intelligence}---general reasoning a
 % ============================================================================
 \section{Introduction}
 
-The promise of Mixture-of-Experts is that different experts learn different things. We spent six experimental arms and 40+ hours of GPU training discovering that this promise is remarkably hard to fulfill. Copy-initialized experts trained on disjoint data remain virtually identical (cosine similarity 0.998 after 12M tokens). Prescriptive cost losses shift routing but the effect dilutes. Biological mechanisms help marginally. Without explicit cost signals, no specialization emerges at all.
+Current language models embed all knowledge---from common syntax to rare medical terminology---in the same parameters that also perform reasoning. This creates a structural conflict: expanding the knowledge base means adding parameters, which increases inference cost per token, which reduces the token budget available for chain-of-thought reasoning at fixed latency. The model's reasoning capacity is not degraded by knowledge \emph{per se}, but it is constrained by sharing the same computational resources. In a conventional LLM, you must choose between a larger knowledge base and faster inference. This is not a tuning problem---it is an architectural entanglement.
+
+The \tok{} framework eliminates this conflict by placing fluid intelligence (reasoning, language structure) and crystallized intelligence (domain knowledge) on separate resources. The dense core handles reasoning and is always resident in VRAM. Domain knowledge lives in lightweight, hot-loadable adapters that consume no resources until needed. Adding specialists does not slow the core's inference---the core's reasoning capacity is no longer constrained by the size of the knowledge base.
+
+Standard Mixture-of-Experts architectures attempt this separation but create a different problem. MoE is compute-friendly---only $k$ of $n$ experts activate per token---but storage-unfriendly: all experts must reside in VRAM because any token might route to any expert, and the load-balancing loss enforces near-uniform routing that prevents any hot/cold distinction. The model stores $n$ near-identical copies consuming VRAM without adding knowledge.
+
+The root cause is that standard MoE ignores the entropy structure of language~\cite{shannon1948}: token frequencies follow Zipf's law, and parameter allocation should reflect this information density. When the architecture aligns with Zipf, tiered deployment becomes a natural consequence: frequently-activated generalists stay in VRAM, rare specialists reside on slower storage. In \tok{}, variable-rank LoRA adapters achieve this alignment naturally---common-domain adapters are low-rank (4--64\,KB, always cached), rare specialists are higher-rank but infrequently accessed. At current experimental scale (Qwen3-1.7B), everything fits in VRAM; as the system scales to larger cores, thousands of experts, or edge devices, tier-cost-aware placement emerges without architectural changes (Appendix~\ref{app:shannon}).
+
+That this scaling is practical is supported by 121 inference experiments on rented GPU instances that calibrated a hardware-realistic cache simulator against measured bandwidths and latencies across VRAM, DDR5, and NVMe Gen4/Gen5 tiers. At the OLMoE scale (16\,MB experts), SSD bandwidth is a bottleneck---but \tok{}'s variable-rank adapters are 100--1000$\times$ smaller: a 64\,KB adapter loads from Gen5 NVMe in $<$10\,$\mu$s, well within a single token's compute window (Appendix~\ref{app:tiered}).
+
+But separating fluid from crystallized intelligence requires genuine expert differentiation---and that turns out to be remarkably hard. We spent six experimental arms and 40+ hours of GPU training discovering this. Copy-initialized experts trained on disjoint data remain virtually identical (cosine similarity 0.998 after 12M tokens). Prescriptive cost losses shift routing but the effect dilutes. Biological mechanisms help marginally. Without explicit cost signals, no specialization emerges at all.
 
 These failures taught us something important: \textbf{expert differentiation requires three forces acting together}:
 \begin{enumerate}
@@ -140,7 +150,7 @@ The unification is not a convenient mapping---it is a structural identity:
 
 \textbf{Information-theoretic view.} An expert that handles tokens from a narrow, homogeneous distribution needs few additional parameters to deviate from the generalist (low KL divergence from parent $\rightarrow$ low rank). An expert that handles a fundamentally different distribution needs many parameters (high KL divergence $\rightarrow$ high rank).
 
-\textbf{Hardware view.} Parameters that are rarely needed should live on slower, cheaper storage. Rank-1 adapters (4\,KB) are so small they never leave the cache. Rank-64 adapters (256\,KB) load in microseconds from flash. The rank determines the storage cost because it determines the size, and the size determines the tier.
+\textbf{Hardware view.} Parameters that are rarely needed should live on slower, cheaper storage. The rank determines the size, and the size determines the tier. Rank-1 adapters (4\,KB) never leave the cache; rank-64 adapters (256\,KB) load in microseconds from flash. See Appendix~\ref{app:tiered} for measured latencies across storage tiers.
 
 \textbf{Frequency view.} Common patterns are handled by the shared trunk (always resident). Moderately common domains are handled by low-rank adapters (VRAM-cached). Rare specializations are handled by high-rank adapters (flash-loaded on demand). The Zipf distribution of language ensures that most tokens need no specialist at all.
 
@@ -205,6 +215,84 @@ Six failed experiments, one working hypothesis: specialization depth, adapter ra
 The practical consequence is a model architecture where specialists are measured in kilobytes, loadable in microseconds, trainable independently on commodity hardware, and composable by a community of contributors. Not because we optimized for these properties, but because they are the natural expression of a single underlying principle: \emph{the more specialized the knowledge, the more parameters it needs, and the rarer it is needed}.
 
 % ============================================================================
+\appendix
+
+\section{Shannon's Entropy Argument for Zipf-Aligned Routing}
+\label{app:shannon}
+
+Shannon's foundational analysis of English~\cite{shannon1948} established that natural language has a specific entropy structure: highly redundant on average (approximately 1 bit per character), but with information concentrated in sparse, high-surprise moments. This is the source of Zipf's law---common tokens carry little information and appear frequently, while rare tokens carry much information and appear rarely.
+
+Standard MoE load-balancing ignores this structure: it allocates equal capacity to every expert regardless of how much information the expert's tokens carry. The result is that every expert is equally mediocre at everything, and the power-law structure of world knowledge is flattened into artificial uniformity.
+
+\tok{}'s argument is, in essence, a Shannon argument: parameter allocation should reflect information density. Experts that handle high-entropy (surprising, information-rich) tokens deserve dedicated capacity even if those tokens are rare. Experts that handle low-entropy (predictable, common) tokens can be broadly shared. The resulting heavy-tailed allocation is not an optimization trick---it is alignment with the statistical structure Shannon measured seventy-eight years ago.
+
+This alignment has a practical consequence: when specialization depth follows Zipf's law, so does adapter rank (Section~3), and therefore so does storage footprint. The most frequently needed adapters are the smallest (low-rank generalist corrections). The largest adapters (high-rank deep specialists) are needed least often. This is precisely the access pattern that tiered storage hierarchies are designed to exploit---not by coincidence, but because both language and memory hierarchies are shaped by the same power-law economics of frequency versus capacity.
+
+At current experimental scale (Qwen3-1.7B, hundreds of adapters totaling $<$20\,MB), tiered storage is unnecessary---everything fits in VRAM. Tiered deployment becomes relevant at three scaling thresholds: (1) larger core models (70B+) where VRAM is contested, (2) thousands of community-contributed experts where the aggregate exceeds VRAM, and (3) edge devices (phones, laptops) with 6--8\,GB total memory. The Zipf alignment ensures that tier-cost-aware placement requires no architectural changes at these scales---only a cache eviction policy.
+
+\section{Tiered Storage Validation: 121 Inference Experiments}
+\label{app:tiered}
+
+To validate that tiered expert deployment is practical and not merely theoretical, we conducted 121 inference experiments on rented GPU instances, establishing performance baselines and calibrating a hardware-realistic cache simulator.
+
+\subsection{Hardware Setup}
+
+Experiments ran on NVIDIA RTX PRO 6000 Blackwell GPUs with OLMoE-1B-7B (64 experts, 16\,MB per expert at FP16). Storage tiers were measured directly:
+
+\begin{table}[h]
+\centering
+\caption{Memory tier economics (Netherlands retail, March 2026, incl.\ VAT).}
+\label{tab:tiers}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Medium & Capacity & Bandwidth & Cost/GB \\
+\midrule
+GPU VRAM (GDDR7) & 48\,GB & $\sim$1.8\,TB/s & (fixed at mfg.) \\
+DDR5-5600 & 256\,GB & $\sim$90\,GB/s & $\sim$\euro{}12/GB \\
+NVMe Gen5 & 2--4\,TB & $\sim$14\,GB/s & $\sim$\euro{}0.09/GB \\
+NVMe Gen4 & 2--4\,TB & $\sim$7\,GB/s & $\sim$\euro{}0.07/GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The cost ratio between DDR5 and NVMe (87--140$\times$) vastly exceeds the bandwidth ratio ($\sim$6--13$\times$), making SSD-based storage economically dominant for infrequently-accessed parameters.
+
+\subsection{Cache Simulator}
+
+We implemented an LRU cache simulator calibrated against measured hardware latencies. The simulator models:
+\begin{itemize}
+    \item $n_{\text{slots}}$ VRAM slots for non-resident experts (trained with $n_{\text{slots}}{=}20$, the constrained case)
+    \item Cache hits cost zero; cache misses trigger SSD loads at measured latency
+    \item Quadratic queueing cost for simultaneous SSD loads, modeling bus contention
+\end{itemize}
+
+On OLMoE-1B-7B with standard load-balancing (Gini~0.002), the simulated cache hit rate at 25\% VRAM capacity is only 32.8\%---nearly random. With entropy-aligned routing (Gini~0.60), hit rates exceed 92\%.
+
+\subsection{Implications for \tok{}}
+
+At OLMoE scale (16\,MB experts, 64 experts total = 1\,GB), SSD bandwidth becomes a bottleneck at high token rates: 134~tok/s $\times$ 8 experts/token $\times$ 16 layers $\times$ 7.6\% miss rate $\approx$ 13,000 expert loads/s $\times$ 16\,MB $\approx$ 208\,GB/s required---exceeding available SSD bandwidth.
+
+\tok{}'s variable-rank adapters change these economics fundamentally:
+
+\begin{table}[h]
+\centering
+\caption{Expert load time from Gen5 NVMe at 14\,GB/s, compared to per-token compute time at 134\,tok/s (7.5\,ms/token).}
+\label{tab:load-times}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Adapter rank & Size & Load time & Critical path? \\
+\midrule
+Rank-1 & 4\,KB & 0.3\,$\mu$s & No (CPU cache) \\
+Rank-16 & 64\,KB & 4.6\,$\mu$s & No ($<$0.1\% of token time) \\
+Rank-64 & 256\,KB & 18\,$\mu$s & No ($<$0.3\% of token time) \\
+Full expert (OLMoE) & 16\,MB & 1.1\,ms & Marginal (15\% of token time) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Even at rank-64 (the ``crystal'' tier), adapter loads consume $<$0.3\% of a token's compute budget. Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
+
+% ============================================================================
 \bibliographystyle{plainnat}
 \begin{thebibliography}{99}
 \bibitem{hu2022lora} E. Hu et al. LoRA: Low-Rank Adaptation of Large Language Models. \textit{ICLR}, 2022.
@@ -217,6 +305,7 @@ The practical consequence is a model architecture where specialists are measured
 \bibitem{l2r2026} L2R: Low-Rank Lipschitz-Controlled Routing. \textit{arXiv:2601.21349}, 2026.
 \bibitem{piaget1952} J. Piaget. \textit{The Origins of Intelligence in Children}. 1952.
 \bibitem{vygotsky1978} L. Vygotsky. \textit{Mind in Society}. Harvard University Press, 1978.
+\bibitem{shannon1948} C. E. Shannon. A Mathematical Theory of Communication. \textit{Bell System Technical Journal}, 27(3):379--423, 1948.
 \end{thebibliography}
 
 \end{document}
