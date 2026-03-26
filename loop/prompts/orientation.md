@@ -43,15 +43,39 @@ Update after each cycle.
   },
   "zpd_produces_modularity": {
     "claim": "Teacher-scored ZPD data selection produces more modular experts than self-scoring",
-    "status": "speculative",
-    "evidence": "50K chunks scored by student. Teacher scoring not yet done.",
-    "updated": "2026-03-26"
+    "status": "refuted",
+    "evidence": "P2: Spearman rho=0.958 between teacher and student PPL. ZPD fraction 14.2%. Teacher adds no signal.",
+    "updated": "2026-03-27"
   },
   "rank_reflects_specialization": {
     "claim": "Higher rank = deeper specialization (lens vs crystal)",
     "status": "plausible",
-    "evidence": "Rank grew 4→32 during training. Correlation with domain divergence untested.",
-    "updated": "2026-03-26"
+    "evidence": "Rank grew 4→32 during training. But P1 showed rank-32 experts are redundant, not specialized.",
+    "updated": "2026-03-27"
+  },
+  "layer14_fork_boundary": {
+    "claim": "Layer 14 is the correct trunk/expert boundary",
+    "status": "refuted",
+    "evidence": "Layer divergence analysis: CKA 0.013 at layer 14 vs 0.106 at layer 18. Domain signals begin at layer 17-18.",
+    "updated": "2026-03-27"
+  },
+  "layer18_fork_boundary": {
+    "claim": "Layer 18 is the correct trunk/expert boundary for domain specialization",
+    "status": "supported",
+    "evidence": "CKA jumps 8x between layers 14-18. Trunk-18 experiment running (variant A: FFN-only, variant B: paired sectoral).",
+    "updated": "2026-03-27"
+  },
+  "ffn_only_insufficient": {
+    "claim": "FFN-only LoRA produces redundant representation, not functional specialization",
+    "status": "observed",
+    "evidence": "P1: LoRA deltas 25% of FFN output, experts orthogonal (CosSim 0.02), but routing selectivity <5%.",
+    "updated": "2026-03-27"
+  },
+  "paired_sectoral_better": {
+    "claim": "Coupled attention+FFN adapters produce faster/deeper functional differentiation than FFN-only",
+    "status": "speculative",
+    "evidence": "No data yet. Variant B experiment starting on GPU 1.",
+    "updated": "2026-03-27"
   }
 }
 ```

@@ -147,10 +147,46 @@ window.EXPERIMENTS = {
     "data": window.TREE_DATA  // reference the main data
   },
   "lower_threshold": {
-    "label": "Lower threshold (planned)",
+    "label": "Lower threshold (threshold=0.4, LR=3e-4)",
+    "status": "measured",
+    "note": "CosSim dropped to 0.044, PPL 19.26 at step 56K. No second fork triggered. Rank grew to 32.",
+    "data": {
+      "timeline": [
+        { "step": 1000,  "ppl": 19.68, "cossim": 0.498, "rank": 4,  "experts": 2 },
+        { "step": 2000,  "ppl": 19.64, "cossim": 0.405, "rank": 8,  "experts": 2 },
+        { "step": 3000,  "ppl": 19.63, "cossim": 0.288, "rank": 16, "experts": 2 },
+        { "step": 4000,  "ppl": 19.62, "cossim": 0.186, "rank": 32, "experts": 2 },
+        { "step": 10000, "ppl": 19.47, "cossim": 0.093, "rank": 32, "experts": 2 },
+        { "step": 20000, "ppl": 19.42, "cossim": 0.058, "rank": 32, "experts": 2 },
+        { "step": 35000, "ppl": 19.28, "cossim": 0.045, "rank": 32, "experts": 2 },
+        { "step": 39000, "ppl": 19.26, "cossim": 0.044, "rank": 32, "experts": 2 },
+        { "step": 56000, "ppl": 19.24, "cossim": 0.040, "rank": 32, "experts": 2 }
+      ]
+    }
+  },
+  "layer_divergence": {
+    "label": "Layer divergence analysis",
+    "status": "measured",
+    "note": "Domain divergence (CKA) begins at layer 17-18. Layer 14 fork boundary REFUTED.",
+    "data": {
+      "per_layer_cka": [
+        0.1416, 0.1259, 0.0033, 0.0034, 0.0034, 0.0036, 0.0038, 0.0040,
+        0.0043, 0.0052, 0.0068, 0.0083, 0.0094, 0.0110, 0.0129, 0.0198,
+        0.0311, 0.0621, 0.1060, 0.1337, 0.1763, 0.2003, 0.2053, 0.2099,
+        0.2092, 0.2155, 0.2135, 0.0627
+      ]
+    }
+  },
+  "trunk18_ffn_only": {
+    "label": "Trunk-18 FFN-only (variant A, running)",
+    "status": "running",
+    "note": "Trunk 0-17, experts on 18-27 FFN only. Phase 1 in progress.",
+    "data": null
+  },
+  "trunk18_paired_sectoral": {
+    "label": "Trunk-18 paired sectoral (variant B, starting)",
     "status": "planned",
-    "note": "bimodality_threshold=0.4, 200M tokens — may produce 4 experts",
-    // Placeholder: same tree structure, will be replaced by real data when experiment runs
-    "data": window.TREE_DATA
+    "note": "Trunk 0-17, experts on 18-27 attention+FFN coupled. Pending deployment.",
+    "data": null
   }
 };
