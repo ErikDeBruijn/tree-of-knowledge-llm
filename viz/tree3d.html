@@ -91,7 +91,7 @@
     pointer-events: none;
     z-index: 20;
     backdrop-filter: blur(8px);
-    max-width: 260px;
+    max-width: 320px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   }
   #tooltip .tt-title {
@@ -106,6 +106,55 @@
   #tooltip .tt-row span {
     color: #d0dde8;
     font-weight: 500;
+  }
+  #tooltip .tt-separator {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    margin: 6px 0;
+  }
+  #tooltip .tt-category-title {
+    font-weight: 600;
+    font-size: 12px;
+    color: #aabbcc;
+    margin-bottom: 2px;
+  }
+  #tooltip .tt-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    line-height: 1.9;
+    color: #8899aa;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  #tooltip .tt-bar-label {
+    min-width: 100px;
+    text-align: right;
+    color: #99aabb;
+  }
+  #tooltip .tt-bar-pct {
+    min-width: 32px;
+    text-align: right;
+    color: #d0dde8;
+    font-weight: 500;
+  }
+  #tooltip .tt-bar-container {
+    width: 100px;
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  #tooltip .tt-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #3CBBB1, #4A90D9);
+  }
+  #tooltip .tt-tokens {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #667788;
+    font-style: italic;
   }
   #info-panel {
     position: absolute;
@@ -122,6 +171,48 @@
     max-width: 200px;
     text-align: center;
     line-height: 1.6;
+  }
+  #experiment-selector {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    z-index: 15;
+    pointer-events: auto;
+  }
+  #experiment-selector select {
+    background: rgba(26,26,46,0.92);
+    color: #c8d6e5;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 6px 28px 6px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238899aa' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #experiment-selector select:hover {
+    border-color: rgba(255,255,255,0.3);
+  }
+  #experiment-selector select:focus {
+    border-color: #4A90D9;
+  }
+  #experiment-note {
+    position: absolute;
+    top: 52px;
+    right: 24px;
+    z-index: 15;
+    font-size: 11px;
+    color: #aa8844;
+    font-style: italic;
+    max-width: 220px;
+    text-align: right;
   }
   #timeline-controls {
     position: fixed;
@@ -179,6 +270,11 @@
   <p>Branch angle = (1 - cosine_similarity) x 90deg. Orthogonal experts branch at 90deg.</p>
 </div>
 
+<div id="experiment-selector">
+  <select id="experiment-dropdown"></select>
+</div>
+<div id="experiment-note"></div>
+
 <div id="timeline-controls">
   <button id="play-btn">&#9654; Play</button>
   <input id="time-slider" type="range" min="0" max="100" value="100">
@@ -228,11 +324,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
+// NOTE on second-split / recursive Q3 analysis:
+// The same token_routing_analysis.py technique works at any tree depth.
+// After a second split produces 4 experts, run token_routing_analysis.py on
+// the new checkpoint. It will output category breakdowns for all 4 experts.
+// The viz would then show 4 leaves, each with their own word cloud / bar chart
+// in the hover tooltip. The token_routing data structure in tree_state.js
+// would have expert_0 through expert_3 entries. No changes to the analysis
+// methodology are needed — only more experts to iterate over.
+
 (function() {
+  // ─── Experiment switching ───────────────────────────────────────────
+  const experiments = window.EXPERIMENTS || {};
+  const dropdown = document.getElementById('experiment-dropdown');
+  const experimentNote = document.getElementById('experiment-note');
+
+  // Populate dropdown from EXPERIMENTS
+  Object.keys(experiments).forEach(function(key) {
+    var opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = experiments[key].label;
+    dropdown.appendChild(opt);
+  });
+  // Default to 'current'
+  dropdown.value = 'current';
+
+  function getActiveData() {
+    var key = dropdown.value;
+    var exp = experiments[key];
+    if (!exp) return window.TREE_DATA;
+    return exp.data || window.TREE_DATA;
+  }
+
+  function getActiveExperiment() {
+    return experiments[dropdown.value] || experiments['current'] || {};
+  }
+
+  function updateExperimentNote() {
+    var exp = getActiveExperiment();
+    if (exp.status === 'planned') {
+      experimentNote.textContent = '(planned) ' + (exp.note || '');
+    } else if (exp.status === 'running') {
+      experimentNote.textContent = '(running...)';
+    } else {
+      experimentNote.textContent = '';
+    }
+  }
+
   // ─── Data from tree_state.js ─────────────────────────────────────
-  const D = window.TREE_DATA || {};
-  const tree = D.tree || {};
-  const timeline = D.timeline || [];
+  function D() { return getActiveData(); }
 
   // ─── Colors ─────────────────────────────────────────────────────────
   const COL_TRUNK    = 0x4A90D9;
@@ -465,8 +605,18 @@
     createLabel(label, labelPos, 10, new THREE.Color(color).getStyle());
   }
 
+  // ─── Token routing data lookup ──────────────────────────────────────
+  function getTokenRouting(expertIndex) {
+    var data = D();
+    var routing = data.token_routing;
+    if (!routing) return null;
+    var key = 'expert_' + expertIndex;
+    return routing[key] || null;
+  }
+
   // ─── Timeline interpolation ────────────────────────────────────────
   function interpolateTimeline(t) {
+    var timeline = D().timeline || [];
     // t is 0..1 normalized position in the timeline
     if (timeline.length === 0) {
       return { step: 0, phase: "No data", experts: 1, cossim_fork1: null, cossim_fork2: null, ppl: 0 };
@@ -506,6 +656,13 @@
   const trunkRadius = 0.3;
   const trunkStart = new THREE.Vector3(0, 0, 0);
   const trunkEnd = new THREE.Vector3(0, trunkHeight, 0);
+
+  // Expert labels from Q3 analysis
+  var expertNames = ["Content / Semantic", "Structure / Function"];
+  var expertShortTokens = [
+    ["knowledge", "medical", "algorithm", "infrastructure", "JavaScript"],
+    [".", ",", "the", "of", ")", "123", "\\n"]
+  ];
 
   function buildTree(state) {
     // Clear existing tree meshes
@@ -568,10 +725,9 @@
     const curRankForThickness = state.rank || 4;
     const expertRankRadius = 0.04 + (Math.log2(curRankForThickness) / Math.log2(64)) * 0.12;
     const expertSigns = [-1, 1];
-    const expertLabels = ["Expert A", "Expert B"];
     const expertPositions = [];
 
-    expertLabels.forEach((label, i) => {
+    expertNames.forEach(function(label, i) {
       const sign = expertSigns[i];
       const dx = Math.sin(fork1Angle) * sign;
       const dy = Math.cos(fork1Angle);
@@ -586,18 +742,28 @@
 
       createNode(endPos, 0.17, COL_DEPTH1, {
         label: label,
+        expertIndex: i,
         layerRange: "L15-28",
-        rank: `rank-${curRank}`,
+        rank: 'rank-' + curRank,
         size_kb: Math.round(curSizeKB),
         cossim: state.cossim_fork1.toFixed(3),
         tier: curSizeKB > 128 ? "Flash (loaded on demand)" : "VRAM cache"
       });
 
+      // Build sub-label with representative tokens
+      var tokensStr = expertShortTokens[i].map(function(t) { return '"' + t + '"'; }).join(' ');
       createLabel(
-        `${label} (r${curRank}, ${Math.round(curSizeKB)}KB)`,
+        label + ' (r' + curRank + ', ' + Math.round(curSizeKB) + 'KB)',
         endPos.clone().add(new THREE.Vector3(sign * 0.8, 0.45, 0)),
         12,
         '#88ccbb'
+      );
+      // Small token cloud label below
+      createLabel(
+        tokensStr,
+        endPos.clone().add(new THREE.Vector3(sign * 0.8, 0.1, 0)),
+        9,
+        '#667788'
       );
 
       // Layer rings on branches — L15 through L28 (14 layers)
@@ -625,7 +791,7 @@
           ? ["Specialist A1", "Specialist A2"]
           : ["Specialist B1", "Specialist B2"];
 
-        specLabels.forEach((specLabel, j) => {
+        specLabels.forEach(function(specLabel, j) {
           const specSign = j === 0 ? -1 : 1;
           const baseDir = new THREE.Vector3(dx, dy, 0).normalize();
           const perpX = new THREE.Vector3(0, 0, specSign);
@@ -641,7 +807,7 @@
           createNode(specEnd, 0.14, leafColor, {
             label: specLabel,
             layerRange: "L22-28",
-            rank: `rank-${curRank}`,
+            rank: 'rank-' + curRank,
             size_kb: Math.round(curSizeKB),
             cossim: state.cossim_fork2.toFixed(3),
             tier: "Flash (loaded on demand)"
@@ -674,7 +840,7 @@
 
         const midPt = arcPoints[Math.floor(segs / 2)];
         createLabel(
-          `${((1 - state.cossim_fork2) * 90).toFixed(1)}deg (cos=${state.cossim_fork2.toFixed(3)})`,
+          ((1 - state.cossim_fork2) * 90).toFixed(1) + 'deg (cos=' + state.cossim_fork2.toFixed(3) + ')',
           midPt.clone().add(new THREE.Vector3(0, 0.3, sign * 0.2)),
           10,
           '#E8964D'
@@ -688,7 +854,7 @@
       fork1Angle,
       1.2,
       0x3CBBB1,
-      `${((1 - state.cossim_fork1) * 90).toFixed(1)}deg (cos=${state.cossim_fork1.toFixed(3)})`
+      ((1 - state.cossim_fork1) * 90).toFixed(1) + 'deg (cos=' + state.cossim_fork1.toFixed(3) + ')'
     );
   }
 
@@ -710,7 +876,7 @@
     // Update label
     const cossimStr = state.cossim_fork1 !== null ? state.cossim_fork1.toFixed(3) : "n/a";
     const pplStr = state.ppl.toFixed(2);
-    timeLabel.textContent = `Step ${state.step} | ${state.phase} | CosSim ${cossimStr} | PPL ${pplStr}`;
+    timeLabel.textContent = 'Step ' + state.step + ' | ' + state.phase + ' | CosSim ' + cossimStr + ' | PPL ' + pplStr;
 
     // Rebuild tree
     buildTree(state);
@@ -739,6 +905,7 @@
         slider.value = 0;
       }
 
+      var timeline = D().timeline || [];
       playInterval = setInterval(function() {
         let val = parseInt(slider.value);
         if (val >= 100) {
@@ -758,7 +925,13 @@
     }
   });
 
-  // ─── Tooltip / Hover ───────────────────────────────────────────────
+  // Experiment dropdown change
+  dropdown.addEventListener('change', function() {
+    updateExperimentNote();
+    updateFromSlider();
+  });
+
+  // ─── Tooltip / Hover with token routing bars ───────────────────────
   const tooltip = document.getElementById('tooltip');
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
@@ -766,12 +939,52 @@
   let selectedNode = null;
   const originalMaterials = new Map();
 
+  function buildBarHTML(fraction) {
+    // 10-block bar: each block = 10%
+    var filled = Math.round(fraction * 10);
+    var bar = '';
+    for (var b = 0; b < 10; b++) {
+      bar += b < filled ? '\u2588' : '\u2591';
+    }
+    return bar;
+  }
+
+  function buildTokenRoutingTooltip(expertIndex) {
+    var routing = getTokenRouting(expertIndex);
+    if (!routing) return '';
+
+    var html = '<hr class="tt-separator">';
+    html += '<div class="tt-category-title">' + routing.name + ' (Expert ' + expertIndex + ')</div>';
+
+    var cats = routing.categories;
+    var keys = Object.keys(cats);
+    for (var c = 0; c < keys.length; c++) {
+      var catName = keys[c];
+      var pct = cats[catName];
+      var pctStr = Math.round(pct * 100) + '%';
+      var barWidth = Math.round(pct * 100);
+      html += '<div class="tt-bar-row">';
+      html += '<span class="tt-bar-label">' + catName + '</span>';
+      html += '<span class="tt-bar-pct">' + pctStr + '</span>';
+      html += '<span class="tt-bar-container"><span class="tt-bar-fill" style="width:' + barWidth + '%"></span></span>';
+      html += '</div>';
+    }
+
+    // Representative tokens
+    var tokens = routing.representative_tokens;
+    if (tokens && tokens.length > 0) {
+      html += '<div class="tt-tokens">' + tokens.map(function(t) { return '"' + t + '"'; }).join(', ') + '</div>';
+    }
+
+    return html;
+  }
+
   function onMouseMove(e) {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    const meshes = allNodes.map(n => n.mesh);
+    const meshes = allNodes.map(function(n) { return n.mesh; });
     const intersects = raycaster.intersectObjects(meshes);
 
     if (intersects.length > 0) {
@@ -800,14 +1013,28 @@
         tooltip.style.top = (e.clientY - rect.height - 10) + 'px';
       }
 
-      tooltip.innerHTML = `
-        <div class="tt-title">${data.label || 'Node'}</div>
-        <div class="tt-row">Layer range: <span>${data.layerRange || '-'}</span></div>
-        <div class="tt-row">Adapter rank: <span>${data.rank || '-'}</span></div>
-        <div class="tt-row">Size: <span>${data.size_kb ? data.size_kb + ' KB' : '-'}</span></div>
-        <div class="tt-row">CosSim (sibling): <span>${data.cossim || '-'}</span></div>
-        <div class="tt-row">Storage tier: <span>${data.tier || '-'}</span></div>
-      `;
+      var routingHTML = '';
+      if (data.expertIndex !== undefined) {
+        routingHTML = buildTokenRoutingTooltip(data.expertIndex);
+      }
+
+      tooltip.innerHTML =
+        '<div class="tt-title">' + (data.label || 'Node') + '</div>' +
+        '<div class="tt-row">Layer range: <span>' + (data.layerRange || '-') + '</span></div>' +
+        '<div class="tt-row">Adapter rank: <span>' + (data.rank || '-') + '</span></div>' +
+        '<div class="tt-row">Size: <span>' + (data.size_kb ? data.size_kb + ' KB' : '-') + '</span></div>' +
+        '<div class="tt-row">CosSim (sibling): <span>' + (data.cossim || '-') + '</span></div>' +
+        '<div class="tt-row">Storage tier: <span>' + (data.tier || '-') + '</span></div>' +
+        routingHTML;
+
+      // Re-check bounds after content update
+      var rect2 = tooltip.getBoundingClientRect();
+      if (rect2.right > window.innerWidth) {
+        tooltip.style.left = (e.clientX - rect2.width - 16) + 'px';
+      }
+      if (rect2.bottom > window.innerHeight) {
+        tooltip.style.top = (e.clientY - rect2.height - 10) + 'px';
+      }
 
       renderer.domElement.style.cursor = 'pointer';
     } else {
@@ -845,7 +1072,7 @@
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    const meshes = allNodes.map(n => n.mesh);
+    const meshes = allNodes.map(function(n) { return n.mesh; });
     const intersects = raycaster.intersectObjects(meshes);
 
     if (selectedNode) {
@@ -864,7 +1091,7 @@
   window.addEventListener('click', onClick, false);
 
   // ─── Resize ─────────────────────────────────────────────────────────
-  window.addEventListener('resize', () => {
+  window.addEventListener('resize', function() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -890,6 +1117,7 @@
 
   // ─── Initial build ─────────────────────────────────────────────────
   // Start at the last keyframe (slider at 100%)
+  updateExperimentNote();
   slider.value = 100;
   updateFromSlider();
   animate();
