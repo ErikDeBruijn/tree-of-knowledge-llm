@@ -61,7 +61,7 @@ window.TREE_DATA = {
     "storage": "VRAM (always resident)",
     "children": [
       {
-        "label": "Expert A",
+        "label": "Content / Semantic",
         "type": "leaf",
         "layer": 15,
         "rank": 32,
@@ -70,7 +70,7 @@ window.TREE_DATA = {
         "cossim_with_sibling": 0.278
       },
       {
-        "label": "Expert B",
+        "label": "Structure / Function",
         "type": "leaf",
         "layer": 15,
         "rank": 32,
@@ -84,6 +84,32 @@ window.TREE_DATA = {
   "ablation_comparison": {
     "with_contrastive": { "lambda": 0.1, "final_cossim": 0.278, "ppl": 19.33 },
     "without_contrastive": { "lambda": 0.0, "final_cossim": 0.981, "ppl": 19.58 }
+  },
+
+  // Token routing data from Q3 analysis (token_routing_analysis.py)
+  // Each expert has category breakdowns showing what % of tokens in each category
+  // are routed to that expert (i.e., expert is the argmax gating choice).
+  "token_routing": {
+    "expert_0": {
+      "name": "Content / Semantic",
+      "representative_tokens": ["knowledge", "medical", "algorithm", "infrastructure", "JavaScript"],
+      "categories": {
+        "Rare words":    0.71,
+        "Subwords":      0.66,
+        "Common words":  0.27,
+        "Punctuation":   0.14
+      }
+    },
+    "expert_1": {
+      "name": "Structure / Function",
+      "representative_tokens": [".", ",", "the", "of", ")", "123", "\\n"],
+      "categories": {
+        "Punctuation":   0.86,
+        "Common words":  0.73,
+        "Subwords":      0.34,
+        "Rare words":    0.29
+      }
+    }
   },
 
   "timeline": [
@@ -109,4 +135,22 @@ window.TREE_DATA = {
     { "step": 80828, "phase": "Phase 3",   "experts": 2, "rank": 32, "cossim_fork1": 0.279, "cossim_fork2": null, "ppl": 19.34 },
     { "step": 86828, "phase": "Phase 3",   "experts": 2, "rank": 32, "cossim_fork1": 0.278, "cossim_fork2": null, "ppl": 19.33 }
   ]
+};
+
+// Experiment configurations for the dropdown selector.
+// Each experiment has its own TREE_DATA-like object.
+// The viz reads EXPERIMENTS[selectedKey] to get tree + timeline.
+window.EXPERIMENTS = {
+  "current": {
+    "label": "Current (2 experts, r32)",
+    "status": "measured",
+    "data": window.TREE_DATA  // reference the main data
+  },
+  "lower_threshold": {
+    "label": "Lower threshold (planned)",
+    "status": "planned",
+    "note": "bimodality_threshold=0.4, 200M tokens — may produce 4 experts",
+    // Placeholder: same tree structure, will be replaced by real data when experiment runs
+    "data": window.TREE_DATA
+  }
 };
