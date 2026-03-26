@@ -60,19 +60,9 @@ microseconds—with no inference-latency overhead.
 \section{Introduction}
 \label{sec:intro}
 
-Current language models embed all knowledge—from common syntax to rare medical
-terminology—in the same parameters that also perform reasoning. This creates a
-structural conflict: expanding the knowledge base means adding parameters,
-which increases per-token inference cost, which reduces the token budget
-available for chain-of-thought reasoning at fixed latency. In a conventional
-LLM, you must choose between a larger knowledge base and faster inference. This
-is not a tuning problem—it is an architectural entanglement.
+Current language models embed all knowledge---from common syntax to rare medical terminology---in the same parameters that perform reasoning. Adding knowledge means adding parameters, and therefore inference cost. The standard alternatives do not escape this trade-off: retrieval-augmented generation adds context tokens, tool calls add generation tokens, and longer contexts scale quadratically in attention. Every path to more knowledge costs inference budget.
 
-The \tok{} framework eliminates this conflict by placing fluid intelligence and
-crystallized intelligence on separate resources. The dense core handles
-reasoning and is always resident in VRAM. Domain knowledge lives in
-lightweight, hot-loadable LoRA adapters that consume no resources until needed.
-Adding specialists does not slow the core's inference.
+The \tok{} framework largely eliminates this coupling by placing domain knowledge in separately-loadable adapters whose cost is zero until activated. The dense core handles reasoning and is always resident in VRAM. Crystallized knowledge lives in lightweight, hot-loadable LoRA adapters. Adding specialists does not slow the core's inference.
 
 Prior work shows that learned models reside on a low intrinsic
 dimension~\cite{li2018intrinsic,aghajanyan2021intrinsic}. We observe that
