@@ -1135,6 +1135,7 @@ def main():
     parser.add_argument("--contrastive-margin", type=float, default=0.5)
     parser.add_argument("--bimodality-threshold", type=float, default=0.555)
     parser.add_argument("--phase3-tokens", type=int, default=100_000_000)
+    parser.add_argument("--phase3-lr", type=float, default=5e-5)
     args = parser.parse_args()
 
     cfg = ExperimentConfig(
@@ -1147,6 +1148,7 @@ def main():
         contrastive_margin=args.contrastive_margin,
         bimodality_threshold=args.bimodality_threshold,
         phase3_tokens=args.phase3_tokens,
+        phase3_lr=args.phase3_lr,
     )
 
     # Setup
