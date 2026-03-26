@@ -15,6 +15,7 @@
 \usepackage[tracking=true,kerning=true,spacing=true]{microtype}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{enumitem}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
 \usepackage{wrapfig}
@@ -76,11 +77,14 @@ Adding specialists does not slow the core's inference.
 Prior work shows that learned models reside on a low intrinsic
 dimension~\cite{li2018intrinsic,aghajanyan2021intrinsic}. We observe that
 specialization depth, adapter rank, and storage tier are not three design
-decisions—they are one. A rank-1 adapter is a \emph{lens}: a 4\,KB correction
-to the generalist, always cached. A rank-64 adapter is a \emph{crystal}: a
-256\,KB specialist that reshapes computation fundamentally, loaded from NVMe on
-demand. The rank is not a hyperparameter to tune—it is a \emph{measurement} of
-how different this knowledge is from the core.
+decisions---they are one. We distinguish two regimes:
+
+\begin{itemize}[nosep,leftmargin=1em]
+\item \textbf{Lens-like} (low rank, e.g.\ rank-1 to rank-4): the adapter does not alter the computation itself but \emph{redirects information} through the existing weights. The original FFN does the heavy lifting; the LoRA adapter bends the light. At 4--16\,KB, these corrections are always cached and cost nothing to load.
+\item \textbf{Crystal-like} (high rank, e.g.\ rank-32 to rank-64): the $A \times B$ matrix is large enough to encode its own features---knowledge the original FFN does not possess. It is no longer a correction but an independent information carrier. At 128--256\,KB, these specialists are loaded from flash on demand.
+\end{itemize}
+
+The rank is not a hyperparameter to tune---it is a \emph{measurement} of how different this expert's knowledge is from the generalist core. Lens-like adapters say ``the same computation, slightly adjusted.'' Crystal-like adapters say ``fundamentally different knowledge lives here.''
 
 \input{figure1.tex}
 
