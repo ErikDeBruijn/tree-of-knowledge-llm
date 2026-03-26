@@ -36,7 +36,7 @@
 
 % ============================================================================
 \begin{abstract}
-Current language models entangle \emph{fluid intelligence}---general reasoning and language understanding---with \emph{crystallized intelligence}---domain-specific knowledge accumulated during training. We propose the \tok{} framework, which separates these into a shared dense core and a hierarchy of progressively specialized LoRA adapters that branch like a tree through the model's depth. The central insight is that three apparently separate quantities---\textbf{specialization depth} (how different an expert's knowledge is from the generalist core), \textbf{adapter rank} (how many parameters the expert needs), and \textbf{storage tier} (where the expert lives in the memory hierarchy)---are the same dimension. A rank-1 adapter is a lens: a 4KB correction to the generalist, always cached. A rank-64 adapter is a crystal: a 256KB specialist that reshapes computation fundamentally, loaded from NVMe on demand. This unification arises naturally when experts are created by \emph{learntropy-driven splitting}: a teacher model monitors each expert's prediction difficulty distribution, and when it detects bimodal learntropy---some tokens easy, others hard---the expert splits. Each child inherits the parent's weights plus a LoRA perturbation, starting at rank-1 and growing as the data demands. A contrastive loss accelerates divergence between siblings. The tree grows through the model's depth: early layers share a common trunk, middle layers branch into broad domains, and deep layers fork into narrow specialties. We validate on Qwen3-1.7B (28 layers, 2.0B parameters) and ground our proposal in systematic negative results from six prior experimental arms that establish what does and does not produce genuine expert differentiation.
+Current language models entangle \emph{fluid intelligence}---general reasoning and language understanding---with \emph{crystallized intelligence}---domain-specific knowledge accumulated during training. We propose the \tok{} framework, which separates these into a shared dense core and a hierarchy of progressively specialized LoRA adapters that branch like a tree through the model's depth. The central insight is that three apparently separate quantities---\textbf{specialization depth} (how different an expert's knowledge is from the generalist core), \textbf{adapter rank} (how many parameters the expert needs), and \textbf{storage tier} (where the expert lives in the memory hierarchy)---are the same dimension. A rank-1 adapter is a lens: a 4KB correction to the generalist, always cached. A rank-64 adapter is a crystal: a 256KB specialist that reshapes computation fundamentally, loaded from flash on demand. This unification arises naturally when experts are created by \emph{learntropy-driven splitting}: a teacher model monitors each expert's prediction difficulty distribution, and when it detects bimodal learntropy---some tokens easy, others hard---the expert splits. Each child inherits the parent's weights plus a LoRA perturbation, starting at rank-1 and growing as the data demands. A contrastive loss accelerates divergence between siblings. The tree grows through the model's depth: early layers share a common trunk, middle layers branch into broad domains, and deep layers fork into narrow specialties. We validate on Qwen3-1.7B (28 layers, 2.0B parameters) and ground our proposal in systematic negative results from six prior experimental arms that establish what does and does not produce genuine expert differentiation.
 \end{abstract}
 
 % ============================================================================
@@ -67,8 +67,8 @@ Specialization & Adapter & Size & Storage \\
 \midrule
 Minimal (lens) & Rank-1 LoRA & 4\,KB & CPU cache / always resident \\
 Moderate & Rank-16 LoRA & 64\,KB & VRAM cache \\
-Substantial & Rank-64 LoRA & 256\,KB & NVMe (instant load) \\
-Fundamental (crystal) & Full expert & 12\,MB & NVMe (prefetchable) \\
+Substantial & Rank-64 LoRA & 256\,KB & flash (instant load) \\
+Fundamental (crystal) & Full expert & 12\,MB & flash (prefetchable) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -140,9 +140,9 @@ The unification is not a convenient mapping---it is a structural identity:
 
 \textbf{Information-theoretic view.} An expert that handles tokens from a narrow, homogeneous distribution needs few additional parameters to deviate from the generalist (low KL divergence from parent $\rightarrow$ low rank). An expert that handles a fundamentally different distribution needs many parameters (high KL divergence $\rightarrow$ high rank).
 
-\textbf{Hardware view.} Parameters that are rarely needed should live on slower, cheaper storage. Rank-1 adapters (4\,KB) are so small they never leave the cache. Rank-64 adapters (256\,KB) load in microseconds from NVMe. The rank determines the storage cost because it determines the size, and the size determines the tier.
+\textbf{Hardware view.} Parameters that are rarely needed should live on slower, cheaper storage. Rank-1 adapters (4\,KB) are so small they never leave the cache. Rank-64 adapters (256\,KB) load in microseconds from flash. The rank determines the storage cost because it determines the size, and the size determines the tier.
 
-\textbf{Frequency view.} Common patterns are handled by the shared trunk (always resident). Moderately common domains are handled by low-rank adapters (VRAM-cached). Rare specializations are handled by high-rank adapters (NVMe-loaded on demand). The Zipf distribution of language ensures that most tokens need no specialist at all.
+\textbf{Frequency view.} Common patterns are handled by the shared trunk (always resident). Moderately common domains are handled by low-rank adapters (VRAM-cached). Rare specializations are handled by high-rank adapters (flash-loaded on demand). The Zipf distribution of language ensures that most tokens need no specialist at all.
 
 These three views produce the same ordering: common $\rightarrow$ rare = low rank $\rightarrow$ high rank = always cached $\rightarrow$ loaded on demand. \textbf{It is one dimension, not three.}
 

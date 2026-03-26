@@ -73,7 +73,7 @@ This resolves the bottleneck without fully giving up frozen-core benefits (paral
 │      └──┬────┬────┬────┬────┬────┬───┘     │
 │         │    │    │    │    │    │           │
 │        E0   E1   E2  ...  E48  ...          │
-│       VRAM VRAM VRAM      NVMe  SSD         │
+│       VRAM VRAM VRAM      flash  SSD         │
 │     (generalists)     (specialists)          │
 │                                              │
 │  Experts train independently on their        │

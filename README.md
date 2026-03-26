@@ -21,11 +21,11 @@ Tree of Knowledge is a different architecture:
         │                      │
         │      [root]          │  ← Broad generalists (VRAM)
         │      /    \          │
-        │   [tech]  [human]    │  ← Domain level (VRAM/NVMe)
+        │   [tech]  [human]    │  ← Domain level (VRAM/flash)
         │   /  \     /  \     │
-        │ [code][sci][med][law]│  ← Specialist (NVMe)
+        │ [code][sci][med][law]│  ← Specialist (flash)
         │ / \                  │
-        │[py][rs]              │  ← Deep specialist (NVMe/SSD)
+        │[py][rs]              │  ← Deep specialist (flash/SSD)
         │                      │
         └──────────────────────┘
 ```
@@ -42,7 +42,7 @@ The analogy is cognitive science, not hardware. A child develops fluid intellige
 | **Non-redundant experts** | KD-tree over embedding space ensures disjoint knowledge domains |
 | **Hot-loadable** | Add a medical expert without retraining. Remove the Rust expert if you don't need it. Update the Python expert for the new version. |
 | **Train anywhere** | Experts train independently on commodity GPUs — no fast interconnect, no datacenter. A 64-expert model costs ~$30 on vast.ai. |
-| **Natural storage tiers** | Tree depth = specialization depth = access frequency. Shallow = VRAM, deep = NVMe/SSD. Not imposed — it follows from the structure. |
+| **Natural storage tiers** | Tree depth = specialization depth = access frequency. Shallow = VRAM, deep = flash/SSD. Not imposed — it follows from the structure. |
 | **Developmental training** | A dense teacher model guides the curriculum from simple to complex, like a tutor adapting to the student. |
 
 ## How It Differs from MoE
@@ -63,7 +63,7 @@ This started as "MoGaE" — an attempt to make MoE routing cache-friendly for ti
 The key insights:
 1. Prescriptive cost losses shift routing but the effect dilutes as experts are added
 2. Without cost signals, no specialization emerges at all (Béna & Goodman 2025)
-3. NVMe-only deployment makes routing concentration irrelevant — post-hoc placement works fine
+3. flash-only deployment makes routing concentration irrelevant — post-hoc placement works fine
 4. The real question is: **how do you train experts that are genuinely different?**
 
 Tree of Knowledge answers this by defining expert domains from the geometry of the embedding space, not from a learned router that converges to uniformity.
