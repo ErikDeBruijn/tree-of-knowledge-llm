@@ -214,7 +214,7 @@ class ExpertRouter(nn.Module):
 
     def __init__(self, hidden_dim: int, num_experts: int):
         super().__init__()
-        self.gate = nn.Linear(hidden_dim, num_experts, bias=False)
+        self.gate = nn.Linear(hidden_dim, num_experts, bias=False, dtype=torch.bfloat16)
         nn.init.xavier_uniform_(self.gate.weight)
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -300,9 +300,9 @@ class LoRAForkingLayer(nn.Module):
         self.num_experts = len(self.experts)
         # Grow router
         if self.router is None:
-            self.router = ExpertRouter(self.hidden_dim, 2).to(
-                next(self.experts[0].parameters()).device
-            )
+            dev = next(self.experts[0].parameters()).device
+            dtype = next(self.experts[0].parameters()).dtype
+            self.router = ExpertRouter(self.hidden_dim, 2).to(device=dev, dtype=dtype)
         else:
             self.router.grow(self.num_experts)
         return self.num_experts
