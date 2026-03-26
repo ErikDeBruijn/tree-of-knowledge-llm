@@ -1,0 +1,83 @@
+{
+  "experiment": "hot_loading_validation",
+  "timestamp": "2026-03-26 21:03:45",
+  "checkpoint": "/root/t6b-mogae/checkpoints/phase3_final.pt",
+  "eval_set_sizes": {
+    "content_heavy": 50,
+    "structure_heavy": 50
+  },
+  "predictions": {
+    "remove_E0_content_ppl_increase_pct_gt": 10.0,
+    "remove_E0_structure_ppl_change_pct_lt": 1.0,
+    "remove_E1_structure_ppl_increase_pct_gt": 10.0,
+    "remove_E1_content_ppl_change_pct_lt": 1.0,
+    "restore_ppl_within_pct": 0.5
+  },
+  "conditions": {
+    "baseline": {
+      "content_ppl": 15.948662979809358,
+      "content_loss": 2.769375,
+      "structure_ppl": 13.186831921869462,
+      "structure_loss": 2.57921875
+    },
+    "remove_E0": {
+      "content_ppl": 17.33105536453573,
+      "content_loss": 2.8525,
+      "content_ppl_change_pct": 8.667763476326813,
+      "structure_ppl": 14.27173845604152,
+      "structure_loss": 2.65828125,
+      "structure_ppl_change_pct": 8.22719619541684
+    },
+    "remove_E1": {
+      "content_ppl": 17.174702220569475,
+      "content_loss": 2.8434375,
+      "content_ppl_change_pct": 7.687410802474511,
+      "structure_ppl": 14.193902911913028,
+      "structure_loss": 2.6528125,
+      "structure_ppl_change_pct": 7.636944157704834
+    },
+    "restored": {
+      "content_ppl": 15.948662979809358,
+      "content_loss": 2.769375,
+      "content_diff_from_baseline_pct": 0.0,
+      "structure_ppl": 13.186831921869462,
+      "structure_loss": 2.57921875,
+      "structure_diff_from_baseline_pct": 0.0
+    }
+  },
+  "verdicts": {
+    "remove_E0_hurts_content": {
+      "prediction": "content PPL increases >10.0%",
+      "actual": "+8.67%",
+      "pass": false
+    },
+    "remove_E0_spares_structure": {
+      "prediction": "structure PPL changes <1.0%",
+      "actual": "+8.23%",
+      "pass": false
+    },
+    "remove_E1_hurts_structure": {
+      "prediction": "structure PPL increases >10.0%",
+      "actual": "+7.64%",
+      "pass": false
+    },
+    "remove_E1_spares_content": {
+      "prediction": "content PPL changes <1.0%",
+      "actual": "+7.69%",
+      "pass": false
+    },
+    "restoration_exact": {
+      "prediction": "PPL within 0.5% of baseline",
+      "actual_content": "0.0000%",
+      "actual_structure": "0.0000%",
+      "pass": true
+    }
+  },
+  "summary": {
+    "all_pass": false,
+    "modularity_confirmed": false,
+    "selectivity_confirmed": false,
+    "n_verdicts_pass": 1,
+    "n_verdicts_total": 5
+  }
+}
