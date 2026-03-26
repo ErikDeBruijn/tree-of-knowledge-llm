@@ -122,5 +122,27 @@ window.TREE_DATA = {
   "ablation_comparison": {
     "with_contrastive": { "lambda": 0.1, "final_cossim": 0.288, "ppl": 19.38 },
     "without_contrastive": { "lambda": 0.0, "final_cossim": 0.982, "ppl": 19.58 }
-  }
+  },
+
+  "timeline": [
+    { "step": 0,     "phase": "Baseline",  "experts": 1, "cossim_fork1": null, "cossim_fork2": null, "ppl": 21.20 },
+    { "step": 1000,  "phase": "Phase 1",   "experts": 1, "cossim_fork1": null, "cossim_fork2": null, "ppl": 19.99 },
+    { "step": 5000,  "phase": "Phase 1",   "experts": 1, "cossim_fork1": null, "cossim_fork2": null, "ppl": 19.69 },
+    { "step": 24414, "phase": "Phase 1 end", "experts": 1, "cossim_fork1": null, "cossim_fork2": null, "ppl": 19.59 },
+    { "step": 25414, "phase": "Phase 2 (split!)", "experts": 2, "cossim_fork1": 0.975, "cossim_fork2": null, "ppl": 19.60 },
+    { "step": 27414, "phase": "Phase 2",   "experts": 2, "cossim_fork1": 0.943, "cossim_fork2": null, "ppl": 19.59 },
+    { "step": 29414, "phase": "Phase 2",   "experts": 2, "cossim_fork1": 0.910, "cossim_fork2": null, "ppl": 19.59 },
+    { "step": 31414, "phase": "Phase 2",   "experts": 2, "cossim_fork1": 0.884, "cossim_fork2": null, "ppl": 19.59 },
+    { "step": 35414, "phase": "Phase 2",   "experts": 2, "cossim_fork1": 0.857, "cossim_fork2": null, "ppl": 19.58 },
+    { "step": 39414, "phase": "Phase 2",   "experts": 2, "cossim_fork1": 0.845, "cossim_fork2": null, "ppl": 19.58 },
+    { "step": 48828, "phase": "Phase 2 end", "experts": 2, "cossim_fork1": 0.840, "cossim_fork2": null, "ppl": 19.58 },
+    { "step": 49828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.827, "cossim_fork2": null, "ppl": 19.59 },
+    { "step": 50828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.516, "cossim_fork2": null, "ppl": 19.59 },
+    { "step": 52828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.458, "cossim_fork2": null, "ppl": 19.58 },
+    { "step": 54828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.383, "cossim_fork2": null, "ppl": 19.57 },
+    { "step": 58828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.343, "cossim_fork2": null, "ppl": 19.47 },
+    { "step": 62828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.318, "cossim_fork2": null, "ppl": 19.46 },
+    { "step": 68828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.296, "cossim_fork2": null, "ppl": 19.39 },
+    { "step": 74828, "phase": "Phase 3",   "experts": 2, "cossim_fork1": 0.283, "cossim_fork2": null, "ppl": 19.36 }
+  ]
 };

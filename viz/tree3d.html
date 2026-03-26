@@ -43,7 +43,7 @@
   }
   #legend {
     position: absolute;
-    bottom: 24px;
+    bottom: 90px;
     left: 24px;
     background: rgba(26,26,46,0.88);
     border: 1px solid rgba(255,255,255,0.1);
@@ -123,6 +123,51 @@
     text-align: center;
     line-height: 1.6;
   }
+  #timeline-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: rgba(26,26,46,0.9);
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 600px;
+    backdrop-filter: blur(6px);
+  }
+  #play-btn {
+    background: none;
+    border: 1px solid #4A90D9;
+    color: #4A90D9;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    min-width: 70px;
+    transition: background 0.2s, color 0.2s;
+  }
+  #play-btn:hover {
+    background: rgba(74,144,217,0.15);
+  }
+  #play-btn.playing {
+    border-color: #E85D75;
+    color: #E85D75;
+  }
+  #time-slider {
+    flex: 1;
+    accent-color: #4A90D9;
+  }
+  #time-label {
+    color: #e0e0e0;
+    font-size: 13px;
+    min-width: 320px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
 </style>
 </head>
 <body>
@@ -132,6 +177,12 @@
 <div id="header">
   <h1>Tree of Knowledge — Expert Orthogonality Visualization</h1>
   <p>Branch angle = (1 - cosine_similarity) x 90deg. Orthogonal experts branch at 90deg.</p>
+</div>
+
+<div id="timeline-controls">
+  <button id="play-btn">&#9654; Play</button>
+  <input id="time-slider" type="range" min="0" max="100" value="100">
+  <span id="time-label">Loading...</span>
 </div>
 
 <div id="legend">
@@ -178,44 +229,15 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 (function() {
-  // ─── Data from tree_state.js (loaded via <script> tag) ─────────────
+  // ─── Data from tree_state.js ─────────────────────────────────────
   const D = window.TREE_DATA || {};
   const tree = D.tree || {};
-
-  // Build treeData from the live JSON structure
-  function extractFork(node) {
-    if (!node.children || node.children.length < 2) return null;
-    const cossim = node.children[0].cossim_with_sibling || 0.5;
-    return {
-      depth: 1, layer: node.children[0].layer || 15, cossim: cossim,
-      children: node.children.map(c => {
-        const sub = extractFork(c);
-        return {
-          label: c.label, rank: c.rank || 4, size_kb: c.size_kb || 16,
-          ...(sub ? { fork2: { ...sub, depth: (sub.depth || 1) + 1 } } : {})
-        };
-      })
-    };
-  }
-
-  const treeData = {
-    trunk: { layers: (tree.layers || "1-14"), label: (tree.label || "Fluid Core"), height: 5, thickness: 0.3, color: "#4A90D9" },
-    fork1: extractFork(tree) || {
-      depth: 1, layer: 15, cossim: 0.84,
-      children: [
-        { label: "Expert A", rank: 4, size_kb: 16 },
-        { label: "Expert B", rank: 4, size_kb: 16 }
-      ]
-    }
-  };
+  const timeline = D.timeline || [];
 
   // ─── Colors ─────────────────────────────────────────────────────────
   const COL_TRUNK    = 0x4A90D9;
   const COL_DEPTH1   = 0x3CBBB1;
   const COL_DEPTH2   = 0xE8964D;
-  const COL_LEAF_A   = 0xE85D75;
-  const COL_LEAF_B   = 0xB67CE8;
-  const COL_HIGHLIGHT = 0xFFDD44;
   const COL_BG       = 0x1a1a2e;
 
   const leafColors = {
@@ -292,14 +314,36 @@
     scene.add(ring);
   }
 
-  // ─── Helpers ────────────────────────────────────────────────────────
-  const allNodes = [];      // { mesh, data } for raycasting
-  const allBranches = [];   // { mesh, pathId } for highlighting
-  const pathMap = {};        // nodeId -> array of mesh references in path
+  // ─── Subtle particle dust ──────────────────────────────────────────
+  const particleCount = 200;
+  const particleGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 14;
+    positions[i * 3 + 1] = Math.random() * 12;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 14;
+  }
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particleMat = new THREE.PointsMaterial({
+    color: 0x4466aa,
+    size: 0.04,
+    transparent: true,
+    opacity: 0.4,
+    depthWrite: false
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
 
+  // ─── Tree Group (rebuilt on timeline change) ───────────────────────
+  const treeGroup = new THREE.Group();
+  scene.add(treeGroup);
+
+  // Tracking for tooltip/hover
+  let allNodes = [];
   let nodeIdCounter = 0;
   function nextId() { return nodeIdCounter++; }
 
+  // ─── Material helpers ─────────────────────────────────────────────
   function makeBranchMaterial(color) {
     return new THREE.MeshStandardMaterial({
       color: color,
@@ -318,7 +362,7 @@
     });
   }
 
-  // Create a branch (cylinder) between two points
+  // Create a branch (cylinder) between two points, added to treeGroup
   function createBranch(start, end, radius, color) {
     const dir = new THREE.Vector3().subVectors(end, start);
     const length = dir.length();
@@ -335,18 +379,18 @@
     const quat = new THREE.Quaternion().setFromUnitVectors(axis, normalized);
     mesh.quaternion.copy(quat);
 
-    scene.add(mesh);
+    treeGroup.add(mesh);
     return mesh;
   }
 
-  // Create a node sphere
+  // Create a node sphere, added to treeGroup
   function createNode(position, radius, color, data) {
     const geo = new THREE.SphereGeometry(radius, 24, 24);
     const mat = makeNodeMaterial(color);
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.copy(position);
     mesh.castShadow = true;
-    scene.add(mesh);
+    treeGroup.add(mesh);
 
     const id = nextId();
     mesh.userData = { nodeId: id, ...data };
@@ -354,7 +398,7 @@
     return { mesh, id };
   }
 
-  // Create floating label
+  // Create floating label, added to treeGroup
   function createLabel(text, position, fontSize, color) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -392,137 +436,12 @@
     sprite.position.copy(position);
     const spriteScale = 0.0035;
     sprite.scale.set(w * spriteScale, h * spriteScale, 1);
-    scene.add(sprite);
+    treeGroup.add(sprite);
     return sprite;
   }
 
-  // ─── Build Tree ─────────────────────────────────────────────────────
-  const trunkRadius = treeData.trunk.thickness;
-  const trunkHeight = treeData.trunk.height;
-  const trunkStart = new THREE.Vector3(0, 0, 0);
-  const trunkEnd = new THREE.Vector3(0, trunkHeight, 0);
-
-  // Trunk
-  const trunkMesh = createBranch(trunkStart, trunkEnd, trunkRadius, COL_TRUNK);
-
-  // Root node
-  createNode(trunkStart, 0.18, COL_TRUNK, {
-    label: "Root",
-    layerRange: "L0",
-    rank: "-",
-    size_kb: "-",
-    cossim: "-",
-    tier: "VRAM (always loaded)"
-  });
-
-  // Trunk top node (fork1)
-  const fork1Pos = trunkEnd.clone();
-  const fork1Node = createNode(fork1Pos, 0.22, COL_TRUNK, {
-    label: "Fluid Core",
-    layerRange: "L1-14",
-    rank: "Dense (shared)",
-    size_kb: "~40,000 (full model)",
-    cossim: "-",
-    tier: "VRAM (always loaded)"
-  });
-
-  createLabel("Fluid Core (L1-14)", new THREE.Vector3(0, trunkHeight + 0.5, 0), 13, '#88aacc');
-
-  // Layer markers along trunk
-  for (let i = 1; i <= 14; i++) {
-    const y = (i / 14) * trunkHeight * 0.9;
-    if (i % 3 === 0) {
-      const markerGeo = new THREE.TorusGeometry(trunkRadius + 0.03, 0.015, 8, 24);
-      const markerMat = new THREE.MeshStandardMaterial({ color: 0x6AA8E8, emissive: 0x223344 });
-      const marker = new THREE.Mesh(markerGeo, markerMat);
-      marker.position.set(0, y, 0);
-      marker.rotation.x = Math.PI / 2;
-      scene.add(marker);
-    }
-  }
-
-  // Fork 1: Expert A and Expert B
-  const fork1Data = treeData.fork1;
-  const fork1Angle = (1 - fork1Data.cossim) * Math.PI / 2; // radians
-  const branchLength1 = 3.0;
-  const expertRankRadius = 0.08; // rank-4 thin
-
-  // Place Expert A and B symmetrically in the XZ plane
-  const expertBranches = [];
-  const expertPositions = [];
-  const expertLabels = ["Expert A", "Expert B"];
-  const expertSigns = [-1, 1];
-
-  fork1Data.children.forEach((expert, i) => {
-    const sign = expertSigns[i];
-    // Direction: tilt from vertical by fork1Angle, spread along X axis
-    const dx = Math.sin(fork1Angle) * sign;
-    const dy = Math.cos(fork1Angle);
-    const dir = new THREE.Vector3(dx, dy, 0).normalize();
-    const endPos = fork1Pos.clone().add(dir.multiplyScalar(branchLength1));
-
-    const branchMesh = createBranch(fork1Pos, endPos, expertRankRadius, COL_DEPTH1);
-
-    const expertNode = createNode(endPos, 0.17, COL_DEPTH1, {
-      label: expert.label,
-      layerRange: "L15-21",
-      rank: `rank-${expert.rank}`,
-      size_kb: expert.size_kb,
-      cossim: fork1Data.cossim,
-      tier: "Flash (loaded on demand)"
-    });
-
-    createLabel(
-      `${expert.label} (r${expert.rank}, ${expert.size_kb}KB)`,
-      endPos.clone().add(new THREE.Vector3(sign * 0.8, 0.45, 0)),
-      12,
-      '#88ccbb'
-    );
-
-    expertPositions.push(endPos);
-
-    // Fork 2: Specialists
-    const fork2 = expert.fork2;
-    const fork2Angle = (1 - fork2.cossim) * Math.PI / 2;
-    const branchLength2 = 2.5;
-
-    fork2.children.forEach((spec, j) => {
-      const specSign = j === 0 ? -1 : 1;
-      // Specialists branch in a plane perpendicular to the expert branch direction
-      // Use a rotated reference frame
-      const baseDir = new THREE.Vector3(dx, dy, 0).normalize();
-      // Perpendicular in XZ plane
-      const perpX = new THREE.Vector3(0, 0, specSign);
-      // Tilt from the expert branch direction by fork2Angle
-      const specDir = new THREE.Vector3()
-        .addScaledVector(baseDir, Math.cos(fork2Angle))
-        .addScaledVector(perpX, Math.sin(fork2Angle))
-        .normalize();
-      const specEnd = endPos.clone().add(specDir.clone().multiplyScalar(branchLength2));
-
-      const leafColor = leafColors[spec.label] || COL_LEAF_A;
-      createBranch(endPos, specEnd, expertRankRadius * 0.7, COL_DEPTH2);
-
-      createNode(specEnd, 0.14, leafColor, {
-        label: spec.label,
-        layerRange: "L22-25",
-        rank: `rank-${spec.rank}`,
-        size_kb: spec.size_kb,
-        cossim: fork2.cossim,
-        tier: "Flash (loaded on demand)"
-      });
-
-      createLabel(
-        `${spec.label}`,
-        specEnd.clone().add(new THREE.Vector3(0, 0.4, specSign * 0.3)),
-        11,
-        new THREE.Color(leafColor).getStyle()
-      );
-    });
-  });
-
-  // ─── Angle annotation arcs ─────────────────────────────────────────
-  function createAngleArc(center, angle, radius, color, label, rotationMatrix) {
+  // Create an angle arc annotation
+  function createAngleArc(center, angle, radius, color, label) {
     const points = [];
     const segments = 32;
     const halfAngle = angle;
@@ -531,16 +450,14 @@
       const x = Math.sin(t) * radius;
       const y = Math.cos(t) * radius;
       const p = new THREE.Vector3(x, y, 0);
-      if (rotationMatrix) p.applyMatrix4(rotationMatrix);
       p.add(center);
       points.push(p);
     }
     const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
     const arcMat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.5 });
     const arc = new THREE.Line(arcGeo, arcMat);
-    scene.add(arc);
+    treeGroup.add(arc);
 
-    // Label for the angle
     const midPoint = points[Math.floor(segments / 2)];
     const labelPos = midPoint.clone().add(
       midPoint.clone().sub(center).normalize().multiplyScalar(0.3)
@@ -548,75 +465,277 @@
     createLabel(label, labelPos, 10, new THREE.Color(color).getStyle());
   }
 
-  // Fork 1 angle arc
-  createAngleArc(
-    fork1Pos,
-    fork1Angle,
-    1.2,
-    0x3CBBB1,
-    `${((1 - fork1Data.cossim) * 90).toFixed(1)}deg (cos=${fork1Data.cossim})`
-  );
-
-  // Fork 2 angle arcs (in ZY plane at each expert position)
-  const fork2Angle = (1 - treeData.fork1.children[0].fork2.cossim) * Math.PI / 2;
-  expertPositions.forEach((pos, i) => {
-    const rotMat = new THREE.Matrix4();
-    // Rotate to align with the expert branch direction
-    const sign = expertSigns[i];
-    const dx = Math.sin(fork1Angle) * sign;
-    const dy = Math.cos(fork1Angle);
-    const baseDir = new THREE.Vector3(dx, dy, 0).normalize();
-    // Build rotation: Y-axis -> baseDir, then rotate arc into ZY plane of branch
-    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), baseDir);
-    const rotMat2 = new THREE.Matrix4().makeRotationFromQuaternion(q);
-    // Rotate 90 around baseDir to put arc in the branching plane (XZ)
-    const rotMat3 = new THREE.Matrix4().makeRotationAxis(baseDir, Math.PI / 2);
-    rotMat.multiplyMatrices(rotMat3, rotMat2);
-
-    // Simplified: draw in the plane of the specialist branches
-    const arcPoints = [];
-    const segs = 32;
-    const r = 0.9;
-    for (let j = 0; j <= segs; j++) {
-      const t = -fork2Angle + (2 * fork2Angle * j / segs);
-      const p = new THREE.Vector3(0, 0, 0);
-      p.addScaledVector(baseDir, Math.cos(t) * r);
-      p.addScaledVector(new THREE.Vector3(0, 0, 1), Math.sin(t) * r);
-      p.add(pos);
-      arcPoints.push(p);
+  // ─── Timeline interpolation ────────────────────────────────────────
+  function interpolateTimeline(t) {
+    // t is 0..1 normalized position in the timeline
+    if (timeline.length === 0) {
+      return { step: 0, phase: "No data", experts: 1, cossim_fork1: null, cossim_fork2: null, ppl: 0 };
     }
-    const arcGeo = new THREE.BufferGeometry().setFromPoints(arcPoints);
-    const arcMat = new THREE.LineBasicMaterial({ color: 0xE8964D, transparent: true, opacity: 0.4 });
-    scene.add(new THREE.Line(arcGeo, arcMat));
+    if (timeline.length === 1) return { ...timeline[0] };
 
-    const midPt = arcPoints[Math.floor(segs / 2)];
-    createLabel(
-      `${((1 - 0.32) * 90).toFixed(1)}deg (cos=0.32)`,
-      midPt.clone().add(new THREE.Vector3(0, 0.3, sign * 0.2)),
-      10,
-      '#E8964D'
-    );
-  });
+    // Map t to a position between keyframes
+    const pos = t * (timeline.length - 1);
+    const i0 = Math.floor(pos);
+    const i1 = Math.min(i0 + 1, timeline.length - 1);
+    const frac = pos - i0;
 
-  // ─── Subtle particle dust ──────────────────────────────────────────
-  const particleCount = 200;
-  const particleGeo = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 14;
-    positions[i * 3 + 1] = Math.random() * 12;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 14;
+    const a = timeline[i0];
+    const b = timeline[i1];
+
+    // Interpolate numeric values
+    function lerp(va, vb, f) {
+      if (va === null && vb === null) return null;
+      if (va === null) return f > 0.5 ? vb : null; // snap: null until halfway
+      if (vb === null) return f < 0.5 ? va : null;
+      return va + (vb - va) * f;
+    }
+
+    return {
+      step: Math.round(a.step + (b.step - a.step) * frac),
+      phase: frac < 0.5 ? a.phase : b.phase,
+      experts: frac < 0.5 ? a.experts : b.experts,
+      cossim_fork1: lerp(a.cossim_fork1, b.cossim_fork1, frac),
+      cossim_fork2: lerp(a.cossim_fork2, b.cossim_fork2, frac),
+      ppl: a.ppl + (b.ppl - a.ppl) * frac
+    };
   }
-  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const particleMat = new THREE.PointsMaterial({
-    color: 0x4466aa,
-    size: 0.04,
-    transparent: true,
-    opacity: 0.4,
-    depthWrite: false
+
+  // ─── Build tree for given state ────────────────────────────────────
+  const trunkHeight = 5;
+  const trunkRadius = 0.3;
+  const trunkStart = new THREE.Vector3(0, 0, 0);
+  const trunkEnd = new THREE.Vector3(0, trunkHeight, 0);
+
+  function buildTree(state) {
+    // Clear existing tree meshes
+    allNodes = [];
+    while (treeGroup.children.length > 0) {
+      const child = treeGroup.children[0];
+      treeGroup.remove(child);
+      if (child.geometry) child.geometry.dispose();
+      if (child.material) {
+        if (child.material.map) child.material.map.dispose();
+        child.material.dispose();
+      }
+    }
+
+    // Always show trunk
+    createBranch(trunkStart, trunkEnd, trunkRadius, COL_TRUNK);
+
+    // Root node
+    createNode(trunkStart, 0.18, COL_TRUNK, {
+      label: "Root",
+      layerRange: "L0",
+      rank: "-",
+      size_kb: "-",
+      cossim: "-",
+      tier: "VRAM (always loaded)"
+    });
+
+    // Trunk top node
+    const fork1Pos = trunkEnd.clone();
+    createNode(fork1Pos, 0.22, COL_TRUNK, {
+      label: "Fluid Core",
+      layerRange: "L1-14",
+      rank: "Dense (shared)",
+      size_kb: "~40,000 (full model)",
+      cossim: "-",
+      tier: "VRAM (always loaded)"
+    });
+
+    createLabel("Fluid Core (L1-14)", new THREE.Vector3(0, trunkHeight + 0.5, 0), 13, '#88aacc');
+
+    // Layer markers along trunk
+    for (let i = 1; i <= 14; i++) {
+      const y = (i / 14) * trunkHeight * 0.9;
+      if (i % 3 === 0) {
+        const markerGeo = new THREE.TorusGeometry(trunkRadius + 0.03, 0.015, 8, 24);
+        const markerMat = new THREE.MeshStandardMaterial({ color: 0x6AA8E8, emissive: 0x223344 });
+        const marker = new THREE.Mesh(markerGeo, markerMat);
+        marker.position.set(0, y, 0);
+        marker.rotation.x = Math.PI / 2;
+        treeGroup.add(marker);
+      }
+    }
+
+    // If no fork1 yet (pre-split), we're done
+    if (state.cossim_fork1 === null) return;
+
+    // Fork 1 branches
+    const fork1Angle = (1 - state.cossim_fork1) * Math.PI / 2;
+    const branchLength1 = 3.0;
+    const expertRankRadius = 0.08;
+    const expertSigns = [-1, 1];
+    const expertLabels = ["Expert A", "Expert B"];
+    const expertPositions = [];
+
+    expertLabels.forEach((label, i) => {
+      const sign = expertSigns[i];
+      const dx = Math.sin(fork1Angle) * sign;
+      const dy = Math.cos(fork1Angle);
+      const dir = new THREE.Vector3(dx, dy, 0).normalize();
+      const endPos = fork1Pos.clone().add(dir.multiplyScalar(branchLength1));
+
+      createBranch(fork1Pos, endPos, expertRankRadius, COL_DEPTH1);
+
+      createNode(endPos, 0.17, COL_DEPTH1, {
+        label: label,
+        layerRange: "L15-21",
+        rank: "rank-4",
+        size_kb: 16,
+        cossim: state.cossim_fork1.toFixed(3),
+        tier: "Flash (loaded on demand)"
+      });
+
+      createLabel(
+        `${label} (r4, 16KB)`,
+        endPos.clone().add(new THREE.Vector3(sign * 0.8, 0.45, 0)),
+        12,
+        '#88ccbb'
+      );
+
+      expertPositions.push({ pos: endPos, dx, dy, sign });
+
+      // Fork 2 branches (if cossim_fork2 exists)
+      if (state.cossim_fork2 !== null) {
+        const fork2Angle = (1 - state.cossim_fork2) * Math.PI / 2;
+        const branchLength2 = 2.5;
+        const specLabels = i === 0
+          ? ["Specialist A1", "Specialist A2"]
+          : ["Specialist B1", "Specialist B2"];
+
+        specLabels.forEach((specLabel, j) => {
+          const specSign = j === 0 ? -1 : 1;
+          const baseDir = new THREE.Vector3(dx, dy, 0).normalize();
+          const perpX = new THREE.Vector3(0, 0, specSign);
+          const specDir = new THREE.Vector3()
+            .addScaledVector(baseDir, Math.cos(fork2Angle))
+            .addScaledVector(perpX, Math.sin(fork2Angle))
+            .normalize();
+          const specEnd = endPos.clone().add(specDir.clone().multiplyScalar(branchLength2));
+
+          const leafColor = leafColors[specLabel] || 0xE85D75;
+          createBranch(endPos, specEnd, expertRankRadius * 0.7, COL_DEPTH2);
+
+          createNode(specEnd, 0.14, leafColor, {
+            label: specLabel,
+            layerRange: "L22-25",
+            rank: "rank-4",
+            size_kb: 16,
+            cossim: state.cossim_fork2.toFixed(3),
+            tier: "Flash (loaded on demand)"
+          });
+
+          createLabel(
+            specLabel,
+            specEnd.clone().add(new THREE.Vector3(0, 0.4, specSign * 0.3)),
+            11,
+            new THREE.Color(leafColor).getStyle()
+          );
+        });
+
+        // Fork 2 angle arcs
+        const baseDir = new THREE.Vector3(dx, dy, 0).normalize();
+        const arcPoints = [];
+        const segs = 32;
+        const arcR = 0.9;
+        for (let s = 0; s <= segs; s++) {
+          const t = -fork2Angle + (2 * fork2Angle * s / segs);
+          const p = new THREE.Vector3(0, 0, 0);
+          p.addScaledVector(baseDir, Math.cos(t) * arcR);
+          p.addScaledVector(new THREE.Vector3(0, 0, 1), Math.sin(t) * arcR);
+          p.add(endPos);
+          arcPoints.push(p);
+        }
+        const arcGeo = new THREE.BufferGeometry().setFromPoints(arcPoints);
+        const arcMat = new THREE.LineBasicMaterial({ color: 0xE8964D, transparent: true, opacity: 0.4 });
+        treeGroup.add(new THREE.Line(arcGeo, arcMat));
+
+        const midPt = arcPoints[Math.floor(segs / 2)];
+        createLabel(
+          `${((1 - state.cossim_fork2) * 90).toFixed(1)}deg (cos=${state.cossim_fork2.toFixed(3)})`,
+          midPt.clone().add(new THREE.Vector3(0, 0.3, sign * 0.2)),
+          10,
+          '#E8964D'
+        );
+      }
+    });
+
+    // Fork 1 angle arc
+    createAngleArc(
+      fork1Pos,
+      fork1Angle,
+      1.2,
+      0x3CBBB1,
+      `${((1 - state.cossim_fork1) * 90).toFixed(1)}deg (cos=${state.cossim_fork1.toFixed(3)})`
+    );
+  }
+
+  // ─── Timeline controls ─────────────────────────────────────────────
+  const slider = document.getElementById('time-slider');
+  const timeLabel = document.getElementById('time-label');
+  const playBtn = document.getElementById('play-btn');
+
+  // Set slider max to 100 (we use 0-100 and normalize to 0-1)
+  slider.max = 100;
+
+  let isPlaying = false;
+  let playInterval = null;
+
+  function updateFromSlider() {
+    const t = parseInt(slider.value) / 100;
+    const state = interpolateTimeline(t);
+
+    // Update label
+    const cossimStr = state.cossim_fork1 !== null ? state.cossim_fork1.toFixed(3) : "n/a";
+    const pplStr = state.ppl.toFixed(2);
+    timeLabel.textContent = `Step ${state.step} | ${state.phase} | CosSim ${cossimStr} | PPL ${pplStr}`;
+
+    // Rebuild tree
+    buildTree(state);
+  }
+
+  slider.addEventListener('input', function() {
+    updateFromSlider();
   });
-  const particles = new THREE.Points(particleGeo, particleMat);
-  scene.add(particles);
+
+  playBtn.addEventListener('click', function() {
+    if (isPlaying) {
+      // Stop
+      clearInterval(playInterval);
+      playInterval = null;
+      isPlaying = false;
+      playBtn.innerHTML = '&#9654; Play';
+      playBtn.classList.remove('playing');
+    } else {
+      // Start
+      isPlaying = true;
+      playBtn.innerHTML = '&#9724; Stop';
+      playBtn.classList.add('playing');
+
+      // If at end, restart from beginning
+      if (parseInt(slider.value) >= 100) {
+        slider.value = 0;
+      }
+
+      playInterval = setInterval(function() {
+        let val = parseInt(slider.value);
+        if (val >= 100) {
+          // Reached end — stop
+          clearInterval(playInterval);
+          playInterval = null;
+          isPlaying = false;
+          playBtn.innerHTML = '&#9654; Play';
+          playBtn.classList.remove('playing');
+          return;
+        }
+        // Advance by ~1 keyframe worth (100 / number of keyframes)
+        const stepSize = Math.max(1, Math.round(100 / Math.max(timeline.length, 1)));
+        slider.value = Math.min(val + stepSize, 100);
+        updateFromSlider();
+      }, 2000);
+    }
+  });
 
   // ─── Tooltip / Hover ───────────────────────────────────────────────
   const tooltip = document.getElementById('tooltip');
@@ -639,11 +758,11 @@
       const data = hit.userData;
 
       if (hoveredNode !== hit) {
-        if (hoveredNode && hoveredNode !== selectedNode?.mesh) {
+        if (hoveredNode && hoveredNode !== (selectedNode && selectedNode.mesh)) {
           restoreMaterial(hoveredNode);
         }
         hoveredNode = hit;
-        if (hoveredNode !== selectedNode?.mesh) {
+        if (hoveredNode !== (selectedNode && selectedNode.mesh)) {
           highlightMesh(hoveredNode, 1.15);
         }
       }
@@ -652,7 +771,6 @@
       tooltip.style.left = (e.clientX + 16) + 'px';
       tooltip.style.top = (e.clientY - 10) + 'px';
 
-      // Keep tooltip on screen
       const rect = tooltip.getBoundingClientRect();
       if (rect.right > window.innerWidth) {
         tooltip.style.left = (e.clientX - rect.width - 16) + 'px';
@@ -672,7 +790,7 @@
 
       renderer.domElement.style.cursor = 'pointer';
     } else {
-      if (hoveredNode && hoveredNode !== selectedNode?.mesh) {
+      if (hoveredNode && hoveredNode !== (selectedNode && selectedNode.mesh)) {
         restoreMaterial(hoveredNode);
       }
       hoveredNode = null;
@@ -709,7 +827,6 @@
     const meshes = allNodes.map(n => n.mesh);
     const intersects = raycaster.intersectObjects(meshes);
 
-    // Deselect previous
     if (selectedNode) {
       restoreMaterial(selectedNode.mesh);
       selectedNode = null;
@@ -750,6 +867,10 @@
     renderer.render(scene, camera);
   }
 
+  // ─── Initial build ─────────────────────────────────────────────────
+  // Start at the last keyframe (slider at 100%)
+  slider.value = 100;
+  updateFromSlider();
   animate();
 })();
 </script>

@@ -502,6 +502,64 @@ def should_split_expert(per_token_losses: np.ndarray, cfg: ExperimentConfig) -> 
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Visualization State Update
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def update_tree_state_js(results_dir: str, timeline_entry: Dict):
+    """Append a timeline entry to viz/tree_state.js for the 3D visualization.
+
+    Args:
+        results_dir: Path to the results directory (tree_state.js lives in ../viz/)
+        timeline_entry: Dict with keys: step, phase, experts, cossim_fork1, cossim_fork2, ppl
+    """
+    viz_dir = Path(results_dir).parent / "viz"
+    state_path = viz_dir / "tree_state.js"
+
+    if not state_path.exists():
+        return  # No viz file to update
+
+    try:
+        content = state_path.read_text()
+        # Extract the JS object: everything between 'window.TREE_DATA = ' and the final ';'
+        prefix = "window.TREE_DATA = "
+        idx_start = content.index(prefix) + len(prefix)
+        idx_end = content.rindex(";")
+        data = json.loads(content[idx_start:idx_end])
+
+        # Ensure timeline array exists
+        if "timeline" not in data:
+            data["timeline"] = []
+
+        # Avoid duplicate steps: replace if same step exists, otherwise append
+        existing_steps = {e["step"]: i for i, e in enumerate(data["timeline"])}
+        entry = {
+            "step": timeline_entry["step"],
+            "phase": str(timeline_entry["phase"]),
+            "experts": timeline_entry["experts"],
+            "cossim_fork1": timeline_entry.get("cossim_fork1"),
+            "cossim_fork2": timeline_entry.get("cossim_fork2"),
+            "ppl": round(timeline_entry["ppl"], 2),
+        }
+
+        if entry["step"] in existing_steps:
+            data["timeline"][existing_steps[entry["step"]]] = entry
+        else:
+            data["timeline"].append(entry)
+            data["timeline"].sort(key=lambda e: e["step"])
+
+        # Update timestamp
+        from datetime import datetime
+        data["updated"] = datetime.now().isoformat(timespec="seconds")
+
+        # Write back
+        js_content = prefix + json.dumps(data, indent=2) + ";\n"
+        state_path.write_text(js_content)
+    except Exception:
+        # Visualization update is best-effort; don't crash training
+        pass
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Metrics
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -926,6 +984,18 @@ def train_phase(model: LoRAForkingModel, train_loader: DataLoader,
             with open(results_path, "w") as f:
                 json.dump(metrics_history, f, indent=2, default=str)
 
+            # Update 3D visualization timeline
+            tree_info = metrics.get("tree_info", {})
+            max_experts = max((v.get("num_experts", 1) for v in tree_info.values()), default=1)
+            update_tree_state_js(cfg.results_dir, {
+                "step": step,
+                "phase": f"Phase {cfg.phase}",
+                "experts": max_experts,
+                "cossim_fork1": metrics["mean_cossim"] if max_experts >= 2 else None,
+                "cossim_fork2": None,  # Populated when depth-2 forks exist
+                "ppl": metrics["ppl"],
+            })
+
             # Phase 2+: attempt splits
             if cfg.phase >= 2 and tokens_since_last_split >= cfg.min_tokens_before_split:
                 logger.log("Checking for splits...")
@@ -983,6 +1053,18 @@ def train_phase(model: LoRAForkingModel, train_loader: DataLoader,
     with open(results_path, "w") as f:
         json.dump(metrics_history, f, indent=2, default=str)
     logger.log(f"Results saved to {results_path}")
+
+    # Update 3D visualization timeline (final)
+    tree_info = metrics.get("tree_info", {})
+    max_experts = max((v.get("num_experts", 1) for v in tree_info.values()), default=1)
+    update_tree_state_js(cfg.results_dir, {
+        "step": step,
+        "phase": f"Phase {cfg.phase} end",
+        "experts": max_experts,
+        "cossim_fork1": metrics["mean_cossim"] if max_experts >= 2 else None,
+        "cossim_fork2": None,
+        "ppl": metrics["ppl"],
+    })
 
     return metrics_history
 
