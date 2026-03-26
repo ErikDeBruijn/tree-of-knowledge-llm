@@ -1,0 +1,1310 @@
+{
+  "metadata": {
+    "checkpoint": "/root/t6b-mogae/checkpoints/phase3_final.pt",
+    "model": "Qwen/Qwen3-1.7B",
+    "tokens_analyzed": 5000,
+    "analysis_layer": 27,
+    "most_decisive_layer": 15
+  },
+  "layer_stats": {
+    "14": {
+      "expert_0_frac": 0.481,
+      "expert_1_frac": 0.519,
+      "entropy": 0.9989581230624177
+    },
+    "15": {
+      "expert_0_frac": 0.5556,
+      "expert_1_frac": 0.4444,
+      "entropy": 0.9910617458635362
+    },
+    "16": {
+      "expert_0_frac": 0.4774,
+      "expert_1_frac": 0.5226,
+      "entropy": 0.9985257556438274
+    },
+    "17": {
+      "expert_0_frac": 0.497,
+      "expert_1_frac": 0.503,
+      "entropy": 0.9999740310449117
+    },
+    "18": {
+      "expert_0_frac": 0.4932,
+      "expert_1_frac": 0.5068,
+      "entropy": 0.9998665751608677
+    },
+    "19": {
+      "expert_0_frac": 0.488,
+      "expert_1_frac": 0.512,
+      "entropy": 0.9995844636428596
+    },
+    "20": {
+      "expert_0_frac": 0.4752,
+      "expert_1_frac": 0.5248,
+      "entropy": 0.9982246410328162
+    },
+    "21": {
+      "expert_0_frac": 0.46,
+      "expert_1_frac": 0.54,
+      "entropy": 0.9953784385316867
+    },
+    "22": {
+      "expert_0_frac": 0.5132,
+      "expert_1_frac": 0.4868,
+      "entropy": 0.9994971909278424
+    },
+    "23": {
+      "expert_0_frac": 0.4804,
+      "expert_1_frac": 0.5196,
+      "entropy": 0.9988912642012048
+    },
+    "24": {
+      "expert_0_frac": 0.4972,
+      "expert_1_frac": 0.5028,
+      "entropy": 0.9999773781349836
+    },
+    "25": {
+      "expert_0_frac": 0.501,
+      "expert_1_frac": 0.499,
+      "entropy": 0.9999971143194556
+    },
+    "26": {
+      "expert_0_frac": 0.4802,
+      "expert_1_frac": 0.5198,
+      "entropy": 0.9988685155508145
+    },
+    "27": {
+      "expert_0_frac": 0.4686,
+      "expert_1_frac": 0.5314,
+      "entropy": 0.9971532475921898
+    }
+  },
+  "category_analysis": {
+    "word_start": {
+      "total": 3708,
+      "expert_0": 1828,
+      "expert_1": 1880,
+      "expert_0_pct": 49.3,
+      "expert_1_pct": 50.7,
+      "preference": "--"
+    },
+    "rare_word": {
+      "total": 1910,
+      "expert_0": 1362,
+      "expert_1": 548,
+      "expert_0_pct": 71.31,
+      "expert_1_pct": 28.69,
+      "preference": "E0"
+    },
+    "common_word": {
+      "total": 1739,
+      "expert_0": 478,
+      "expert_1": 1261,
+      "expert_0_pct": 27.49,
+      "expert_1_pct": 72.51,
+      "preference": "E1"
+    },
+    "capitalized": {
+      "total": 601,
+      "expert_0": 292,
+      "expert_1": 309,
+      "expert_0_pct": 48.59,
+      "expert_1_pct": 51.41,
+      "preference": "--"
+    },
+    "number": {
+      "total": 589,
+      "expert_0": 115,
+      "expert_1": 474,
+      "expert_0_pct": 19.52,
+      "expert_1_pct": 80.48,
+      "preference": "E1"
+    },
+    "punctuation": {
+      "total": 530,
+      "expert_0": 72,
+      "expert_1": 458,
+      "expert_0_pct": 13.58,
+      "expert_1_pct": 86.42,
+      "preference": "E1"
+    },
+    "subword": {
+      "total": 518,
+      "expert_0": 342,
+      "expert_1": 176,
+      "expert_0_pct": 66.02,
+      "expert_1_pct": 33.98,
+      "preference": "E0"
+    },
+    "code_keyword": {
+      "total": 491,
+      "expert_0": 100,
+      "expert_1": 391,
+      "expert_0_pct": 20.37,
+      "expert_1_pct": 79.63,
+      "preference": "E1"
+    },
+    "newline": {
+      "total": 100,
+      "expert_0": 1,
+      "expert_1": 99,
+      "expert_0_pct": 1.0,
+      "expert_1_pct": 99.0,
+      "preference": "E1"
+    },
+    "code_symbol": {
+      "total": 59,
+      "expert_0": 20,
+      "expert_1": 39,
+      "expert_0_pct": 33.9,
+      "expert_1_pct": 66.1,
+      "preference": "E1"
+    },
+    "other": {
+      "total": 55,
+      "expert_0": 30,
+      "expert_1": 25,
+      "expert_0_pct": 54.55,
+      "expert_1_pct": 45.45,
+      "preference": "--"
+    },
+    "whitespace": {
+      "total": 50,
+      "expert_0": 6,
+      "expert_1": 44,
+      "expert_0_pct": 12.0,
+      "expert_1_pct": 88.0,
+      "preference": "E1"
+    }
+  },
+  "expert_0_samples": [
+    {
+      "position": 0,
+      "token_text": "The",
+      "token_id": 785,
+      "context": "The woman who died",
+      "categories": [
+        "common_word",
+        "capitalized",
+        "subword"
+      ]
+    },
+    {
+      "position": 102,
+      "token_text": "ers",
+      "token_id": 388,
+      "context": " Medway Coroners office have confirmed",
+      "categories": [
+        "subword"
+      ]
+    },
+    {
+      "position": 194,
+      "token_text": "It",
+      "token_id": 2132,
+      "context": " kind soul\".\nIt read: \"",
+      "categories": [
+        "common_word",
+        "capitalized",
+        "subword"
+      ]
+    },
+    {
+      "position": 292,
+      "token_text": "le",
+      "token_id": 273,
+      "context": ".\nMrs Kendle&apos;s death",
+      "categories": [
+        "subword"
+      ]
+    },
+    {
+      "position": 404,
+      "token_text": " disagree",
+      "token_id": 28295,
+      "context": "ete people would disagree with me here",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 495,
+      "token_text": " bounded",
+      "token_id": 61115,
+      "context": " is fairly tightly bounded to KDE,",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 599,
+      "token_text": " GUI",
+      "token_id": 16435,
+      "context": " I develop a GUI application, I",
+      "categories": [
+        "word_start"
+      ]
+    },
+    {
+      "position": 701,
+      "token_text": " stuff",
+      "token_id": 6259,
+      "context": " for some graphic stuff, etc.",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 798,
+      "token_text": " You",
+      "token_id": 1446,
+      "context": "+ code. You can save the",
+      "categories": [
+        "common_word",
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 883,
+      "token_text": " this",
+      "token_id": 419,
+      "context": " do I think this is exciting?\n",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 979,
+      "token_text": " little",
+      "token_id": 2632,
+      "context": " off-track a little bit. What",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1086,
+      "token_text": "len",
+      "token_id": 2892,
+      "context": ", in Mechlenburg, Germany",
+      "categories": [
+        "subword"
+      ]
+    },
+    {
+      "position": 1213,
+      "token_text": " William",
+      "token_id": 12375,
+      "context": "; John, William and Nicholas—and",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1318,
+      "token_text": " Lutheran",
+      "token_id": 81981,
+      "context": " of the German Lutheran Church, and",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1408,
+      "token_text": "ep",
+      "token_id": 747,
+      "context": " with John Roepke, he",
+      "categories": [
+        "subword"
+      ]
+    },
+    {
+      "position": 1509,
+      "token_text": " acres",
+      "token_id": 26367,
+      "context": "300 acres of timber and",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1609,
+      "token_text": "Mary",
+      "token_id": 41484,
+      "context": " five daughters—Mary, Lizzie",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "subword"
+      ]
+    },
+    {
+      "position": 1727,
+      "token_text": ",",
+      "token_id": 11,
+      "context": " German Lutheran Church, and are held",
+      "categories": [
+        "punctuation",
+        "number"
+      ]
+    },
+    {
+      "position": 1820,
+      "token_text": " exhaustion",
+      "token_id": 69563,
+      "context": " for job-related exhaustion. The risk",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1898,
+      "token_text": " people",
+      "token_id": 1251,
+      "context": " better. The people with this gene",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1977,
+      "token_text": " sheet",
+      "token_id": 10834,
+      "context": " analysis, balance sheet substantiation,",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2074,
+      "token_text": " experience",
+      "token_id": 3139,
+      "context": " control, solid experience in South East",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2173,
+      "token_text": " future",
+      "token_id": 3853,
+      "context": " else in the future.It’s",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2279,
+      "token_text": "arch",
+      "token_id": 1113,
+      "context": " Happiness?\nMonarch butterflies journey from",
+      "categories": [
+        "rare_word",
+        "subword"
+      ]
+    },
+    {
+      "position": 2376,
+      "token_text": " photos",
+      "token_id": 7249,
+      "context": " related information, photos, and folklore",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2478,
+      "token_text": "0",
+      "token_id": 15,
+      "context": "ise MOD70s. On",
+      "categories": [
+        "number"
+      ]
+    },
+    {
+      "position": 2570,
+      "token_text": " Wave",
+      "token_id": 31318,
+      "context": ", and Purple Wave was widely regarded",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2661,
+      "token_text": " years",
+      "token_id": 1635,
+      "context": " months or even years to acquire is",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2773,
+      "token_text": " Therapy",
+      "token_id": 39043,
+      "context": " data.Stretch Therapy (ST)",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2846,
+      "token_text": " activity",
+      "token_id": 5702,
+      "context": " prepare for daily activity. The AIS",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2946,
+      "token_text": " important",
+      "token_id": 2989,
+      "context": "AIS is important for injury prevention",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3060,
+      "token_text": " muscle",
+      "token_id": 15747,
+      "context": " allows the targeted muscle to lengthen",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3163,
+      "token_text": " desk",
+      "token_id": 18010,
+      "context": " also helpful for desk job or office",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3262,
+      "token_text": "broken",
+      "token_id": 48909,
+      "context": ", the unbroken thread of B",
+      "categories": [
+        "rare_word",
+        "subword"
+      ]
+    },
+    {
+      "position": 3364,
+      "token_text": ",",
+      "token_id": 11,
+      "context": " Latin bottia, meaning boss.\n",
+      "categories": [
+        "punctuation",
+        "number"
+      ]
+    },
+    {
+      "position": 3486,
+      "token_text": " sport",
+      "token_id": 10552,
+      "context": " publicly condemned the sport, punishing those",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3594,
+      "token_text": " was",
+      "token_id": 572,
+      "context": "ce Olympiad was held in Athens",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3708,
+      "token_text": " Golf",
+      "token_id": 27033,
+      "context": " to Soccer and Golf, Boc",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3805,
+      "token_text": " small",
+      "token_id": 2613,
+      "context": "ino, the small orange ball being",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3891,
+      "token_text": "ino",
+      "token_id": 3313,
+      "context": " to the Pallino.\nAbove,",
+      "categories": [
+        "subword"
+      ]
+    },
+    {
+      "position": 3987,
+      "token_text": "Strategy",
+      "token_id": 19816,
+      "context": "occe.\nStrategy plays a big",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "subword"
+      ]
+    },
+    {
+      "position": 4085,
+      "token_text": " to",
+      "token_id": 311,
+      "context": " a measurement has to be taken to",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4187,
+      "token_text": "ce",
+      "token_id": 346,
+      "context": " a Bocce court in the",
+      "categories": [
+        "subword"
+      ]
+    },
+    {
+      "position": 4278,
+      "token_text": " I",
+      "token_id": 358,
+      "context": " is fantastic. I played when I",
+      "categories": [
+        "common_word",
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4376,
+      "token_text": " kids",
+      "token_id": 6837,
+      "context": " to take the kids (still is",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4493,
+      "token_text": " Co",
+      "token_id": 3539,
+      "context": "-powered airport in Cochin. Recently",
+      "categories": [
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4570,
+      "token_text": " green",
+      "token_id": 6176,
+      "context": " by incorporating various green technologies.\nThe",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4653,
+      "token_text": " does",
+      "token_id": 1558,
+      "context": " terminals, this does not have huge",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4734,
+      "token_text": " laid",
+      "token_id": 17113,
+      "context": ".\nA lawn laid out right inside",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4813,
+      "token_text": " power",
+      "token_id": 2355,
+      "context": " meet the major power needs of the",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    }
+  ],
+  "expert_1_samples": [
+    {
+      "position": 4,
+      "token_text": " after",
+      "token_id": 1283,
+      "context": " woman who died after falling from a",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 99,
+      "token_text": " Med",
+      "token_id": 3264,
+      "context": ".\nKent and Medway Coroners",
+      "categories": [
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 201,
+      "token_text": " and",
+      "token_id": 323,
+      "context": "To a beautiful and kind soul,",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 304,
+      "token_text": " for",
+      "token_id": 369,
+      "context": " a petition calling for higher railings",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 390,
+      "token_text": " a",
+      "token_id": 264,
+      "context": " system designed as a plugin-based system",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 496,
+      "token_text": " to",
+      "token_id": 311,
+      "context": " fairly tightly bounded to KDE, whereas",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 593,
+      "token_text": " not",
+      "token_id": 537,
+      "context": ". I'm not. When I",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 687,
+      "token_text": " use",
+      "token_id": 990,
+      "context": " applications. I use Konqueror",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 791,
+      "token_text": " generate",
+      "token_id": 6923,
+      "context": " and it can generate the corresponding GTK",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 896,
+      "token_text": " a",
+      "token_id": 264,
+      "context": " runtime, without a recompilation",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1000,
+      "token_text": " the",
+      "token_id": 279,
+      "context": ", one of the prosperous and highly",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1092,
+      "token_text": " after",
+      "token_id": 1283,
+      "context": " Germany, and after the death of",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1178,
+      "token_text": " the",
+      "token_id": 279,
+      "context": " Bavaria about the year 1",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1263,
+      "token_text": " when",
+      "token_id": 979,
+      "context": " old; John when an infant,",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1368,
+      "token_text": " common",
+      "token_id": 4185,
+      "context": " education in the common schools, and",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1468,
+      "token_text": " repairing",
+      "token_id": 67237,
+      "context": ", buying and repairing a mill and",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1570,
+      "token_text": " of",
+      "token_id": 315,
+      "context": "uss, natives of Germany; who",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1659,
+      "token_text": " his",
+      "token_id": 806,
+      "context": " busy attending to his own affairs to",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1746,
+      "token_text": " S",
+      "token_id": 328,
+      "context": " NIGHTS AND SLEEP EAS",
+      "categories": [
+        "capitalized",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1860,
+      "token_text": " of",
+      "token_id": 315,
+      "context": "a new field of genetics studying how",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 1988,
+      "token_text": ".\n",
+      "token_id": 624,
+      "context": " market conformity checking.\nFirst point of",
+      "categories": [
+        "punctuation",
+        "number",
+        "newline"
+      ]
+    },
+    {
+      "position": 2085,
+      "token_text": " in",
+      "token_id": 304,
+      "context": ".\nProficiency in financial instruments &",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2182,
+      "token_text": ",”",
+      "token_id": 2419,
+      "context": " of the world,” said the cater",
+      "categories": [
+        "punctuation"
+      ]
+    },
+    {
+      "position": 2277,
+      "token_text": "?\n",
+      "token_id": 5267,
+      "context": " Butterfly of Happiness?\nMonarch butterflies",
+      "categories": [
+        "punctuation",
+        "newline"
+      ]
+    },
+    {
+      "position": 2377,
+      "token_text": ",",
+      "token_id": 11,
+      "context": " information, photos, and folklore from",
+      "categories": [
+        "punctuation",
+        "number"
+      ]
+    },
+    {
+      "position": 2469,
+      "token_text": "aed",
+      "token_id": 61454,
+      "context": " followed by Phaedo, Oman",
+      "categories": [
+        "subword"
+      ]
+    },
+    {
+      "position": 2582,
+      "token_text": " sellers",
+      "token_id": 36149,
+      "context": " that brought corporate sellers and buyers together",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2681,
+      "token_text": " about",
+      "token_id": 911,
+      "context": " and informed decisions about critical business issues",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2772,
+      "token_text": "Stretch",
+      "token_id": 53898,
+      "context": " actionable data.Stretch Therapy (ST",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "subword"
+      ]
+    },
+    {
+      "position": 2890,
+      "token_text": " fasc",
+      "token_id": 15195,
+      "context": " muscle joins and fascia. The",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 2988,
+      "token_text": " and",
+      "token_id": 323,
+      "context": " has no age and very few contr",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3083,
+      "token_text": ".",
+      "token_id": 13,
+      "context": " the targeted muscle. This gentle stretch",
+      "categories": [
+        "punctuation",
+        "number"
+      ]
+    },
+    {
+      "position": 3176,
+      "token_text": " is",
+      "token_id": 374,
+      "context": "occe Ball is alive and well",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3272,
+      "token_text": " consistently",
+      "token_id": 20699,
+      "context": " lineage is the consistently common objective of",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3369,
+      "token_text": " early",
+      "token_id": 4124,
+      "context": " boss.\nThe early Romans were among",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3457,
+      "token_text": " noted",
+      "token_id": 10342,
+      "context": "occe have noted that the game",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3542,
+      "token_text": " throughout",
+      "token_id": 6814,
+      "context": " and gained popularity throughout the ages.",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3639,
+      "token_text": " its",
+      "token_id": 1181,
+      "context": " States. During its beginnings in the",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3723,
+      "token_text": " is",
+      "token_id": 374,
+      "context": " the world and is considered the oldest",
+      "categories": [
+        "code_keyword",
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 3830,
+      "token_text": ".",
+      "token_id": 13,
+      "context": " the Pallino. Red then tries",
+      "categories": [
+        "punctuation",
+        "number"
+      ]
+    },
+    {
+      "position": 3938,
+      "token_text": " playing",
+      "token_id": 5619,
+      "context": " over years of playing bocce",
+      "categories": [
+        "rare_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4033,
+      "token_text": "Above",
+      "token_id": 58807,
+      "context": " Pallino.\nAbove, Kevin toss",
+      "categories": [
+        "rare_word",
+        "capitalized",
+        "subword"
+      ]
+    },
+    {
+      "position": 4140,
+      "token_text": ".",
+      "token_id": 13,
+      "context": "?\nBetween games. Al Zamb",
+      "categories": [
+        "punctuation",
+        "number"
+      ]
+    },
+    {
+      "position": 4243,
+      "token_text": " at",
+      "token_id": 518,
+      "context": ".\nThere is at least one other",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4342,
+      "token_text": " the",
+      "token_id": 279,
+      "context": " the blame for the demise of the",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4429,
+      "token_text": "uggling",
+      "token_id": 61931,
+      "context": " failed at juggling waiting in line",
+      "categories": [
+        "rare_word",
+        "subword"
+      ]
+    },
+    {
+      "position": 4530,
+      "token_text": " (",
+      "token_id": 320,
+      "context": " Toubro (L&T),",
+      "categories": [
+        "punctuation",
+        "word_start",
+        "code_symbol"
+      ]
+    },
+    {
+      "position": 4655,
+      "token_text": " have",
+      "token_id": 614,
+      "context": " this does not have huge displays that",
+      "categories": [
+        "common_word",
+        "word_start"
+      ]
+    },
+    {
+      "position": 4786,
+      "token_text": ",",
+      "token_id": 11,
+      "context": " the electricity requirements, a 2",
+      "categories": [
+        "punctuation",
+        "number"
+      ]
+    },
+    {
+      "position": 4891,
+      "token_text": " may",
+      "token_id": 1231,
+      "context": " in India, may be in world",
+      "categories": [
+        "word_start"
+      ]
+    }
+  ],
+  "cross_layer_agreement": {
+    "14-15": 0.4822,
+    "14-16": 0.5392,
+    "14-17": 0.5564,
+    "14-18": 0.5546,
+    "14-19": 0.4974,
+    "14-20": 0.4742,
+    "14-21": 0.473,
+    "14-22": 0.5742,
+    "14-23": 0.5214,
+    "14-24": 0.5702,
+    "14-25": 0.584,
+    "14-26": 0.6044,
+    "14-27": 0.6004,
+    "15-16": 0.5206,
+    "15-17": 0.4978,
+    "15-18": 0.4956,
+    "15-19": 0.4972,
+    "15-20": 0.4776,
+    "15-21": 0.4848,
+    "15-22": 0.4992,
+    "15-23": 0.5184,
+    "15-24": 0.5188,
+    "15-25": 0.5006,
+    "15-26": 0.497,
+    "15-27": 0.473,
+    "16-17": 0.6172,
+    "16-18": 0.5322,
+    "16-19": 0.589,
+    "16-20": 0.4294,
+    "16-21": 0.4374,
+    "16-22": 0.5594,
+    "16-23": 0.6398,
+    "16-24": 0.5858,
+    "16-25": 0.6056,
+    "16-26": 0.6156,
+    "16-27": 0.606,
+    "17-18": 0.5726,
+    "17-19": 0.5474,
+    "17-20": 0.4486,
+    "17-21": 0.4522,
+    "17-22": 0.6042,
+    "17-23": 0.585,
+    "17-24": 0.617,
+    "17-25": 0.6296,
+    "17-26": 0.6396,
+    "17-27": 0.6052,
+    "18-19": 0.5216,
+    "18-20": 0.4892,
+    "18-21": 0.4496,
+    "18-22": 0.5688,
+    "18-23": 0.5836,
+    "18-24": 0.5992,
+    "18-25": 0.6122,
+    "18-26": 0.6358,
+    "18-27": 0.6138,
+    "19-20": 0.3804,
+    "19-21": 0.406,
+    "19-22": 0.5364,
+    "19-23": 0.6404,
+    "19-24": 0.556,
+    "19-25": 0.5722,
+    "19-26": 0.583,
+    "19-27": 0.6058,
+    "20-21": 0.6416,
+    "20-22": 0.4208,
+    "20-23": 0.3404,
+    "20-24": 0.3956,
+    "20-25": 0.3998,
+    "20-26": 0.3542,
+    "20-27": 0.3506,
+    "21-22": 0.4256,
+    "21-23": 0.354,
+    "21-24": 0.3724,
+    "21-25": 0.3642,
+    "21-26": 0.3582,
+    "21-27": 0.387,
+    "22-23": 0.6052,
+    "22-24": 0.652,
+    "22-25": 0.6774,
+    "22-26": 0.7154,
+    "22-27": 0.6682,
+    "23-24": 0.644,
+    "23-25": 0.6566,
+    "23-26": 0.6782,
+    "23-27": 0.6834,
+    "24-25": 0.7022,
+    "24-26": 0.721,
+    "24-27": 0.6766,
+    "25-26": 0.7764,
+    "25-27": 0.7364,
+    "26-27": 0.7924
+  },
+  "routing_locality": {
+    "switch_rate": 0.5319063812762552,
+    "random_baseline": 0.49802808,
+    "ratio_to_random": 1.0680248818023579,
+    "expert_0_run_length_mean": 1.761654135338346,
+    "expert_1_run_length_mean": 1.9977443609022556
+  },
+  "position_analysis": {
+    "q0_0-127": {
+      "expert_0_frac": 0.46484375
+    },
+    "q1_128-255": {
+      "expert_0_frac": 0.46640625
+    },
+    "q2_256-383": {
+      "expert_0_frac": 0.46875
+    },
+    "q3_384-511": {
+      "expert_0_frac": 0.475
+    }
+  }
+}
