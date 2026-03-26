@@ -15,6 +15,8 @@
 \usepackage[tracking=true,kerning=true,spacing=true]{microtype}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \usepackage{wrapfig}
 
 \newcommand{\placeholder}[1]{\begin{center}\fbox{\parbox{0.85\textwidth}{\centering\textcolor{red}{\textbf{[FIGURE: #1]}}}}\end{center}}
@@ -80,12 +82,7 @@ to the generalist, always cached. A rank-64 adapter is a \emph{crystal}: a
 demand. The rank is not a hyperparameter to tune—it is a \emph{measurement} of
 how different this knowledge is from the core.
 
-\placeholder{Figure~1: The \tok{} tree. A Qwen3-1.7B trunk (layers 1–14) feeds
-into branching LoRA adapters at increasing depth. Each node shows its adapter
-rank (r=1 at first fork, growing to r=16..64 at leaves). Annotations indicate
-storage tier: VRAM-resident for the trunk and low-rank adapters, NVMe for
-high-rank specialists. The reader should understand the entire architecture
-from this single picture.}
+\input{figure1.tex}
 
 Standard Mixture-of-Experts (MoE) architectures attempt this separation but
 fail in practice: load-balancing losses enforce near-uniform routing, preventing
