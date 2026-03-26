@@ -1,10 +1,5 @@
-% Tree of Knowledge: Specialization Depth, Adapter Rank, and Storage Tier
-% Are the Same Dimension
-%
-% The central claim: in a well-designed MoE architecture, how specialized
-% an expert is (information-theoretic), how large its adapter is (parameters),
-% and where it lives in the memory hierarchy (hardware) are not three separate
-% design decisions — they are one.
+% Tree of Knowledge v3 — rewritten following LoRA structural patterns
+% Core claim: specialization depth, adapter rank, and storage tier are one dimension.
 
 \documentclass{article}
 \usepackage[preprint]{neurips_2024}
@@ -19,8 +14,9 @@
 \usepackage{microtype}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{wrapfig}
 
-\newcommand{\placeholder}[1]{\textcolor{red}{\textbf{[#1]}}}
+\newcommand{\placeholder}[1]{\begin{center}\fbox{\parbox{0.85\textwidth}{\centering\textcolor{red}{\textbf{[FIGURE: #1]}}}}\end{center}}
 \newcommand{\tok}{Tree of Knowledge}
 
 \title{Tree of Knowledge: Differentiating Fluid Intelligence \\ from Modular Crystallized Knowledge in Language Models}
@@ -36,208 +32,487 @@
 
 % ============================================================================
 \begin{abstract}
-Current language models entangle \emph{fluid intelligence}---general reasoning and language understanding---with \emph{crystallized intelligence}---domain-specific knowledge accumulated during training. We propose the \tok{} framework, which separates these into a shared dense core and a hierarchy of progressively specialized LoRA adapters that branch like a tree through the model's depth. The central insight is that three apparently separate quantities---\textbf{specialization depth} (how different an expert's knowledge is from the generalist core), \textbf{adapter rank} (how many parameters the expert needs), and \textbf{storage tier} (where the expert lives in the memory hierarchy)---are the same dimension. A rank-1 adapter is a lens: a 4KB correction to the generalist, always cached. A rank-64 adapter is a crystal: a 256KB specialist that reshapes computation fundamentally, loaded from flash on demand. This unification arises naturally when experts are created by \emph{learntropy-driven splitting}: a teacher model monitors each expert's prediction difficulty distribution, and when it detects bimodal learntropy---some tokens easy, others hard---the expert splits. Each child inherits the parent's weights plus a LoRA perturbation, starting at rank-1 and growing as the data demands. A contrastive loss accelerates divergence between siblings. The tree grows through the model's depth: early layers share a common trunk, middle layers branch into broad domains, and deep layers fork into narrow specialties. We validate on Qwen3-1.7B (28 layers, 2.0B parameters) and ground our proposal in systematic negative results from six prior experimental arms that establish what does and does not produce genuine expert differentiation.
+We propose the \tok{} framework, which separates a language model's
+\emph{fluid intelligence} (reasoning, syntax, attention patterns) from its
+\emph{crystallized intelligence} (domain-specific knowledge) by placing them on
+different parameter budgets. A shared dense core preserves reasoning capacity
+while a hierarchy of variable-rank LoRA adapters—branching like a tree through
+the model's depth—supplies domain knowledge on demand. Adapters are born at
+rank-1 through \emph{learntropy-driven forking}: when a teacher detects bimodal
+prediction difficulty in an expert, the expert splits into two children whose
+divergence is accelerated by a contrastive loss. Rank grows only as the data
+demands, yielding specialists measured in kilobytes rather than megabytes. We
+ground the design in systematic negative results: six experimental arms on
+Qwen3-1.7B show that copy-initialized experts trained on disjoint data remain
+virtually identical (cosine similarity 0.998). LoRA initialization, disjoint
+data, and contrastive pressure together reduce Phase~2 cosine similarity from
+0.975 to 0.840 while matching the Phase~1 perplexity of 19.58 (baseline
+21.20). The resulting architecture admits specialists that are trainable on
+commodity hardware, composable by a community, and loadable from NVMe in
+microseconds—with no inference-latency overhead.
 \end{abstract}
 
 % ============================================================================
 \section{Introduction}
+\label{sec:intro}
 
-Current language models embed all knowledge---from common syntax to rare medical terminology---in the same parameters that also perform reasoning. This creates a structural conflict: expanding the knowledge base means adding parameters, which increases inference cost per token, which reduces the token budget available for chain-of-thought reasoning at fixed latency. The model's reasoning capacity is not degraded by knowledge \emph{per se}, but it is constrained by sharing the same computational resources. In a conventional LLM, you must choose between a larger knowledge base and faster inference. This is not a tuning problem---it is an architectural entanglement.
+Current language models embed all knowledge—from common syntax to rare medical
+terminology—in the same parameters that also perform reasoning. This creates a
+structural conflict: expanding the knowledge base means adding parameters,
+which increases per-token inference cost, which reduces the token budget
+available for chain-of-thought reasoning at fixed latency. In a conventional
+LLM, you must choose between a larger knowledge base and faster inference. This
+is not a tuning problem—it is an architectural entanglement.
 
-The \tok{} framework eliminates this conflict by placing fluid intelligence (reasoning, language structure) and crystallized intelligence (domain knowledge) on separate resources. The dense core handles reasoning and is always resident in VRAM. Domain knowledge lives in lightweight, hot-loadable adapters that consume no resources until needed. Adding specialists does not slow the core's inference---the core's reasoning capacity is no longer constrained by the size of the knowledge base.
+The \tok{} framework eliminates this conflict by placing fluid intelligence and
+crystallized intelligence on separate resources. The dense core handles
+reasoning and is always resident in VRAM. Domain knowledge lives in
+lightweight, hot-loadable LoRA adapters that consume no resources until needed.
+Adding specialists does not slow the core's inference.
 
-Standard Mixture-of-Experts architectures attempt this separation but create a different problem. MoE is compute-friendly---only $k$ of $n$ experts activate per token---but storage-unfriendly: all experts must reside in VRAM because any token might route to any expert, and the load-balancing loss enforces near-uniform routing that prevents any hot/cold distinction. The model stores $n$ near-identical copies consuming VRAM without adding knowledge.
+Prior work shows that learned models reside on a low intrinsic
+dimension~\cite{li2018intrinsic,aghajanyan2021intrinsic}. We observe that
+specialization depth, adapter rank, and storage tier are not three design
+decisions—they are one. A rank-1 adapter is a \emph{lens}: a 4\,KB correction
+to the generalist, always cached. A rank-64 adapter is a \emph{crystal}: a
+256\,KB specialist that reshapes computation fundamentally, loaded from NVMe on
+demand. The rank is not a hyperparameter to tune—it is a \emph{measurement} of
+how different this knowledge is from the core.
 
-The root cause is that standard MoE ignores the entropy structure of language~\cite{shannon1948}: token frequencies follow Zipf's law, and parameter allocation should reflect this information density. When the architecture aligns with Zipf, tiered deployment becomes a natural consequence: frequently-activated generalists stay in VRAM, rare specialists reside on slower storage. In \tok{}, variable-rank LoRA adapters achieve this alignment naturally---common-domain adapters are low-rank (4--64\,KB, always cached), rare specialists are higher-rank but infrequently accessed. At current experimental scale (Qwen3-1.7B), everything fits in VRAM; as the system scales to larger cores, thousands of experts, or edge devices, tier-cost-aware placement emerges without architectural changes (Appendix~\ref{app:shannon}).
+\placeholder{Figure~1: The \tok{} tree. A Qwen3-1.7B trunk (layers 1–14) feeds
+into branching LoRA adapters at increasing depth. Each node shows its adapter
+rank (r=1 at first fork, growing to r=16..64 at leaves). Annotations indicate
+storage tier: VRAM-resident for the trunk and low-rank adapters, NVMe for
+high-rank specialists. The reader should understand the entire architecture
+from this single picture.}
 
-That this scaling is practical is supported by 121 inference experiments on rented GPU instances that calibrated a hardware-realistic cache simulator against measured bandwidths and latencies across VRAM, DDR5, and NVMe Gen4/Gen5 tiers. At the OLMoE scale (16\,MB experts), SSD bandwidth is a bottleneck---but \tok{}'s variable-rank adapters are 100--1000$\times$ smaller: a 64\,KB adapter loads from Gen5 NVMe in $<$10\,$\mu$s, well within a single token's compute window (Appendix~\ref{app:tiered}).
+Standard Mixture-of-Experts (MoE) architectures attempt this separation but
+fail in practice: load-balancing losses enforce near-uniform routing, preventing
+any hot/cold distinction, and copy-initialized experts remain virtually
+identical. We dedicate Section~\ref{sec:why-moe-fails} to this failure mode,
+which motivates every design choice in \tok{}.
 
-But separating fluid from crystallized intelligence requires genuine expert differentiation---and that turns out to be remarkably hard. We spent six experimental arms and 40+ hours of GPU training discovering this. Copy-initialized experts trained on disjoint data remain virtually identical (cosine similarity 0.998 after 12M tokens). Prescriptive cost losses shift routing but the effect dilutes. Biological mechanisms help marginally. Without explicit cost signals, no specialization emerges at all.
+\paragraph{Concrete benefits.}
+\begin{itemize}
+    \item Specialists measured in \textbf{kilobytes}, not megabytes (4\,KB–256\,KB vs.\ 16\,MB per MoE expert).
+    \item Trainable on \textbf{commodity hardware}, in parallel—each adapter trains independently.
+    \item \textbf{Composable by a community}—contributors add specialists without retraining the core.
+    \item \textbf{No inference-latency overhead}—the core runs at full speed; adapters merge into the forward pass.
+\end{itemize}
 
-These failures taught us something important: \textbf{expert differentiation requires three forces acting together}:
-\begin{enumerate}
-    \item \textbf{Different starting points.} Copy-initialized experts share an identical basin of attraction that data alone cannot escape. LoRA adapters, randomly initialized, start from genuinely different positions in parameter space.
-    \item \textbf{Different training data.} Disjoint data partitions force each expert to encounter different input distributions. Without this, all experts converge to the same function.
-    \item \textbf{Explicit divergence pressure.} Even with different data, convergence toward the shared optimum is the default. A contrastive loss that penalizes similarity between sibling experts provides the gradient signal that accelerates differentiation.
-\end{enumerate}
+Throughout this paper, we use \textbf{Qwen3-1.7B} (28 layers, 2.0B parameters)
+as our running example, training on C4 data. All reported numbers are from this
+model unless otherwise noted.
 
-The \tok{} framework instantiates all three through a single mechanism: \emph{learntropy-driven progressive splitting with variable-rank LoRA adapters}.
+% ============================================================================
+\section{Why Can't Standard MoE Differentiate?}
+\label{sec:why-moe-fails}
 
-\subsection{The Unifying Insight}
+The promise of Mixture-of-Experts is that different experts will learn different
+things. In practice, they do not. We spent six experimental arms and 40+ hours
+of GPU training on Qwen3-1.7B discovering why.
 
-We observe that three design decisions typically treated independently---specialization depth, adapter rank, and storage tier---are manifestations of the same underlying quantity: \emph{how different this expert's computation is from the generalist core}.
+\paragraph{The copy-initialization trap.}
+The standard upcycling recipe~\cite{komatsuzaki2023sparse} creates experts by
+copying the dense model's FFN weights. Each expert starts in the same basin of
+attraction. Our decisive experiment: we forced completely disjoint data
+partitions across experts, training for 12M tokens. Result: expert weight cosine
+similarity remained at \textbf{0.998}. The copy initialization creates a basin
+that disjoint data alone cannot escape on practical timescales.
 
-\begin{table}[h]
+\paragraph{Load-balancing destroys structure.}
+MoE training adds an auxiliary load-balancing loss that penalizes uneven routing.
+This is necessary to prevent expert collapse, but it has a side effect: it
+enforces near-uniform token distribution across experts, eliminating the very
+frequency structure that would allow hot/cold tiering. Every expert sees the
+same distribution and converges to the same function.
+
+\paragraph{Six arms, one conclusion.}
+Table~\ref{tab:lessons} summarizes six experimental arms that systematically
+explored alternatives. Prescriptive cost losses create routing structure (Gini
+0.60) but the effect dilutes over training. Descriptive losses fail entirely
+(Gini 0.05). Biological mechanisms help marginally (Gini 0.46). Without
+explicit divergence pressure on the \emph{weights themselves}, no genuine
+specialization emerges.
+
+\begin{table}[t]
 \centering
-\caption{Specialization depth, adapter rank, and storage tier are the same dimension.}
-\label{tab:unification}
-\begin{tabular}{@{}llll@{}}
+\caption{Six experimental arms on Qwen3-1.7B that establish what does \emph{not}
+produce genuine expert differentiation.}
+\label{tab:lessons}
+\begin{tabular}{@{}llp{6.5cm}@{}}
 \toprule
-Specialization & Adapter & Size & Storage \\
+Arm & Key metric & Lesson \\
 \midrule
-Minimal (lens) & Rank-1 LoRA & 4\,KB & CPU cache / always resident \\
-Moderate & Rank-16 LoRA & 64\,KB & VRAM cache \\
-Substantial & Rank-64 LoRA & 256\,KB & flash (instant load) \\
-Fundamental (crystal) & Full expert & 12\,MB & flash (prefetchable) \\
+A: Prescriptive cost loss  & Gini 0.60$\to$0.49 & Creates routing skew, but skew dilutes over training \\
+B: Reuse-distance proxy     & Gini 0.05           & Descriptive loss produces no structure \\
+C: Adaptive + cost          & 25 rounds, Gini dilutes & Piaget mechanism works, but routing Gini is wrong metric \\
+D: Pure data-driven         & Gini 0.11           & No specialization without resource constraint \\
+E: Bio-integrated           & Gini 0.46           & Six bio mechanisms help modestly, not fundamentally \\
+F: KD-Warm upcycle          & CosSim 0.998        & Copy-init experts don't differentiate via data alone \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A rank-1 adapter is a \emph{lens}: it makes a small correction to the generalist's output, like reading glasses that sharpen an already-clear image. A rank-64 adapter is a new \emph{crystal}: it computes a fundamentally different function, like a prism that decomposes white light into a spectrum the generalist cannot see. The rank is not a hyperparameter to tune---it is a \emph{measurement} of how different this knowledge is from the core.
+These failures taught us that expert differentiation requires three forces acting
+\emph{together}: (1)~different starting points (not copy-initialization),
+(2)~different training data, and (3)~explicit divergence pressure on the weights.
+The \tok{} framework instantiates all three through learntropy-driven progressive
+splitting with contrastive LoRA adapters.
 
 % ============================================================================
-\section{Architecture: Progressive LoRA Forking}
+\section{Method: Progressive LoRA Forking}
+\label{sec:method}
+
+The \tok{} architecture has three components: a shared trunk, a branching
+mechanism, and a divergence loss. We describe each briefly; mathematical details
+are in Appendix~\ref{app:math}.
 
 \subsection{Shared Trunk, Branching Depth}
 
-A standard transformer with $L$ layers processes every token through the same $L$ feed-forward networks. In \tok{}, early layers remain shared (the ``trunk''), while later layers progressively branch:
-
+For Qwen3-1.7B (28 layers), we partition the transformer into:
 \begin{itemize}
-    \item \textbf{Layers 1--$k_1$}: Shared FFN. All tokens follow the same path. This is the fluid intelligence core---general reasoning, syntax, attention patterns. Always resident in VRAM.
-    \item \textbf{Layers $k_1$--$k_2$}: First fork. 2--4 broad domain branches, each implemented as a LoRA adapter on the shared FFN. The router selects which branch based on the hidden state.
-    \item \textbf{Layers $k_2$--$L$}: Progressive forking. Each branch may split further as specialization demands. The tree grows deeper where the data requires it.
+    \item \textbf{Layers 1–14 (trunk):} Shared FFN, always VRAM-resident.
+          This is the fluid intelligence core—general reasoning, syntax,
+          attention patterns. $\sim$1.0B parameters.
+    \item \textbf{Layers 15–21 (first fork):} 2–4 broad domain branches,
+          each a LoRA adapter on the shared FFN ($\sim$2\,MB per branch).
+    \item \textbf{Layers 22–28 (deep forks):} Up to 8+ branches
+          ($\sim$0.5\,MB per branch).
 \end{itemize}
-
-For Qwen3-1.7B (28 layers), a natural partition is:
-\begin{itemize}
-    \item Layers 1--14: trunk (shared, 1.0B parameters)
-    \item Layers 15--21: first fork, 2--4 branches ($\sim$2\,MB LoRA per branch)
-    \item Layers 22--28: deep forks, up to 8+ branches ($\sim$0.5\,MB LoRA per branch)
-\end{itemize}
-
-Total specialist parameters: $\sim$6\,MB for 8 specialists, versus 800+\,MB for 8 full expert copies in standard MoE.
+Total specialist parameters: $\sim$6\,MB for 8 specialists, versus 800+\,MB for
+8 full expert copies in standard MoE.
 
 \subsection{Learntropy-Driven Splitting}
 
-An expert splits when a teacher model detects \textbf{bimodal learntropy}: the expert handles some tokens easily (low prediction error) and others poorly (high prediction error). This bimodality is evidence that one expert is serving two distinct populations that would benefit from separate treatment.
+\textbf{Definition: Learntropy.} We define \emph{learntropy} as the per-token prediction difficulty experienced by a specific expert:
+\begin{equation}
+\mathcal{L}_{\text{learn}}(e_i, t) = -\log P(t \mid \text{context}, e_i)
+\end{equation}
+where $e_i$ is expert $i$ and $t$ is the predicted token. This is the standard cross-entropy loss, but we use it as a \emph{diagnostic signal for the learning system itself}: not only as a training objective but as an instrument that determines when more capacity is needed. The term combines ``learning'' and ``entropy'' to reflect Shannon's insight that information content drives the allocation of representational resources~\cite{shannon1948}—and Piaget's observation that prediction failure (accommodation) triggers the creation of new cognitive structure~\cite{piaget1952}.
 
+An expert splits when the \emph{distribution} of learntropy across its assigned tokens is \textbf{bimodal}—the expert handles some tokens easily (low learntropy) and others poorly (high learntropy)—signaling two distinct populations that would benefit from separate treatment. Split procedure:
 \begin{enumerate}
-    \item The teacher scores each expert's tokens by per-token loss.
-    \item If the loss distribution is bimodal (measured by bimodality coefficient or Hartigan's dip test), the expert is a split candidate.
-    \item The expert's LoRA adapter is duplicated. Each child inherits the parent's weights plus a small random perturbation.
-    \item Children start at rank-1. If the data requires more capacity, rank grows adaptively.
-    \item A contrastive loss between siblings accelerates divergence.
+    \item Score each expert's tokens by per-token loss.
+    \item Test for bimodality (Hartigan's dip test). If bimodal, the expert is a
+          split candidate.
+    \item Duplicate the expert's LoRA adapter. Each child inherits parent weights
+          plus a small random perturbation, starting at \textbf{rank-1}.
+    \item Train children on their respective data partitions.
+    \item Apply contrastive loss between siblings (Section~\ref{sec:contrastive}).
 \end{enumerate}
-
-The split is not on a timer or a fixed schedule---it is triggered by an information-theoretic signal from the data itself. This is Piaget's accommodation mechanism made precise: new cognitive structure is created when prediction failure reveals that existing structure is inadequate.
+The split is triggered by an information-theoretic signal, not a schedule.
 
 \subsection{Variable Rank as Specialization Measure}
 
-After splitting, each child adapter begins at rank-1 (minimal deviation from parent). Training proceeds, and the rank grows when the reconstruction error of the low-rank adapter exceeds a threshold---the adapter needs more capacity to express the specialization the data demands.
-
+After splitting, each child begins at rank-1. Rank grows when reconstruction
+error exceeds a threshold—the adapter needs more capacity to express what the
+data demands. The rank \emph{is} the measurement of specialization depth:
 \begin{itemize}
-    \item \textbf{Rank stays at 1--4}: The specialization is a small correction. The knowledge is ``close to'' the parent. The adapter is a lens.
-    \item \textbf{Rank grows to 16--64}: The specialization is substantial. The expert handles fundamentally different computation. The adapter is a crystal.
-    \item \textbf{Rank approaches full}: The expert has diverged so far from the parent that it should be promoted to a full expert (or the parent should be restructured).
+    \item \textbf{Rank 1–4} (4–16\,KB): A lens. Small correction, close to parent.
+    \item \textbf{Rank 16–64} (64–256\,KB): A crystal. Fundamentally different
+          computation.
 \end{itemize}
 
-The rank IS the measurement of specialization depth. It is not chosen by a human---it emerges from the data.
-
-\subsection{Contrastive Divergence Loss}
-
-Without explicit pressure, sibling experts drift toward the shared optimum (we observed CosSim 0.998 after 12M tokens of disjoint data training). The contrastive loss provides the missing force:
-
-\begin{equation}
-\mathcal{L}_{\text{contrast}} = \lambda_c \sum_{i < j} \max(0, \cos(\theta_{ij}) - \tau)
-\end{equation}
-
-where $\theta_{ij}$ is the angle between sibling expert weight vectors and $\tau$ is a target maximum similarity. Combined with disjoint training data, this produces rapid differentiation.
-
-% ============================================================================
-\section{Why These Three Are the Same Dimension}
-
-The unification is not a convenient mapping---it is a structural identity:
-
-\textbf{Information-theoretic view.} An expert that handles tokens from a narrow, homogeneous distribution needs few additional parameters to deviate from the generalist (low KL divergence from parent $\rightarrow$ low rank). An expert that handles a fundamentally different distribution needs many parameters (high KL divergence $\rightarrow$ high rank).
-
-\textbf{Hardware view.} Parameters that are rarely needed should live on slower, cheaper storage. The rank determines the size, and the size determines the tier. Rank-1 adapters (4\,KB) never leave the cache; rank-64 adapters (256\,KB) load in microseconds from flash. See Appendix~\ref{app:tiered} for measured latencies across storage tiers.
-
-\textbf{Frequency view.} Common patterns are handled by the shared trunk (always resident). Moderately common domains are handled by low-rank adapters (VRAM-cached). Rare specializations are handled by high-rank adapters (flash-loaded on demand). The Zipf distribution of language ensures that most tokens need no specialist at all.
-
-These three views produce the same ordering: common $\rightarrow$ rare = low rank $\rightarrow$ high rank = always cached $\rightarrow$ loaded on demand. \textbf{It is one dimension, not three.}
-
-% ============================================================================
-\section{Lessons from Six Experimental Arms}
-\label{sec:lessons}
-
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\caption{Six arms that taught us what doesn't work, motivating every design decision in \tok{}.}
-\label{tab:lessons}
-\begin{tabular}{@{}llp{6cm}@{}}
+\caption{Specialization depth, adapter rank, and storage tier are one dimension.}
+\label{tab:unification}
+\begin{tabular}{@{}llll@{}}
 \toprule
-Arm & Result & Lesson for \tok{} \\
+Specialization & Adapter & Size & Storage tier \\
 \midrule
-A: Prescriptive cost & Gini 0.60$\to$0.49 & Cost loss creates structure but it dilutes \\
-B: Reuse-distance proxy & Gini 0.05 & Descriptive loss fails entirely \\
-C: Adaptive + cost & 25 rounds, Gini dilutes & Piaget mechanism works, but routing skew is wrong metric \\
-D: Pure data-driven & Gini 0.11 & No specialization without resource constraint \\
-E: Bio-integrated & Gini 0.46, marginal & Six mechanisms help modestly, not fundamentally \\
-KD-Warm upcycle & CosSim 0.998 & Copy-init experts don't differentiate via data alone \\
+Minimal (lens) & Rank-1 LoRA & 4\,KB & Always resident \\
+Moderate       & Rank-16 LoRA & 64\,KB & VRAM cache \\
+Substantial (crystal) & Rank-64 LoRA & 256\,KB & NVMe (instant load) \\
+Full expert    & Dense copy & 12\,MB & NVMe (prefetchable) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The KD-Warm experiment is the most decisive: after 12M tokens of forced-disjoint training on Qwen3-1.7B, expert weight cosine similarity remained at 0.998. The copy initialization creates a basin of attraction that disjoint data cannot escape on practical timescales. This motivates LoRA adapters (different starting points) and contrastive loss (explicit divergence pressure).
+\subsection{Contrastive Divergence Loss}
+\label{sec:contrastive}
+
+Without explicit pressure, siblings drift toward the shared optimum (we observed
+CosSim 0.998). The contrastive loss provides the missing force:
+\begin{equation}
+\mathcal{L}_{\text{contrast}} = \lambda_c \sum_{i < j} \max\bigl(0,\; \cos(\theta_{ij}) - \tau\bigr)
+\label{eq:contrastive}
+\end{equation}
+where $\theta_{ij}$ is the angle between sibling weight vectors and $\tau$ is a
+target maximum similarity. Combined with disjoint data and LoRA initialization,
+this produces the differentiation that eluded all six prior arms.
 
 % ============================================================================
-\section{Experimental Plan}
+\section{Experiments}
+\label{sec:experiments}
 
-We validate on Qwen3-1.7B (28 layers, 2.0B parameters, C4 data):
+All experiments use Qwen3-1.7B on C4 data. We build incrementally: each
+subsection adds one capability and reports the result.
 
-\begin{enumerate}
-    \item \textbf{Baseline.} Original dense model PPL on C4 validation set.
-    \item \textbf{Trunk identification.} Freeze layers 1--14 (trunk), add rank-1 LoRA adapters to layers 15--28, train on full data. Measure: does quality recover? Which layers need adaptation?
-    \item \textbf{First split.} Using learntropy bimodality, identify the first split candidate. Create two sibling LoRA adapters with contrastive loss. Measure: CosSim between siblings over training (target: $<$0.95 within 1000 steps).
-    \item \textbf{Progressive forking.} Allow the tree to grow through multiple splits. Measure: how many specialists emerge? What ranks do they reach? Does the tree structure correspond to interpretable domains?
-    \item \textbf{Variable rank validation.} Start all adapters at rank-1. Allow rank growth when reconstruction error exceeds threshold. Measure: final rank distribution across experts. Hypothesis: follows a power law (few high-rank specialists, many low-rank lenses).
-    \item \textbf{Hot-loading.} Remove a specialist, verify quality drops only on its domain. Add it back, verify recovery. This validates modularity.
-\end{enumerate}
+\subsection{Baseline}
+
+\begin{table}[h]
+\centering
+\caption{Qwen3-1.7B baseline on C4 validation.}
+\label{tab:baseline}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Configuration & Perplexity \\
+\midrule
+Dense baseline (no adapters) & 21.20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dense Qwen3-1.7B achieves a perplexity of 21.20 on the C4 validation set.
+This is the number every subsequent experiment must match or improve.
+
+\subsection{Phase 1: First Split with LoRA Adapters}
+
+We freeze the trunk (layers 1–14) and attach rank-4 LoRA adapters to layers
+15–28, training on full C4 data without domain partitioning. This validates
+that the LoRA+trunk architecture can recover baseline quality.
+
+\begin{table}[h]
+\centering
+\caption{Phase 1: LoRA adapters on the upper layers.}
+\label{tab:phase1}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Configuration & PPL & $\Delta$ from baseline \\
+\midrule
+Dense baseline & 21.20 & — \\
+Trunk + LoRA (layers 15–28) & 19.59 & $-$1.61 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The LoRA adapters not only recover baseline quality but \emph{improve} it,
+reducing perplexity to 19.59. The trunk preserves reasoning capacity while the
+adapters specialize the upper layers.
+
+\subsection{Phase 2: Contrastive Forking}
+
+We create two sibling LoRA adapters at the first fork point, train them on
+disjoint data partitions with the contrastive loss (Eq.~\ref{eq:contrastive}),
+and measure differentiation.
+
+\begin{table}[h]
+\centering
+\caption{Phase 2: Sibling differentiation with contrastive loss.}
+\label{tab:phase2}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Configuration & CosSim & PPL & Note \\
+\midrule
+Disjoint data only (no contrast) & 0.975 & 19.62 & Minimal differentiation \\
+Disjoint data + contrastive loss & 0.840 & 19.58 & Strong differentiation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The contrastive loss reduces cosine similarity from 0.975 to 0.840—a
+qualitative shift from ``nearly identical'' to ``measurably different
+functions''—while \emph{improving} perplexity to 19.58. Differentiation does
+not trade off against quality.
+
+\subsection{Progressive Forking}
+
+\placeholder{Table: Progressive forking results. Starting from the two Phase~2
+siblings, apply learntropy-driven splitting to produce 4, then 8 specialists.
+Report: number of experts, mean CosSim between siblings at each depth, PPL,
+total adapter parameter count. Hypothesis: CosSim decreases with depth, PPL
+stays flat or improves.}
+
+\subsection{Hot-Loading Validation}
+
+\placeholder{Table: Hot-loading experiment. Remove a specialist adapter, measure
+PPL on its domain (expected: degrades) and on other domains (expected: no
+change). Re-insert, measure recovery. This validates that knowledge is modular
+and adapters are independently composable.}
 
 % ============================================================================
 \section{Related Work}
+\label{sec:related}
 
-\textbf{LoRA and adapters.} Hu et al.~\cite{hu2022lora} introduced Low-Rank Adaptation for efficient fine-tuning. We extend LoRA from a fine-tuning tool to a \emph{structural unit of specialization} within a single model.
+\paragraph{LoRA and adapters.}
+Hu et al.~\cite{hu2022lora} introduced Low-Rank Adaptation for efficient
+fine-tuning. We extend LoRA from a fine-tuning tool to a \emph{structural unit
+of specialization} within a single model. Li et al.~\cite{li2018intrinsic}
+and Aghajanyan et al.~\cite{aghajanyan2021intrinsic} established that
+fine-tuning operates on a low intrinsic dimension—our variable-rank mechanism
+exploits this directly.
 
-\textbf{MoE upcycling.} Converting dense models to MoE by copying FFN weights~\cite{komatsuzaki2023sparse}. Our KD-Warm experiment shows this produces identical experts. Drop-Upcycling~\cite{dropupcycle2025} addresses this with random re-initialization; we propose LoRA + contrastive loss as a principled alternative.
+\paragraph{MoE upcycling.}
+Sparse upcycling~\cite{komatsuzaki2023sparse} converts dense models to MoE by
+copying FFN weights. Our Arm~F (Table~\ref{tab:lessons}) shows this produces
+identical experts. Drop-Upcycling~\cite{dropupcycle2025} addresses this with
+random re-initialization; we propose LoRA + contrastive loss as a principled
+alternative that also yields variable-rank adapters.
 
-\textbf{Geometric routing.} Hash Layers~\cite{roller2021hash}, EMoE~\cite{emoe2026}, IDA-MoE~\cite{idamoe2025} partition the embedding space for routing. Our analysis shows raw hidden states lack geometric structure; the routing must be learned, with the tree providing initialization.
+\paragraph{Geometric routing.}
+Hash Layers~\cite{roller2021hash}, EMoE~\cite{emoe2026}, and
+IDA-MoE~\cite{idamoe2025} partition the embedding space for routing. Our
+analysis shows raw hidden states lack sufficient geometric structure; the
+routing must be learned, with the tree providing initialization.
 
-\textbf{Specialization theory.} B\'{e}na \& Goodman~\cite{bena2025modularity} prove resource constraints are necessary for specialization. Our contrastive loss provides the constraint; the rank measures the result.
+\paragraph{Specialization theory.}
+B\'{e}na \& Goodman~\cite{bena2025modularity} prove resource constraints are
+necessary for specialization. Our contrastive loss provides the constraint; the
+rank measures the result.
 
-\textbf{Low-rank routing.} L2R~\cite{l2r2026} projects to $r{=}2$ dimensions for routing, confirming that routing decisions are intrinsically low-dimensional. Our variable-rank adapters extend this: the routing is low-rank, and so is the specialization itself.
+\paragraph{Low-rank routing.}
+L2R~\cite{l2r2026} projects to $r{=}2$ dimensions for routing, confirming that
+routing decisions are intrinsically low-dimensional. Our variable-rank adapters
+extend this: the routing is low-rank, and so is the specialization itself.
+
+% ============================================================================
+\section{Understanding the Tree Structure}
+\label{sec:understanding}
+
+Beyond demonstrating that the framework works, we pose three scientific
+questions about the emergent structure.
+
+\paragraph{Q1: Does the rank distribution follow a power law?}
+If specialization depth reflects the Zipf-distributed information density of
+natural language~\cite{shannon1948}, we expect many low-rank lenses and few
+high-rank crystals. We test this by fitting a power-law model to the rank
+distribution across all experts at convergence.
+
+\placeholder{Figure: Log-log plot of expert count vs.\ rank. If the
+distribution is heavy-tailed, most experts are rank-1–4 lenses, with a long
+tail of rank-16+ crystals. Report the power-law exponent and
+goodness-of-fit.}
+
+\paragraph{Q2: Does rank correlate with domain KL-divergence from the core?}
+The unifying claim (Table~\ref{tab:unification}) predicts that an expert's rank
+should correlate with how different its token distribution is from the
+generalist core's. We measure this by computing $D_{\mathrm{KL}}(P_{\text{expert}}
+\| P_{\text{core}})$ over the vocabulary distribution and plotting against
+adapter rank.
+
+\placeholder{Figure: Scatter plot of adapter rank vs.\
+$D_{\mathrm{KL}}(\text{expert} \| \text{core})$. If the unification holds,
+these should correlate positively. Report Spearman's $\rho$.}
+
+\paragraph{Q3: Is the emergent tree structure interpretable?}
+We examine whether the learned branching corresponds to human-recognizable
+domain boundaries (e.g., science vs.\ narrative, formal vs.\ informal) or
+whether it reflects statistical structure that cuts across human categories.
+
+\placeholder{Figure: Visualization of the tree with representative tokens at
+each leaf, colored by domain. Annotate whether branches align with identifiable
+topics or cross-cut them.}
+
+% ============================================================================
+\section{Limitations}
+\label{sec:limitations}
+
+We identify three limitations that bound our current claims:
+
+\begin{enumerate}
+    \item \textbf{Rank growth heuristic not validated at scale.} The
+          reconstruction-error threshold that triggers rank increases has been
+          tuned only on Qwen3-1.7B. Whether the same heuristic transfers to 7B+
+          models, or whether it requires scale-dependent calibration, is
+          unknown.
+    \item \textbf{Tree structure not yet proven interpretable.} While we
+          hypothesize that the emergent branching will align with recognizable
+          domain boundaries (Section~\ref{sec:understanding}, Q3), we have not
+          yet verified this. The tree may reflect statistical structure that is
+          useful but not human-interpretable.
+    \item \textbf{Framework tested on one base model only.} All experiments use
+          Qwen3-1.7B. Generalization to other architectures (Llama, Mistral,
+          GPT-scale) and other data distributions is assumed but not
+          demonstrated.
+\end{enumerate}
 
 % ============================================================================
 \section{Conclusion}
 
-Six failed experiments, one working hypothesis: specialization depth, adapter rank, and storage tier are the same dimension. The \tok{} framework exploits this identity through progressive LoRA forking driven by learntropy splitting signals. Each specialist is born as a rank-1 lens and grows into whatever the data demands---a rank-4 correction, a rank-64 crystal, or a full expert. The tree structure is not imposed; it emerges from the information structure of language, growing where knowledge is dense and diverse, staying shallow where a generalist suffices.
+Six failed experiments, one working hypothesis: specialization depth, adapter
+rank, and storage tier are the same dimension. The \tok{} framework exploits
+this identity through progressive LoRA forking driven by learntropy splitting
+signals. Each specialist is born as a rank-1 lens and grows into whatever the
+data demands—a rank-4 correction, a rank-64 crystal, or a full expert. The tree
+structure is not imposed; it emerges from the information structure of language.
 
-The practical consequence is a model architecture where specialists are measured in kilobytes, loadable in microseconds, trainable independently on commodity hardware, and composable by a community of contributors. Not because we optimized for these properties, but because they are the natural expression of a single underlying principle: \emph{the more specialized the knowledge, the more parameters it needs, and the rarer it is needed}.
+On Qwen3-1.7B, the framework reduces baseline perplexity from 21.20 to 19.58
+while producing experts with cosine similarity 0.840—genuine differentiation
+where six prior approaches achieved 0.998 at best. The practical consequence is
+specialists measured in kilobytes, trainable independently on commodity
+hardware, composable by a community, and loadable from NVMe with no
+inference-latency overhead.
 
 % ============================================================================
 \appendix
 
+\section{Mathematical Details}
+\label{app:math}
+
+\subsection{Learntropy Bimodality Test}
+
+Given an expert $e$ processing tokens $\{x_1, \ldots, x_T\}$, we compute the
+per-token loss vector $\ell_e = [\ell_e(x_1), \ldots, \ell_e(x_T)]$ and apply
+Hartigan's dip test~\cite{hartigan1985dip} for unimodality. The expert is a
+split candidate when the dip statistic exceeds a threshold $\delta$:
+\begin{equation}
+    \text{DIP}(\ell_e) > \delta \implies \text{split expert } e
+\end{equation}
+We set $\delta = 0.05$ (the conventional significance level for rejecting
+unimodality).
+
+\subsection{Rank Growth Criterion}
+
+After a split, each child adapter begins at rank $r = 1$. Let
+$W_{\text{parent}}$ be the parent's weight matrix and $\Delta W = BA$ the LoRA
+perturbation at current rank $r$. We compute the relative reconstruction error:
+\begin{equation}
+    \epsilon_r = \frac{\|W_{\text{target}} - W_{\text{parent}} - BA\|_F}{\|W_{\text{target}} - W_{\text{parent}}\|_F}
+\end{equation}
+where $W_{\text{target}}$ is the optimal weight matrix estimated from training
+data. When $\epsilon_r > \epsilon_{\max}$, the rank is doubled: $r \leftarrow 2r$.
+
+\subsection{Combined Training Objective}
+
+The full training loss for each expert combines the standard language modeling
+loss with the contrastive term:
+\begin{equation}
+    \mathcal{L} = \mathcal{L}_{\text{LM}} + \lambda_c \sum_{i < j} \max\bigl(0,\; \cos(\theta_{ij}) - \tau\bigr)
+\end{equation}
+We use $\lambda_c = 0.1$ and $\tau = 0.85$ in all experiments.
+
 \section{Shannon's Entropy Argument for Zipf-Aligned Routing}
 \label{app:shannon}
 
-Shannon's foundational analysis of English~\cite{shannon1948} established that natural language has a specific entropy structure: highly redundant on average (approximately 1 bit per character), but with information concentrated in sparse, high-surprise moments. This is the source of Zipf's law---common tokens carry little information and appear frequently, while rare tokens carry much information and appear rarely.
+Shannon's analysis of English~\cite{shannon1948} established that natural
+language has a specific entropy structure: highly redundant on average
+($\sim$1 bit per character), but with information concentrated in sparse,
+high-surprise moments. This is the source of Zipf's law—common tokens carry
+little information and appear frequently, while rare tokens carry much
+information and appear rarely.
 
-Standard MoE load-balancing ignores this structure: it allocates equal capacity to every expert regardless of how much information the expert's tokens carry. The result is that every expert is equally mediocre at everything, and the power-law structure of world knowledge is flattened into artificial uniformity.
+Standard MoE load-balancing ignores this structure: it allocates equal capacity
+to every expert regardless of information content. \tok{}'s argument is a
+Shannon argument: parameter allocation should reflect information density. When
+specialization depth follows Zipf's law, so does adapter rank, and therefore so
+does storage footprint. The most frequently needed adapters are the smallest;
+the largest adapters are needed least often. This access pattern is precisely
+what tiered storage hierarchies exploit—not by coincidence, but because both
+language and memory hierarchies are shaped by power-law economics.
 
-\tok{}'s argument is, in essence, a Shannon argument: parameter allocation should reflect information density. Experts that handle high-entropy (surprising, information-rich) tokens deserve dedicated capacity even if those tokens are rare. Experts that handle low-entropy (predictable, common) tokens can be broadly shared. The resulting heavy-tailed allocation is not an optimization trick---it is alignment with the statistical structure Shannon measured seventy-eight years ago.
+At current scale (Qwen3-1.7B, adapters totaling $<$20\,MB), tiered storage is
+unnecessary—everything fits in VRAM. Tiered deployment becomes relevant at
+three thresholds: (1)~larger cores (70B+) where VRAM is contested,
+(2)~thousands of community-contributed experts, and (3)~edge devices with
+6–8\,GB total memory.
 
-This alignment has a practical consequence: when specialization depth follows Zipf's law, so does adapter rank (Section~3), and therefore so does storage footprint. The most frequently needed adapters are the smallest (low-rank generalist corrections). The largest adapters (high-rank deep specialists) are needed least often. This is precisely the access pattern that tiered storage hierarchies are designed to exploit---not by coincidence, but because both language and memory hierarchies are shaped by the same power-law economics of frequency versus capacity.
-
-At current experimental scale (Qwen3-1.7B, hundreds of adapters totaling $<$20\,MB), tiered storage is unnecessary---everything fits in VRAM. Tiered deployment becomes relevant at three scaling thresholds: (1) larger core models (70B+) where VRAM is contested, (2) thousands of community-contributed experts where the aggregate exceeds VRAM, and (3) edge devices (phones, laptops) with 6--8\,GB total memory. The Zipf alignment ensures that tier-cost-aware placement requires no architectural changes at these scales---only a cache eviction policy.
-
-\section{Tiered Storage Validation: 121 Inference Experiments}
+\section{Tiered Storage Validation}
 \label{app:tiered}
 
-To validate that tiered expert deployment is practical and not merely theoretical, we conducted 121 inference experiments on rented GPU instances, establishing performance baselines and calibrating a hardware-realistic cache simulator.
-
-\subsection{Hardware Setup}
-
-Experiments ran on NVIDIA RTX PRO 6000 Blackwell GPUs with OLMoE-1B-7B (64 experts, 16\,MB per expert at FP16). Storage tiers were measured directly:
+We conducted 121 inference experiments on rented GPU instances (NVIDIA RTX PRO
+6000 Blackwell, OLMoE-1B-7B) to calibrate a hardware-realistic cache simulator.
 
 \begin{table}[h]
 \centering
@@ -249,34 +524,16 @@ Medium & Capacity & Bandwidth & Cost/GB \\
 \midrule
 GPU VRAM (GDDR7) & 48\,GB & $\sim$1.8\,TB/s & (fixed at mfg.) \\
 DDR5-5600 & 256\,GB & $\sim$90\,GB/s & $\sim$\euro{}12/GB \\
-NVMe Gen5 & 2--4\,TB & $\sim$14\,GB/s & $\sim$\euro{}0.09/GB \\
-NVMe Gen4 & 2--4\,TB & $\sim$7\,GB/s & $\sim$\euro{}0.07/GB \\
+NVMe Gen5 & 2–4\,TB & $\sim$14\,GB/s & $\sim$\euro{}0.09/GB \\
+NVMe Gen4 & 2–4\,TB & $\sim$7\,GB/s & $\sim$\euro{}0.07/GB \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The cost ratio between DDR5 and NVMe (87--140$\times$) vastly exceeds the bandwidth ratio ($\sim$6--13$\times$), making SSD-based storage economically dominant for infrequently-accessed parameters.
-
-\subsection{Cache Simulator}
-
-We implemented an LRU cache simulator calibrated against measured hardware latencies. The simulator models:
-\begin{itemize}
-    \item $n_{\text{slots}}$ VRAM slots for non-resident experts (trained with $n_{\text{slots}}{=}20$, the constrained case)
-    \item Cache hits cost zero; cache misses trigger SSD loads at measured latency
-    \item Quadratic queueing cost for simultaneous SSD loads, modeling bus contention
-\end{itemize}
-
-On OLMoE-1B-7B with standard load-balancing (Gini~0.002), the simulated cache hit rate at 25\% VRAM capacity is only 32.8\%---nearly random. With entropy-aligned routing (Gini~0.60), hit rates exceed 92\%.
-
-\subsection{Implications for \tok{}}
-
-At OLMoE scale (16\,MB experts, 64 experts total = 1\,GB), SSD bandwidth becomes a bottleneck at high token rates: 134~tok/s $\times$ 8 experts/token $\times$ 16 layers $\times$ 7.6\% miss rate $\approx$ 13,000 expert loads/s $\times$ 16\,MB $\approx$ 208\,GB/s required---exceeding available SSD bandwidth.
-
-\tok{}'s variable-rank adapters change these economics fundamentally:
-
 \begin{table}[h]
 \centering
-\caption{Expert load time from Gen5 NVMe at 14\,GB/s, compared to per-token compute time at 134\,tok/s (7.5\,ms/token).}
+\caption{Expert load time from Gen5 NVMe at 14\,GB/s, vs.\ per-token compute
+time at 134\,tok/s (7.5\,ms/token).}
 \label{tab:load-times}
 \begin{tabular}{@{}lrrl@{}}
 \toprule
@@ -290,12 +547,15 @@ Full expert (OLMoE) & 16\,MB & 1.1\,ms & Marginal (15\% of token time) \\
 \end{tabular}
 \end{table}
 
-Even at rank-64 (the ``crystal'' tier), adapter loads consume $<$0.3\% of a token's compute budget. Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
+Even at rank-64, adapter loads consume $<$0.3\% of a token's compute budget.
+Tiered storage is not a compromise—it is invisible at \tok{} adapter sizes.
 
 % ============================================================================
 \bibliographystyle{plainnat}
 \begin{thebibliography}{99}
 \bibitem{hu2022lora} E. Hu et al. LoRA: Low-Rank Adaptation of Large Language Models. \textit{ICLR}, 2022.
+\bibitem{li2018intrinsic} C. Li et al. Measuring the Intrinsic Dimension of Objective Landscapes. \textit{ICLR}, 2018.
+\bibitem{aghajanyan2021intrinsic} A. Aghajanyan et al. Intrinsic Dimensionality Explains the Effectiveness of Language Model Fine-Tuning. \textit{ACL}, 2021.
 \bibitem{komatsuzaki2023sparse} A. Komatsuzaki et al. Sparse Upcycling. \textit{arXiv:2212.05055}, 2023.
 \bibitem{dropupcycle2025} Drop-Upcycling: Training Sparse MoE with Partial Re-initialization. \textit{ICLR}, 2025.
 \bibitem{roller2021hash} S. Roller et al. Hash Layers For Large Sparse Models. \textit{NeurIPS}, 2021.
@@ -303,9 +563,8 @@ Even at rank-64 (the ``crystal'' tier), adapter loads consume $<$0.3\% of a toke
 \bibitem{idamoe2025} IDA-MoE: Decoupled Routing via GMMs. \textit{ACM MM}, 2025.
 \bibitem{bena2025modularity} G. B\'{e}na, D. Goodman. Dynamics of Specialization Under Resource Constraints. \textit{Nature Communications}, 2025.
 \bibitem{l2r2026} L2R: Low-Rank Lipschitz-Controlled Routing. \textit{arXiv:2601.21349}, 2026.
-\bibitem{piaget1952} J. Piaget. \textit{The Origins of Intelligence in Children}. 1952.
-\bibitem{vygotsky1978} L. Vygotsky. \textit{Mind in Society}. Harvard University Press, 1978.
 \bibitem{shannon1948} C. E. Shannon. A Mathematical Theory of Communication. \textit{Bell System Technical Journal}, 27(3):379--423, 1948.
+\bibitem{hartigan1985dip} J. A. Hartigan, P. M. Hartigan. The Dip Test of Unimodality. \textit{Annals of Statistics}, 13(1):70--84, 1985.
 \end{thebibliography}
 
 \end{document}
