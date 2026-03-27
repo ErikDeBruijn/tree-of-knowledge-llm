@@ -864,9 +864,11 @@ fraction of experts consume compute per token. Causal locality thus connects
 all three pillars: it is what makes compact adapters (pillar~1) and fast
 loading (pillar~2) practically beneficial at scale.
 
-The Standing Committee~\cite{standing2026} and
-DeepSeekMoE~\cite{deepseek2024moe} results suggest that shared + routed
-architectures and top-$K$ routing ($K > 1$) are likely prerequisites.
+However, the Hessian analysis (Section~\ref{sec:hessian}) provides a concrete
+path forward: the LM loss \emph{does} encode selective routing directions, but
+hard argmax routing blocks the gradient signal. Replacing argmax with
+Gumbel-softmax~\cite{jang2017gumbel} would allow the LM loss to directly
+train the router toward the saddle point's escape directions.
 
 % ============================================================================
 \appendix
