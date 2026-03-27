@@ -784,17 +784,21 @@ always cached, larger ones are prefetchable. This has not been tested at scale
 
 \textbf{3.~Causal modularity (open problem).} The ablation matrix $M_{ij}$
 (Table~\ref{tab:ablation-matrix}) is uniform, not diagonal: removing either
-expert degrades all domains equally. Three independent routing analyses
-confirm uniform domain routing (49--51\% split). Weight orthogonality
-(CosSim $<$0.3) is necessary but not sufficient for modularity.
+expert degrades all domains equally. Weight orthogonality (CosSim $<$0.3) is
+necessary but not sufficient.
 
-Our central methodological conclusion: \textbf{hot-pluggability requires
-causal locality, not orthogonality.} The correct metric is whether expert
-removal causes \emph{selective} damage, not whether expert weights occupy
-different subspaces. The Standing Committee~\cite{standing2026} and
+Causal locality is not only a modularity requirement---it is also the key to
+\emph{compute and memory efficiency}. With uniform $M_{ij}$, every expert must
+be active for every token: no expert can be skipped without quality loss, and
+tiered storage is architecturally valid but practically useless. With diagonal
+$M_{ij}$, irrelevant experts can remain on NVMe until needed, and only a
+fraction of experts consume compute per token. Causal locality thus connects
+all three pillars: it is what makes compact adapters (pillar~1) and fast
+loading (pillar~2) practically beneficial at scale.
+
+The Standing Committee~\cite{standing2026} and
 DeepSeekMoE~\cite{deepseek2024moe} results suggest that shared + routed
-architectures and top-$K$ routing ($K > 1$) are likely prerequisites for
-achieving causal locality at small scale.
+architectures and top-$K$ routing ($K > 1$) are likely prerequisites.
 
 % ============================================================================
 \appendix
