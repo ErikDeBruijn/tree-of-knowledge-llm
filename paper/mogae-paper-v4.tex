@@ -638,15 +638,16 @@ Layer & Min $\lambda$ & Max $\lambda$ & Negative fraction \\
 \end{tabular}
 \end{table}
 
-The LM loss landscape contains abundant escape directions from uniform
-routing. The optimizer does not exploit them, likely because: (a)~the
-load-balancing loss actively penalizes non-uniform routing, counteracting
-the curvature signal; (b)~the router learning rate may be too low relative to
-the Hessian curvature; or (c)~gradient noise from stochastic batches masks the
-directional signal. This refines our earlier conclusion: the training signal
-\emph{does} encode routing selectivity, but the optimization dynamics prevent
-it from being realized. The constraint is not the loss function itself but the
-interaction between the LM loss and auxiliary losses during training.
+The analysis revealed two findings. First, the \textbf{root cause} of uniform
+routing: our router uses hard argmax, a non-differentiable operation.
+$\partial\mathcal{L}/\partial w_{\text{router}} = 0$ exactly---the router
+weights are invisible to the optimizer and cannot learn from the LM loss.
+Second, when argmax is replaced with a differentiable softmax surrogate, the
+Hessian shows abundant negative eigenvalues (47--49\% of sampled directions),
+confirming that the LM loss \emph{does} encode routing selectivity. The path
+to causal locality is therefore to replace argmax with a differentiable routing
+mechanism such as Gumbel-softmax~\cite{jang2017gumbel} or a straight-through
+estimator, allowing the LM loss gradient to flow through the routing decision.
 
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
@@ -999,6 +1000,7 @@ Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
 \bibitem{openmoe2024} F. Xue et al. OpenMoE: An Early Effort on Open Mixture-of-Experts Language Models. \textit{ICML}, 2024.
 \bibitem{mixtral2024} A. Jiang et al. Mixtral of Experts. \textit{arXiv:2401.04088}, 2024.
 \bibitem{domaindriver2026} What Gets Activated: Uncovering Domain and Driver Experts in MoE Language Models. \textit{arXiv:2601.10159}, 2026.
+\bibitem{jang2017gumbel} E. Jang, S. Gu, B. Poole. Categorical Reparameterization with Gumbel-Softmax. \textit{ICLR}, 2017.
 \end{thebibliography}
 
 \end{document}
