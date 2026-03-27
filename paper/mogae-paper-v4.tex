@@ -668,7 +668,14 @@ with 4 experts (Gumbel-softmax, each token activates 2 of 4) developed a
 each and two ``light'' experts contributing $\sim$0.28---but no domain
 selectivity (per-expert CV 0.11--0.16). This is the Standing Committee
 pattern~\cite{standing2026} at 4-expert scale: functional importance
-differentiates, domain ownership does not.
+differentiates, domain ownership does not. Finally, a damage-prediction
+surrogate that directly optimizes for selective indispensability
+($L_\text{loc} \propto \text{overlap} - \lambda\,\text{exclusivity}$
+of per-token ablation damage) achieves high token-level exclusivity
+(1.27 at training time) but the resulting $M_{ij}$ is again
+domain-uniform (CV~0.12): expert~1 carries 2.5$\times$ more load than
+expert~0, uniformly across all domains. The experts own different
+\emph{tokens}, but those tokens are distributed evenly across domains.
 
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
