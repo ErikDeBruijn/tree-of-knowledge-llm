@@ -20,11 +20,11 @@ Last updated: 2026-03-27T12:40
 
 ## Current hypothesis under test
 
-**Can Gumbel-softmax routing (differentiable) achieve causal locality?**
-Root cause identified: hard argmax gives zero router gradient. Hessian confirms
-LM loss has selective routing directions (saddle point, 47-49% negative eigenvalues).
-Gumbel-softmax replaces argmax with differentiable routing, allowing LM loss
-to train the router. Temperature anneals 1.0→0.1 over training.
+**Can forced domain specialization achieve causal locality (diagonal M_ij)?**
+Gumbel-softmax achieved level-2 routing selectivity (0.41) but M_ij remained
+uniform — escape directions led to magnitude asymmetry, not domain selectivity.
+Domain-conditional training now running: each expert only gets gradients from
+its assigned domain. If this fails too → capacity/scale issue, not training signal.
 
 ## Next experiments (prioritized)
 
