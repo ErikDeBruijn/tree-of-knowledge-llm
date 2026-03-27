@@ -53,10 +53,9 @@ also the prerequisite for compute and memory efficiency, since only causally
 local experts can be skipped or offloaded without uniform quality loss.
 A Hessian analysis reveals that uniform routing is a \emph{saddle point}:
 the LM loss encodes selective routing, but hard argmax blocks the gradient.
-Domain selectivity scales as a shallow power law with expert count
-($\text{CV} \propto N^{0.16}$), predicting that 50--600 experts are needed
-for meaningful causal locality---consistent with recent extreme-expert
-architectures.
+Domain selectivity ($M_{ij}$ CV) plateaus at $\sim$0.16 regardless of expert
+count (2--48 tested), suggesting the bottleneck is the base model's
+representational capacity at 1.7B parameters, not the number of experts.
 \end{abstract}
 
 % ============================================================================
@@ -461,7 +460,7 @@ This is the number every subsequent experiment must match or improve.
 \subsection{Phase 1: First Split with LoRA Adapters}
 
 We freeze the trunk (layers 0--14) and attach rank-4 LoRA adapters to layers
-15--28, training on full C4 data without domain partitioning. This validates
+15--27, training on full C4 data without domain partitioning. This validates
 that the LoRA+trunk architecture can recover baseline quality.
 
 \begin{table}[h]
@@ -532,7 +531,7 @@ Trunk-18 + Phase 3 (rank 4) & 10 & 0.311 & 19.83 & 655K \\
 \end{tabular}
 \end{table}
 
-The trunk-18 configuration achieves deeper differentiation (CosSim 0.276 at
+The trunk-18 configuration achieves deeper differentiation (CosSim 0.311 at
 rank 4) than trunk-14 at the same rank (0.433), with 3$\times$ fewer
 parameters. Both fork location and rank constraint affect differentiation:
 trunk-14 at rank 32 reaches 0.278, while trunk-14 at rank 4 reaches only
@@ -554,7 +553,7 @@ generic C4 data.
 \label{sec:hotloading}
 
 Our first hot-loading test \emph{failed}: removing either first-level expert
-degraded all text types equally ($\sim$8\%). Token routing analysis
+degraded all text types equally ($\sim$1.3 PPL each). Token routing analysis
 revealed Expert~0 handles rare/content words (71\% of rare tokens) while
 Expert~1 handles punctuation and function words (86\% of punctuation). Every
 sentence requires both structure and content---neither expert is independently
@@ -604,8 +603,9 @@ Conversational & +1.22 & +1.05 \\
 \end{table}
 
 The ablation matrix is uniform: coefficient of variation 0.11 across domains
-(threshold for meaningful selectivity: $>$0.3). Each expert alone provides
-73--77\% of the full LoRA benefit (high substitutability). This confirms that
+(threshold for meaningful selectivity: $>$0.3). Each expert accounts for a substantial fraction of the total LoRA improvement
+(high substitutability: removing either costs $\sim$1.2--1.4 PPL of the
+$\sim$1.4 total benefit). This confirms that
 weight orthogonality (CosSim 0.311) does not produce causal locality---the
 experts are near-interchangeable general-purpose adapters, not domain
 specialists.
@@ -904,10 +904,11 @@ highest $M_{ij}$ CV observed (0.16 vs.\ 0.11--0.14 for 2--4 experts) and
 routing selectivity of 0.84, with layer-dependent expert structure---a step
 toward but not yet achieving domain selectivity. An initial power law fit ($\text{CV} \approx 0.105 \cdot N^{0.16}$)
 predicted $\sim$50 experts for CV$=$0.2, but a 48-expert variant produced
-CV$=$0.162---identical to 16 experts. The M$_{ij}$ CV appears to \emph{ceiling}
-at $\sim$0.16 for this base model, regardless of expert count. This suggests
-the bottleneck is not expert count but the base model's representational
-capacity for domain-distinguishable features at 1.7B parameters.
+CV$=$0.162---identical to 16 experts. The M$_{ij}$ CV appears to \emph{plateau} at $\sim$0.16 for this base
+model across the range tested (2--48 experts). While we cannot exclude
+optimization difficulties at higher expert counts, this suggests the
+bottleneck may be the base model's representational capacity for
+domain-distinguishable features at 1.7B parameters.
 The Hessian analysis (Section~\ref{sec:hessian}) confirms the LM loss
 \emph{does} encode selective routing directions; the path forward is
 differentiable routing (Gumbel-softmax~\cite{jang2017gumbel}) combined with
