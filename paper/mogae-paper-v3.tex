@@ -101,8 +101,15 @@ model unless otherwise noted.
 \label{sec:why-moe-fails}
 
 The promise of Mixture-of-Experts is that different experts will learn different
-things. In practice, they do not. We spent six experimental arms and 40+ hours
-of GPU training on Qwen3-1.7B discovering why.
+things. In practice, they do---but not in the way we expect. Experts readily
+specialize along \emph{functional} axes (structure vs.\ content, punctuation
+vs.\ rare words) but resist specializing along \emph{domain} axes (medical
+vs.\ legal vs.\ code). The word ``expert'' evokes a human domain specialist,
+but MoE experts behave more like specialized tools: one handles
+fasteners, another handles cutting, regardless of whether the project is
+carpentry or plumbing. We spent six experimental arms and 40+ hours of GPU
+training on Qwen3-1.7B discovering why domain specialization is harder than
+functional specialization, and what it takes to cross that boundary.
 
 \paragraph{The copy-initialization trap.}
 The standard upcycling recipe~\cite{komatsuzaki2023sparse} creates experts by
@@ -425,8 +432,9 @@ Configuration & Expert layers & CosSim & PPL & Params \\
 \midrule
 Trunk-14 (layers 15--28) & 14 & 0.840 & 19.58 & 1.9M \\
 Trunk-14 + Phase 3 (rank 32) & 14 & 0.278 & 19.33 & 11.2M \\
+Trunk-14 + Phase 3 (rank 4) & 14 & 0.433 & 19.45 & 1.9M \\
 \textbf{Trunk-18 (layers 18--27)} & \textbf{10} & \textbf{0.771} & \textbf{20.14} & \textbf{655K} \\
-Trunk-18 + Phase 3 (rank 4) & 10 & 0.383$^*$ & 19.98$^*$ & 655K \\
+Trunk-18 + Phase 3 (rank 4) & 10 & 0.276$^*$ & 19.87$^*$ & 655K \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -434,18 +442,23 @@ Trunk-18 + Phase 3 (rank 4) & 10 & 0.383$^*$ & 19.98$^*$ & 655K \\
 \noindent $^*$\textit{Phase 3 interrupted at step 14K/48K; values are
 intermediate, not final.}
 
-The trunk-18 configuration achieves faster differentiation (CosSim 0.771 after
-Phase 2 vs.\ 0.840 for trunk-14) with 3$\times$ fewer parameters, despite
-having fewer expert layers. In Phase 3, CosSim dropped to 0.383 at rank 4
-without rank growth---deeper differentiation than trunk-14 achieved at rank 4
-(0.840). This supports the hypothesis that placing experts in the
-domain-divergent zone (Section~\ref{sec:divergence}) accelerates
-specialization.
+The trunk-18 configuration achieves deeper differentiation (CosSim 0.276 at
+rank 4) than trunk-14 at the same rank (0.433), with 3$\times$ fewer
+parameters. Both fork location and rank constraint affect differentiation:
+trunk-14 at rank 32 reaches 0.278, while trunk-14 at rank 4 reaches only
+0.433. Trunk-18 at rank 4 matches the rank-32 result (0.276 vs.\ 0.278),
+suggesting that \emph{placing experts in the domain-divergent zone compensates
+for 8$\times$ fewer parameters}.
 
-No second fork (2$\to$4 experts) has triggered in any configuration. The
-bimodality threshold (0.3) has not been reached, suggesting that on generic C4
-data, 2-expert systems may be stable equilibria regardless of trunk boundary.
-Domain-specific curricula may be needed to trigger deeper forking.
+However, routing analysis (Section~\ref{sec:magnitude}) shows that none of
+these configurations achieve domain-specific routing. Weight-space
+differentiation (low CosSim) does not imply functional specialization. Recent
+work on MoE expert roles~\cite{standing2026} confirms this pattern at scale:
+a ``standing committee'' of experts handles functional/structural processing
+across all domains, while domain-specific routing is peripheral.
+
+No second fork (2$\to$4 experts) has triggered in any configuration on
+generic C4 data.
 
 \subsection{Hot-Loading Validation}
 \label{sec:hotloading}
@@ -790,6 +803,9 @@ Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
 \bibitem{piaget1952} J. Piaget. \textit{The Origins of Intelligence in Children}. International Universities Press, 1952.
 \bibitem{vygotsky1978} L. S. Vygotsky. \textit{Mind in Society: The Development of Higher Psychological Processes}. Harvard University Press, 1978.
 \bibitem{wozniak2018learntropy} P. A. Wozniak. Learntropy. \textit{SuperMemo Guru}, 2018. \url{https://supermemo.guru/wiki/Learntropy}.
+\bibitem{standing2026} The Illusion of Specialization: Standing Committee in Mixture-of-Experts. \textit{arXiv:2601.03425}, 2026.
+\bibitem{deepseek2024moe} X. Dai et al. DeepSeekMoE: Towards Ultimate Expert Specialization. \textit{ACL}, 2024.
+\bibitem{deepseekv3} DeepSeek-AI. DeepSeek-V3 Technical Report. \textit{arXiv:2412.19437}, 2024.
 \end{thebibliography}
 
 \end{document}
