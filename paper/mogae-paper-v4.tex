@@ -311,9 +311,16 @@ When $\mathcal{A}(e)$ is low, the error fits within the current subspace
 the error requires capacity the expert does not have. The response depends on
 the \emph{structure} of $g_\perp$: if it is unimodal (one coherent residual
 population), rank growth is appropriate; if it is multimodal (distinct
-populations requiring different corrections), splitting is appropriate. Rank
-growth adds capacity within one factor; splitting separates factors into
-independently trainable units.
+populations requiring different corrections), splitting is appropriate.
+
+\textbf{Practical caveat.} At low rank, $\mathcal{A}(e)$ is dominated by
+geometry: a rank-$r$ subspace in $d$ dimensions captures only $r/d$ of random
+directions, yielding $\mathcal{A}(e) \approx 1 - r/d$ even for uninformative
+gradients. We measured $\mathcal{A}(e) \approx 0.99$ at rank~4 across all
+training phases---close to the random baseline of $1 - 4/2048 = 0.998$. A
+useful trigger therefore requires either higher rank (so the subspace covers a
+non-trivial fraction) or a \emph{normalized} accommodation ratio that
+compares against the rank-appropriate baseline.
 
 We distinguish two regimes:
 \begin{itemize}
