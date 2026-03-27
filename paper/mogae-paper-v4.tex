@@ -294,7 +294,7 @@ The decision to divide is triggered by an information-theoretic signal, not a sc
 \subsection{Variable Rank as Accommodation}
 
 The rank of an adapter measures the dimensionality of its update-subspace
-relative to the parent representation. We formalize rank growth as Piagetiaan
+relative to the parent representation. We formalize rank growth as Piagetian
 \emph{accommodation}: structural expansion that occurs when new residual
 structure cannot be \emph{assimilated} within the existing subspace.
 
@@ -431,7 +431,7 @@ Layer range & CKA & Fisher ratio & Interpretation \\
 CKA increases by an order of magnitude between layers 14 and 18 (0.013 to
 0.106). This empirically determines the trunk boundary: layers below 18 carry
 insufficient domain signal for expert specialization. Our initial experiments
-(Sections~\ref{tab:phase1}--\ref{sec:hotloading}) used a trunk of 14 layers;
+(below) used a trunk of 14 layers;
 the layer divergence analysis motivated extending the trunk to 18 layers in
 subsequent experiments.
 
@@ -455,7 +455,7 @@ This is the number every subsequent experiment must match or improve.
 
 \subsection{Phase 1: First Split with LoRA Adapters}
 
-We freeze the trunk (layers 1--14) and attach rank-4 LoRA adapters to layers
+We freeze the trunk (layers 0--14) and attach rank-4 LoRA adapters to layers
 15--28, training on full C4 data without domain partitioning. This validates
 that the LoRA+trunk architecture can recover baseline quality.
 
@@ -468,7 +468,7 @@ that the LoRA+trunk architecture can recover baseline quality.
 Configuration & PPL & $\Delta$ from baseline \\
 \midrule
 Dense baseline & 21.20 & --- \\
-Trunk + LoRA (layers 15--28) & 19.59 & $-$1.61 \\
+Trunk + LoRA (layers 15--27) & 19.59 & $-$1.61 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -518,17 +518,14 @@ zone identified by the divergence analysis.}
 \toprule
 Configuration & Expert layers & CosSim & PPL & Params \\
 \midrule
-Trunk-14 (layers 15--28) & 14 & 0.840 & 19.58 & 1.9M \\
+Trunk-14 (layers 15--27) & 14 & 0.840 & 19.58 & 1.9M \\
 Trunk-14 + Phase 3 (rank 32) & 14 & 0.278 & 19.33 & 11.2M \\
 Trunk-14 + Phase 3 (rank 4) & 14 & 0.433 & 19.45 & 1.9M \\
 \textbf{Trunk-18 (layers 18--27)} & \textbf{10} & \textbf{0.771} & \textbf{20.14} & \textbf{655K} \\
-Trunk-18 + Phase 3 (rank 4) & 10 & 0.276$^*$ & 19.87$^*$ & 655K \\
+Trunk-18 + Phase 3 (rank 4) & 10 & 0.311 & 19.83 & 655K \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\noindent $^*$\textit{Phase 3 interrupted at step 14K/48K; values are
-intermediate, not final.}
 
 The trunk-18 configuration achieves deeper differentiation (CosSim 0.276 at
 rank 4) than trunk-14 at the same rank (0.433), with 3$\times$ fewer
@@ -773,8 +770,8 @@ parameters) across ranks 1--32 at the trunk-18 boundary.
 \begin{table}[h]
 \centering
 \caption{Rank sweep at trunk-18 boundary (5K steps each, layers 18--27).
-RCR = PPL gain / trainable parameters in millions. Higher RCR = more
-information-efficient.}
+Gain measured against frozen-trunk baseline (PPL 26.1, no adapters).
+RCR = gain / trainable parameters in millions.}
 \label{tab:rank-sweep}
 \begin{tabular}{@{}rrrrr@{}}
 \toprule
