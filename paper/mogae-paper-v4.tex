@@ -894,11 +894,16 @@ fraction of experts consume compute per token. Causal locality thus connects
 all three pillars: it is what makes compact adapters (pillar~1) and fast
 loading (pillar~2) practically beneficial at scale.
 
-However, the Hessian analysis (Section~\ref{sec:hessian}) provides a concrete
-path forward: the LM loss \emph{does} encode selective routing directions, but
-hard argmax routing blocks the gradient signal. Replacing argmax with
-Gumbel-softmax~\cite{jang2017gumbel} would allow the LM loss to directly
-train the router toward the saddle point's escape directions.
+Recent literature clarifies that the bottleneck is likely \emph{expert count},
+not model scale: domain specialization does not emerge from standard MoE
+training at any tested scale up to 34B~\cite{openmoe2024, standing2026}, but
+extreme expert counts (262K per layer in Monet~\cite{monet2025}) or explicit
+input-space partitioning~\cite{idamoe2025} achieve it at smaller scale. Our
+2--4 expert configurations are likely too coarse for domain-level ownership.
+The Hessian analysis (Section~\ref{sec:hessian}) confirms the LM loss
+\emph{does} encode selective routing directions; the path forward is
+differentiable routing (Gumbel-softmax~\cite{jang2017gumbel}) combined with
+many more, smaller experts.
 
 % ============================================================================
 \appendix
@@ -1029,6 +1034,8 @@ Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
 \bibitem{mixtral2024} A. Jiang et al. Mixtral of Experts. \textit{arXiv:2401.04088}, 2024.
 \bibitem{domaindriver2026} What Gets Activated: Uncovering Domain and Driver Experts in MoE Language Models. \textit{arXiv:2601.10159}, 2026.
 \bibitem{jang2017gumbel} E. Jang, S. Gu, B. Poole. Categorical Reparameterization with Gumbel-Softmax. \textit{ICLR}, 2017.
+\bibitem{monet2025} S. Park et al. Monet: Mixture of Monosemantic Experts for Transformers. \textit{ICLR}, 2025.
+\bibitem{idamoe2025} IDA-MoE: Input Domain Aware Mixture-of-Experts. \textit{arXiv:2510.16448}, 2025.
 \end{thebibliography}
 
 \end{document}
