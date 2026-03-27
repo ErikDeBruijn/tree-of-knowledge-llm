@@ -230,32 +230,29 @@ attention layers. While Hu et al.~\cite{hu2022lora} demonstrated LoRA
 primarily on attention projections, mechanistic interpretability research
 suggests that FFN layers function as key-value memories that store factual
 associations~\cite{geva2021transformer}, whereas attention layers perform
-routing and compositional binding. Since our goal is to specialize
-\emph{domain knowledge} (medical facts vs.\ legal facts vs.\ code patterns),
-the FFN is the natural target: we are modifying what the model \emph{knows},
-not how it \emph{routes} information. The attention layers remain shared across
-all experts, preserving the model's general reasoning and compositional
-abilities (fluid intelligence) while specialists modify only the crystallized
-knowledge stored in the FFN.
+routing and compositional binding. Our goal is to modularize knowledge---whether that modularization ultimately
+follows domain boundaries (medical vs.\ legal) or functional boundaries
+(structure vs.\ content) is an empirical question. The FFN is the natural
+target because we are modifying what the model \emph{stores}, not how it
+\emph{routes} information. The attention layers remain shared across all
+experts, preserving general reasoning and compositional abilities (fluid
+intelligence).
 
-% TODO: Update layer numbers when trunk-18 experiment validates the new boundary.
-% Layer divergence analysis (2026-03-26) showed domain divergence begins at
-% layer 17-18 (CKA 0.013 at layer 14 vs 0.106 at layer 18). The layer-14
-% boundary below is from early experiments; trunk-18 experiment is running.
 \subsection{Shared Trunk, Branching Depth}
 
-For Qwen3-1.7B (28 layers), we partition the transformer into:
+The trunk boundary is determined empirically by layer divergence analysis
+(Section~\ref{sec:divergence}). For Qwen3-1.7B (28 layers), domain-specific
+signals emerge at layer~18 (CKA increases 8$\times$ between layers 14 and 18).
+We partition the transformer into:
 \begin{itemize}
-    \item \textbf{Layers 1--14 (trunk):} Shared FFN, always VRAM-resident.
-          This is the fluid intelligence core---general reasoning, syntax,
-          attention patterns. $\sim$1.0B parameters.
-    \item \textbf{Layers 15--21 (first fork):} 2--4 broad domain branches,
-          each a LoRA adapter on the shared FFN ($\sim$2\,MB per branch).
-    \item \textbf{Layers 22--28 (deep forks):} Up to 8+ branches
-          ($\sim$0.5\,MB per branch).
+    \item \textbf{Layers 0--17 (trunk):} Shared FFN, always VRAM-resident.
+          Fluid intelligence core---general reasoning, syntax, attention
+          patterns. $\sim$1.2B parameters.
+    \item \textbf{Layers 18--27 (expert layers):} Variable-rank LoRA adapters
+          on FFN. Each adapter $\sim$45\,KB at rank-4 per layer.
 \end{itemize}
-Total specialist parameters: $\sim$6\,MB for 8 specialists, versus 800+\,MB for
-8 full expert copies in standard MoE.
+Total specialist parameters: 655K for 2 experts across 10 layers, versus
+800+\,MB for full expert copies in standard MoE.
 
 \subsection{Learntropy-Driven Mitosis}
 
@@ -709,39 +706,26 @@ extend this: the routing is low-rank, and so is the specialization itself.
 \section{Understanding the Tree Structure}
 \label{sec:understanding}
 
-Beyond demonstrating that the framework works, we pose three scientific
-questions about the emergent structure.
+These questions were originally framed for a multi-level tree with variable
+ranks. Our experiments produced only 2-expert systems at fixed rank, so we
+reformulate them in light of actual results.
 
-\paragraph{Q1: Does the rank distribution follow a power law?}
-If specialization depth reflects the Zipf-distributed information density of
-natural language~\cite{shannon1948}, we expect many low-rank lenses and few
-high-rank crystals. We test this by fitting a power-law model to the rank
-distribution across all experts at convergence.
+\paragraph{Q1: How does rank affect information efficiency?}
+We measure the residual compression ratio (RCR = PPL gain / trainable
+parameters) across ranks 1--32 at the trunk-18 boundary.
+% TODO: Fill with rank sweep results when available.
 
-\placeholder{Figure: Log-log plot of expert count vs.\ rank. If the
-distribution is heavy-tailed, most experts are rank-1--4 lenses, with a long
-tail of rank-16+ crystals. Report the power-law exponent and
-goodness-of-fit.}
+\placeholder{Table: Rank sweep results. For each rank (1,2,4,8,16,32):
+trainable params, PPL after 5K steps, PPL gain, RCR. Expected: diminishing
+returns at higher ranks (lens$\to$crystal transition).}
 
-\paragraph{Q2: Does rank correlate with domain KL-divergence from the core?}
-The unifying claim (Table~\ref{tab:unification}) predicts that an expert's rank
-should correlate with how different its token distribution is from the
-generalist core's. We measure this by computing $D_{\mathrm{KL}}(P_{\text{expert}}
-\| P_{\text{core}})$ over the vocabulary distribution and plotting against
-adapter rank.
-
-\placeholder{Figure: Scatter plot of adapter rank vs.\
-$D_{\mathrm{KL}}(\text{expert} \| \text{core})$. If the unification holds,
-these should correlate positively. Report Spearman's $\rho$.}
-
-\paragraph{Q3: Is the emergent tree structure interpretable?}
-We examine whether the learned branching corresponds to human-recognizable
-domain boundaries (e.g., science vs.\ narrative, formal vs.\ informal) or
-whether it reflects statistical structure that cuts across human categories.
-
-\placeholder{Figure: Visualization of the tree with representative tokens at
-each leaf, colored by domain. Annotate whether branches align with identifiable
-topics or cross-cut them.}
+\paragraph{Q2: Is the emergent specialization interpretable?}
+The first fork produces a structure/content split: Expert~0 routes 71\% of
+rare words, Expert~1 routes 86\% of punctuation. This is functional, not
+domain-based. The split aligns with the ``Standing Committee''
+pattern~\cite{standing2026}: functional experts form a stable core, domain
+experts are peripheral. At Qwen3-1.7B scale, domain-level interpretability
+has not emerged.
 
 % ============================================================================
 \section{Limitations}
@@ -758,9 +742,10 @@ We identify four limitations that bound our current claims:
           uniformly (49--51\% split), and removing either expert degrades all
           domains equally. The experts learn different \emph{directions} in
           representation space, but both directions are needed by all tokens.
-          Achieving genuine functional modularity---where experts are
-          independently removable with selective damage---remains an open
-          problem.
+          Achieving causal modularity---where expert removal causes
+          \emph{selective} domain damage (near-diagonal $M_{ij}$)---requires
+          mechanisms beyond contrastive loss, likely including top-$K$ routing
+          or modularity-aware training objectives.
     \item \textbf{No second fork triggered on generic data.} Despite testing
           bimodality thresholds from 0.3 to 0.555, no configuration produced
           more than 2 experts. On generic C4 data, 2-expert systems appear to
