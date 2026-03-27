@@ -655,8 +655,13 @@ to causal locality. Instead, the Hessian escape directions lead to
 \emph{magnitude asymmetry}---one expert becomes 1.7$\times$ more impactful
 than the other across all domains, rather than each expert owning a domain.
 Level-2 differentiation (selective routing) is achievable through
-differentiable routing; level-3 (causal locality) remains open and may require
-domain-aware training signals or scale beyond 1.7B parameters.
+differentiable routing; level-3 (causal locality) remains open. A
+domain-conditional experiment (4 experts with gradient masking per domain,
+supervised router) also failed: the general-domain expert absorbed
+$>$99\% of useful learning while domain-specific experts contributed
+$<$0.03 PPL each, due to severe data imbalance in C4 ($>$80\% general text).
+Even forced specialization cannot overcome insufficient domain-specific
+training signal at this scale and data composition.
 
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
