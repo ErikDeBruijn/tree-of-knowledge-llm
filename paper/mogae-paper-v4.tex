@@ -177,10 +177,14 @@ at least three distinct levels, each progressively harder to achieve:
           populations to different experts based on meaningful features (not
           just load balancing). Requires informative hidden states at the
           routing point (Section~\ref{sec:divergence}).
-    \item \textbf{Causal modularity.} Removing an expert causes
-          \emph{selective} damage---its domain or function degrades while others
-          are unaffected. This is the requirement for hot-pluggability. Measured
-          by the ablation matrix $M_{ij}$, not by weight geometry.
+    \item \textbf{Causal modularity.} Each expert must be selectively
+          indispensable for a specific token population: removing it causes
+          concentrated damage to that population while leaving others
+          unaffected. This is the requirement for hot-pluggability, and it is
+          fundamentally different from generic otherness---experts must not
+          merely \emph{differ}, they must \emph{own} distinct subsets of the
+          model's competence. Measured by the ablation matrix $M_{ij}$, not by
+          weight geometry.
 \end{enumerate}
 
 Our framework achieves level~1 reliably (CosSim $<$0.3) but has not yet
