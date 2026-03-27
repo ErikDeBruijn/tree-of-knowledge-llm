@@ -20,9 +20,11 @@ Last updated: 2026-03-27T12:40
 
 ## Current hypothesis under test
 
-**Is uniform routing a basin or saddle point of the LM loss?**
-Hessian eigenspectrum analysis on the router parameters. If basin → must change
-loss function. If saddle → optimizer issue, fixable with lr/momentum.
+**Can Gumbel-softmax routing (differentiable) achieve causal locality?**
+Root cause identified: hard argmax gives zero router gradient. Hessian confirms
+LM loss has selective routing directions (saddle point, 47-49% negative eigenvalues).
+Gumbel-softmax replaces argmax with differentiable routing, allowing LM loss
+to train the router. Temperature anneals 1.0→0.1 over training.
 
 ## Next experiments (prioritized)
 
