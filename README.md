@@ -2,6 +2,9 @@
 
 **A small dense core for reasoning. A tree of hot-loadable experts for knowledge. Load only what you need.**
 
+> *"I know Kung Fu."*
+> *— Neo, after a 45KB LoRA adapter was hot-loaded from NVMe in 0.3 microseconds*
+
 ## Beyond Mixture-of-Experts
 
 Traditional MoE models use a router to select from a flat pool of interchangeable experts. The load-balancing loss makes all experts nearly identical — you can't tell what any single expert "knows."
