@@ -644,10 +644,13 @@ $\partial\mathcal{L}/\partial w_{\text{router}} = 0$ exactly---the router
 weights are invisible to the optimizer and cannot learn from the LM loss.
 Second, when argmax is replaced with a differentiable softmax surrogate, the
 Hessian shows abundant negative eigenvalues (47--49\% of sampled directions),
-confirming that the LM loss \emph{does} encode routing selectivity. The path
-to causal locality is therefore to replace argmax with a differentiable routing
-mechanism such as Gumbel-softmax~\cite{jang2017gumbel} or a straight-through
-estimator, allowing the LM loss gradient to flow through the routing decision.
+confirming that the LM loss \emph{does} encode routing selectivity. Replacing argmax with
+Gumbel-softmax~\cite{jang2017gumbel} ($\tau$: 1.0$\to$0.1) confirms this:
+routing selectivity reaches 0.41 at layer~27 (vs.\ $<$0.01 with argmax),
+with 82\% of tokens routed with $>$0.3 confidence---all without PPL
+degradation (20.14, identical to argmax). This achieves level-2
+differentiation (routing) for the first time. Whether it produces level-3
+(causal locality, diagonal $M_{ij}$) is under evaluation.
 
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
