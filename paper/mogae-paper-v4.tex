@@ -54,7 +54,9 @@ local experts can be skipped or offloaded without uniform quality loss.
 A Hessian analysis reveals that uniform routing is a \emph{saddle point}, not
 a basin: the LM loss contains escape directions toward selective routing, but
 auxiliary losses and optimization dynamics prevent exploitation. This
-suggests the path to causal locality lies in optimization (router learning
+A damage-prediction surrogate that directly optimizes for selective
+indispensability achieves token-level exclusivity but not domain-level
+selectivity, suggesting the path to causal locality lies in optimization (router learning
 rates, auxiliary loss removal) rather than fundamental loss redesign.
 \end{abstract}
 
