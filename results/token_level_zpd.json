@@ -5,13 +5,13 @@
     "sample_size": 50,
     "total_tokens": 25518,
     "errors": 0,
-    "total_time_seconds": 57.4900119304657,
-    "tokens_per_second": 443.86840675670896,
+    "total_time_seconds": 57.00417518615723,
+    "tokens_per_second": 447.65142056115104,
     "seed": 42,
     "zpd_token_threshold": 3.0,
     "context_size": 2048,
     "chunk_level_rho_baseline": 0.958,
-    "timestamp": "2026-03-27T16:01:00"
+    "timestamp": "2026-03-27T16:02:35"
   },
   "summary": {
     "token_spearman_rho": 0.9125918914886766,
@@ -33,4 +33,1058 @@
     "within_chunk_rho_median": 0.915580800694953
   },
   "pre_registered": {
-    "token_rho_less_than_chunk": 
+    "token_rho_less_than_chunk": true,
+    "token_rho_in_expected_range": false,
+    "zpd_fraction_in_range": true
+  },
+  "niche_categories": {
+    "punctuation": {
+      "count": 126,
+      "total_in_corpus": 2564,
+      "over_representation": 0.6235726902969704,
+      "mean_zpd": 19.52769046170371,
+      "examples": [
+        {
+          "text": "'-'",
+          "student_loss": 0.7945518493652344,
+          "teacher_loss": 0.1631450653076172,
+          "zpd": 4.8702168464660645
+        },
+        {
+          "text": "'?\\n'",
+          "student_loss": 0.372314453125,
+          "teacher_loss": 0.05175209045410156,
+          "zpd": 7.1941914558410645
+        },
+        {
+          "text": "','",
+          "student_loss": 0.42922210693359375,
+          "teacher_loss": 0.1416454315185547,
+          "zpd": 3.030257225036621
+        },
+        {
+          "text": "','",
+          "student_loss": 0.05300712585449219,
+          "teacher_loss": 0.0118255615234375,
+          "zpd": 4.482419490814209
+        },
+        {
+          "text": "')'",
+          "student_loss": 1.5569438934326172,
+          "teacher_loss": 0.35645484924316406,
+          "zpd": 4.367857456207275
+        }
+      ]
+    },
+    "common_word": {
+      "count": 1142,
+      "total_in_corpus": 14324,
+      "over_representation": 1.011664135442722,
+      "mean_zpd": 12.455822905600593,
+      "examples": [
+        {
+          "text": "'fore'",
+          "student_loss": 2.8461055755615234,
+          "teacher_loss": 0.023084640502929688,
+          "zpd": 123.29000854492188
+        },
+        {
+          "text": "' the'",
+          "student_loss": 0.8819408416748047,
+          "teacher_loss": 0.2811698913574219,
+          "zpd": 3.1366829872131348
+        },
+        {
+          "text": "' will'",
+          "student_loss": 1.5987777709960938,
+          "teacher_loss": 0.4209766387939453,
+          "zpd": 3.7977826595306396
+        },
+        {
+          "text": "' pre'",
+          "student_loss": 1.638885498046875,
+          "teacher_loss": 0.5173149108886719,
+          "zpd": 3.1680614948272705
+        },
+        {
+          "text": "' during'",
+          "student_loss": 3.1487197875976562,
+          "teacher_loss": 0.9362564086914062,
+          "zpd": 3.36309552192688
+        }
+      ]
+    },
+    "whitespace": {
+      "count": 34,
+      "total_in_corpus": 272,
+      "over_representation": 1.5861511685728495,
+      "mean_zpd": 13.774898886680603,
+      "examples": [
+        {
+          "text": "' '",
+          "student_loss": 0.4152812957763672,
+          "teacher_loss": 0.13691139221191406,
+          "zpd": 3.033212184906006
+        },
+        {
+          "text": "' '",
+          "student_loss": 1.1011199951171875,
+          "teacher_loss": 0.31905555725097656,
+          "zpd": 3.451185703277588
+        },
+        {
+          "text": "' '",
+          "student_loss": 7.574987411499023,
+          "teacher_loss": 0.12824058532714844,
+          "zpd": 59.068565368652344
+        },
+        {
+          "text": "' '",
+          "student_loss": 2.209012985229492,
+          "teacher_loss": 0.14650726318359375,
+          "zpd": 15.077839851379395
+        },
+        {
+          "text": "' '",
+          "student_loss": 1.2000961303710938,
+          "teacher_loss": 0.1354999542236328,
+          "zpd": 8.85680103302002
+        }
+      ]
+    },
+    "longer_word": {
+      "count": 276,
+      "total_in_corpus": 3604,
+      "over_representation": 0.9717596504464072,
+      "mean_zpd": 10.614663968915524,
+      "examples": [
+        {
+          "text": "' homeowner'",
+          "student_loss": 5.096836090087891,
+          "teacher_loss": 1.6455955505371094,
+          "zpd": 3.097259283065796
+        },
+        {
+          "text": "' homeowner'",
+          "student_loss": 1.863351821899414,
+          "teacher_loss": 0.6210441589355469,
+          "zpd": 3.0003530979156494
+        },
+        {
+          "text": "' approve'",
+          "student_loss": 5.555036544799805,
+          "teacher_loss": 0.9126987457275391,
+          "zpd": 6.086385726928711
+        },
+        {
+          "text": "' benefits'",
+          "student_loss": 3.2662200927734375,
+          "teacher_loss": 0.8482437133789062,
+          "zpd": 3.8505680561065674
+        },
+        {
+          "text": "' control'",
+          "student_loss": 9.927711486816406,
+          "teacher_loss": 0.7871513366699219,
+          "zpd": 12.612201690673828
+        }
+      ]
+    },
+    "number": {
+      "count": 83,
+      "total_in_corpus": 933,
+      "over_representation": 1.1288364157903235,
+      "mean_zpd": 23.002949283783693,
+      "examples": [
+        {
+          "text": "'0'",
+          "student_loss": 0.8164825439453125,
+          "teacher_loss": 0.20041465759277344,
+          "zpd": 4.073966026306152
+        },
+        {
+          "text": "'1'",
+          "student_loss": 0.3749275207519531,
+          "teacher_loss": 0.07441520690917969,
+          "zpd": 5.038318634033203
+        },
+        {
+          "text": "'2'",
+          "student_loss": 0.8477859497070312,
+          "teacher_loss": 0.13176536560058594,
+          "zpd": 6.434057712554932
+        },
+        {
+          "text": "'3'",
+          "student_loss": 0.3907318115234375,
+          "teacher_loss": 0.06214141845703125,
+          "zpd": 6.287784099578857
+        },
+        {
+          "text": "'0'",
+          "student_loss": 0.36746978759765625,
+          "teacher_loss": 0.061565399169921875,
+          "zpd": 5.968771457672119
+        }
+      ]
+    },
+    "capitalized_word": {
+      "count": 265,
+      "total_in_corpus": 3128,
+      "over_representation": 1.0750129403370972,
+      "mean_zpd": 27.753306518410735,
+      "examples": [
+        {
+          "text": "' U'",
+          "student_loss": 7.996667861938477,
+          "teacher_loss": 1.6155548095703125,
+          "zpd": 4.949796676635742
+        },
+        {
+          "text": "' Ser'",
+          "student_loss": 0.7049903869628906,
+          "teacher_loss": 0.06415367126464844,
+          "zpd": 10.989089012145996
+        },
+        {
+          "text": "' Dec'",
+          "student_loss": 1.9997005462646484,
+          "teacher_loss": 0.11270904541015625,
+          "zpd": 17.74214744567871
+        },
+        {
+          "text": "'Method'",
+          "student_loss": 0.38527488708496094,
+          "teacher_loss": 0.11301994323730469,
+          "zpd": 3.4089107513427734
+        },
+        {
+          "text": "' Logical'",
+          "student_loss": 3.4241199493408203,
+          "teacher_loss": 0.35065460205078125,
+          "zpd": 9.764936447143555
+        }
+      ]
+    },
+    "other": {
+      "count": 78,
+      "total_in_corpus": 662,
+      "over_representation": 1.495103216298275,
+      "mean_zpd": 23.08013684933002,
+      "examples": [
+        {
+          "text": "'\u201d'",
+          "student_loss": 0.5600376129150391,
+          "teacher_loss": 0.07381248474121094,
+          "zpd": 7.587302207946777
+        },
+        {
+          "text": "'-component'",
+          "student_loss": 0.45528411865234375,
+          "teacher_loss": 0.08534812927246094,
+          "zpd": 5.334435939788818
+        },
+        {
+          "text": "\"'s\"",
+          "student_loss": 1.3816032409667969,
+          "teacher_loss": 0.1970806121826172,
+          "zpd": 7.010345935821533
+        },
+        {
+          "text": "'-going'",
+          "student_loss": 0.20829391479492188,
+          "teacher_loss": 0.026540756225585938,
+          "zpd": 7.848077774047852
+        },
+        {
+          "text": "' \u00a7'",
+          "student_loss": 3.705301284790039,
+          "teacher_loss": 0.016902923583984375,
+          "zpd": 219.21067810058594
+        }
+      ]
+    },
+    "url": {
+      "count": 3,
+      "total_in_corpus": 10,
+      "over_representation": 3.8067628045748383,
+      "mean_zpd": 16.888442675272625,
+      "examples": [
+        {
+          "text": "' http'",
+          "student_loss": 2.8059120178222656,
+          "teacher_loss": 0.08313751220703125,
+          "zpd": 33.75025177001953
+        },
+        {
+          "text": "' http'",
+          "student_loss": 1.9454727172851562,
+          "teacher_loss": 0.16849899291992188,
+          "zpd": 11.54590129852295
+        },
+        {
+          "text": "'www'",
+          "student_loss": 0.6493644714355469,
+          "teacher_loss": 0.12094306945800781,
+          "zpd": 5.369174957275391
+        }
+      ]
+    },
+    "camelCase": {
+      "count": 4,
+      "total_in_corpus": 21,
+      "over_representation": 2.416992256872913,
+      "mean_zpd": 5.211109817028046,
+      "examples": [
+        {
+          "text": "' iOS'",
+          "student_loss": 1.6054668426513672,
+          "teacher_loss": 0.5090370178222656,
+          "zpd": 3.1539294719696045
+        },
+        {
+          "text": "' iPad'",
+          "student_loss": 6.148294448852539,
+          "teacher_loss": 1.0062217712402344,
+          "zpd": 6.1102776527404785
+        },
+        {
+          "text": "' iPod'",
+          "student_loss": 0.22992324829101562,
+          "teacher_loss": 0.06596183776855469,
+          "zpd": 3.485701084136963
+        },
+        {
+          "text": "' iOS'",
+          "student_loss": 1.24517822265625,
+          "teacher_loss": 0.15382957458496094,
+          "zpd": 8.094531059265137
+        }
+      ]
+    }
+  },
+  "top_30_niche_tokens": [
+    {
+      "rank": 1,
+      "token_text": " The",
+      "token_id": 576,
+      "student_loss": 7.944385528564453,
+      "teacher_loss": 0.010461807250976562,
+      "zpd": 759.3703002929688,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 2,
+      "token_text": "?v",
+      "token_id": 22995,
+      "student_loss": 7.886823654174805,
+      "teacher_loss": 0.01221466064453125,
+      "zpd": 645.68505859375,
+      "category": "other"
+    },
+    {
+      "rank": 3,
+      "token_text": "L",
+      "token_id": 43,
+      "student_loss": 7.381828308105469,
+      "teacher_loss": 0.012981414794921875,
+      "zpd": 568.6458740234375,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 4,
+      "token_text": " parks",
+      "token_id": 26845,
+      "student_loss": 9.81387996673584,
+      "teacher_loss": 0.01929473876953125,
+      "zpd": 508.6298522949219,
+      "category": "common_word"
+    },
+    {
+      "rank": 5,
+      "token_text": " <",
+      "token_id": 366,
+      "student_loss": 10.083918571472168,
+      "teacher_loss": 0.023914337158203125,
+      "zpd": 421.6683349609375,
+      "category": "punctuation"
+    },
+    {
+      "rank": 6,
+      "token_text": "pons",
+      "token_id": 2737,
+      "student_loss": 4.655462265014648,
+      "teacher_loss": 0.011205673217773438,
+      "zpd": 415.4558410644531,
+      "category": "common_word"
+    },
+    {
+      "rank": 7,
+      "token_text": " Association",
+      "token_id": 10024,
+      "student_loss": 5.572353363037109,
+      "teacher_loss": 0.013517379760742188,
+      "zpd": 412.2362060546875,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 8,
+      "token_text": "res",
+      "token_id": 416,
+      "student_loss": 5.597328186035156,
+      "teacher_loss": 0.013914108276367188,
+      "zpd": 402.2771911621094,
+      "category": "common_word"
+    },
+    {
+      "rank": 9,
+      "token_text": " Hill",
+      "token_id": 8108,
+      "student_loss": 10.468621253967285,
+      "teacher_loss": 0.030019760131835938,
+      "zpd": 348.7243347167969,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 10,
+      "token_text": "Par",
+      "token_id": 4272,
+      "student_loss": 4.7680206298828125,
+      "teacher_loss": 0.013988494873046875,
+      "zpd": 340.85302734375,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 11,
+      "token_text": " handling",
+      "token_id": 11589,
+      "student_loss": 10.00086498260498,
+      "teacher_loss": 0.0305328369140625,
+      "zpd": 327.5445861816406,
+      "category": "longer_word"
+    },
+    {
+      "rank": 12,
+      "token_text": ".",
+      "token_id": 13,
+      "student_loss": 3.4012527465820312,
+      "teacher_loss": 0.010425567626953125,
+      "zpd": 326.2414855957031,
+      "category": "punctuation"
+    },
+    {
+      "rank": 13,
+      "token_text": "anny",
+      "token_id": 12888,
+      "student_loss": 4.93781852722168,
+      "teacher_loss": 0.015573501586914062,
+      "zpd": 317.0653991699219,
+      "category": "common_word"
+    },
+    {
+      "rank": 14,
+      "token_text": "una",
+      "token_id": 8565,
+      "student_loss": 3.383024215698242,
+      "teacher_loss": 0.01309967041015625,
+      "zpd": 258.25262451171875,
+      "category": "common_word"
+    },
+    {
+      "rank": 15,
+      "token_text": " Town",
+      "token_id": 13971,
+      "student_loss": 5.930056571960449,
+      "teacher_loss": 0.023687362670898438,
+      "zpd": 250.3468475341797,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 16,
+      "token_text": " Please",
+      "token_id": 5209,
+      "student_loss": 3.100187301635742,
+      "teacher_loss": 0.012434005737304688,
+      "zpd": 249.3313446044922,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 17,
+      "token_text": "9",
+      "token_id": 24,
+      "student_loss": 3.534330368041992,
+      "teacher_loss": 0.014532089233398438,
+      "zpd": 243.2086944580078,
+      "category": "number"
+    },
+    {
+      "rank": 18,
+      "token_text": " Per",
+      "token_id": 3616,
+      "student_loss": 8.995184898376465,
+      "teacher_loss": 0.038379669189453125,
+      "zpd": 234.3737030029297,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 19,
+      "token_text": " Neu",
+      "token_id": 44850,
+      "student_loss": 4.387731552124023,
+      "teacher_loss": 0.019060134887695312,
+      "zpd": 230.20465087890625,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 20,
+      "token_text": " Answers",
+      "token_id": 37243,
+      "student_loss": 10.259903907775879,
+      "teacher_loss": 0.04480743408203125,
+      "zpd": 228.97772216796875,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 21,
+      "token_text": " \u00a7",
+      "token_id": 16625,
+      "student_loss": 3.705301284790039,
+      "teacher_loss": 0.016902923583984375,
+      "zpd": 219.21067810058594,
+      "category": "other"
+    },
+    {
+      "rank": 22,
+      "token_text": " Glide",
+      "token_id": 56026,
+      "student_loss": 5.446407318115234,
+      "teacher_loss": 0.025310516357421875,
+      "zpd": 215.18357849121094,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 23,
+      "token_text": " seat",
+      "token_id": 10723,
+      "student_loss": 5.476411819458008,
+      "teacher_loss": 0.026336669921875,
+      "zpd": 207.93865966796875,
+      "category": "common_word"
+    },
+    {
+      "rank": 24,
+      "token_text": "house",
+      "token_id": 7675,
+      "student_loss": 15.720542907714844,
+      "teacher_loss": 0.08636665344238281,
+      "zpd": 182.02098083496094,
+      "category": "common_word"
+    },
+    {
+      "rank": 25,
+      "token_text": " accounts",
+      "token_id": 9618,
+      "student_loss": 2.1895065307617188,
+      "teacher_loss": 0.012287139892578125,
+      "zpd": 178.19497680664062,
+      "category": "longer_word"
+    },
+    {
+      "rank": 26,
+      "token_text": "1",
+      "token_id": 16,
+      "student_loss": 1.9288482666015625,
+      "teacher_loss": 0.010942459106445312,
+      "zpd": 176.27191162109375,
+      "category": "number"
+    },
+    {
+      "rank": 27,
+      "token_text": "count",
+      "token_id": 1830,
+      "student_loss": 3.4216060638427734,
+      "teacher_loss": 0.0198822021484375,
+      "zpd": 172.0939178466797,
+      "category": "common_word"
+    },
+    {
+      "rank": 28,
+      "token_text": "5",
+      "token_id": 20,
+      "student_loss": 2.586658477783203,
+      "teacher_loss": 0.01641082763671875,
+      "zpd": 157.6190185546875,
+      "category": "number"
+    },
+    {
+      "rank": 29,
+      "token_text": " N",
+      "token_id": 451,
+      "student_loss": 9.408434867858887,
+      "teacher_loss": 0.06066131591796875,
+      "zpd": 155.0977783203125,
+      "category": "capitalized_word"
+    },
+    {
+      "rank": 30,
+      "token_text": " Poetry",
+      "token_id": 67687,
+      "student_loss": 3.4735183715820312,
+      "teacher_loss": 0.024692535400390625,
+      "zpd": 140.67079162597656,
+      "category": "capitalized_word"
+    }
+  ],
+  "chunk_summaries": [
+    {
+      "text_preview": "When the homeowner is officially in pre-foreclosure they usually are given anywhere from 3 to 10 mon",
+      "n_tokens": 511,
+      "student_mean_loss": 2.3465373516082764,
+      "teacher_mean_loss": 1.8558268547058105,
+      "chunk_zpd": 1.2644160987638333,
+      "student_ppl_original": 10.125,
+      "high_zpd_token_fraction": 0.08610567514677103
+    },
+    {
+      "text_preview": " a Circuit in a Data Network,\u201d filed Jan. 21, 2003. This patent is also related to U.S. patent appli",
+      "n_tokens": 511,
+      "student_mean_loss": 1.7892858982086182,
+      "teacher_mean_loss": 1.4340612888336182,
+      "chunk_zpd": 1.2477053192502805,
+      "student_ppl_original": 5.8125,
+      "high_zpd_token_fraction": 0.0821917808219178
+    },
+    {
+      "text_preview": ". Surf on over to learn how to draw this landscape in just five steps., where , boundary of the cube",
+      "n_tokens": 510,
+      "student_mean_loss": 2.669001817703247,
+      "teacher_mean_loss": 2.1240994930267334,
+      "chunk_zpd": 1.2565333339918348,
+      "student_ppl_original": 14.0,
+      "high_zpd_token_fraction": 0.10784313725490197
+    },
+    {
+      "text_preview": " then grouped individuals based on the neurotransmitter system that was targeted by the mother's med",
+      "n_tokens": 511,
+      "student_mean_loss": 2.6089987754821777,
+      "teacher_mean_loss": 2.201519727706909,
+      "chunk_zpd": 1.1850898916085102,
+      "student_ppl_original": 13.375,
+      "high_zpd_token_fraction": 0.050880626223091974
+    },
+    {
+      "text_preview": " the Meaningful Use (MU) program, which offered financial incentives for adopting electronic health ",
+      "n_tokens": 510,
+      "student_mean_loss": 2.560439348220825,
+      "teacher_mean_loss": 1.873747706413269,
+      "chunk_zpd": 1.3664803108002317,
+      "student_ppl_original": 12.9375,
+      "high_zpd_token_fraction": 0.11960784313725491
+    },
+    {
+      "text_preview": " identifying issues early and, where possible, avoiding costly and stressful disputes, while protect",
+      "n_tokens": 510,
+      "student_mean_loss": 2.4529900550842285,
+      "teacher_mean_loss": 1.7991244792938232,
+      "chunk_zpd": 1.3634354283518253,
+      "student_ppl_original": 10.9375,
+      "high_zpd_token_fraction": 0.09803921568627451
+    },
+    {
+      "text_preview": ", and shops and just one short block to the F/G at 7th Avenue. Prospect Park is also an easy stroll ",
+      "n_tokens": 510,
+      "student_mean_loss": 2.2747879028320312,
+      "teacher_mean_loss": 1.4093917608261108,
+      "chunk_zpd": 1.6140210025767932,
+      "student_ppl_original": 9.8125,
+      "high_zpd_token_fraction": 0.16666666666666666
+    },
+    {
+      "text_preview": " was posted on Tuesday, May 1st, 2012 at 6:55 PM\tand is filed under All, Porsche Cup. You can follow",
+      "n_tokens": 510,
+      "student_mean_loss": 2.9431138038635254,
+      "teacher_mean_loss": 2.240931749343872,
+      "chunk_zpd": 1.3133437931455283,
+      "student_ppl_original": 17.5,
+      "high_zpd_token_fraction": 0.10784313725490197
+    },
+    {
+      "text_preview": ". Uniforms are provided and employees must comply with uniform dress code. Valid driver\u2019s license re",
+      "n_tokens": 511,
+      "student_mean_loss": 2.2287182807922363,
+      "teacher_mean_loss": 1.8091696500778198,
+      "chunk_zpd": 1.2319012098707105,
+      "student_ppl_original": 9.1875,
+      "high_zpd_token_fraction": 0.08023483365949119
+    },
+    {
+      "text_preview": " news when you have Hashimoto\u2019s hypothyroidism, as toxins can trigger the immune system to contribut",
+      "n_tokens": 508,
+      "student_mean_loss": 2.9562268257141113,
+      "teacher_mean_loss": 2.429379463195801,
+      "chunk_zpd": 1.2168649939212268,
+      "student_ppl_original": 18.0,
+      "high_zpd_token_fraction": 0.08267716535433071
+    },
+    {
+      "text_preview": " with a new tattoo or just having someone reline and recolour an old tattoo so that it looks as it s",
+      "n_tokens": 509,
+      "student_mean_loss": 3.1188557147979736,
+      "teacher_mean_loss": 2.5681233406066895,
+      "chunk_zpd": 1.2144493473047833,
+      "student_ppl_original": 22.0,
+      "high_zpd_token_fraction": 0.07269155206286837
+    },
+    {
+      "text_preview": " Briefcases: Oops! We're restocking.\nIt looks like you've found one of our popular items within our ",
+      "n_tokens": 510,
+      "student_mean_loss": 2.9435226917266846,
+      "teacher_mean_loss": 2.4917566776275635,
+      "chunk_zpd": 1.1813042253103356,
+      "student_ppl_original": 18.625,
+      "high_zpd_token_fraction": 0.047058823529411764
+    },
+    {
+      "text_preview": ", and include a minibar and sat TV. Some have balconies with sea views.\nThe hotel itself has an outd",
+      "n_tokens": 511,
+      "student_mean_loss": 2.960944652557373,
+      "teacher_mean_loss": 2.329378604888916,
+      "chunk_zpd": 1.2711306982655897,
+      "student_ppl_original": 18.25,
+      "high_zpd_token_fraction": 0.09001956947162426
+    },
+    {
+      "text_preview": "2 bit iOS device on iOS 9.1 \u2013 iOS 9.3.4, subsequently we\u2019ve some fantastic news for you. iPhone hack",
+      "n_tokens": 511,
+      "student_mean_loss": 3.0032215118408203,
+      "teacher_mean_loss": 2.497091293334961,
+      "chunk_zpd": 1.2026879112737217,
+      "student_ppl_original": 19.125,
+      "high_zpd_token_fraction": 0.09001956947162426
+    },
+    {
+      "text_preview": "4 I had to travel to Dublin via Bucharest with the Romanian airlines TAROM in order to attend a very",
+      "n_tokens": 509,
+      "student_mean_loss": 3.045206308364868,
+      "teacher_mean_loss": 2.5492563247680664,
+      "chunk_zpd": 1.1945469267951796,
+      "student_ppl_original": 20.375,
+      "high_zpd_token_fraction": 0.06286836935166994
+    },
+    {
+      "text_preview": " etc. Carpenter Ants prefer dead, damp wood in which to build nests. Thus, it is critical that gutte",
+      "n_tokens": 511,
+      "student_mean_loss": 3.0454142093658447,
+      "teacher_mean_loss": 2.431781768798828,
+      "chunk_zpd": 1.2523386137852817,
+      "student_ppl_original": 20.375,
+      "high_zpd_token_fraction": 0.06262230919765166
+    },
+    {
+      "text_preview": " two control texts written by the same author are identified as within-author tests. The tests betwe",
+      "n_tokens": 511,
+      "student_mean_loss": 3.174528121948242,
+      "teacher_mean_loss": 2.5299935340881348,
+      "chunk_zpd": 1.2547574051774848,
+      "student_ppl_original": 22.75,
+      "high_zpd_token_fraction": 0.07827788649706457
+    },
+    {
+      "text_preview": ". Between the two we should end up with a grand tale full of dramatic engagements, action and intrig",
+      "n_tokens": 512,
+      "student_mean_loss": 3.199756622314453,
+      "teacher_mean_loss": 2.4772942066192627,
+      "chunk_zpd": 1.2916336758729707,
+      "student_ppl_original": 23.5,
+      "high_zpd_token_fraction": 0.111328125
+    },
+    {
+      "text_preview": "Pro tip: if you know you\u2019re going to be having a late night out, leave some makeup wipes on your bed",
+      "n_tokens": 511,
+      "student_mean_loss": 2.9444429874420166,
+      "teacher_mean_loss": 2.328519582748413,
+      "chunk_zpd": 1.2645128730103325,
+      "student_ppl_original": 18.25,
+      "high_zpd_token_fraction": 0.12133072407045009
+    },
+    {
+      "text_preview": " where he also earned a Medical Degree. After completing an internship in Internal Medicine at the T",
+      "n_tokens": 510,
+      "student_mean_loss": 3.187762498855591,
+      "teacher_mean_loss": 2.6175713539123535,
+      "chunk_zpd": 1.2178321305705768,
+      "student_ppl_original": 23.125,
+      "high_zpd_token_fraction": 0.06470588235294118
+    },
+    {
+      "text_preview": " never play for Leinster, and don't think I'd want him, good player and all that he is.\nThx. Im prob",
+      "n_tokens": 511,
+      "student_mean_loss": 3.2913763523101807,
+      "teacher_mean_loss": 2.8712871074676514,
+      "chunk_zpd": 1.1463069449759866,
+      "student_ppl_original": 25.375,
+      "high_zpd_token_fraction": 0.050880626223091974
+    },
+    {
+      "text_preview": " spread even outside the boundaries of China exporting such practices in Japan and Korea. It has str",
+      "n_tokens": 511,
+      "student_mean_loss": 3.4123127460479736,
+      "teacher_mean_loss": 2.5703225135803223,
+      "chunk_zpd": 1.3275815497934553,
+      "student_ppl_original": 28.75,
+      "high_zpd_token_fraction": 0.13307240704500978
+    },
+    {
+      "text_preview": " Do you recognize him? And the determination was made two days after he gave the \u201cI Have a Dream\u201d sp",
+      "n_tokens": 511,
+      "student_mean_loss": 3.3040997982025146,
+      "teacher_mean_loss": 2.7876062393188477,
+      "chunk_zpd": 1.1852821074937299,
+      "student_ppl_original": 27.5,
+      "high_zpd_token_fraction": 0.07827788649706457
+    },
+    {
+      "text_preview": "asmus KNX Lab will study and evaluate both the project\u2019s viability and the number of hours estimated",
+      "n_tokens": 511,
+      "student_mean_loss": 3.260099172592163,
+      "teacher_mean_loss": 2.8248496055603027,
+      "chunk_zpd": 1.1540788458879847,
+      "student_ppl_original": 25.75,
+      "high_zpd_token_fraction": 0.07632093933463796
+    },
+    {
+      "text_preview": " publish the changes to production? Thank you!\nHi Emily, I'm sorry if this is a stupid question, but",
+      "n_tokens": 510,
+      "student_mean_loss": 3.3465018272399902,
+      "teacher_mean_loss": 2.7955830097198486,
+      "chunk_zpd": 1.1970675939883288,
+      "student_ppl_original": 27.875,
+      "high_zpd_token_fraction": 0.056862745098039215
+    },
+    {
+      "text_preview": " use site Just type in your search engine, the song you want to access in search as soon as you reac",
+      "n_tokens": 510,
+      "student_mean_loss": 3.3677775859832764,
+      "teacher_mean_loss": 2.9731292724609375,
+      "chunk_zpd": 1.1327383633055679,
+      "student_ppl_original": 29.25,
+      "high_zpd_token_fraction": 0.03725490196078431
+    },
+    {
+      "text_preview": " would prefer. But it\u2019s March and the weather will hopefully turn soon, meaning I\u2019m on my way to war",
+      "n_tokens": 511,
+      "student_mean_loss": 3.329275369644165,
+      "teacher_mean_loss": 2.706364393234253,
+      "chunk_zpd": 1.2301652275529311,
+      "student_ppl_original": 26.25,
+      "high_zpd_token_fraction": 0.07240704500978473
+    },
+    {
+      "text_preview": ". Because everyone will be impacted.\nz, yes, you are making a lot of good points. I am hoping that b",
+      "n_tokens": 511,
+      "student_mean_loss": 3.2019309997558594,
+      "teacher_mean_loss": 2.6411619186401367,
+      "chunk_zpd": 1.2123190847021024,
+      "student_ppl_original": 23.875,
+      "high_zpd_token_fraction": 0.08023483365949119
+    },
+    {
+      "text_preview": " evolve and reinvent as it grows. It\u2019s all about giving meaning to your customers.\nWe approached Bou",
+      "n_tokens": 511,
+      "student_mean_loss": 3.2614212036132812,
+      "teacher_mean_loss": 2.705794334411621,
+      "chunk_zpd": 1.2053470443541607,
+      "student_ppl_original": 25.0,
+      "high_zpd_token_fraction": 0.06457925636007827
+    },
+    {
+      "text_preview": " the day with a nice Romanian salad prepared by Adina and Alex. We were all exhausted. Tomorrow is a",
+      "n_tokens": 509,
+      "student_mean_loss": 3.367827892303467,
+      "teacher_mean_loss": 2.8109099864959717,
+      "chunk_zpd": 1.198127264296264,
+      "student_ppl_original": 27.5,
+      "high_zpd_token_fraction": 0.06286836935166994
+    },
+    {
+      "text_preview": " of patients for a short period. More research is needed to confirm the safety of the quadpill, its ",
+      "n_tokens": 510,
+      "student_mean_loss": 3.5284359455108643,
+      "teacher_mean_loss": 3.1269493103027344,
+      "chunk_zpd": 1.128395632729096,
+      "student_ppl_original": 33.75,
+      "high_zpd_token_fraction": 0.03725490196078431
+    },
+    {
+      "text_preview": " a home sale smoothly. But today I got to see the joy of a brand new, just licensed real estate agen",
+      "n_tokens": 509,
+      "student_mean_loss": 3.5173051357269287,
+      "teacher_mean_loss": 2.897092580795288,
+      "chunk_zpd": 1.2140810269726985,
+      "student_ppl_original": 32.5,
+      "high_zpd_token_fraction": 0.06286836935166994
+    },
+    {
+      "text_preview": " family and their struggles. Boo is a cat after all, and her observations are simplistic but also su",
+      "n_tokens": 511,
+      "student_mean_loss": 3.4827864170074463,
+      "teacher_mean_loss": 2.7487423419952393,
+      "chunk_zpd": 1.2670472469527223,
+      "student_ppl_original": 31.125,
+      "high_zpd_token_fraction": 0.09001956947162426
+    },
+    {
+      "text_preview": " of 19th century urban park design remaining in the United States. Tower Grove Park is one of only s",
+      "n_tokens": 510,
+      "student_mean_loss": 3.528719186782837,
+      "teacher_mean_loss": 2.6984241008758545,
+      "chunk_zpd": 1.3076962904524478,
+      "student_ppl_original": 32.0,
+      "high_zpd_token_fraction": 0.10588235294117647
+    },
+    {
+      "text_preview": " edema.\nThe maximum recommended daily dose for Mykrox is 1 mg.Bradley Pryce and Neil Sinclair will c",
+      "n_tokens": 510,
+      "student_mean_loss": 3.5481886863708496,
+      "teacher_mean_loss": 2.7208614349365234,
+      "chunk_zpd": 1.304068131074682,
+      "student_ppl_original": 33.75,
+      "high_zpd_token_fraction": 0.1450980392156863
+    },
+    {
+      "text_preview": " and is instrumental to the resolution of the conflict.\nAlthough well structured and competently wri",
+      "n_tokens": 510,
+      "student_mean_loss": 3.4368696212768555,
+      "teacher_mean_loss": 2.962690830230713,
+      "chunk_zpd": 1.1600500417416881,
+      "student_ppl_original": 30.625,
+      "high_zpd_token_fraction": 0.047058823529411764
+    },
+    {
+      "text_preview": " its healing qualities & comes with a free 18\" inch black silicone cord.\nOcean Jasper draws its soot",
+      "n_tokens": 509,
+      "student_mean_loss": 3.448195695877075,
+      "teacher_mean_loss": 2.765019655227661,
+      "chunk_zpd": 1.2470781859932796,
+      "student_ppl_original": 30.625,
+      "high_zpd_token_fraction": 0.08644400785854617
+    },
+    {
+      "text_preview": " equally important. The companies in US and Europe by outsourcing their jobs in countries like India",
+      "n_tokens": 510,
+      "student_mean_loss": 3.561702013015747,
+      "teacher_mean_loss": 3.075993299484253,
+      "chunk_zpd": 1.1579030466720888,
+      "student_ppl_original": 34.25,
+      "high_zpd_token_fraction": 0.058823529411764705
+    },
+    {
+      "text_preview": " factors in, your age could indirectly affect your credit. After all, you can\u2019t be 22 years old and ",
+      "n_tokens": 511,
+      "student_mean_loss": 3.4726245403289795,
+      "teacher_mean_loss": 2.8711917400360107,
+      "chunk_zpd": 1.2094714859709876,
+      "student_ppl_original": 30.625,
+      "high_zpd_token_fraction": 0.06653620352250489
+    },
+    {
+      "text_preview": " borther had a penpal from Belgium and years later when they were in college, he came to visit and h",
+      "n_tokens": 511,
+      "student_mean_loss": 3.5907909870147705,
+      "teacher_mean_loss": 3.0505127906799316,
+      "chunk_zpd": 1.1771106149712016,
+      "student_ppl_original": 33.75,
+      "high_zpd_token_fraction": 0.033268101761252444
+    },
+    {
+      "text_preview": " of the Seven Rays of Manifestation of the Higher Self. They are - Power, Personal Will and Determin",
+      "n_tokens": 510,
+      "student_mean_loss": 4.057901382446289,
+      "teacher_mean_loss": 3.1629889011383057,
+      "chunk_zpd": 1.282932539215019,
+      "student_ppl_original": 49.0,
+      "high_zpd_token_fraction": 0.07647058823529412
+    },
+    {
+      "text_preview": " rarely designed directions. The delivery cell of this favorite is that ia seems an CERT in not Merg",
+      "n_tokens": 511,
+      "student_mean_loss": 5.656558513641357,
+      "teacher_mean_loss": 4.4141130447387695,
+      "chunk_zpd": 1.2814711486339192,
+      "student_ppl_original": 278.0,
+      "high_zpd_token_fraction": 0.11741682974559686
+    },
+    {
+      "text_preview": " able to take place in every fashion lover\u2019s heart in Pakistan. Recently, Stylo has released their \u201c",
+      "n_tokens": 510,
+      "student_mean_loss": 3.865079402923584,
+      "teacher_mean_loss": 3.115776538848877,
+      "chunk_zpd": 1.240486714862914,
+      "student_ppl_original": 45.25,
+      "high_zpd_token_fraction": 0.09019607843137255
+    },
+    {
+      "text_preview": "ow or nearby, I almost certainly have more information, so please contact me regardless.\nCopyright \u00a9",
+      "n_tokens": 509,
+      "student_mean_loss": 3.6990976333618164,
+      "teacher_mean_loss": 2.8967831134796143,
+      "chunk_zpd": 1.276967411246216,
+      "student_ppl_original": 38.75,
+      "high_zpd_token_fraction": 0.09430255402750491
+    },
+    {
+      "text_preview": " give it a classic appear that can function with a lot of house decorations styles, from conventiona",
+      "n_tokens": 511,
+      "student_mean_loss": 4.097485542297363,
+      "teacher_mean_loss": 3.5943679809570312,
+      "chunk_zpd": 1.1399738602185001,
+      "student_ppl_original": 58.0,
+      "high_zpd_token_fraction": 0.05870841487279843
+    },
+    {
+      "text_preview": " personal journal, but rather a tool used to communicate how I feel with the hope that someone else ",
+      "n_tokens": 510,
+      "student_mean_loss": 4.387145042419434,
+      "teacher_mean_loss": 3.811311721801758,
+      "chunk_zpd": 1.151085338237686,
+      "student_ppl_original": 74.5,
+      "high_zpd_token_fraction": 0.054901960784313725
+    },
+    {
+      "text_preview": ", who demand the usual approach to a growing problem. But that's another topic.\nAnyway, that is my t",
+      "n_tokens": 511,
+      "student_mean_loss": 3.7291526794433594,
+      "teacher_mean_loss": 3.292391061782837,
+      "chunk_zpd": 1.1326578797793283,
+      "student_ppl_original": 41.25,
+      "high_zpd_token_fraction": 0.046966731898238745
+    },
+    {
+      "text_preview": "Did anyone else notice the little workers inserted in the matte painting in the office?\nThose are th",
+      "n_tokens": 510,
+      "student_mean_loss": 3.9868152141571045,
+      "teacher_mean_loss": 3.273613452911377,
+      "chunk_zpd": 1.2178637678225095,
+      "student_ppl_original": 51.25,
+      "high_zpd_token_fraction": 0.07450980392156863
+    },
+    {
+      "text_preview": " great fun! I just discovered how stinky it is to try and dehydrate broccoli!!!!\nOn an impulse, I bo",
+      "n_tokens": 511,
+      "student_mean_loss": 3.7169952392578125,
+      "teacher_mean_loss": 3.094306230545044,
+      "chunk_zpd": 1.2012370341907257,
+      "student_ppl_original": 40.0,
+      "high_zpd_token_fraction": 0.05870841487279843
+    },
+    {
+      "text_preview": " ladies claim to be seeking a spouse at the U.S. or alternative western nations nevertheless are rea",
+      "n_tokens": 511,
+      "student_mean_loss": 4.485692501068115,
+      "teacher_mean_loss": 4.041513442993164,
+      "chunk_zpd": 1.109904139709106,
+      "student_ppl_original": 84.5,
+      "high_zpd_token_fraction": 0.03913894324853229
+    }
+  ]
+}
