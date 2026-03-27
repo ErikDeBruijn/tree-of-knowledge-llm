@@ -168,6 +168,38 @@ These failures taught us that expert differentiation requires three forces actin
 The \tok{} framework instantiates all three through learntropy-driven progressive
 splitting with contrastive LoRA adapters.
 
+\paragraph{Three levels of differentiation.}
+Our experiments reveal that ``expert specialization'' is not binary but admits
+at least three distinct levels, each progressively harder to achieve:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Parameter differentiation.} Expert weight matrices become
+          orthogonal in weight space (low CosSim). Achievable via contrastive
+          loss. \emph{Necessary but not sufficient.}
+    \item \textbf{Routing differentiation.} The router sends different token
+          populations to different experts based on meaningful features (not
+          just load balancing). Requires informative hidden states at the
+          routing point (Section~\ref{sec:divergence}).
+    \item \textbf{Causal modularity.} Removing an expert causes
+          \emph{selective} damage---its domain or function degrades while others
+          are unaffected. This is the requirement for hot-pluggability. Measured
+          by the ablation matrix $M_{ij}$, not by weight geometry.
+\end{enumerate}
+
+Our framework achieves level~1 reliably (CosSim $<$0.3) but has not yet
+achieved levels~2 or~3. The gap between these levels is the central open
+problem this paper identifies.
+
+\paragraph{Domains may not be the natural primitive.}
+A recurring theme across our experiments and the literature~\cite{standing2026,
+domaindriver2026, openmoe2024} is that functional axes (syntax, token type,
+sentence position) are the \emph{primary} basis of expert specialization, while
+domain axes (medical, legal, code) are secondary and may not emerge as a
+natural partition at all. If this is correct, the right framing is not ``how
+do we make experts specialize by domain'' but ``what are the natural factors
+along which expert specialization occurs, and are domains a meaningful
+downstream consequence of those factors?''
+
 % ============================================================================
 \section{Method: Progressive LoRA Forking}
 \label{sec:method}
@@ -264,9 +296,12 @@ The \emph{accommodation ratio} is:
 
 When $\mathcal{A}(e)$ is low, the error fits within the current subspace
 (assimilation---no structural change needed). When $\mathcal{A}(e)$ is high,
-the error requires capacity the expert does not have---rank should grow. This
-replaces hand-tuned reconstruction-error thresholds with a principled criterion
-grounded in subspace geometry.
+the error requires capacity the expert does not have. The response depends on
+the \emph{structure} of $g_\perp$: if it is unimodal (one coherent residual
+population), rank growth is appropriate; if it is multimodal (distinct
+populations requiring different corrections), splitting is appropriate. Rank
+growth adds capacity within one factor; splitting separates factors into
+independently trainable units.
 
 We distinguish two regimes:
 \begin{itemize}
@@ -583,11 +618,10 @@ fine-tuning. We extend LoRA from a fine-tuning tool to a \emph{structural unit
 of specialization} within a single model. Li et al.~\cite{li2018intrinsic}
 and Aghajanyan et al.~\cite{aghajanyan2021intrinsic} established that
 fine-tuning operates on a low intrinsic dimension---our variable-rank mechanism
-exploits this directly. HydraLoRA~\cite{hydralora2024} shares our core
-insight: a shared A matrix captures functional patterns while multiple routed B
-matrices handle domain-specific refinement. MoLoRA~\cite{molora2026} extends
-per-token LoRA routing to achieve composable specialization, validating the
-hot-swap vision independently.
+exploits this directly. HydraLoRA~\cite{hydralora2024} demonstrates that asymmetric residual
+specialization (shared A + routed B matrices) is viable, though it does not
+test causal modularity (hot-pluggability). MoLoRA~\cite{molora2026} validates
+per-token LoRA routing and composability independently.
 
 \paragraph{Shared vs.\ routed experts.}
 DeepSeekMoE~\cite{deepseek2024moe} introduced \emph{shared expert isolation}:
