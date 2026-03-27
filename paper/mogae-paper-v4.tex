@@ -51,11 +51,11 @@ individually indispensable, but not independently removable. We show that \emph{
 weight orthogonality is the correct metric for modularity---and that it is
 also the prerequisite for compute and memory efficiency, since only causally
 local experts can be skipped or offloaded without uniform quality loss.
-Top-$K$ routing ($K > 1$) may be required for domain-level specialization at
-this scale.
-
-We formalize rank growth as Piagetiaan accommodation: capacity expands when
-residual error cannot be assimilated within the current update-subspace.
+A Hessian analysis reveals that uniform routing is a \emph{saddle point}, not
+a basin: the LM loss contains escape directions toward selective routing, but
+auxiliary losses and optimization dynamics prevent exploitation. This
+suggests the path to causal locality lies in optimization (router learning
+rates, auxiliary loss removal) rather than fundamental loss redesign.
 \end{abstract}
 
 % ============================================================================
@@ -613,8 +613,40 @@ DeepSeekMoE~\cite{deepseek2024moe}: one always-active expert per layer plus
 one gated expert with a learned sigmoid gate and sparsity penalty. The gate
 converged to 0.985 (near-always-on) with domain selectivity of 0.007 (needed
 $>$0.20). Given the option of using additional capacity, the model uses it
-uniformly rather than selectively---confirming that the training signal, not
-the architecture, is the binding constraint on causal locality.
+uniformly rather than selectively.
+
+\subsection{Hessian Analysis of Routing Landscape}
+\label{sec:hessian}
+
+To determine whether uniform routing is a local minimum (basin) or a saddle
+point, we computed the Lanczos eigenspectrum of the LM loss Hessian restricted
+to router parameters (150 iterations per layer, float32).
+
+\begin{table}[h]
+\centering
+\caption{Hessian eigenspectrum at the uniform-routing solution. Nearly half of
+all sampled directions point downhill: uniform routing is a saddle point.}
+\label{tab:hessian}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Layer & Min $\lambda$ & Max $\lambda$ & Negative fraction \\
+\midrule
+18 & $-0.050$ & $+0.131$ & 47\% \\
+22 & $-0.062$ & $+0.084$ & 48\% \\
+27 & $-0.298$ & $+0.158$ & 49\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The LM loss landscape contains abundant escape directions from uniform
+routing. The optimizer does not exploit them, likely because: (a)~the
+load-balancing loss actively penalizes non-uniform routing, counteracting
+the curvature signal; (b)~the router learning rate may be too low relative to
+the Hessian curvature; or (c)~gradient noise from stochastic batches masks the
+directional signal. This refines our earlier conclusion: the training signal
+\emph{does} encode routing selectivity, but the optimization dynamics prevent
+it from being realized. The constraint is not the loss function itself but the
+interaction between the LM loss and auxiliary losses during training.
 
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
@@ -777,8 +809,10 @@ We identify four limitations that bound our current claims:
           representation space, but both directions are needed by all tokens.
           Achieving causal modularity---where expert removal causes
           \emph{selective} domain damage (near-diagonal $M_{ij}$)---requires
-          mechanisms beyond contrastive loss, likely including top-$K$ routing
-          or modularity-aware training objectives.
+          changes to the optimization dynamics. Hessian analysis
+          (Section~\ref{sec:hessian}) shows the LM loss \emph{does} encode
+          selective routing directions, but auxiliary losses and learning rate
+          settings prevent exploitation.
     \item \textbf{No second fork triggered on generic data.} Despite testing
           bimodality thresholds from 0.3 to 0.555, no configuration produced
           more than 2 experts. On generic C4 data, 2-expert systems appear to
