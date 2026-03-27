@@ -64,12 +64,12 @@ residual error cannot be assimilated within the current update-subspace.
 
 Current language models embed all knowledge---from common syntax to rare medical terminology---in the same parameters that perform reasoning. Adding knowledge means adding parameters, and therefore inference cost. The standard alternatives do not escape this trade-off: retrieval-augmented generation adds context tokens, tool calls add generation tokens, and longer contexts scale quadratically in attention. Every path to more knowledge costs inference budget.
 
-The \tok{} framework largely eliminates this coupling by placing domain knowledge in separately-loadable adapters whose cost is zero until activated. The dense core handles reasoning and is always resident in VRAM. Crystallized knowledge lives in lightweight, hot-loadable LoRA adapters. Adding specialists does not slow the core's inference.
+The \tok{} framework aims to weaken this coupling by placing domain knowledge in separately-loadable adapters whose cost is zero until activated. The dense core handles reasoning and is always resident in VRAM. Crystallized knowledge lives in lightweight, hot-loadable LoRA adapters. Adding specialists does not slow the core's inference.
 
 Prior work shows that learned models reside on a low intrinsic
 dimension~\cite{li2018intrinsic,aghajanyan2021intrinsic}. We observe that
-specialization depth, adapter rank, and storage tier are not three design
-decisions---they are one. We distinguish two regimes:
+specialization depth, adapter rank, and storage tier are not three independent
+design decisions---they correlate strongly. We distinguish two regimes:
 
 \begin{itemize}[nosep,leftmargin=1em]
 \item \textbf{Lens-like} (low rank, e.g.\ rank-1 to rank-4): the adapter does not alter the computation itself but \emph{redirects information} through the existing weights. The original FFN does the heavy lifting; the LoRA adapter bends the light. At 4--16\,KB, these corrections are always cached and cost nothing to load.
@@ -333,7 +333,7 @@ We distinguish two regimes:
 
 \begin{table}[t]
 \centering
-\caption{Specialization depth, adapter rank, and storage tier are one dimension.}
+\caption{Specialization depth, adapter rank, and storage tier correlate.}
 \label{tab:unification}
 \begin{tabular}{@{}llll@{}}
 \toprule
@@ -800,7 +800,7 @@ We identify four limitations that bound our current claims:
 \section{Conclusion}
 
 We set out to test whether specialization depth, adapter rank, and storage tier
-are the same dimension. The results are positive on two of three fronts:
+correlate strongly. The results are positive on two of three fronts:
 
 \textbf{1.~Information efficiency (achieved).} Variable-rank LoRA adapters on
 FFN layers reduce perplexity from 21.20 to 19.83 with 655K trainable

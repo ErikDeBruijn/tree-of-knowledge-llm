@@ -37,10 +37,14 @@ loss function. If saddle → optimizer issue, fixable with lr/momentum.
 - Would domain-labeled data (not generic C4) change the picture?
 - Is the three-level hierarchy (trunk + functional + domain) testable at this scale?
 
-## Accumulated observations
+## Accumulated findings (with confidence classes per CHARTER)
 
-- 7 experiments all converge: contrastive loss → orthogonality, not modularity
-- Functional specialization (structure/content) emerges first, domain never
-- Gate mechanisms saturate to always-on (model wants capacity, not selectivity)
-- Layer 18 is the correct fork boundary (CKA analysis)
-- Low-rank adapters are maximally information-efficient (RCR analysis)
+<!-- observed = directly measured | supported = multiple measurements converge | plausible = one measurement, alternatives not ruled out | speculative = no measurement -->
+
+- **Supported**: Contrastive loss → weight orthogonality but not causal locality (7 experiments, 3 configs)
+- **Observed**: First fork produces functional split (structure/content), not domain (token routing analysis)
+- **Observed**: Shared+routed gate saturates at ~0.985 on this architecture (one experiment)
+- **Supported**: Layer 18 is the correct fork boundary (CKA analysis + faster differentiation at trunk-18)
+- **Observed**: RCR drops 30x from rank-1→32; rank-1 captures 93% of gain (rank sweep)
+- **Plausible**: Training signal (not architecture) is the binding constraint on causal locality
+- **Speculative**: Domain-conditional training or expert-choice routing may achieve causal locality

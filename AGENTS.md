@@ -28,7 +28,7 @@ Critic needs generator proposals. Runner needs team lead approval.
 
 ### Paper regie (team lead only)
 
-The team lead owns the paper (`paper/mogae-paper-v3.tex`). Agents do not edit
+The team lead owns the paper (`paper/mogae-paper-v4.tex`). Agents do not edit
 the paper directly. Orientation flags what needs updating ("placeholder X can
 be filled", "table Y has new numbers"). The team lead writes the text, builds
 with `tectonic`, reviews the PDF, and ensures CHARTER compliance.
