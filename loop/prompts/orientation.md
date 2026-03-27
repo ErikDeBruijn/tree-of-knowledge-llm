@@ -1,8 +1,8 @@
 # ToK Orientation — Update World Model
 
-Read the paper (`paper/mogae-paper-v4.tex`) for the current theoretical
-framework, findings, and open problems. This prompt covers only operational
-checks.
+Read the paper (`paper/mogae-paper-v4.tex`) for the theoretical framework.
+Read and UPDATE `loop/state.md` for operational working memory — what's
+running, what just finished, what we're testing, what to try next.
 
 ## Every cycle
 
