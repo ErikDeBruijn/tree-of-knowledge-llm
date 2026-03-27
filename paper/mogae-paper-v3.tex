@@ -609,41 +609,63 @@ topics or cross-cut them.}
 \section{Limitations}
 \label{sec:limitations}
 
-We identify three limitations that bound our current claims:
+We identify four limitations that bound our current claims:
 
 \begin{enumerate}
-    \item \textbf{Rank growth heuristic not validated at scale.} The
-          reconstruction-error threshold that triggers rank increases has been
-          tuned only on Qwen3-1.7B. Whether the same heuristic transfers to 7B+
-          models, or whether it requires scale-dependent calibration, is
-          unknown.
-    \item \textbf{Tree structure not yet proven interpretable.} While we
-          hypothesize that the emergent branching will align with recognizable
-          domain boundaries (Section~\ref{sec:understanding}, Q3), we have not
-          yet verified this. The tree may reflect statistical structure that is
-          useful but not human-interpretable.
+    \item \textbf{Weight differentiation does not imply functional
+          specialization.} This is our most important negative finding.
+          Contrastive loss reliably produces orthogonal expert weights
+          (CosSim $<$0.3) at both fork boundaries tested (layers 14 and 18).
+          However, token routing analysis shows both experts route all domains
+          uniformly (49--51\% split), and removing either expert degrades all
+          domains equally. The experts learn different \emph{directions} in
+          representation space, but both directions are needed by all tokens.
+          Achieving genuine functional modularity---where experts are
+          independently removable with selective damage---remains an open
+          problem.
+    \item \textbf{No second fork triggered on generic data.} Despite testing
+          bimodality thresholds from 0.3 to 0.555, no configuration produced
+          more than 2 experts. On generic C4 data, 2-expert systems appear to
+          be stable equilibria. Domain-specific curricula may be required to
+          trigger deeper forking.
     \item \textbf{Framework tested on one base model only.} All experiments use
           Qwen3-1.7B. Generalization to other architectures (Llama, Mistral,
           GPT-scale) and other data distributions is assumed but not
           demonstrated.
+    \item \textbf{Learntropy definition is provisional.} Our use of raw
+          cross-entropy as a splitting signal does not distinguish productively
+          difficult tokens from noise (Section~\ref{sec:method}). A principled
+          learntropy function that models net learning value---closer to
+          Wozniak's~\cite{wozniak2018learntropy} definition---may be needed
+          for effective curriculum-driven forking.
 \end{enumerate}
 
 % ============================================================================
 \section{Conclusion}
 
-Six failed experiments, one working hypothesis: specialization depth, adapter
-rank, and storage tier are the same dimension. The \tok{} framework exploits
-this identity through progressive LoRA forking driven by learntropy splitting
-signals. Each specialist is born as a rank-1 lens and grows into whatever the
-data demands---a rank-4 correction, a rank-64 crystal, or a full expert. The tree
-structure is not imposed; it emerges from the information structure of language.
+We set out to test whether specialization depth, adapter rank, and storage tier
+are the same dimension. The evidence is mixed.
 
-On Qwen3-1.7B, the framework reduces baseline perplexity from 21.20 to 19.58
-while producing experts with cosine similarity 0.840---genuine differentiation
-where six prior approaches achieved 0.998 at best. The practical consequence is
-specialists measured in kilobytes, trainable independently on commodity
-hardware, composable by a community, and loadable from NVMe with no
-inference-latency overhead.
+\textbf{What works:} Contrastive LoRA forking reliably produces weight-space
+differentiation (CosSim $<$0.3) where six prior approaches achieved 0.998 at
+best. Layer divergence analysis identifies where domain signals emerge (layer
+18 in Qwen3-1.7B), and placing experts in this zone accelerates
+differentiation. Variable-rank adapters measured in kilobytes can improve
+perplexity from 21.20 to 19.87 with only 655K trainable parameters.
+
+\textbf{What does not work yet:} Weight-space differentiation does not produce
+functional modularity. Experts route tokens uniformly across domains and
+cannot be independently removed without uniform quality degradation. No
+configuration triggered a second fork on generic C4 data. The tree structure
+we hypothesized has not emerged.
+
+\textbf{What this means:} The \tok{} framework demonstrates that LoRA
+adapters can serve as a structural unit of specialization---compact,
+variable-rank, and trainable on commodity hardware. But achieving the
+modular, hot-loadable expert tree requires mechanisms beyond contrastive loss:
+possibly domain-aware curricula, goal-directed routing~\cite{wozniak2018learntropy},
+or explicit functional objectives that reward routing selectivity rather than
+weight orthogonality.
 
 % ============================================================================
 \appendix
