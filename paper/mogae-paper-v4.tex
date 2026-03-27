@@ -200,6 +200,18 @@ do we make experts specialize by domain'' but ``what are the natural factors
 along which expert specialization occurs, and are domains a meaningful
 downstream consequence of those factors?''
 
+\paragraph{Unifying efficiency mechanisms in a single structure.}
+Several efficiency mechanisms that MoE systems often introduce as separate
+architectural components---such as shared always-on
+experts~\cite{deepseek2024moe}, driver-like experts with disproportionate
+causal influence~\cite{domaindriver2026}, and selectively routed
+specialists---may instead correspond to different depths in a single tree. The
+trunk provides a shared substrate; early, low-rank forks can serve as
+lightweight infrastructure; and deeper, higher-rank branches can implement
+conditional residual specialization. This remains a simplifying hypothesis
+rather than a demonstrated result: our current experiments have not yet
+produced the multi-level tree needed to test it directly.
+
 % ============================================================================
 \section{Method: Progressive LoRA Forking}
 \label{sec:method}
