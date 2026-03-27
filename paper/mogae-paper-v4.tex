@@ -662,7 +662,13 @@ supervised router) also failed: the general-domain expert absorbed
 $>$99\% of useful learning while domain-specific experts contributed
 $<$0.03 PPL each, due to severe data imbalance in C4 ($>$80\% general text).
 Even forced specialization cannot overcome insufficient domain-specific
-training signal at this scale and data composition.
+training signal at this scale and data composition. A top-2 routing variant
+with 4 experts (Gumbel-softmax, each token activates 2 of 4) developed a
+\emph{capacity hierarchy}---two ``heavy'' experts contributing $\sim$0.56 PPL
+each and two ``light'' experts contributing $\sim$0.28---but no domain
+selectivity (per-expert CV 0.11--0.16). This is the Standing Committee
+pattern~\cite{standing2026} at 4-expert scale: functional importance
+differentiates, domain ownership does not.
 
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
