@@ -51,13 +51,12 @@ individually indispensable, but not independently removable. We show that \emph{
 weight orthogonality is the correct metric for modularity---and that it is
 also the prerequisite for compute and memory efficiency, since only causally
 local experts can be skipped or offloaded without uniform quality loss.
-A Hessian analysis reveals that uniform routing is a \emph{saddle point}, not
-a basin: the LM loss contains escape directions toward selective routing, but
-auxiliary losses and optimization dynamics prevent exploitation. This
-A damage-prediction surrogate that directly optimizes for selective
-indispensability achieves token-level exclusivity but not domain-level
-selectivity, suggesting the path to causal locality lies in optimization (router learning
-rates, auxiliary loss removal) rather than fundamental loss redesign.
+A Hessian analysis reveals that uniform routing is a \emph{saddle point}:
+the LM loss encodes selective routing, but hard argmax blocks the gradient.
+Domain selectivity scales as a shallow power law with expert count
+($\text{CV} \propto N^{0.16}$), predicting that 50--600 experts are needed
+for meaningful causal locality---consistent with recent extreme-expert
+architectures.
 \end{abstract}
 
 % ============================================================================
