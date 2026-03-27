@@ -608,6 +608,14 @@ weight orthogonality (CosSim 0.311) does not produce causal locality---the
 experts are near-interchangeable general-purpose adapters, not domain
 specialists.
 
+We also tested a shared + gated-routed architecture inspired by
+DeepSeekMoE~\cite{deepseek2024moe}: one always-active expert per layer plus
+one gated expert with a learned sigmoid gate and sparsity penalty. The gate
+converged to 0.985 (near-always-on) with domain selectivity of 0.007 (needed
+$>$0.20). Given the option of using additional capacity, the model uses it
+uniformly rather than selectively---confirming that the training signal, not
+the architecture, is the binding constraint on causal locality.
+
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
 
