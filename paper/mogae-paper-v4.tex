@@ -36,29 +36,24 @@
 
 % ============================================================================
 \begin{abstract}
-We investigate how to separate a language model's \emph{fluid intelligence}
-(reasoning, syntax, attention patterns) from its \emph{crystallized
-intelligence} (domain-specific knowledge) using variable-rank LoRA adapters on
-FFN layers. Our central finding is that \textbf{weight-space differentiation
-does not imply functional modularity}: contrastive loss reliably produces
-orthogonal expert weights (cosine similarity $<$0.3), but routing analysis
-shows both experts contribute uniformly across all domains. This holds
-regardless of fork depth (layers 14 vs.\ 18) or adapter rank (4 vs.\ 32).
+We separate a language model's \emph{fluid intelligence} (reasoning, syntax)
+from \emph{crystallized intelligence} (domain knowledge) using variable-rank
+LoRA adapters on FFN layers. With 655K trainable parameters on Qwen3-1.7B, we
+reduce perplexity from 21.20 to 19.83---adapters of $\sim$45\,KB loadable from
+NVMe in microseconds.
 
-We ground this finding in systematic experiments on Qwen3-1.7B: a layer
-divergence analysis identifies where domain signals emerge (layer 18, not 14
-as initially assumed); a LoRA magnitude analysis reveals experts contribute
-25\% of FFN output but with $<$5\% routing selectivity; and three independent
-routing analyses confirm uniform domain routing. These results align with
-recent MoE interpretability work showing that functional specialization
-(structure vs.\ content) emerges before domain specialization, and that
-top-$K$ routing ($K > 1$) may be required for multi-axis
-specialization~\cite{standing2026, domaindriver2026}.
+Experts readily specialize along \emph{functional} axes (structure vs.\
+content) but not \emph{domain} axes---a pattern independently confirmed across
+the MoE literature as the Standing Committee
+effect~\cite{standing2026, domaindriver2026}. Removing either expert degrades
+all domains equally ($\sim$1.3 PPL): the experts are genuinely specialized and
+individually indispensable, but not independently removable. We show that
+\emph{causal locality} (selective ablation damage) rather than weight
+orthogonality is the correct metric for modularity, and that top-$K$ routing
+($K > 1$) may be a prerequisite for domain-level specialization at this scale.
 
-We propose that \emph{causal locality}---selective ablation damage rather than
-weight orthogonality---is the correct metric for modularity, and formalize
-rank growth as Piagetiaan accommodation: capacity expands only when residual
-error cannot be assimilated within the current update-subspace.
+We formalize rank growth as Piagetiaan accommodation: capacity expands when
+residual error cannot be assimilated within the current update-subspace.
 \end{abstract}
 
 % ============================================================================
