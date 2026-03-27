@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "teacher_model": "Qwen3-30B-A3B (GGUF via llama-cpp-python)",
+    "student_model": "Qwen3-1.7B (GGUF via llama-cpp-python)",
+    "sample_size": 50,
+    "total_tokens": 25518,
+    "errors": 0,
+    "total_time_seconds": 57.4900119304657,
+    "tokens_per_second": 443.86840675670896,
+    "seed": 42,
+    "zpd_token_threshold": 3.0,
+    "context_size": 2048,
+    "chunk_level_rho_baseline": 0.958,
+    "timestamp": "2026-03-27T16:01:00"
+  },
+  "summary": {
+    "token_spearman_rho": 0.9125918914886766,
+    "token_spearman_p": 0.0,
+    "token_pearson_r": 0.9025009274482727,
+    "token_pearson_p": 0.0,
+    "chunk_level_rho_baseline": 0.958,
+    "rho_delta": 0.045408108511323375,
+    "high_zpd_token_fraction": 0.0788071165451838,
+    "zpd_mean": 2.2681749497614625,
+    "zpd_median": 1.0755199790000916,
+    "zpd_std": 12.960350236367102,
+    "zpd_p90": 2.5643012285232545,
+    "zpd_p95": 4.28759775161743,
+    "zpd_p99": 20.65804645538308,
+    "student_loss_mean": 3.3078837394714355,
+    "teacher_loss_mean": 2.7060141563415527,
+    "within_chunk_rho_mean": 0.9132133739862028,
+    "within_chunk_rho_median": 0.915580800694953
+  },
+  "pre_registered": {
+    "token_rho_less_than_chunk": 
