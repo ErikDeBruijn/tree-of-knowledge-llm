@@ -554,11 +554,34 @@ occurred in our experiments.
           rather than knowledge organization.
 \end{itemize}
 
-\placeholder{Table: Level-2 hot-loading experiment (pending second fork).
-Remove a domain sub-expert, measure PPL per domain. Pre-registered prediction:
-selective degradation on removed domain ($>$5\% PPL increase) with minimal
-impact on others ($<$1\%). Failure threshold: uniform degradation similar to
-level-1 ($\sim$8\% across all domains).}
+\begin{table}[h]
+\centering
+\caption{Ablation matrix $M_{ij}$ for trunk-18 Phase~3 final checkpoint
+(CosSim 0.311). Each cell shows $\Delta$PPL when expert $j$ is removed,
+evaluated on domain $i$. A modular system would show high values on the
+diagonal and low values off-diagonal.}
+\label{tab:ablation-matrix}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Domain $i$ & Remove E0 & Remove E1 \\
+\midrule
+Medical       & +1.38 & +1.16 \\
+Code          & +1.63 & +1.47 \\
+Legal         & +1.42 & +1.20 \\
+News          & +1.26 & +1.05 \\
+Conversational & +1.22 & +1.05 \\
+\midrule
+\textbf{Mean} & \textbf{+1.38} & \textbf{+1.19} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ablation matrix is uniform: coefficient of variation 0.11 across domains
+(threshold for meaningful selectivity: $>$0.3). Each expert alone provides
+73--77\% of the full LoRA benefit (high substitutability). This confirms that
+weight orthogonality (CosSim 0.311) does not produce causal locality---the
+experts are near-interchangeable general-purpose adapters, not domain
+specialists.
 
 \subsection{LoRA Magnitude Analysis}
 \label{sec:magnitude}
