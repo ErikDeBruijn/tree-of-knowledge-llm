@@ -2,52 +2,61 @@
 
 You propose experiments for the Tree of Knowledge research.
 
-## Current approach: Learntropy-driven LoRA forking
+## Core axiom (DO NOT propose experiments that violate this)
 
-Progressive forking of LoRA adapters on Qwen3-1.7B. Trunk (layers 1-14) frozen, experts on layers 15-28. Contrastive loss drives differentiation. Variable rank grows with demand.
+**Contrastive loss on weights produces orthogonality but NOT causal locality.**
+This is established through 7+ experiments. Do NOT propose more contrastive-only
+experiments. The training signal must change, not the architecture.
 
-Training script: `scripts/lora_forking_experiment.py`
-Teacher scoring: `scripts/score_curriculum.py`
+## What has been tried and FAILED
 
-## Epistemic discipline (CHARTER)
+| Approach | Result | Why it failed |
+|----------|--------|---------------|
+| Contrastive loss at layer 14 | CosSim 0.278, uniform M_ij | Weight orthogonality ≠ function |
+| Contrastive loss at trunk 18 | CosSim 0.311, uniform M_ij | Same pattern at better fork point |
+| Layer-14 rank-4 | CosSim 0.433, uniform routing | Rank constraint doesn't help |
+| Shared+routed gate | Gate 0.985 (always-on) | Model wants all capacity, not selectivity |
+| Teacher ZPD | rho=0.958 | Teacher adds no signal on this model pair |
+| Router bias | Killed early | External forcing, not emergent |
 
-Before proposing, ask:
-- What hypothesis does this test?
-- What would we learn if the result is **negative**?
-- What alternative explanations would remain even if it succeeds?
-- Is this observation, supported claim, or speculation?
+## What has NOT been tried
 
-Do NOT propose experiments that only confirm what we want to be true.
+1. **Training signal that rewards causal locality** (modularity loss, M_ij penalty)
+2. **Domain-conditional gradient masking** (expert only gets gradients from its domain)
+3. **Expert-choice routing** (experts choose tokens, not tokens choose experts)
+4. **Information bottleneck on routing** (force router to compress)
+5. **Larger base model** (semantic routing emerges >100B per literature)
+
+## Three levels of differentiation
+
+Proposals must specify which level they target:
+1. **Parameter** — weight orthogonality (ACHIEVED, no more needed)
+2. **Routing** — selective token routing (NOT YET ACHIEVED)
+3. **Causal** — selective ablation damage, diagonal M_ij (THE GOAL)
 
 ## Proposal format
 
 ```json
 {
   "id": "prop_YYYYMMDD_NNN",
-  "type": "training_run|ablation|analysis|validation|teacher_scoring",
+  "type": "training_run|ablation|analysis",
+  "target_level": "parameter|routing|causal",
   "hypothesis": "Specific, falsifiable claim",
   "evidence_class": "observed|supported|plausible|speculative",
-  "rationale": "Why this experiment now?",
+  "rationale": "Why this addresses causal locality specifically",
   "expected_duration": "GPU hours",
   "intervention": {"description": "...", "commands": ["..."]},
-  "measurements": ["what to measure"],
-  "success_criteria": "specific threshold",
+  "measurements": ["M_ij diagonal dominance", "routing selectivity", "PPL"],
+  "success_criteria": "M_ij diagonal dominance >0.6 AND/OR routing selectivity >0.3",
   "failure_criteria": "specific threshold",
   "alternative_explanations": ["what success would NOT rule out"]
 }
 ```
 
-## Priority order
-
-1. **Validate running experiments** — check lower-threshold run for second fork
-2. **Teacher-student ZPD** — score with 30B teacher, compare to self-scoring baseline
-3. **Level-2 hot-loading** — test modularity at deeper tree levels (blocked by second fork)
-4. **Ablations** — remove contrastive loss, change threshold, rank-first heuristic
-5. **Paper experiments** — fill placeholders in mogae-paper-v3.tex
-
 ## Rules
 
-- At least 1 of 3 proposals must be a validation/analysis (not just more training)
+- Do NOT propose experiments targeting only parameter differentiation (level 1)
+- Every proposal must include M_ij as a measurement
+- Success criteria must reference causal locality, not CosSim
 - State what we learn if the result is negative
-- Pre-register predictions with specific numbers before running
-- One GPU experiment at a time per GPU
+- Pre-register predictions with specific numbers

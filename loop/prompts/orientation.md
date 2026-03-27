@@ -2,79 +2,78 @@
 
 Process new results and update beliefs. Distinguish observation from interpretation.
 
+## Core axiom (established through 7+ experiments)
+
+**Contrastive loss on weights produces weight-space orthogonality but NOT
+causal locality.** All architectural variants tested (layer-14, trunk-18,
+rank-4, rank-32, shared+routed) show uniform M_ij and uniform routing.
+The training signal, not the architecture, is the binding constraint.
+
+## Three levels of differentiation
+
+1. **Parameter differentiation** — orthogonal weights (CosSim <0.3). ACHIEVED.
+2. **Routing differentiation** — selective token routing by domain. NOT ACHIEVED.
+3. **Causal modularity** — selective ablation damage (diagonal M_ij). NOT ACHIEVED.
+
+The primary metric for modularity is M_ij (ablation matrix), NOT CosSim.
+
 ## Key questions (check every cycle)
 
-- Is the lower-threshold run still converging? (PPL, CosSim trend)
-- Has a second fork triggered? (num_experts > 2 in any layer)
-- Is rank still growing or has it plateaued?
-- Any collapse? (one expert getting all tokens, CosSim rising back)
-- Lambda075 MoGaE pipeline: any results to compare?
+- Are any experiments running? Check GPU status and process list.
+- Did any experiment complete? Read final metrics.
+- Is the training signal producing causal locality? (M_ij diagonal dominance)
+- Any rogue processes? (check file dates, kill if >24h old MoGaE scripts)
 
 ## Beliefs to track
 
-Each belief has an evidence class: observed / supported / plausible / speculative.
-Update after each cycle.
-
 ```json
 {
-  "contrastive_differentiation": {
-    "claim": "λ=0.1 contrastive loss produces expert differentiation",
+  "contrastive_produces_orthogonality_not_modularity": {
+    "claim": "Contrastive loss produces weight orthogonality (CosSim <0.3) but not causal locality (uniform M_ij)",
     "status": "observed",
-    "evidence": "CosSim 0.278 (λ=0.1) vs 0.981 (λ=0), ablation on same data",
-    "updated": "2026-03-26"
-  },
-  "structure_content_split": {
-    "claim": "First fork separates structure (punctuation/function words) from content (rare/domain words)",
-    "status": "observed",
-    "evidence": "Token routing: Expert 0 gets 71% rare words, Expert 1 gets 86% punctuation",
-    "updated": "2026-03-26"
-  },
-  "hot_loading_level1_fails": {
-    "claim": "Removing either level-1 expert degrades all text types equally (~8%)",
-    "status": "observed",
-    "evidence": "Hot-loading test on 2-expert model",
-    "updated": "2026-03-26"
-  },
-  "level2_domain_modularity": {
-    "claim": "Deeper tree levels will produce domain-specific, hot-loadable experts",
-    "status": "speculative",
-    "evidence": "None. No level-2 fork has occurred.",
-    "updated": "2026-03-26"
-  },
-  "zpd_produces_modularity": {
-    "claim": "Teacher-scored ZPD data selection produces more modular experts than self-scoring",
-    "status": "refuted",
-    "evidence": "P2: Spearman rho=0.958 between teacher and student PPL. ZPD fraction 14.2%. Teacher adds no signal.",
+    "evidence": "7 experiments across 3 configs, 3 routing analyses, 1 M_ij analysis. All show uniform routing and ablation.",
     "updated": "2026-03-27"
   },
-  "rank_reflects_specialization": {
-    "claim": "Higher rank = deeper specialization (lens vs crystal)",
-    "status": "plausible",
-    "evidence": "Rank grew 4→32 during training. But P1 showed rank-32 experts are redundant, not specialized.",
-    "updated": "2026-03-27"
-  },
-  "layer14_fork_boundary": {
-    "claim": "Layer 14 is the correct trunk/expert boundary",
-    "status": "refuted",
-    "evidence": "Layer divergence analysis: CKA 0.013 at layer 14 vs 0.106 at layer 18. Domain signals begin at layer 17-18.",
+  "training_signal_is_bottleneck": {
+    "claim": "The LM loss does not reward routing selectivity. The globally optimal strategy is uniform expert usage.",
+    "status": "supported",
+    "evidence": "Shared+routed gate saturates at 0.985. Domain selectivity 0.007. M_ij CV=0.11. No config achieves selective routing.",
     "updated": "2026-03-27"
   },
   "layer18_fork_boundary": {
-    "claim": "Layer 18 is the correct trunk/expert boundary for domain specialization",
+    "claim": "Layer 18 is the correct trunk/expert boundary",
     "status": "supported",
-    "evidence": "CKA jumps 8x between layers 14-18. Trunk-18 experiment running (variant A: FFN-only, variant B: paired sectoral).",
+    "evidence": "CKA jumps 8x between L14-L18. Trunk-18 differentiates faster (CosSim 0.311 at rank-4 vs 0.433 at layer-14 rank-4).",
     "updated": "2026-03-27"
   },
-  "ffn_only_insufficient": {
-    "claim": "FFN-only LoRA produces redundant representation, not functional specialization",
+  "rank_efficiency": {
+    "claim": "RCR drops 30x from rank-1 to rank-32. Most value at very low rank.",
     "status": "observed",
-    "evidence": "P1: LoRA deltas 25% of FFN output, experts orthogonal (CosSim 0.02), but routing selectivity <5%.",
+    "evidence": "Rank sweep: rank-1 RCR=33.1, rank-32 RCR=1.1. Rank-1 captures 93% of total gain.",
     "updated": "2026-03-27"
   },
-  "paired_sectoral_better": {
-    "claim": "Coupled attention+FFN adapters produce faster/deeper functional differentiation than FFN-only",
-    "status": "speculative",
-    "evidence": "No data yet. Variant B experiment starting on GPU 1.",
+  "zpd_not_confirmed": {
+    "claim": "Teacher-student ZPD adds no signal in this configuration",
+    "status": "observed",
+    "evidence": "Spearman rho=0.958 (Qwen3-30B teacher, 1.7B student on C4). Not a falsification of ZPD concept.",
+    "updated": "2026-03-27"
+  },
+  "accommodation_ratio_needs_normalization": {
+    "claim": "Raw A(e) is trivially ~0.99 at rank-4 in 2048-d space (geometric artifact)",
+    "status": "observed",
+    "evidence": "A(e)≈0.99 across all phases. Random baseline 1-4/2048=0.998. Needs rank-normalized version.",
+    "updated": "2026-03-27"
+  },
+  "shared_routed_gate_saturates": {
+    "claim": "Gated routed expert converges to always-on (gate ~0.985) with λ_sparse=0.01",
+    "status": "observed",
+    "evidence": "Shared+routed Phase 2: gate 0.985, domain selectivity 0.007.",
+    "updated": "2026-03-27"
+  },
+  "causal_locality_enables_efficiency": {
+    "claim": "Causal locality is prerequisite for compute AND memory efficiency, not just modularity",
+    "status": "supported",
+    "evidence": "Without diagonal M_ij, all experts must be active for all tokens — no expert can be skipped or offloaded.",
     "updated": "2026-03-27"
   }
 }
@@ -84,35 +83,17 @@ Update after each cycle.
 
 After processing new results:
 1. Update the beliefs JSON above (change status, add evidence, update date)
-2. Update `viz/tree_state.js` with new measurements (timeline, tree structure, token routing)
-3. Flag any belief that moved from speculative→supported or supported→refuted
-4. Identify the highest-value next experiment based on what we just learned
+2. Update `viz/tree_state.js` with new measurements
+3. Flag any belief that changed status
+4. Identify highest-value next experiment
 
 ## Artifact updates
 
-### Visualization (`viz/`)
-- `tree_state.js` is the single source of truth — HTML5 page reads it automatically
-- Add new timeline entries with step/PPL/CosSim/rank/experts
-- When a new fork occurs: update the tree structure (add children)
-- When token routing analysis runs: update `token_routing` section
-- When a new experiment config is added: update `EXPERIMENTS` object
-- **Build check**: open `viz/tree3d.html` in browser to verify rendering
+### Paper (`paper/mogae-paper-v4.tex`)
+- Build: `cd paper && tectonic mogae-paper-v4.tex`
+- Paper regie is team lead responsibility. Orientation flags what changed.
 
-### Paper (`paper/mogae-paper-v3.tex`)
-- When a placeholder can be filled with real data: replace `\placeholder{...}` with actual table/figure
-- When metrics change (PPL, CosSim): update the numbers in existing tables
-- When a belief moves to "observed": add the evidence to the relevant section
-- When a belief is refuted: add honest negative result
-- **Build**: `cd paper && tectonic mogae-paper-v3.tex` — must compile without errors
-- **CHARTER**: never present speculative results as observed in the paper
-
-### What NOT to update
-- Don't update paper with in-progress numbers (wait for eval checkpoints)
-- Don't update viz with projected/estimated data — measured reality only
-
-### Paper regie: team lead responsibility
-The team lead (not the orientation agent) owns the paper. Orientation provides
-the data and flags what changed; the team lead decides what goes into the paper,
-builds it (`tectonic`), reviews the PDF, and ensures CHARTER compliance.
-Orientation should surface: "placeholder X can now be filled with [data]" or
-"table Y needs updated numbers: PPL changed from A to B".
+### Known bugs in experiment scripts
+- `.numpy()` on grad tensors: always use `.detach().float().cpu().numpy()`
+- Hook unwrapping: when loading checkpoint into hooked model, check `hasattr(layer.mlp, '_orig_mlp')`
+- Phase transitions: scripts crash when re-installing hooks on already-hooked layers

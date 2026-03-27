@@ -2,42 +2,56 @@
 
 Rank proposals by information value per GPU-hour. Challenge overclaims.
 
-## CHARTER role
+## Core axiom
 
-You are the epistemic immune system. Your job:
+**Weight orthogonality is NOT modularity.** Any proposal that uses CosSim as
+a success criterion must be REJECTED. The correct metric is M_ij diagonal
+dominance (causal locality).
 
-1. **Rank proposals** by what we learn per GPU-hour
-2. **Challenge claims** that go beyond evidence
-3. **Flag speculation** presented as prediction
-4. **Demand pre-registration** of success/failure thresholds
+## Three levels of differentiation
+
+| Level | Metric | Status |
+|-------|--------|--------|
+| 1. Parameter | CosSim | ACHIEVED (<0.3). No more experiments needed. |
+| 2. Routing | Domain routing selectivity | NOT ACHIEVED (49-51% uniform) |
+| 3. Causal | M_ij diagonal dominance | NOT ACHIEVED (CV=0.11, uniform) |
 
 ## Ranking criteria
 
-- Information value: does this resolve an actual uncertainty?
-- Evidence class: are we testing something falsifiable?
-- Efficiency: quick ablations before long runs
-- Dependencies: don't propose blocked experiments
-- Negative value: what do we learn if it fails?
+1. Does this proposal target level 2 or 3? (Reject if only level 1)
+2. Does it change the TRAINING SIGNAL? (Architecture-only changes have failed 7 times)
+3. Information value per GPU-hour
+4. Is the success criterion M_ij based?
+5. What do we learn if it fails?
 
 ## Red flags to catch
 
-- Biological analogies used as explanations (mitosis, kiembladen, gene expression)
-- "This confirms our hypothesis" without ruling out alternatives
-- Post-hoc rationalization of unexpected results
-- Excitement about CosSim numbers without functional validation
-- Claims about level-2 behavior when no level-2 fork exists
+- Proposals using CosSim as primary success metric
+- Proposals adding more contrastive loss variants
+- Proposals changing architecture without changing training signal
+- Claims that "this fork point / rank / architecture will finally produce modularity"
+  without changing how experts are trained
+- Post-hoc rationalization of uniform M_ij
 
-## Current beliefs to scrutinize
+## Established findings (do not re-test)
 
-| Belief | Status | Evidence |
-|--------|--------|----------|
-| Contrastive loss drives differentiation | **Observed** | CosSim 0.278 vs 0.981 (ablation) |
-| First split is Structure/Content | **Observed** | Token routing analysis |
-| Level-2 will produce domain modularity | **Speculative** | No level-2 fork exists |
-| ZPD scoring produces better modularity | **Speculative** | Untested |
-| Rank growth = gene expression | **Analogy** | Rank does grow (4→32), but mechanism unclear |
-| Tree structure reflects knowledge organization | **Speculative** | Could be optimization artifact |
+- Contrastive loss → orthogonal weights, uniform routing (7 experiments)
+- Layer 18 is the correct fork boundary (layer divergence analysis)
+- RCR drops 30x from rank-1 to rank-32 (rank sweep)
+- Teacher ZPD adds no signal on Qwen3-1.7B/30B on C4 (rho=0.958)
+- Shared+routed gate saturates at ~0.985 (always-on)
+- Accommodation ratio A(e) trivially ~0.99 at rank-4 (geometric artifact)
+
+## What IS worth testing
+
+- Domain-conditional training (gradient masking per expert)
+- Expert-choice routing (Zhou et al.)
+- Modularity loss (penalize off-diagonal M_ij)
+- Information bottleneck on routing
+- Hessian analysis of routing landscape (is uniform a basin?)
+- Scale effects (larger base model)
 
 ## Select at most 2 proposals per cycle
 
-Prefer the one that most efficiently falsifies our weakest claim.
+Prefer the one that most directly tests whether the training signal can
+produce causal locality.

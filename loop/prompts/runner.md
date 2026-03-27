@@ -12,35 +12,64 @@ cd /root/t6b-mogae
 
 ## Training scripts
 
-- `scripts/lora_forking_experiment.py` — main LoRA forking (phases 1-3)
-- `scripts/score_curriculum.py` — score chunks by difficulty (student self-scoring)
-- Teacher scoring: use Ollama on MacBook (Qwen3 30B) or write new script
+- `scripts/fork_trunk18.py` — trunk-18 LoRA forking (current architecture)
+- `scripts/lora_forking_experiment.py` — original layer-14 experiment
+- `scripts/shared_routed.py` — shared+gated-routed variant
+- `scripts/rank_sweep.py` — rank-performance frontier analysis
+- `scripts/ablation_matrix.py` — M_ij causal locality test
+- `scripts/layer_divergence_analysis.py` — per-layer domain divergence
+- `scripts/trunk18_routing_analysis.py` — domain routing selectivity
+
+## Pre-flight checklist
+
+Before running ANY script:
+1. **Check for rogue processes**: `ps aux | grep python | grep -v grep | grep -v networkd | grep -v unattended`
+2. **Check GPU memory**: `nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader`
+3. **Verify checkpoint exists** before loading
+4. **Create checkpoint directory** before training
+
+## Known bugs (fix preemptively in new scripts)
+
+### 1. `.numpy()` on grad tensors
+ALWAYS use `.detach().float().cpu().numpy()`, never `.cpu().numpy()`.
+Search new scripts: `grep -n '\.numpy()' script.py | grep -v detach`
+
+### 2. Hook unwrapping at phase transitions
+When loading a checkpoint into a model that already has hooks:
+```python
+if hasattr(base_mlp, '_orig_mlp'):
+    base_mlp = base_mlp._orig_mlp
+```
+After creating hooks, store originals:
+```python
+hook._orig_mlp = base_mlp
+```
+
+### 3. GQA tensor mismatch (attention LoRA)
+Qwen3-1.7B uses grouped query attention (16 Q heads, 4 KV heads).
+When scattering RoPE embeddings per expert, expand batch dim before reshape:
+```python
+cos = cos.expand(B, -1, -1)  # before reshape
+```
+
+### 4. Phase transitions in multi-phase scripts
+Scripts that auto-chain P1→P2→P3 often crash at transitions because
+hooks are re-installed on already-hooked layers. Test each transition
+separately or add the unwrapping logic above.
 
 ## For each experiment
 
-1. Read proposal JSON from generator
-2. Verify GPU is free: `nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader`
+1. Read proposal from generator
+2. Verify GPU is free
 3. **Measure baseline BEFORE starting** (AGENTS.md rule)
-4. Execute training command via nohup, log to `/root/t6b-mogae/logs/`
-5. Monitor: tail log every eval step (every 1000 steps)
-6. On completion: write results to `/root/t6b-mogae/results/`
-7. Send Telegram: `/Users/erik/bin/telegram-me "✅ [experiment]: [key metrics]"`
+4. Execute via nohup, log to `/root/t6b-mogae/logs/`
+5. Monitor: check log at eval intervals
+6. On completion: save results to `/root/t6b-mogae/results/`
 
-## Health checks (every monitoring cycle)
+## Key metric: M_ij (ablation matrix)
 
-- PPL trending down or stable (not diverging)
-- CosSim trending down (experts differentiating)
-- c_loss = 0.0 is OK (experts already below similarity threshold)
-- lb_loss near 1.0 (load balance OK)
-- tok/s stable around 17K (no memory issues)
-
-## Collapse detection (kill early)
-
-- PPL rising > 5% above baseline (21.20) for 3 consecutive evals
-- CosSim rising (experts re-converging) for 3 consecutive evals
-- One expert getting > 90% of all tokens
-- Loss NaN or diverging
-- GPU OOM
+Every experiment should include M_ij measurement on the final checkpoint.
+This is the PRIMARY metric for causal locality. CosSim is secondary.
 
 ## Output format
 
@@ -48,12 +77,10 @@ Write to `results/run_YYYYMMDD_NNN.json`:
 ```json
 {
   "experiment": "name",
-  "config": {"phase": 3, "lr": 3e-4, "threshold": 0.4, ...},
-  "baseline": {"ppl": 21.20},
-  "final_metrics": {"ppl": 19.38, "cossim": 0.067, "num_experts": 2, "rank": 32},
-  "timeline": [{"step": 1000, "ppl": 19.5, "cossim": 0.3}, ...],
-  "verdict": "PASS|FAIL vs pre-registered prediction",
-  "duration_hours": 14.2,
-  "gpu": "cuda:0"
+  "config": {...},
+  "final_metrics": {"ppl": ..., "cossim": ..., "mij_diagonal_dominance": ...},
+  "mij_matrix": [[...], [...]],
+  "routing_selectivity": ...,
+  "verdict": "PASS|FAIL vs pre-registered prediction"
 }
 ```
