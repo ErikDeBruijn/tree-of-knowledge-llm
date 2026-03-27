@@ -555,25 +555,39 @@ fine-tuning. We extend LoRA from a fine-tuning tool to a \emph{structural unit
 of specialization} within a single model. Li et al.~\cite{li2018intrinsic}
 and Aghajanyan et al.~\cite{aghajanyan2021intrinsic} established that
 fine-tuning operates on a low intrinsic dimension---our variable-rank mechanism
-exploits this directly.
+exploits this directly. HydraLoRA~\cite{hydralora2024} shares our core
+insight: a shared A matrix captures functional patterns while multiple routed B
+matrices handle domain-specific refinement. MoLoRA~\cite{molora2026} extends
+per-token LoRA routing to achieve composable specialization, validating the
+hot-swap vision independently.
 
-\paragraph{MoE upcycling.}
-Sparse upcycling~\cite{komatsuzaki2023sparse} converts dense models to MoE by
-copying FFN weights. Our Arm~F (Table~\ref{tab:lessons}) shows this produces
-identical experts. Drop-Upcycling~\cite{dropupcycle2025} addresses this with
-random re-initialization; we propose LoRA + contrastive loss as a principled
-alternative that also yields variable-rank adapters.
-
-\paragraph{Geometric routing.}
-Hash Layers~\cite{roller2021hash}, EMoE~\cite{emoe2026}, and
-IDA-MoE~\cite{idamoe2025} partition the embedding space for routing. Our
-analysis shows raw hidden states lack sufficient geometric structure; the
-routing must be learned, with the tree providing initialization.
+\paragraph{Shared vs.\ routed experts.}
+DeepSeekMoE~\cite{deepseek2024moe} introduced \emph{shared expert isolation}:
+always-active experts absorb cross-domain knowledge, freeing routed experts to
+specialize. DeepSeek-V3~\cite{deepseekv3} scales this to 1 shared + 256
+routed experts. The ``Basic-Refinement Collaboration''
+framework~\cite{basicrefinement2025} empirically confirms that shared experts
+perform entity recognition and syntactic parsing while routed experts refine
+domain-specific associations. Our finding that experts differentiate along
+functional axes but not domain axes (Section~\ref{sec:magnitude}) is
+independently reported by OpenMoE~\cite{openmoe2024} (context-independent
+token-type routing), the Mixtral analysis~\cite{mixtral2024} (``no obvious
+patterns based on topic''), and the Standing
+Committee~\cite{standing2026} paper (functional experts as stable core, domain
+experts as peripheral). The ``Domain vs.\ Driver Experts''
+analysis~\cite{domaindriver2026} formalizes this: driver experts handle
+function words and syntax, domain experts handle content vocabulary.
 
 \paragraph{Specialization theory.}
 B\'{e}na \& Goodman~\cite{bena2025modularity} prove resource constraints are
-necessary for specialization. Our contrastive loss provides the constraint; the
-rank measures the result.
+necessary for specialization---without cost pressure, modules converge. Our
+contrastive loss provides one form of constraint; the rank measures the result.
+However, our experiments show that weight-space constraints (contrastive loss)
+produce representational but not functional specialization. The literature
+suggests that top-$K$ routing ($K > 1$) may be required: with $K=1$, each
+token must choose a single axis of specialization (typically functional), while
+$K \geq 2$ allows simultaneous functional and domain expert
+activation~\cite{standing2026, domaindriver2026}.
 
 \paragraph{Low-rank routing.}
 L2R~\cite{l2r2026} projects to $r{=}2$ dimensions for routing, confirming that
@@ -806,6 +820,12 @@ Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
 \bibitem{standing2026} The Illusion of Specialization: Standing Committee in Mixture-of-Experts. \textit{arXiv:2601.03425}, 2026.
 \bibitem{deepseek2024moe} X. Dai et al. DeepSeekMoE: Towards Ultimate Expert Specialization. \textit{ACL}, 2024.
 \bibitem{deepseekv3} DeepSeek-AI. DeepSeek-V3 Technical Report. \textit{arXiv:2412.19437}, 2024.
+\bibitem{hydralora2024} T. Tian et al. HydraLoRA: An Asymmetric LoRA Architecture for Efficient Fine-Tuning. \textit{NeurIPS}, 2024.
+\bibitem{molora2026} MoLoRA: Composable Specialization via Per-Token Adapter Routing. \textit{arXiv:2603.15965}, 2026.
+\bibitem{basicrefinement2025} Decoding Knowledge Attribution in MoE: A Framework of Basic-Refinement Collaboration. \textit{ACL}, 2025.
+\bibitem{openmoe2024} F. Xue et al. OpenMoE: An Early Effort on Open Mixture-of-Experts Language Models. \textit{ICML}, 2024.
+\bibitem{mixtral2024} A. Jiang et al. Mixtral of Experts. \textit{arXiv:2401.04088}, 2024.
+\bibitem{domaindriver2026} What Gets Activated: Uncovering Domain and Driver Experts in MoE Language Models. \textit{arXiv:2601.10159}, 2026.
 \end{thebibliography}
 
 \end{document}
