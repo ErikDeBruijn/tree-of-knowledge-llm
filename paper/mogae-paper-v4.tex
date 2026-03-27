@@ -903,7 +903,11 @@ input-space partitioning~\cite{idamoe2025} achieve it at smaller scale. Our
 A 16-expert rank-1 variant (iso-parameter with 2$\times$rank-4) achieves the
 highest $M_{ij}$ CV observed (0.16 vs.\ 0.11--0.14 for 2--4 experts) and
 routing selectivity of 0.84, with layer-dependent expert structure---a step
-toward but not yet achieving domain selectivity.
+toward but not yet achieving domain selectivity. Fitting a power law to CV
+vs.\ expert count yields $\text{CV} \approx 0.105 \cdot N^{0.16}$: the
+exponent is very shallow, predicting $\sim$50 experts for CV$=$0.2 and
+$\sim$600 for CV$=$0.3---consistent with Monet's extreme expert
+counts~\cite{monet2025}.
 The Hessian analysis (Section~\ref{sec:hessian}) confirms the LM loss
 \emph{does} encode selective routing directions; the path forward is
 differentiable routing (Gumbel-softmax~\cite{jang2017gumbel}) combined with
