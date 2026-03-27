@@ -408,12 +408,44 @@ functions''---while \emph{improving} perplexity to 19.58. Differentiation does
 not trade off against quality.
 
 \subsection{Progressive Forking}
+\label{sec:forking}
 
-\placeholder{Table: Progressive forking results. Starting from the two Phase~2
-siblings, apply learntropy-driven splitting to produce 4, then 8 specialists.
-Report: number of experts, mean CosSim between siblings at each depth, PPL,
-total adapter parameter count. Hypothesis: CosSim decreases with depth, PPL
-stays flat or improves.}
+With the trunk boundary informed by the layer divergence analysis
+(Section~\ref{sec:divergence}), we compare forking at two boundary points.
+
+\begin{table}[h]
+\centering
+\caption{Trunk boundary comparison: Phase 2 results (2 experts, rank 4,
+contrastive weight 0.1). Layer-18 trunk places experts in the domain-specific
+zone identified by the divergence analysis.}
+\label{tab:trunk-comparison}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Configuration & Expert layers & CosSim & PPL & Params \\
+\midrule
+Trunk-14 (layers 15--28) & 14 & 0.840 & 19.58 & 1.9M \\
+Trunk-14 + Phase 3 (rank 32) & 14 & 0.278 & 19.33 & 11.2M \\
+\textbf{Trunk-18 (layers 18--27)} & \textbf{10} & \textbf{0.771} & \textbf{20.14} & \textbf{655K} \\
+Trunk-18 + Phase 3 (rank 4) & 10 & 0.383$^*$ & 19.98$^*$ & 655K \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent $^*$\textit{Phase 3 interrupted at step 14K/48K; values are
+intermediate, not final.}
+
+The trunk-18 configuration achieves faster differentiation (CosSim 0.771 after
+Phase 2 vs.\ 0.840 for trunk-14) with 3$\times$ fewer parameters, despite
+having fewer expert layers. In Phase 3, CosSim dropped to 0.383 at rank 4
+without rank growth---deeper differentiation than trunk-14 achieved at rank 4
+(0.840). This supports the hypothesis that placing experts in the
+domain-divergent zone (Section~\ref{sec:divergence}) accelerates
+specialization.
+
+No second fork (2$\to$4 experts) has triggered in any configuration. The
+bimodality threshold (0.3) has not been reached, suggesting that on generic C4
+data, 2-expert systems may be stable equilibria regardless of trunk boundary.
+Domain-specific curricula may be needed to trigger deeper forking.
 
 \subsection{Hot-Loading Validation}
 \label{sec:hotloading}
