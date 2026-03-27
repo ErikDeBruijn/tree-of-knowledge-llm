@@ -715,11 +715,34 @@ reformulate them in light of actual results.
 \paragraph{Q1: How does rank affect information efficiency?}
 We measure the residual compression ratio (RCR = PPL gain / trainable
 parameters) across ranks 1--32 at the trunk-18 boundary.
-% TODO: Fill with rank sweep results when available.
+\begin{table}[h]
+\centering
+\caption{Rank sweep at trunk-18 boundary (5K steps each, layers 18--27).
+RCR = PPL gain / trainable parameters in millions. Higher RCR = more
+information-efficient.}
+\label{tab:rank-sweep}
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+Rank & Params (M) & PPL & Gain & RCR \\
+\midrule
+1  & 0.164 & 20.73 & 5.42 & \textbf{33.1} \\
+2  & 0.328 & 20.65 & 5.49 & 16.8 \\
+4  & 0.655 & 20.61 & 5.54 & 8.4 \\
+8  & 1.311 & 20.55 & 5.60 & 4.3 \\
+16 & 2.621 & 20.43 & 5.71 & 2.2 \\
+32 & 5.243 & 20.29 & 5.85 & 1.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\placeholder{Table: Rank sweep results. For each rank (1,2,4,8,16,32):
-trainable params, PPL after 5K steps, PPL gain, RCR. Expected: diminishing
-returns at higher ranks (lens$\to$crystal transition).}
+RCR drops 30$\times$ from rank-1 to rank-32, showing that the first few
+dimensions of the update-subspace capture most of the learnable signal. In
+absolute terms, even rank-32 adds only 5.2M parameters (0.26\% of the 2B base
+model) for a 0.44 PPL improvement over rank-1---still highly efficient
+relative to the base model. The rank sweep thus validates both the lens and
+crystal regimes: low-rank adapters are maximally information-efficient per
+parameter, while high-rank adapters remain negligible in total model storage
+and can be justified when the marginal quality matters.
 
 \paragraph{Q2: Is the emergent specialization interpretable?}
 The first fork produces a structure/content split: Expert~0 routes 71\% of
