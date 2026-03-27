@@ -376,10 +376,15 @@ means either both struggle (noise, not knowledge) or both succeed (nothing to
 learn). Each expert receives the chunks where \emph{its own} ZPD is highest,
 producing genuinely disjoint training distributions.
 
-Our hypothesis is that ZPD-guided data selection can produce domain-level
-modularity that contrastive loss alone does not achieve
-(Section~\ref{sec:hotloading}). This remains untested: we have scored a pool
-of 50K chunks but have not yet trained experts on ZPD-selected data.
+We tested ZPD scoring with Qwen3-30B as teacher and Qwen3-1.7B as student on
+500 C4 chunks: Spearman $\rho = 0.958$ between teacher and student difficulty
+rankings, with only 14.2\% of chunks in the ZPD zone. In this configuration,
+the teacher adds little signal beyond what the student already knows about its
+own difficulty. This does not falsify the ZPD concept itself---the result is
+specific to this model pair on generic C4 data. ZPD-guided selection may prove
+more effective (a)~after experts have diverged enough to have genuinely
+different difficulty profiles, (b)~with a much larger teacher, or (c)~on
+domain-specific data where teacher--student knowledge gaps are wider.
 
 % ============================================================================
 \section{Experiments}
@@ -768,40 +773,34 @@ We identify four limitations that bound our current claims:
 \section{Conclusion}
 
 We set out to test whether specialization depth, adapter rank, and storage tier
-are the same dimension. Our most important finding is negative:
-\textbf{weight-space orthogonality is not modularity.}
+are the same dimension. The results are positive on two of three fronts:
 
-Contrastive LoRA forking reliably produces orthogonal expert weights
-(CosSim $<$0.3), and layer divergence analysis correctly identifies where
-domain signals emerge (layer 18 in Qwen3-1.7B). But three independent routing
-analyses across different configurations all show uniform domain routing
-(49--51\% split) and uniform ablation damage. The experts learned different
-\emph{directions} in representation space without learning different
-\emph{functions}.
+\textbf{1.~Information efficiency (achieved).} Variable-rank LoRA adapters on
+FFN layers reduce perplexity from 21.20 to 19.83 with 655K trainable
+parameters---adapters of $\sim$45\,KB per layer. Layer divergence analysis
+empirically identifies the optimal fork boundary (layer~18), and the
+accommodation ratio (Eq.~\ref{eq:accommodation}) provides a principled,
+measurable criterion for when to expand capacity.
 
-This leads to our central methodological conclusion:
-\textbf{hot-pluggability requires causal locality, not orthogonality.} The
-correct metric for modularity is the ablation matrix $M_{ij} = \Delta\text{loss
-on task } i \text{ when expert } j \text{ is removed}$. A modular system has
-near-diagonal $M$; our system has uniform $M$. Cosine similarity, subspace
-separation, and weight orthogonality are hygiene metrics, not modularity
-metrics.
+\textbf{2.~Tiered deployment (architecturally valid).} At rank-4, adapter
+loads from NVMe consume $<$0.3\% of per-token compute time
+(Table~\ref{tab:load-times}). The storage economics align: small adapters are
+always cached, larger ones are prefetchable. This has not been tested at scale
+(thousands of community-contributed adapters) but the arithmetic is sound.
 
-We formalize rank growth as Piagetiaan \emph{accommodation}
-(Eq.~\ref{eq:accommodation}): the minimum rank needed is the dimensionality
-of the residual structure that cannot be assimilated within the parent's
-update-subspace. This replaces heuristic thresholds with a principled,
-measurable criterion.
+\textbf{3.~Causal modularity (open problem).} The ablation matrix $M_{ij}$
+(Table~\ref{tab:ablation-matrix}) is uniform, not diagonal: removing either
+expert degrades all domains equally. Three independent routing analyses
+confirm uniform domain routing (49--51\% split). Weight orthogonality
+(CosSim $<$0.3) is necessary but not sufficient for modularity.
 
-The architecture itself---compact, variable-rank LoRA adapters on FFN layers,
-trainable on commodity hardware---remains sound. Recent independent work
-confirms the design: HydraLoRA~\cite{hydralora2024} shares the shared-A +
-routed-B structure, and MoLoRA~\cite{molora2026} validates per-token adapter
-routing. The open problem is achieving causal locality: producing experts whose
-ablation matrix is diagonal, not uniform. The Standing
-Committee~\cite{standing2026} and DeepSeekMoE~\cite{deepseek2024moe} results
-suggest that shared + routed expert architectures and top-$K$ routing ($K > 1$)
-are likely prerequisites.
+Our central methodological conclusion: \textbf{hot-pluggability requires
+causal locality, not orthogonality.} The correct metric is whether expert
+removal causes \emph{selective} damage, not whether expert weights occupy
+different subspaces. The Standing Committee~\cite{standing2026} and
+DeepSeekMoE~\cite{deepseek2024moe} results suggest that shared + routed
+architectures and top-$K$ routing ($K > 1$) are likely prerequisites for
+achieving causal locality at small scale.
 
 % ============================================================================
 \appendix
