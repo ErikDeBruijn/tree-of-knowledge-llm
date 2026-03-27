@@ -512,12 +512,25 @@ are not small corrections but substantial transformations. Expert weight
 matrices are nearly orthogonal (CosSim 0.019), confirming that contrastive
 loss produces genuine weight-space differentiation. However, routing
 selectivity is weak: both experts produce similar-magnitude deltas regardless
-of which tokens are routed to them. This reveals \textbf{redundant
-representation}: the experts learned different directions in representation
-space, but both directions are needed by most tokens. Combined with the layer
-divergence analysis (Section~\ref{sec:divergence}), this suggests the experts
-were placed in a domain-agnostic zone (layers 14--17) where there was
-insufficient domain signal to drive functional specialization.
+of which tokens are routed to them. This reveals \textbf{redundant representation}: the experts learned different
+directions in representation space, but both directions are needed by most
+tokens.
+
+We initially hypothesized that this was caused by placing experts in a
+domain-agnostic zone (layers 14--17), motivated by the layer divergence
+analysis (Section~\ref{sec:divergence}). However, repeating the routing
+analysis on the trunk-18 configuration (experts on layers 18--27, where CKA
+$>$0.10) yielded the same result: both experts route 49--51\% of tokens
+uniformly across all five domains, with per-expert PPL ablation varying by
+only $\sim$0.26 points across domains. \textbf{Moving the fork to the
+domain-divergent zone did not produce domain-specific routing.}
+
+This suggests that the redundancy is not caused by fork location but by a more
+fundamental limitation: contrastive loss differentiates expert \emph{weights}
+but does not create functional \emph{routing specialization}. The router
+learns to split tokens approximately 50/50 regardless of domain content,
+and both experts contribute equally to all domains. Weight-space orthogonality
+(CosSim $<$0.3) is a necessary but not sufficient condition for modularity.
 
 % ============================================================================
 \section{Related Work}
