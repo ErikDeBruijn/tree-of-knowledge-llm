@@ -47,10 +47,12 @@ content) but not \emph{domain} axes---a pattern independently confirmed across
 the MoE literature as the Standing Committee
 effect~\cite{standing2026, domaindriver2026}. Removing either expert degrades
 all domains equally ($\sim$1.3 PPL): the experts are genuinely specialized and
-individually indispensable, but not independently removable. We show that
-\emph{causal locality} (selective ablation damage) rather than weight
-orthogonality is the correct metric for modularity, and that top-$K$ routing
-($K > 1$) may be a prerequisite for domain-level specialization at this scale.
+individually indispensable, but not independently removable. We show that \emph{causal locality} (selective ablation damage) rather than
+weight orthogonality is the correct metric for modularity---and that it is
+also the prerequisite for compute and memory efficiency, since only causally
+local experts can be skipped or offloaded without uniform quality loss.
+Top-$K$ routing ($K > 1$) may be required for domain-level specialization at
+this scale.
 
 We formalize rank growth as Piagetiaan accommodation: capacity expands when
 residual error cannot be assimilated within the current update-subspace.
