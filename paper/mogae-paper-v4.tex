@@ -1035,6 +1035,43 @@ when accommodation is needed. If validated, this would close the gap between
 our framework's theoretical design (learntropy-driven tree growth) and its
 practical training dynamics.
 
+\paragraph{Three dimensions of the learntropy control signal.}
+The learntropy-modulated LR is only one of three control dimensions that the
+same signal could drive simultaneously:
+
+\emph{(1)~Functional divergence and fork boundaries.}
+Our CKA/fisher divergence analysis (Section~\ref{sec:8b}) uses
+\emph{domain} categories (medical, code, legal). However, functional
+divergence---syntax vs.\ semantics, operators vs.\ operands, abstraction
+vs.\ instantiation---may show a different profile, possibly peaking at
+earlier layers. If functional divergence ramps at layer~12 while domain
+divergence ramps at layer~24, the optimal fork boundary depends on
+\emph{what} the expert specializes in. This motivates variable-depth
+forking: functional experts branch early (broad but expensive), domain
+experts branch late (narrow but cheap).
+
+\emph{(2)~Information-theoretic ceiling.}
+The 2-expert equilibrium at 8B has an information-theoretic
+explanation: rank-4 LoRA adapters operate in a 4-dimensional subspace of a
+4096-dimensional hidden space ($<$0.1\% of available directions). The
+residual error that experts can correct is inherently low-rank, and 2
+principal components may exhaust the useful signal in that subspace. Three
+knobs can expand this: earlier forking (more divergent representations to
+correct), higher rank (more dimensions per expert), or learntropy-driven
+adaptation (letting the model allocate capacity where needed). These are
+orthogonal and likely complementary.
+
+\emph{(3)~Meta-learned training policy.}
+The logical endpoint is a \emph{training controller} that observes learntropy
+statistics (mean, variance, kurtosis per expert per layer) and takes actions:
+adjust LR, trigger splits, increase rank, modify loss weights. This is
+the state/action space of a reinforcement learning problem, where reward is
+$M_{ij}$ CV improvement per training episode. The 25+ experiment trajectories
+in this paper provide offline training data for such a controller.
+A rule-based version is feasible now; a learned version
+(Population-Based Training~\cite{jaderberg2017pbt} or bandit optimization)
+would enable fully autonomous expert-tree growth.
+
 % ============================================================================
 \appendix
 
@@ -1166,6 +1203,7 @@ Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
 \bibitem{jang2017gumbel} E. Jang, S. Gu, B. Poole. Categorical Reparameterization with Gumbel-Softmax. \textit{ICLR}, 2017.
 \bibitem{monet2025} S. Park et al. Monet: Mixture of Monosemantic Experts for Transformers. \textit{ICLR}, 2025.
 \bibitem{idamoe2025} IDA-MoE: Input Domain Aware Mixture-of-Experts. \textit{arXiv:2510.16448}, 2025.
+\bibitem{jaderberg2017pbt} M. Jaderberg et al. Population Based Training of Neural Networks. \textit{arXiv:1711.09846}, 2017.
 \end{thebibliography}
 
 \end{document}
