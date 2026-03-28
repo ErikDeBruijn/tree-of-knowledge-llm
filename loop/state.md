@@ -1,23 +1,37 @@
 # Loop State
-Last updated: 2026-03-28T08:00
+Last updated: 2026-03-28T12:20
 
-## Status: Research arc COMPLETE. 25 experiments. Both GPUs idle.
+## Status: Active experiment. GPU 0 busy, GPU 1 serving.
 
-## Key results
+## Running
+- GPU 0: Early fork 8B (layer 12, 15K steps) — tests Forest hypothesis
+- GPU 1: FoK inference server (tok_serve.py, port 8000)
+
+## Breakthrough: Learntropy-LR (this session)
+- 3/4 experts ACTIVE (first time >2 survive training)
+- Piagetian inversion: lowest-LR expert is most critical (ΔPPL +39.7)
+- Highest-LR expert goes dormant — over-accommodation prevents crystallization
+- Overall M_ij CV: 1.25 (highest ever)
+
+## Recent results (this session)
+- Quality benchmark: FoK-8B reduces PPL by 19% vs base across all domains
+- 4-expert ablation: 2/4 active, routing uninformative about causal importance
+- Progressive fork: same 2/4 collapse — frozen experts dominate
+- Learntropy-LR: BREAKTHROUGH — 3/4 active via per-expert LR modulation
+
+## Key results (cumulative, 26+ experiments)
 
 ### 1.7B ceiling (22 experiments)
-M_ij CV bounded at 0.12-0.16 across ALL configurations:
-5 loss variants, 4 routing mechanisms, 2-48 experts, rank 1-32,
-layer 14/18, generic/enriched/niche curriculum, fresh/pretrained init.
+M_ij CV bounded at 0.12-0.16 across ALL configurations.
 
-### 8B breakthrough (3 experiments, reproducible)
+### 8B breakthrough (3+ experiments, reproducible)
 M_ij CV = 0.49-0.67 — domain-selective causal locality.
 Expert removal causes 3.5-13.5x varying damage across domains.
-Conversational most vulnerable, news least. Stable across 5K/25K/4-expert.
+Quality benchmark: 19% PPL improvement over base.
 
 ### Scale relationship
-- 8B fisher ratios 4-5x higher than 1.7B (layer divergence)
+- 8B fisher ratios 4-5x higher than 1.7B
 - 8B M_ij CV 3-5x higher than 1.7B ceiling
 - Domain-level causal locality IS achievable at sufficient scale
 
-## Paper v4: publishable. All findings reported honestly.
+## Paper v4: updated with Section 7 (Scale Experiment), quality benchmark table, 4-expert collapse finding.
