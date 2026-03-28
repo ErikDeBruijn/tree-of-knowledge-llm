@@ -1038,6 +1038,18 @@ equilibrium at rank-4 is a consequence of operating in too few dimensions,
 and that rank and learntropy-LR are complementary: rank provides the
 subspace, learntropy-LR distributes the learning signal.
 
+However, this relationship is \textbf{non-monotonic}. At rank-1024
+(25\% of hidden dimension, ``HiRA'' regime), the $M_{ij}$ CV
+\emph{drops} to 0.47---lower than rank-4 (1.07). Both experts remain
+active and important, but domain selectivity vanishes. The massive
+subspace gives each expert enough capacity to learn everything, eliminating
+the bottleneck that forces specialization. This reveals a fundamental
+trade-off: \emph{low rank forces specialization through information
+bottleneck; high rank enables capacity but removes differentiation
+pressure}. The optimal rank is not the highest but the one that balances
+capacity against specialization pressure---empirically, rank-8 at the 8B
+scale.
+
 \paragraph{Hierarchical bifurcation: 4/4 experts active.}
 All previous 4-expert experiments used flat 1$\to$4 routing: every expert
 branches from the same layer. The original tree design uses progressive
