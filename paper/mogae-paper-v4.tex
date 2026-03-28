@@ -925,7 +925,11 @@ causal locality observed}, with per-expert ablation damage varying
 The Hessian analysis (Section~\ref{sec:hessian}) confirms the LM loss
 \emph{does} encode selective routing directions; the path forward is
 differentiable routing (Gumbel-softmax~\cite{jang2017gumbel}) combined with
-many more, smaller experts.
+many more, smaller experts. The current binary forking (1$\to$2) is a design
+choice, not a constraint: multi-furcation (1$\to$N children) could exploit
+multimodal learntropy distributions directly, echoing the extreme expert
+counts that enable domain specialization in
+Monet~\cite{monet2025}.
 
 % ============================================================================
 \appendix
