@@ -987,6 +987,46 @@ framework~\cite{piaget1952}, this is the distinction between
 freeze/train cycle is a crude approximation of what should be a continuous
 process.
 
+\paragraph{Early fork (layer 12): testing variable override depth.}
+We replicate the 2-expert experiment with LoRA adapters on layers 12--35
+instead of 24--35, doubling the number of expert layers (24 vs.\ 12) and
+trainable parameters. The results show extreme asymmetry: Expert~0 removal
+causes catastrophic damage ($\Delta$PPL +7,676 to +15,955), while Expert~1
+removal is mild (+5.6 to +7.7). Expert~0 absorbed essentially all learning
+capacity.
+
+Critically, the domain damage pattern is consistent with the forest
+hypothesis: \textbf{code receives the most damage} when Expert~0 is removed
+(+14,461) and \textbf{medical the least} (+7,676)---a 1.88$\times$ ratio.
+This matches the prediction that code diverges earlier from natural language
+than medical text. The overall $M_{ij}$ CV is 1.07 (vs.\ 0.68 at layer~24),
+confirming that earlier overrides produce more domain-selective experts.
+
+\paragraph{The rank spectrum: from lens to full layer.}
+The distinction between ``LoRA adapter'' and ``full layer replacement'' is
+not categorical but continuous. An FFN layer in Qwen3-8B has dimensions
+$4096 \times 11008$; the maximum LoRA rank is $\min(4096, 11008) = 4096$. At
+rank~4096, $A \times B$ is a full matrix---mathematically equivalent to a
+complete layer replacement. The accommodation ratio $A(e)$ determines where
+each expert sits on this spectrum:
+
+\begin{center}
+\begin{tabular}{@{}rrl@{}}
+\toprule
+Rank & \% of full layer & Character \\
+\midrule
+4 & 0.1\% & Lens (redirects information) \\
+64 & 1.6\% & Crystal (encodes own features) \\
+256 & 6.3\% & Semi-autonomous \\
+4096 & 100\% & Full layer replacement \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+This unifies the storage-tiering story: rank-4 adapters (4\,KB) are always
+cached, rank-4096 ``adapters'' ($\sim$32\,MB) load from NVMe. Same API, same
+routing, same mechanism---only the matrix dimensions change.
+
 % ============================================================================
 \section{Conclusion}
 
