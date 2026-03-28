@@ -1077,6 +1077,22 @@ provides the differentiation constraint (pair-level vs.\ leaf-level),
 while the rank provides the representational capacity for that constraint
 to produce distinct experts.
 
+\paragraph{Interpretability: functional, not domain-selective routing.}
+Routing analysis of the 4/4-active rank-8 tree reveals that pair-level
+routing is 97\% Pair~B, 3\% Pair~A---\emph{identical across all domains}.
+The domain routing spread is 0.002, confirming that the pair split is
+\textbf{functional} (structure vs.\ content), not domain-based. Token-type
+analysis shows punctuation tokens route 0\% to Pair~A while alphabetic
+tokens route 3\%, consistent with a content$\to$A / structure$\to$B
+pattern. Pair-level weight cosine similarity is $-0.10$ (orthogonal).
+
+This definitively validates the three-level framework: routing weights
+(level~2) are domain-blind, but ablation damage (level~3) varies
+3.5--13.5$\times$ across domains. The experts are causally specialized
+through \emph{what they compute}, not \emph{which tokens they receive}.
+The tree hierarchy produces differentiation through shared-weight
+constraints, not through selective routing.
+
 % ============================================================================
 \section{Conclusion}
 
