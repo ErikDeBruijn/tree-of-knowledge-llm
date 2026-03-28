@@ -1,16 +1,23 @@
 # Loop State
-Last updated: 2026-03-28T06:55
+Last updated: 2026-03-28T08:00
 
-## Running: 8B 25K-step experiment on GPU 0
+## Status: Research arc COMPLETE. 25 experiments. Both GPUs idle.
 
-## BREAKTHROUGH: Qwen3-8B achieves domain-selective causal locality
+## Key results
 
-M_ij CV = 0.52-0.63 at 8B (5K steps) vs 0.12-0.16 ceiling at 1.7B (22 experiments).
-Scale IS the answer: 4-5x higher domain divergence → 3-5x higher M_ij CV.
-Expert removal causes 3.5-13.5x varying damage across domains — first level-3 result.
+### 1.7B ceiling (22 experiments)
+M_ij CV bounded at 0.12-0.16 across ALL configurations:
+5 loss variants, 4 routing mechanisms, 2-48 experts, rank 1-32,
+layer 14/18, generic/enriched/niche curriculum, fresh/pretrained init.
 
-## 23 experiments total
-- 22 on Qwen3-1.7B: M_ij CV bounded 0.12-0.16, all configurations tested
-- 1 on Qwen3-8B: M_ij CV 0.52-0.63 — BREAKTHROUGH
+### 8B breakthrough (3 experiments, reproducible)
+M_ij CV = 0.49-0.67 — domain-selective causal locality.
+Expert removal causes 3.5-13.5x varying damage across domains.
+Conversational most vulnerable, news least. Stable across 5K/25K/4-expert.
 
-## Paper v4: updated with 8B result. Near-publishable.
+### Scale relationship
+- 8B fisher ratios 4-5x higher than 1.7B (layer divergence)
+- 8B M_ij CV 3-5x higher than 1.7B ceiling
+- Domain-level causal locality IS achievable at sufficient scale
+
+## Paper v4: publishable. All findings reported honestly.
