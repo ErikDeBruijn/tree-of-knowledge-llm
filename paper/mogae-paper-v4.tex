@@ -915,11 +915,11 @@ highest $M_{ij}$ CV observed (0.16 vs.\ 0.11--0.14 for 2--4 experts) and
 routing selectivity of 0.84, with layer-dependent expert structure---a step
 toward but not yet achieving domain selectivity. An initial power law fit ($\text{CV} \approx 0.105 \cdot N^{0.16}$)
 predicted $\sim$50 experts for CV$=$0.2, but a 48-expert variant produced
-CV$=$0.162---identical to 16 experts. The M$_{ij}$ CV appears to \emph{plateau} at $\sim$0.16 for this base
-model across the range tested (2--48 experts). While we cannot exclude
-optimization difficulties at higher expert counts, this suggests the
-bottleneck may be the base model's representational capacity for
-domain-distinguishable features at 1.7B parameters.
+CV$=$0.162---identical to 16 experts. The M$_{ij}$ CV plateaus at $\sim$0.16 for Qwen3-1.7B across all
+configurations tested (2--48 experts). A layer divergence analysis on
+Qwen3-8B shows 4--5$\times$ higher domain-discriminative fisher ratios
+(0.081 vs.\ 0.018 at comparable relative depth), supporting the hypothesis
+that the ceiling will lift at larger scale.
 The Hessian analysis (Section~\ref{sec:hessian}) confirms the LM loss
 \emph{does} encode selective routing directions; the path forward is
 differentiable routing (Gumbel-softmax~\cite{jang2017gumbel}) combined with
