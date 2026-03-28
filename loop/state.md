@@ -13,11 +13,14 @@ Last updated: 2026-03-28T12:20
 - Highest-LR expert goes dormant — over-accommodation prevents crystallization
 - Overall M_ij CV: 1.25 (highest ever)
 
-## Recent results (this session)
-- Quality benchmark: FoK-8B reduces PPL by 19% vs base across all domains
-- 4-expert ablation: 2/4 active, routing uninformative about causal importance
-- Progressive fork: same 2/4 collapse — frozen experts dominate
-- Learntropy-LR: BREAKTHROUGH — 3/4 active via per-expert LR modulation
+## Recent results (this session, 7 experiments)
+- Quality benchmark: FoK-8B reduces PPL by 19% vs base
+- 4-expert ablation: 2/4 active, routing uninformative
+- Progressive fork: same 2/4 collapse
+- Learntropy-LR (4exp): 3/4 ACTIVE, CV=1.25 ⭐
+- Early fork L12 (2exp): code>medical damage, CV=1.07
+- Rank-8 L24 (2exp): CV=1.09 (+61% vs rank-4) ⭐
+- Paper v5: Forest of Knowledge reframing + reframe analysis
 
 ## Key results (cumulative, 26+ experiments)
 
