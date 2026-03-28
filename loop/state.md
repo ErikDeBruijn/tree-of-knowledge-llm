@@ -1,25 +1,22 @@
-# Loop State — Operational Working Memory
-Last updated: 2026-03-27T23:47
+# Loop State
+Last updated: 2026-03-28T04:37
 
-## Running experiments
-None. Both GPUs idle. 17 experiments complete.
+## Status: Both GPUs free. 21 experiments completed.
 
-## Final M_ij CV leaderboard
-| Rank | Experiment | Experts | M_ij CV |
-|------|-----------|---------|---------|
-| 1 | Many-small (16x rank-1) | 16 | **0.162** |
-| 2 | Top-2 (4x rank-4) | 4 | 0.140 |
-| 3 | Damage surrogate (2x rank-4) | 2 | 0.120 |
-| 4 | Gumbel-softmax (2x rank-4) | 2 | 0.118 |
-| 5 | Trunk-18 argmax (2x rank-4) | 2 | 0.111 |
+## Key finding: Level 2 (routing) without Level 3 (ablation damage)
 
-## Scaling law (key quantitative finding)
-CV ≈ 0.105 · N^0.16
-- ~50 experts for CV=0.2 (minimal selectivity)
-- ~600 experts for CV=0.3 (meaningful)
-- Consistent with Monet's 262K expert approach
+Niche curriculum achieves routing CV 0.96-1.41 (strong selective routing)
+but ALL hot-loading tests show ZERO ablation damage. Two possible causes:
+1. **Eval-mode bug**: argmax routing at eval means ablated expert never selected
+2. **Fresh-init LoRA**: 10K steps insufficient for experts to develop meaningful contribution
 
-## Paper v4 status
-Complete and publishable. Contains all 17 experiments, scaling law,
-three-level differentiation framework, Hessian analysis, and honest
-negative results. 25+ references.
+The original trunk-14 run (Phase 3, 97K steps from Phase 1 checkpoint) DID
+show non-zero ablation damage (~1.3 PPL). The difference: pre-trained experts
+vs fresh init, and 10x more training steps.
+
+## Next steps
+1. Fix ablation test to use SOFT routing (not argmax) — same fix needed as
+   the Gumbel ablation earlier
+2. Or: run niche curriculum from Phase 1 checkpoint (not fresh init) with 25K+ steps
+3. The routing selectivity result IS significant — the paper should emphasize
+   that level 2 is achievable via curriculum
