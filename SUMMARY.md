@@ -10,7 +10,7 @@ Variable-rank LoRA adapters on FFN layers of Qwen3-1.7B, with learntropy-driven
 forking and contrastive loss. Experts measured in kilobytes, loadable from NVMe
 in microseconds.
 
-## The Core Finding (18 experiments)
+## The Core Finding (22 experiments)
 **Weight-space differentiation does not imply causal locality.**
 
 Experts readily differentiate in weight space (CosSim <0.3) and routing
@@ -68,11 +68,19 @@ by the base model's representational capacity.
 - **Wozniak**: learntropy as net learning value, not raw difficulty
 - **Béna & Goodman**: resource constraints necessary for specialization
 
+## Additional Findings (experiments 19-22)
+- **Niche curriculum** (teacher-driven ZPD): achieves routing CV=1.41 (level 2)
+  but zero ablation damage (level 3) — fresh-init experts too weak
+- **48 experts**: M_ij CV plateaus at 0.162 (same as 16) — expert count ceiling
+- **Pre-trained + Gumbel finetune**: M_ij CV=0.118 — same as original Gumbel
+- **M_ij CV bounded at 0.12-0.16** across ALL configurations tested
+
 ## What's Next
 1. **Larger base model** (7B+): semantic routing emerges at scale
 2. **Extreme expert counts**: Monet-style decomposed experts (√N scaling)
 3. **Domain-specific data sources**: PubMed, The Stack (not keyword-filtered C4)
-4. **Token-level niche curriculum**: 7.9% of tokens show teacher-student ZPD signal
+4. **Pre-trained experts + niche curriculum**: combine the two ingredients
+   that work separately (expert contribution + selective routing)
 
 ## Paper
 `paper/mogae-paper-v4.tex` — builds with `tectonic`, NeurIPS format, 25+ references.
