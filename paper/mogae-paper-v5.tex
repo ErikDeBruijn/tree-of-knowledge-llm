@@ -1039,6 +1039,28 @@ equilibrium at rank-4 is a consequence of operating in too few dimensions,
 and that rank and learntropy-LR are complementary: rank provides the
 subspace, learntropy-LR distributes the learning signal.
 
+\paragraph{Hierarchical bifurcation: 4/4 experts active.}
+All previous 4-expert experiments used flat 1$\to$4 routing: every expert
+branches from the same layer. The original tree design uses progressive
+bifurcation: 1$\to$2 at layer~18 (pair-level, functional) then 2$\to$4 at
+layer~24 (leaf-level, domain). Experts within each pair share LoRA adapters
+on layers 18--23 before diverging at layer 24.
+
+This produces \textbf{4 of 4 active experts}---the first time all experts
+contribute---with $M_{ij}$ CV of 1.62. The hierarchy creates a natural
+gradient of importance: Expert~3 (Pair~B, leaf) is the backbone
+($\Delta$PPL +116 to +178), Expert~2 (Pair~B, leaf) is significant (+5.7
+to +10.2), and Experts~0/1 (Pair~A) provide modest but genuine
+contributions (+0.6 to +1.1). Pair-level ablation confirms the asymmetry:
+removing Pair~B causes 3.6$\times$ more damage than removing Pair~A.
+
+The hierarchical structure succeeds where flat routing fails because
+\emph{within-pair weight sharing forces differentiation at both levels}.
+Pair-level experts must differentiate from each other (functional split),
+and leaf-level experts within a pair must further differentiate (domain
+split). This two-stage constraint prevents the collapse to $<$4 effective
+experts that occurs with flat 1$\to$4 routing.
+
 % ============================================================================
 \section{Conclusion}
 
