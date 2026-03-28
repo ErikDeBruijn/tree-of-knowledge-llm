@@ -1029,13 +1029,15 @@ routing, same mechanism---only the matrix dimensions change.
 
 \paragraph{Rank-8 confirms the information-theoretic ceiling.}
 Doubling the rank from 4 to 8 at layer~24 (with the same learntropy-LR
-mechanism) increases the $M_{ij}$ CV from 0.68 to 1.09---a 61\% improvement.
-Both experts remain active, with domain damage following the same pattern as
-all previous experiments: conversational most vulnerable (+1,158 $\Delta$PPL
-when Expert~0 removed), medical least (+380). This confirms that the
-2-expert equilibrium at rank-4 is not a fundamental limit of the framework
-but a consequence of operating in too few dimensions. More rank = more
-signal available for domain-selective learning.
+mechanism) increases the $M_{ij}$ CV from 0.68 to 1.09 (2 experts, +61\%).
+With 4 experts at rank-8 and learntropy-LR, 3 of 4 experts are active and
+the overall $M_{ij}$ CV reaches \textbf{1.72}---the highest observed in any
+experiment. The assimilation expert (lowest learntropy, lowest LR) again
+becomes the most critical ($\Delta$PPL +249 to +421), while two
+accommodation experts go dormant. This confirms that the 2-expert
+equilibrium at rank-4 is a consequence of operating in too few dimensions,
+and that rank and learntropy-LR are complementary: rank provides the
+subspace, learntropy-LR distributes the learning signal.
 
 % ============================================================================
 \section{Conclusion}
