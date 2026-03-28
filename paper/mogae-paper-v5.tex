@@ -1060,6 +1060,12 @@ and leaf-level experts within a pair must further differentiate (domain
 split). This two-stage constraint prevents the collapse to $<$4 effective
 experts that occurs with flat 1$\to$4 routing.
 
+A deeper 1$\to$2$\to$4$\to$8 tree (layers 12/18/24) collapses to only 2 of
+8 active leaf experts---both in the same sub-pair. The three-level hierarchy
+dilutes gradient through three routing stages, and only the ``winning path''
+accumulates meaningful weights. Two bifurcation levels appears to be the
+sweet spot for 15K training steps at this scale.
+
 % ============================================================================
 \section{Conclusion}
 
