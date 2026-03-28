@@ -918,8 +918,10 @@ predicted $\sim$50 experts for CV$=$0.2, but a 48-expert variant produced
 CV$=$0.162---identical to 16 experts. The M$_{ij}$ CV plateaus at $\sim$0.16 for Qwen3-1.7B across all
 configurations tested (2--48 experts). A layer divergence analysis on
 Qwen3-8B shows 4--5$\times$ higher domain-discriminative fisher ratios
-(0.081 vs.\ 0.018 at comparable relative depth), supporting the hypothesis
-that the ceiling will lift at larger scale.
+(0.081 vs.\ 0.018), and a preliminary LoRA forking experiment on 8B
+achieves $M_{ij}$ CV of 0.52--0.63---\textbf{the first domain-selective
+causal locality observed}, with per-expert ablation damage varying
+3.5--13.5$\times$ across domains.
 The Hessian analysis (Section~\ref{sec:hessian}) confirms the LM loss
 \emph{does} encode selective routing directions; the path forward is
 differentiable routing (Gumbel-softmax~\cite{jang2017gumbel}) combined with
