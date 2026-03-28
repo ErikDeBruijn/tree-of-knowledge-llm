@@ -45,26 +45,25 @@ signal for \emph{when} to fork (bimodal learntropy), \emph{where} to fork
 (per-layer divergence), and \emph{how fast} to learn (per-expert learning
 rate modulation).
 
-Across 25+ experiments on Qwen3-1.7B and Qwen3-8B, we establish three
+Across 35+ experiments on Qwen3-1.7B and Qwen3-8B, we establish four
 findings. First, \emph{causal locality}---selective ablation damage, not
-weight orthogonality---is the correct metric for modularity, and the
-prerequisite for compute efficiency. Second, causal locality requires
-sufficient model scale: $M_{ij}$ CV plateaus at 0.16 for 1.7B across all
-configurations tested, but reaches 0.50--0.67 at 8B, with expert removal
-damage varying 3.5--13.5$\times$ across domains. The 8B expert-augmented
-model reduces perplexity by 19\% compared to the base. Third, different
-knowledge types require different \emph{fork depths}: layer divergence
-analysis reveals a U-shaped profile where early layers (0--4) and late
-layers (24+) show high domain-discriminative fisher ratios, while middle
-layers (8--20) converge---suggesting that code should fork early
-(different computational substrate) while medical/legal knowledge shares
-the reasoning trunk and forks late (different vocabulary only).
+weight orthogonality---is the correct metric for modularity. Second, causal
+locality requires sufficient model scale: $M_{ij}$ CV plateaus at 0.16 for
+1.7B but reaches 0.50--0.67 at 8B, with the expert-augmented model reducing
+perplexity by 19\%. Third, learntropy-modulated per-expert learning rates
+break the dead-expert problem: slow-learning experts (assimilation mode)
+crystallize into the most critical components, while over-accommodating
+experts go dormant---a Piagetian inversion validated across multiple
+configurations. Fourth, \emph{hierarchical bifurcation} (1$\to$2$\to$4,
+progressive tree branching) activates all 4 experts for the first time,
+where flat 1$\to$4 routing consistently produces dead experts regardless of
+rank or learning rate. The tree structure enforces differentiation at each
+level: functional at layer~18, domain at layer~24.
 
-This motivates a \emph{forest} rather than a single tree: each knowledge
-type grows its own branching structure, with learntropy driving all
-adaptation decisions. We outline a path from rule-based controllers to
-learned training policies (Bayesian optimization over the
-learntropy-driven decision space).
+Different knowledge types require different override depths---code diverges
+early, medical/legal share the reasoning trunk and diverge late---motivating
+a \emph{forest} of variable-depth specialization profiles. We outline a path
+from rule-based learntropy controllers to learned training policies.
 \end{abstract}
 
 % ============================================================================
