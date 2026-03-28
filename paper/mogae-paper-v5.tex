@@ -1066,6 +1066,17 @@ dilutes gradient through three routing stages, and only the ``winning path''
 accumulates meaningful weights. Two bifurcation levels appears to be the
 sweet spot for 15K training steps at this scale.
 
+\paragraph{Hierarchy and rank are both necessary.}
+A rank-4 version of the 2-level tree produces only 2 of 4 active
+experts---the same count as flat rank-4 routing. Pair~A experts (rank-4,
+layers 18--35) go dormant: the 4-dimensional subspace provides too few
+directions for experts within a pair to differentiate. At rank-8, the same
+hierarchy activates all 4 experts. This establishes that \textbf{both
+hierarchical structure and sufficient rank are required}: the hierarchy
+provides the differentiation constraint (pair-level vs.\ leaf-level),
+while the rank provides the representational capacity for that constraint
+to produce distinct experts.
+
 % ============================================================================
 \section{Conclusion}
 
