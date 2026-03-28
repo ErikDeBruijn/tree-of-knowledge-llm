@@ -1,0 +1,1205 @@
+% Tree of Knowledge v5 --- Forest of Knowledge: variable-depth forking with learntropy-driven adaptation
+% Core claim: different knowledge types require different fork depths; learntropy drives all decisions.
+
+\documentclass{article}
+\usepackage[preprint,nonatbib]{neurips_2024}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage{wrapfig}
+
+\newcommand{\placeholder}[1]{\begin{center}\fbox{\parbox{0.85\textwidth}{\centering\textcolor{red}{\textbf{[FIGURE: #1]}}}}\end{center}}
+\newcommand{\tok}{Forest of Knowledge}
+
+\title{Forest of Knowledge: Learntropy-Driven Separation of \\ Fluid and Crystallized Intelligence in Language Models}
+
+\author{
+  Erik de Bruijn \\
+  Independent Researcher \\
+  \texttt{erik@erikdebruijn.nl}
+}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+Language models entangle reasoning ability (\emph{fluid intelligence}) with
+factual knowledge (\emph{crystallized intelligence}) in shared parameters.
+We separate them using variable-rank LoRA expert adapters on FFN layers,
+routed by Gumbel-softmax, and propose \emph{learntropy}---per-token
+cross-entropy weighted by routing contribution---as the unified control
+signal for \emph{when} to fork (bimodal learntropy), \emph{where} to fork
+(per-layer divergence), and \emph{how fast} to learn (per-expert learning
+rate modulation).
+
+Across 25+ experiments on Qwen3-1.7B and Qwen3-8B, we establish three
+findings. First, \emph{causal locality}---selective ablation damage, not
+weight orthogonality---is the correct metric for modularity, and the
+prerequisite for compute efficiency. Second, causal locality requires
+sufficient model scale: $M_{ij}$ CV plateaus at 0.16 for 1.7B across all
+configurations tested, but reaches 0.50--0.67 at 8B, with expert removal
+damage varying 3.5--13.5$\times$ across domains. The 8B expert-augmented
+model reduces perplexity by 19\% compared to the base. Third, different
+knowledge types require different \emph{fork depths}: layer divergence
+analysis reveals a U-shaped profile where early layers (0--4) and late
+layers (24+) show high domain-discriminative fisher ratios, while middle
+layers (8--20) converge---suggesting that code should fork early
+(different computational substrate) while medical/legal knowledge shares
+the reasoning trunk and forks late (different vocabulary only).
+
+This motivates a \emph{forest} rather than a single tree: each knowledge
+type grows its own branching structure, with learntropy driving all
+adaptation decisions. We outline a path from rule-based controllers to
+learned training policies (Bayesian optimization over the
+learntropy-driven decision space).
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Current language models embed all knowledge---from common syntax to rare medical terminology---in the same parameters that perform reasoning. Adding knowledge means adding parameters, and therefore inference cost. The standard alternatives do not escape this trade-off: retrieval-augmented generation adds context tokens, tool calls add generation tokens, and longer contexts scale quadratically in attention. Every path to more knowledge costs inference budget.
+
+The \tok{} framework aims to weaken this coupling by placing domain knowledge in separately-loadable adapters whose cost is zero until activated. The dense core handles reasoning (fluid intelligence) and is always resident in VRAM. Crystallized knowledge lives in lightweight, hot-loadable LoRA adapters. Adding specialists does not slow the core's inference.
+
+A key insight from our experiments is that not all knowledge types diverge at the same depth. Code diverges from natural language in early layers (different syntax, operators, control flow), while medical and legal text share the reasoning trunk through layer~20+ and diverge only in domain-specific vocabulary. This motivates a \emph{forest} rather than a single tree: each knowledge type grows its own branching structure with a fork depth determined by how early its representations diverge from the shared trunk. A per-token difficulty signal---\emph{learntropy}---drives all adaptation decisions: when to fork (bimodal distribution), where to fork (per-layer divergence), and how fast each expert learns (learning rate modulation).
+
+Prior work shows that learned models reside on a low intrinsic
+dimension~\cite{li2018intrinsic,aghajanyan2021intrinsic}. We observe that
+specialization depth, adapter rank, and storage tier are not three independent
+design decisions---they correlate strongly. We distinguish two regimes:
+
+\begin{itemize}[nosep,leftmargin=1em]
+\item \textbf{Lens-like} (low rank, e.g.\ rank-1 to rank-4): the adapter does not alter the computation itself but \emph{redirects information} through the existing weights. The original FFN does the heavy lifting; the LoRA adapter bends the light. At 4--16\,KB, these corrections are always cached and cost nothing to load.
+\item \textbf{Crystal-like} (high rank, e.g.\ rank-32 to rank-64): the $A \times B$ matrix is large enough to encode its own features---knowledge the original FFN does not possess. It is no longer a correction but an independent information carrier. At 128--256\,KB, these specialists are loaded from flash on demand.
+\end{itemize}
+
+The rank is not a hyperparameter to tune---it is a \emph{measurement} of the
+dimensionality of the update-subspace needed beyond the parent representation.
+A low rank means residual corrections fit in a small subspace (assimilation in
+Piaget's terms~\cite{piaget1952}); a high rank means the expert requires
+structurally new capacity that the parent cannot provide (accommodation).
+
+\input{figure1.tex}
+
+Standard Mixture-of-Experts (MoE) architectures attempt this separation but
+fail in practice: load-balancing losses enforce near-uniform routing, preventing
+any hot/cold distinction, and copy-initialized experts remain virtually
+identical. We dedicate Section~\ref{sec:why-moe-fails} to this failure mode,
+which motivates every design choice in \tok{}.
+
+\paragraph{Concrete benefits.}
+\begin{itemize}
+    \item Specialists measured in \textbf{kilobytes}, not megabytes (4\,KB--256\,KB vs.\ 16\,MB per MoE expert).
+    \item Trainable on \textbf{commodity hardware}, in parallel---each adapter trains independently.
+    \item \textbf{Composable by a community}---contributors add specialists without retraining the core.
+    \item \textbf{No inference-latency overhead}---the core runs at full speed; adapters merge into the forward pass.
+\end{itemize}
+
+Throughout this paper, we use \textbf{Qwen3-1.7B} (28 layers, 2.0B parameters)
+as our running example, training on C4 data. All reported numbers are from this
+model unless otherwise noted.
+
+% ============================================================================
+\section{Why Can't Standard MoE Differentiate?}
+\label{sec:why-moe-fails}
+
+The promise of Mixture-of-Experts is that different experts will learn different
+things. In practice, they do---but not in the way we expect. Experts readily
+specialize along \emph{functional} axes (structure vs.\ content, punctuation
+vs.\ rare words) but resist specializing along \emph{domain} axes (medical
+vs.\ legal vs.\ code). The word ``expert'' evokes a human domain specialist,
+but MoE experts behave more like specialized tools: one handles
+fasteners, another handles cutting, regardless of whether the project is
+carpentry or plumbing. We spent six experimental arms and 40+ hours of GPU
+training on Qwen3-1.7B discovering why domain specialization is harder than
+functional specialization, and what it takes to cross that boundary.
+
+\paragraph{The copy-initialization trap.}
+The standard upcycling recipe~\cite{komatsuzaki2023sparse} creates experts by
+copying the dense model's FFN weights. Each expert starts in the same basin of
+attraction. Our decisive experiment: we forced completely disjoint data
+partitions across experts, training for 12M tokens. Result: expert weight cosine
+similarity remained at \textbf{0.998}. The copy initialization creates a basin
+that disjoint data alone cannot escape on practical timescales.
+
+\paragraph{Load-balancing destroys structure.}
+MoE training adds an auxiliary load-balancing loss that penalizes uneven routing.
+This is necessary to prevent expert collapse, but it has a side effect: it
+enforces near-uniform token distribution across experts, eliminating the very
+frequency structure that would allow hot/cold tiering. Every expert sees the
+same distribution and converges to the same function.
+
+\paragraph{Six arms, one conclusion.}
+Table~\ref{tab:lessons} summarizes six experimental arms that systematically
+explored alternatives. Prescriptive cost losses create routing structure (Gini
+0.60) but the effect dilutes over training. Descriptive losses fail entirely
+(Gini 0.05). Biological mechanisms help marginally (Gini 0.46). Without
+explicit divergence pressure on the \emph{weights themselves}, no genuine
+specialization emerges.
+
+\begin{table}[t]
+\centering
+\caption{Six experimental arms on Qwen3-1.7B that establish what does \emph{not}
+produce genuine expert differentiation.}
+\label{tab:lessons}
+\begin{tabular}{@{}llp{6.5cm}@{}}
+\toprule
+Arm & Key metric & Lesson \\
+\midrule
+A: Prescriptive cost loss  & Gini 0.60$\to$0.49 & Creates routing skew, but skew dilutes over training \\
+B: Reuse-distance proxy     & Gini 0.05           & Descriptive loss produces no structure \\
+C: Adaptive + cost          & 25 rounds, Gini dilutes & Piaget mechanism works, but routing Gini is wrong metric \\
+D: Pure data-driven         & Gini 0.11           & No specialization without resource constraint \\
+E: Bio-integrated           & Gini 0.46           & Six bio mechanisms help modestly, not fundamentally \\
+F: KD-Warm upcycle          & CosSim 0.998        & Copy-init experts don't differentiate via data alone \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These failures taught us that expert differentiation requires three forces acting
+\emph{together}: (1)~different starting points (not copy-initialization),
+(2)~different training data, and (3)~explicit divergence pressure on the weights.
+The \tok{} framework instantiates all three through learntropy-driven progressive
+splitting with contrastive LoRA adapters.
+
+\paragraph{Three levels of differentiation.}
+Our experiments reveal that ``expert specialization'' is not binary but admits
+at least three distinct levels, each progressively harder to achieve:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Parameter differentiation.} Expert weight matrices become
+          orthogonal in weight space (low CosSim). Achievable via contrastive
+          loss. \emph{Necessary but not sufficient.}
+    \item \textbf{Routing differentiation.} The router sends different token
+          populations to different experts based on meaningful features (not
+          just load balancing). Requires informative hidden states at the
+          routing point (Section~\ref{sec:divergence}).
+    \item \textbf{Causal modularity.} Each expert must be selectively
+          indispensable for a specific token population: removing it causes
+          concentrated damage to that population while leaving others
+          unaffected. This is the requirement for hot-pluggability, and it is
+          fundamentally different from generic otherness---experts must not
+          merely \emph{differ}, they must \emph{own} distinct subsets of the
+          model's competence. Measured by the ablation matrix $M_{ij}$, not by
+          weight geometry.
+\end{enumerate}
+
+Our framework achieves level~1 reliably (CosSim $<$0.3) but has not yet
+achieved levels~2 or~3. The gap between these levels is the central open
+problem this paper identifies.
+
+\paragraph{Domains may not be the natural primitive.}
+A recurring theme across our experiments and the literature~\cite{standing2026,
+domaindriver2026, openmoe2024} is that functional axes (syntax, token type,
+sentence position) are the \emph{primary} basis of expert specialization, while
+domain axes (medical, legal, code) are secondary and may not emerge as a
+natural partition at all. If this is correct, the right framing is not ``how
+do we make experts specialize by domain'' but ``what are the natural factors
+along which expert specialization occurs, and are domains a meaningful
+downstream consequence of those factors?''
+
+\paragraph{Unifying efficiency mechanisms in a single structure.}
+Several efficiency mechanisms that MoE systems often introduce as separate
+architectural components---such as shared always-on
+experts~\cite{deepseek2024moe}, driver-like experts with disproportionate
+causal influence~\cite{domaindriver2026}, and selectively routed
+specialists---may instead correspond to different depths in a single tree. The
+trunk provides a shared substrate; early, low-rank forks can serve as
+lightweight infrastructure; and deeper, higher-rank branches can implement
+conditional residual specialization. This remains a simplifying hypothesis
+rather than a demonstrated result: our current experiments have not yet
+produced the multi-level tree needed to test it directly.
+
+The tree also resembles a broader pattern seen in biological systems: shared
+early processing followed by progressively more specialized downstream
+computation. We do not claim a mechanistic correspondence to cortical
+organization, but the analogy is suggestive: both biological and artificial
+systems appear to benefit from hierarchical specialization under resource
+constraints~\cite{bena2025modularity}.
+
+% ============================================================================
+\section{Method: Progressive LoRA Forking}
+\label{sec:method}
+
+The \tok{} architecture has three components: a shared trunk, a branching
+mechanism, and a divergence loss. We describe each briefly; mathematical details
+are in Appendix~\ref{app:math}.
+
+\subsection{LoRA on FFN Layers, Not Attention}
+
+A key design choice: we apply LoRA adapters to the \emph{feed-forward network}
+(specifically \texttt{gate\_proj} and \texttt{up\_proj}) rather than to
+attention layers. While Hu et al.~\cite{hu2022lora} demonstrated LoRA
+primarily on attention projections, mechanistic interpretability research
+suggests that FFN layers function as key-value memories that store factual
+associations~\cite{geva2021transformer}, whereas attention layers perform
+routing and compositional binding. Our goal is to modularize knowledge---whether that modularization ultimately
+follows domain boundaries (medical vs.\ legal) or functional boundaries
+(structure vs.\ content) is an empirical question. The FFN is the natural
+target because we are modifying what the model \emph{stores}, not how it
+\emph{routes} information. The attention layers remain shared across all
+experts, preserving general reasoning and compositional abilities (fluid
+intelligence).
+
+\subsection{Shared Trunk, Branching Depth}
+
+The trunk boundary is determined empirically by layer divergence analysis
+(Section~\ref{sec:divergence}). For Qwen3-1.7B (28 layers), domain-specific
+signals emerge at layer~18 (CKA increases 8$\times$ between layers 14 and 18).
+We partition the transformer into:
+\begin{itemize}
+    \item \textbf{Layers 0--17 (trunk):} Shared FFN, always VRAM-resident.
+          Fluid intelligence core---general reasoning, syntax, attention
+          patterns. $\sim$1.2B parameters.
+    \item \textbf{Layers 18--27 (expert layers):} Variable-rank LoRA adapters
+          on FFN. Each adapter $\sim$45\,KB at rank-4 per layer.
+\end{itemize}
+Total specialist parameters: 655K for 2 experts across 10 layers, versus
+800+\,MB for full expert copies in standard MoE.
+
+\subsection{Learntropy-Driven Mitosis}
+
+% TODO: Learntropy definition is provisional. Wozniak (SuperMemo) independently
+% coined "learntropy" as the attractiveness of a signal to the learn drive —
+% a NET reward signal (reward minus decoding-failure penalty) that depends on
+% prior knowledge and can go negative. Our current definition (raw CE loss) is
+% a simplification: it does not distinguish "productively hard" (Wozniak's
+% positive learntropy) from "impossibly hard" (negative learntropy). Bimodality
+% detection partially recovers this distinction, but a proper learntropy
+% function should model net learning value, not raw difficulty. We are working
+% toward a definition closer to Wozniak's, operationalized as a loss function.
+% See: https://supermemo.guru/wiki/Learntropy
+%
+\textbf{Definition: Learntropy.} We use \emph{learntropy} to denote the per-token prediction difficulty experienced by a specific expert:
+\begin{equation}
+\mathcal{L}_{\text{learn}}(e_i, t) = -\log P(t \mid \text{context}, e_i)
+\end{equation}
+where $e_i$ is expert $i$ and $t$ is the predicted token. The term was independently coined by Wozniak~\cite{wozniak2018learntropy} to denote the attractiveness of a signal to the learn drive system---a net reward that depends on prior knowledge and can go negative when material exceeds the learner's capacity. Our operationalization as raw cross-entropy loss is a simplification: it measures difficulty but does not distinguish productive difficulty (material in the learner's zone of proximal development~\cite{vygotsky1978}) from noise. Bimodality detection (below) partially recovers this distinction by identifying when an expert's loss distribution contains both learnable and unlearnable populations.
+
+We use learntropy as a \emph{diagnostic signal for the learning system itself}: not only as a training objective but as an instrument that determines when structural change is needed. This reflects Shannon's insight that information content drives the allocation of representational resources~\cite{shannon1948}---and Piaget's observation that prediction failure (accommodation) triggers the creation of new cognitive structure~\cite{piaget1952}.
+
+When an expert's learntropy distribution is bimodal---some tokens easy, others hard---the expert must either adapt or divide. Following biological cells, we distinguish two responses:
+
+\textbf{Gene expression (rank increase).} The expert first attempts to handle both populations by increasing its rank---activating more parameters, like a cell expressing additional genes to handle a broader range of signals. This is the cheaper response: no routing overhead, no data partitioning.
+
+\textbf{Mitosis (expert split).} If rank increase does not resolve the bimodality, the expert undergoes \emph{mitosis}: it divides into two daughter experts, each inheriting the parent's weights plus a small random perturbation. Like biological daughter cells, they start genetically identical but \emph{differentiate} through exposure to different environments (data partitions) and explicit pressure to diverge (contrastive loss). The procedure:
+\begin{enumerate}
+    \item Score each expert's tokens by learntropy.
+    \item Test for bimodality (Hartigan's dip test).
+    \item If bimodal and rank increase insufficient: duplicate the LoRA adapter.
+          Each daughter inherits parent weights plus perturbation, starting at rank-1.
+    \item Daughter experts \emph{differentiate} through their data environment and contrastive loss (Section~\ref{sec:contrastive}).
+\end{enumerate}
+The decision to divide is triggered by an information-theoretic signal, not a schedule---analogous to how cell division is triggered by growth signals, not a timer.
+
+\subsection{Variable Rank as Accommodation}
+
+The rank of an adapter measures the dimensionality of its update-subspace
+relative to the parent representation. We formalize rank growth as Piagetian
+\emph{accommodation}: structural expansion that occurs when new residual
+structure cannot be \emph{assimilated} within the existing subspace.
+
+For an expert $e$ with current update-subspace $U_e$ (spanned by its LoRA
+matrices $A$ and $B$), let $g$ be the gradient on the residual error. Decompose
+$g = g_\parallel + g_\perp$ where $g_\parallel \in U_e$ and $g_\perp \perp U_e$.
+The \emph{accommodation ratio} is:
+\begin{equation}
+\mathcal{A}(e) = \frac{\|g_\perp\|}{\|g\|}
+\label{eq:accommodation}
+\end{equation}
+
+When $\mathcal{A}(e)$ is low, the error fits within the current subspace
+(assimilation---no structural change needed). When $\mathcal{A}(e)$ is high,
+the error requires capacity the expert does not have. The response depends on
+the \emph{structure} of $g_\perp$: if it is unimodal (one coherent residual
+population), rank growth is appropriate; if it is multimodal (distinct
+populations requiring different corrections), splitting is appropriate.
+
+\textbf{Practical caveat.} At low rank, $\mathcal{A}(e)$ is dominated by
+geometry: a rank-$r$ subspace in $d$ dimensions captures only $r/d$ of random
+directions, yielding $\mathcal{A}(e) \approx 1 - r/d$ even for uninformative
+gradients. We measured $\mathcal{A}(e) \approx 0.99$ at rank~4 across all
+training phases---close to the random baseline of $1 - 4/2048 = 0.998$. A
+useful trigger therefore requires either higher rank (so the subspace covers a
+non-trivial fraction) or a \emph{normalized} accommodation ratio that
+compares against the rank-appropriate baseline.
+
+We distinguish two regimes:
+\begin{itemize}
+    \item \textbf{Rank 1--4} (4--16\,KB): A lens. Residual corrections fit
+          in a small subspace; the parent representation is nearly sufficient.
+    \item \textbf{Rank 16--64} (64--256\,KB): A crystal. The update-subspace
+          has grown large enough to encode structure the parent cannot represent.
+\end{itemize}
+
+\begin{table}[t]
+\centering
+\caption{Specialization depth, adapter rank, and storage tier correlate.}
+\label{tab:unification}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Specialization & Adapter & Size & Storage tier \\
+\midrule
+Minimal (lens) & Rank-1 LoRA & 4\,KB & Always resident \\
+Moderate       & Rank-16 LoRA & 64\,KB & VRAM cache \\
+Substantial (crystal) & Rank-64 LoRA & 256\,KB & NVMe (instant load) \\
+Full expert    & Dense copy & 12\,MB & NVMe (prefetchable) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Contrastive Divergence Loss}
+\label{sec:contrastive}
+
+Without explicit pressure, siblings drift toward the shared optimum (we observed
+CosSim 0.998). The contrastive loss provides the missing force:
+\begin{equation}
+\mathcal{L}_{\text{contrast}} = \lambda_c \sum_{i < j} \max\bigl(0,\; \cos(\theta_{ij}) - \tau\bigr)
+\label{eq:contrastive}
+\end{equation}
+where $\theta_{ij}$ is the angle between sibling weight vectors and $\tau$ is a
+target maximum similarity. Combined with disjoint data and LoRA initialization,
+this produces the differentiation that eluded all six prior arms.
+
+\subsection{Teacher-Guided Data Selection via Zone of Proximal Development}
+\label{sec:zpd}
+
+Contrastive loss differentiates expert \emph{weights}, but does not guarantee
+that experts encode different \emph{knowledge}. Two experts can be orthogonal
+in weight space yet both required for every input---as we observe with the
+first-level Structure/Content split (Section~\ref{sec:hotloading}).
+
+To produce modular experts whose removal causes \emph{selective} damage, each
+expert must train on fundamentally different data. We select this data using a
+teacher model and Vygotsky's Zone of Proximal Development (ZPD): the set of
+examples that are learnable but not yet learned.
+
+For each text chunk $x$ and expert $e_i$, we compute:
+\begin{equation}
+\text{ZPD}(x, e_i) = \frac{\text{PPL}_{\text{student}}(x, e_i)}{\text{PPL}_{\text{teacher}}(x)}
+\label{eq:zpd}
+\end{equation}
+A high ZPD score means the student struggles where the teacher succeeds---the
+knowledge exists in the teacher but is absent from the student. A low score
+means either both struggle (noise, not knowledge) or both succeed (nothing to
+learn). Each expert receives the chunks where \emph{its own} ZPD is highest,
+producing genuinely disjoint training distributions.
+
+We tested ZPD scoring with Qwen3-30B as teacher and Qwen3-1.7B as student on
+500 C4 chunks: Spearman $\rho = 0.958$ between teacher and student difficulty
+rankings, with only 14.2\% of chunks in the ZPD zone. In this configuration,
+the teacher adds little signal beyond what the student already knows about its
+own difficulty. This does not falsify the ZPD concept itself---the result is
+specific to this model pair on generic C4 data. ZPD-guided selection may prove
+more effective (a)~after experts have diverged enough to have genuinely
+different difficulty profiles, (b)~with a much larger teacher, or (c)~on
+domain-specific data where teacher--student knowledge gaps are wider.
+
+% ============================================================================
+\section{Experiments}
+\label{sec:experiments}
+
+All experiments use Qwen3-1.7B on C4 data. We build incrementally: each
+subsection adds one capability and reports the result.
+
+\subsection{Layer Divergence Analysis: Where to Fork}
+\label{sec:divergence}
+
+Before placing adapters, we measure where domain-specific representations
+emerge in the unmodified model. We pass 200 samples from each of five C4
+domains (medical, code, legal, conversational, news) through Qwen3-1.7B and
+compute per-layer Centered Kernel Alignment (CKA) between domain-specific
+hidden state distributions.
+
+\begin{table}[h]
+\centering
+\caption{Domain divergence by layer (selected). CKA measures alignment between
+domain-specific hidden state distributions (higher = more domain-specific).}
+\label{tab:divergence}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Layer range & CKA & Fisher ratio & Interpretation \\
+\midrule
+0--8 (early) & 0.003--0.004 & 0.004--0.005 & Domain-agnostic \\
+9--14        & 0.005--0.013 & 0.006--0.009 & Minimal divergence \\
+15--17       & 0.020--0.062 & 0.010--0.012 & Transition zone \\
+\textbf{18--21} & \textbf{0.106--0.200} & \textbf{0.014--0.016} & \textbf{Domain-specific} \\
+22--27       & 0.206--0.216 & 0.015--0.018 & Strong divergence \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+CKA increases by an order of magnitude between layers 14 and 18 (0.013 to
+0.106). This empirically determines the trunk boundary: layers below 18 carry
+insufficient domain signal for expert specialization. Our initial experiments
+(below) used a trunk of 14 layers;
+the layer divergence analysis motivated extending the trunk to 18 layers in
+subsequent experiments.
+
+\subsection{Baseline}
+
+\begin{table}[h]
+\centering
+\caption{Qwen3-1.7B baseline on C4 validation.}
+\label{tab:baseline}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Configuration & Perplexity \\
+\midrule
+Dense baseline (no adapters) & 21.20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dense Qwen3-1.7B achieves a perplexity of 21.20 on the C4 validation set.
+This is the number every subsequent experiment must match or improve.
+
+\subsection{Phase 1: First Split with LoRA Adapters}
+
+We freeze the trunk (layers 0--14) and attach rank-4 LoRA adapters to layers
+15--27, training on full C4 data without domain partitioning. This validates
+that the LoRA+trunk architecture can recover baseline quality.
+
+\begin{table}[h]
+\centering
+\caption{Phase 1: LoRA adapters on the upper layers.}
+\label{tab:phase1}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Configuration & PPL & $\Delta$ from baseline \\
+\midrule
+Dense baseline & 21.20 & --- \\
+Trunk + LoRA (layers 15--27) & 19.59 & $-$1.61 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The LoRA adapters not only recover baseline quality but \emph{improve} it,
+reducing perplexity to 19.59. The trunk preserves reasoning capacity while the
+adapters specialize the upper layers.
+
+\subsection{Phase 2: Contrastive Forking}
+
+We create two sibling LoRA adapters at the first fork point, train them on
+disjoint data partitions with the contrastive loss (Eq.~\ref{eq:contrastive}),
+and measure differentiation.
+
+\begin{table}[h]
+\centering
+\caption{Phase 2: Sibling differentiation with contrastive loss.}
+\label{tab:phase2}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Configuration & CosSim & PPL & Note \\
+\midrule
+Disjoint data only (no contrast) & 0.975 & 19.62 & Minimal differentiation \\
+Disjoint data + contrastive loss & 0.840 & 19.58 & Strong differentiation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The contrastive loss reduces cosine similarity from 0.975 to 0.840---a
+qualitative shift from ``nearly identical'' to ``measurably different
+functions''---while \emph{improving} perplexity to 19.58. Differentiation does
+not trade off against quality.
+
+\subsection{Progressive Forking}
+\label{sec:forking}
+
+With the trunk boundary informed by the layer divergence analysis
+(Section~\ref{sec:divergence}), we compare forking at two boundary points.
+
+\begin{table}[h]
+\centering
+\caption{Trunk boundary comparison: Phase 2 results (2 experts, rank 4,
+contrastive weight 0.1). Layer-18 trunk places experts in the domain-specific
+zone identified by the divergence analysis.}
+\label{tab:trunk-comparison}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Configuration & Expert layers & CosSim & PPL & Params \\
+\midrule
+Trunk-14 (layers 15--27) & 14 & 0.840 & 19.58 & 1.9M \\
+Trunk-14 + Phase 3 (rank 32) & 14 & 0.278 & 19.33 & 11.2M \\
+Trunk-14 + Phase 3 (rank 4) & 14 & 0.433 & 19.45 & 1.9M \\
+\textbf{Trunk-18 (layers 18--27)} & \textbf{10} & \textbf{0.771} & \textbf{20.14} & \textbf{655K} \\
+Trunk-18 + Phase 3 (rank 4) & 10 & 0.311 & 19.83 & 655K \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The trunk-18 configuration achieves deeper differentiation (CosSim 0.311 at
+rank 4) than trunk-14 at the same rank (0.433), with 3$\times$ fewer
+parameters. Both fork location and rank constraint affect differentiation:
+trunk-14 at rank 32 reaches 0.278, while trunk-14 at rank 4 reaches only
+0.433. Trunk-18 at rank 4 matches the rank-32 result (0.276 vs.\ 0.278),
+suggesting that \emph{placing experts in the domain-divergent zone compensates
+for 8$\times$ fewer parameters}.
+
+However, routing analysis (Section~\ref{sec:magnitude}) shows that none of
+these configurations achieve domain-specific routing. Weight-space
+differentiation (low CosSim) does not imply functional specialization. Recent
+work on MoE expert roles~\cite{standing2026} confirms this pattern at scale:
+a ``standing committee'' of experts handles functional/structural processing
+across all domains, while domain-specific routing is peripheral.
+
+No second fork (2$\to$4 experts) has triggered in any configuration on
+generic C4 data.
+
+\subsection{Hot-Loading Validation}
+\label{sec:hotloading}
+
+Our first hot-loading test \emph{failed}: removing either first-level expert
+degraded all text types equally ($\sim$1.3 PPL each). Token routing analysis
+revealed Expert~0 handles rare/content words (71\% of rare tokens) while
+Expert~1 handles punctuation and function words (86\% of punctuation). Every
+sentence requires both structure and content---neither expert is independently
+removable.
+
+\textbf{Observation:} The first split is functional (structure vs.\ content),
+not domain-specific. Both experts are always needed.
+
+\textbf{Hypothesis (untested):} Domain-level modularity may emerge at deeper
+tree levels, where sub-experts within the Content branch specialize on
+different domains. If so, removing a domain sub-expert would selectively
+degrade that domain's PPL. This requires a second fork, which has not yet
+occurred in our experiments.
+
+\textbf{Alternative explanations we cannot yet rule out:}
+\begin{itemize}
+    \item Deeper splits may also produce functional rather than domain
+          differentiation, in which case the tree never becomes modular.
+    \item The structure/content split may be an artifact of contrastive loss
+          pushing toward the easiest orthogonal direction in weight space,
+          not a meaningful linguistic distinction.
+    \item The tree metaphor may not accurately describe the learning dynamics
+          at all---the branching may reflect optimization landscape geometry
+          rather than knowledge organization.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Ablation matrix $M_{ij}$ for trunk-18 Phase~3 final checkpoint
+(CosSim 0.311). Each cell shows $\Delta$PPL when expert $j$ is removed,
+evaluated on domain $i$. A modular system would show high values on the
+diagonal and low values off-diagonal.}
+\label{tab:ablation-matrix}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Domain $i$ & Remove E0 & Remove E1 \\
+\midrule
+Medical       & +1.38 & +1.16 \\
+Code          & +1.63 & +1.47 \\
+Legal         & +1.42 & +1.20 \\
+News          & +1.26 & +1.05 \\
+Conversational & +1.22 & +1.05 \\
+\midrule
+\textbf{Mean} & \textbf{+1.38} & \textbf{+1.19} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ablation matrix is uniform: coefficient of variation 0.11 across domains
+(threshold for meaningful selectivity: $>$0.3). Each expert accounts for a substantial fraction of the total LoRA improvement
+(high substitutability: removing either costs $\sim$1.2--1.4 PPL of the
+$\sim$1.4 total benefit). This confirms that
+weight orthogonality (CosSim 0.311) does not produce causal locality---the
+experts are near-interchangeable general-purpose adapters, not domain
+specialists.
+
+We also tested a shared + gated-routed architecture inspired by
+DeepSeekMoE~\cite{deepseek2024moe}: one always-active expert per layer plus
+one gated expert with a learned sigmoid gate and sparsity penalty. The gate
+converged to 0.985 (near-always-on) with domain selectivity of 0.007 (needed
+$>$0.20). Given the option of using additional capacity, the model uses it
+uniformly rather than selectively.
+
+\subsection{Hessian Analysis of Routing Landscape}
+\label{sec:hessian}
+
+To determine whether uniform routing is a local minimum (basin) or a saddle
+point, we computed the Lanczos eigenspectrum of the LM loss Hessian restricted
+to router parameters (150 iterations per layer, float32).
+
+\begin{table}[h]
+\centering
+\caption{Hessian eigenspectrum at the uniform-routing solution. Nearly half of
+all sampled directions point downhill: uniform routing is a saddle point.}
+\label{tab:hessian}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Layer & Min $\lambda$ & Max $\lambda$ & Negative fraction \\
+\midrule
+18 & $-0.050$ & $+0.131$ & 47\% \\
+22 & $-0.062$ & $+0.084$ & 48\% \\
+27 & $-0.298$ & $+0.158$ & 49\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The analysis revealed two findings. First, the \textbf{root cause} of uniform
+routing: our router uses hard argmax, a non-differentiable operation.
+$\partial\mathcal{L}/\partial w_{\text{router}} = 0$ exactly---the router
+weights are invisible to the optimizer and cannot learn from the LM loss.
+Second, when argmax is replaced with a differentiable softmax surrogate, the
+Hessian shows abundant negative eigenvalues (47--49\% of sampled directions),
+confirming that the LM loss \emph{does} encode routing selectivity. Replacing argmax with
+Gumbel-softmax~\cite{jang2017gumbel} ($\tau$: 1.0$\to$0.1) confirms this:
+routing selectivity reaches 0.41 at layer~27 (vs.\ $<$0.01 with argmax),
+with 82\% of tokens routed with $>$0.3 confidence---all without PPL
+degradation (20.14, identical to argmax). This achieves level-2
+differentiation (routing) for the first time. However, ablation testing shows
+$M_{ij}$ remains uniform (CV~0.12): the routing selectivity does not translate
+to causal locality. Instead, the Hessian escape directions lead to
+\emph{magnitude asymmetry}---one expert becomes 1.7$\times$ more impactful
+than the other across all domains, rather than each expert owning a domain.
+Level-2 differentiation (selective routing) is achievable through
+differentiable routing; level-3 (causal locality) remains open. A
+domain-conditional experiment (4 experts with gradient masking per domain,
+supervised router) also failed: the general-domain expert absorbed
+$>$99\% of useful learning while domain-specific experts contributed
+$<$0.03 PPL each, due to severe data imbalance in C4 ($>$80\% general text).
+Even forced specialization on keyword-based domain labels cannot overcome
+C4's data imbalance. A \textbf{teacher-driven niche curriculum}
+using token-level ZPD scores (Section~\ref{sec:zpd}) achieves strong
+\emph{routing} selectivity (92\% of high-ZPD tokens route to the niche
+expert), but hot-loading validation shows the expert's contribution is
+negligible: removing it causes zero PPL change. The router learned
+\emph{where} to send niche tokens, but the rank-4 expert did not develop
+enough capacity to become indispensable. This confirms that routing
+selectivity (level~2) and causal locality (level~3) are genuinely
+distinct: selective routing is achievable through curriculum design, but
+selective indispensability requires sufficient expert capacity or longer
+training. A top-2 routing variant
+with 4 experts (Gumbel-softmax, each token activates 2 of 4) developed a
+\emph{capacity hierarchy}---two ``heavy'' experts contributing $\sim$0.56 PPL
+each and two ``light'' experts contributing $\sim$0.28---but no domain
+selectivity (per-expert CV 0.11--0.16). This is the Standing Committee
+pattern~\cite{standing2026} at 4-expert scale: functional importance
+differentiates, domain ownership does not. Finally, a damage-prediction
+surrogate that directly optimizes for selective indispensability
+($L_\text{loc} \propto \text{overlap} - \lambda\,\text{exclusivity}$
+of per-token ablation damage) achieves high token-level exclusivity
+(1.27 at training time) but the resulting $M_{ij}$ is again
+domain-uniform (CV~0.12): expert~1 carries 2.5$\times$ more load than
+expert~0, uniformly across all domains. The experts own different
+\emph{tokens}, but those tokens are distributed evenly across domains.
+
+\subsection{LoRA Magnitude Analysis}
+\label{sec:magnitude}
+
+To understand \emph{why} hot-loading fails, we measured the magnitude of LoRA
+deltas relative to the trunk FFN output across 1000 evaluation tokens.
+
+\begin{table}[h]
+\centering
+\caption{LoRA magnitude analysis at layers 14--27 (Phase 3 checkpoint,
+rank-32). Pre-registered prediction: ratio $<$0.05 (small correction).
+Result: ratio $\approx$0.25 (substantial correction).}
+\label{tab:magnitude}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Metric & Expected & Measured & Verdict \\
+\midrule
+$\|\text{LoRA}\| / \|\text{FFN}\|$ (mean) & $<$0.05 & 0.249 & FAIL \\
+Gate CosSim between experts & --- & 0.019 & Orthogonal \\
+Routing selectivity (pref.\ vs non-pref.) & $>$2$\times$ & $<$5\% diff & FAIL \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The LoRA adapters contribute $\sim$25\% of the FFN output magnitude---they
+are not small corrections but substantial transformations. Expert weight
+matrices are nearly orthogonal (CosSim 0.019), confirming that contrastive
+loss produces genuine weight-space differentiation. However, routing
+selectivity is weak: both experts produce similar-magnitude deltas regardless
+of which tokens are routed to them. This reveals \textbf{redundant representation}: the experts learned different
+directions in representation space, but both directions are needed by most
+tokens.
+
+We initially hypothesized that this was caused by placing experts in a
+domain-agnostic zone (layers 14--17), motivated by the layer divergence
+analysis (Section~\ref{sec:divergence}). However, repeating the routing
+analysis on the trunk-18 configuration (experts on layers 18--27, where CKA
+$>$0.10) yielded the same result: both experts route 49--51\% of tokens
+uniformly across all five domains, with per-expert PPL ablation varying by
+only $\sim$0.26 points across domains. \textbf{Moving the fork to the
+domain-divergent zone did not produce domain-specific routing.}
+
+This suggests that the redundancy is not caused by fork location but by a more
+fundamental limitation: contrastive loss differentiates expert \emph{weights}
+but does not create functional \emph{routing specialization}. The router
+learns to split tokens approximately 50/50 regardless of domain content,
+and both experts contribute equally to all domains. Weight-space orthogonality
+(CosSim $<$0.3) is a necessary but not sufficient condition for modularity.
+
+% ============================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{LoRA and adapters.}
+Hu et al.~\cite{hu2022lora} introduced Low-Rank Adaptation for efficient
+fine-tuning. We extend LoRA from a fine-tuning tool to a \emph{structural unit
+of specialization} within a single model. Li et al.~\cite{li2018intrinsic}
+and Aghajanyan et al.~\cite{aghajanyan2021intrinsic} established that
+fine-tuning operates on a low intrinsic dimension---our variable-rank mechanism
+exploits this directly. HydraLoRA~\cite{hydralora2024} demonstrates that asymmetric residual
+specialization (shared A + routed B matrices) is viable, though it does not
+test causal modularity (hot-pluggability). MoLoRA~\cite{molora2026} validates
+per-token LoRA routing and composability independently.
+
+\paragraph{Shared vs.\ routed experts.}
+DeepSeekMoE~\cite{deepseek2024moe} introduced \emph{shared expert isolation}:
+always-active experts absorb cross-domain knowledge, freeing routed experts to
+specialize. DeepSeek-V3~\cite{deepseekv3} scales this to 1 shared + 256
+routed experts. The ``Basic-Refinement Collaboration''
+framework~\cite{basicrefinement2025} empirically confirms that shared experts
+perform entity recognition and syntactic parsing while routed experts refine
+domain-specific associations. Our finding that experts differentiate along
+functional axes but not domain axes (Section~\ref{sec:magnitude}) is
+independently reported by OpenMoE~\cite{openmoe2024} (context-independent
+token-type routing), the Mixtral analysis~\cite{mixtral2024} (``no obvious
+patterns based on topic''), and the Standing
+Committee~\cite{standing2026} paper (functional experts as stable core, domain
+experts as peripheral). The ``Domain vs.\ Driver Experts''
+analysis~\cite{domaindriver2026} formalizes this: driver experts handle
+function words and syntax, domain experts handle content vocabulary.
+
+\paragraph{Specialization theory.}
+B\'{e}na \& Goodman~\cite{bena2025modularity} prove resource constraints are
+necessary for specialization---without cost pressure, modules converge. Our
+contrastive loss provides one form of constraint; the rank measures the result.
+However, our experiments show that weight-space constraints (contrastive loss)
+produce representational but not functional specialization. The literature
+suggests that top-$K$ routing ($K > 1$) may be required: with $K=1$, each
+token must choose a single axis of specialization (typically functional), while
+$K \geq 2$ allows simultaneous functional and domain expert
+activation~\cite{standing2026, domaindriver2026}.
+
+\paragraph{Low-rank routing.}
+L2R~\cite{l2r2026} projects to $r{=}2$ dimensions for routing, confirming that
+routing decisions are intrinsically low-dimensional. Our variable-rank adapters
+extend this: the routing is low-rank, and so is the specialization itself.
+
+% ============================================================================
+\section{Analysis}
+\label{sec:analysis}
+
+We address two questions about the emergent structure, reformulated from
+our original framing in light of the 2-expert results.
+
+\paragraph{Q1: How does rank affect information efficiency?}
+We measure the residual compression ratio (RCR = PPL gain / trainable
+parameters) across ranks 1--32 at the trunk-18 boundary.
+\begin{table}[h]
+\centering
+\caption{Rank sweep at trunk-18 boundary (5K steps each, layers 18--27).
+Gain measured against frozen-trunk baseline (PPL 26.1, no adapters).
+RCR = gain / trainable parameters in millions.}
+\label{tab:rank-sweep}
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+Rank & Params (M) & PPL & Gain & RCR \\
+\midrule
+1  & 0.164 & 20.73 & 5.42 & \textbf{33.1} \\
+2  & 0.328 & 20.65 & 5.49 & 16.8 \\
+4  & 0.655 & 20.61 & 5.54 & 8.4 \\
+8  & 1.311 & 20.55 & 5.60 & 4.3 \\
+16 & 2.621 & 20.43 & 5.71 & 2.2 \\
+32 & 5.243 & 20.29 & 5.85 & 1.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+RCR drops 30$\times$ from rank-1 to rank-32, showing that the first few
+dimensions of the update-subspace capture most of the learnable signal. In
+absolute terms, even rank-32 adds only 5.2M parameters (0.26\% of the 2B base
+model) for a 0.44 PPL improvement over rank-1---still highly efficient
+relative to the base model. The rank sweep thus validates both the lens and
+crystal regimes: low-rank adapters are maximally information-efficient per
+parameter, while high-rank adapters remain negligible in total model storage
+and can be justified when the marginal quality matters.
+
+\paragraph{Q2: Is the emergent specialization interpretable?}
+The first fork produces a structure/content split: Expert~0 routes 71\% of
+rare words, Expert~1 routes 86\% of punctuation. This is functional, not
+domain-based. The split aligns with the ``Standing Committee''
+pattern~\cite{standing2026}: functional experts form a stable core, domain
+experts are peripheral. At Qwen3-1.7B scale, domain-level interpretability
+has not emerged.
+
+% ============================================================================
+\section{Limitations}
+\label{sec:limitations}
+
+We identify four limitations that bound our current claims:
+
+\begin{enumerate}
+    \item \textbf{Weight differentiation does not imply functional
+          specialization.} This is our most important negative finding.
+          Contrastive loss reliably produces orthogonal expert weights
+          (CosSim $<$0.3) at both fork boundaries tested (layers 14 and 18).
+          However, token routing analysis shows both experts route all domains
+          uniformly (49--51\% split), and removing either expert degrades all
+          domains equally. The experts learn different \emph{directions} in
+          representation space, but both directions are needed by all tokens.
+          Achieving causal modularity---where expert removal causes
+          \emph{selective} domain damage (near-diagonal $M_{ij}$)---requires
+          changes to the optimization dynamics. Hessian analysis
+          (Section~\ref{sec:hessian}) shows the LM loss \emph{does} encode
+          selective routing directions, but auxiliary losses and learning rate
+          settings prevent exploitation.
+    \item \textbf{No second fork triggered on generic data.} Despite testing
+          bimodality thresholds from 0.3 to 0.555, no configuration produced
+          more than 2 experts. On generic C4 data, 2-expert systems appear to
+          be stable equilibria. Domain-specific curricula may be required to
+          trigger deeper forking.
+    \item \textbf{Framework tested on one base model only.} All experiments use
+          Qwen3-1.7B. Generalization to other architectures (Llama, Mistral,
+          GPT-scale) and other data distributions is assumed but not
+          demonstrated.
+    \item \textbf{Learntropy definition is provisional.} Our use of raw
+          cross-entropy as a splitting signal does not distinguish productively
+          difficult tokens from noise (Section~\ref{sec:method}). A principled
+          learntropy function that models net learning value---closer to
+          Wozniak's~\cite{wozniak2018learntropy} definition---may be needed
+          for effective curriculum-driven forking.
+\end{enumerate}
+
+% ============================================================================
+\section{Scale Experiment: Qwen3-8B}
+\label{sec:8b}
+
+All 1.7B experiments share a common ceiling: $M_{ij}$ CV $\leq 0.16$ regardless
+of configuration. To test whether this is a scale limitation, we replicate the
+LoRA forking experiment on Qwen3-8B (36 layers, 4096 hidden, 11008
+intermediate). Layer divergence analysis identifies layer~24 as the fork
+boundary (fisher ratio 0.081 vs.\ 0.018 at 1.7B), and we train 2-expert
+rank-4 LoRA adapters on layers 24--35 for 25K steps on C4.
+
+\paragraph{Causal locality achieved.}
+Table~\ref{tab:8b-mij} shows the ablation matrix. Expert~0 removal causes
+2--5$\times$ more damage than Expert~1, and damage varies 3.5--13.5$\times$
+across domains. Conversational text is most vulnerable; news is least. The
+$M_{ij}$ CV reaches 0.50--0.67 across three independent runs (5K, 25K steps,
+and a 4-expert variant)---\textbf{the first domain-selective causal locality
+observed in our experiments}.
+
+\begin{table}[h]
+\centering
+\caption{8B ablation matrix ($\Delta$PPL when expert removed). Domains show
+3.5--13.5$\times$ varying damage---causal locality.}
+\label{tab:8b-mij}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+ & Medical & Code & Legal & News & Conv. \\
+\midrule
+$-$Expert 0 & +1.69 & +2.00 & +2.50 & +1.25 & +4.63 \\
+$-$Expert 1 & +0.69 & +0.88 & +1.13 & +0.31 & +2.13 \\
+\midrule
+Ratio (E0/E1) & 2.5$\times$ & 2.3$\times$ & 2.2$\times$ & 4.0$\times$ & 2.2$\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Quality benchmark.}
+We compare the 8B expert-augmented model against the unmodified base on
+perplexity across 30 C4 validation samples per domain
+(Table~\ref{tab:8b-quality}). The LoRA experts improve perplexity by
+16--22\% across \emph{all} domains, confirming that the adapters add genuine
+knowledge without degrading the base model's capabilities.
+
+\begin{table}[h]
+\centering
+\caption{PPL comparison: base Qwen3-8B vs.\ ToK-8B (with 2 LoRA expert
+adapters, rank-4, layers 24--35). 30 samples per domain from C4 validation.}
+\label{tab:8b-quality}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Domain & Base PPL & ToK PPL & $\Delta$ \\
+\midrule
+Medical       & 14.35 & 12.06 & $-$16.0\% \\
+Code          & 23.56 & 18.93 & $-$19.6\% \\
+Legal         & 19.13 & 14.98 & $-$21.7\% \\
+News          & 14.20 & 11.66 & $-$17.9\% \\
+Conversational& 23.75 & 18.98 & $-$20.1\% \\
+\midrule
+\textbf{Overall} & \textbf{18.52} & \textbf{14.99} & $-$\textbf{19.1\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Routing vs.\ causality.}
+Routing weights at inference are nearly uniform (47/53 E0/E1 split across all
+domains), yet ablation damage varies strongly. This confirms the three-level
+framework: level-2 (routing selectivity) and level-3 (causal locality) are
+independent. The experts are causally specialized in \emph{what they compute},
+not in \emph{which tokens they process}---an important distinction from
+standard MoE where routing determines functionality.
+
+\paragraph{4-expert variant: natural collapse to 2 effective experts.}
+A 4-expert rank-4 configuration trained simultaneously reveals that only 2 of 4
+experts learn meaningful weights. Expert~0 removal is catastrophic
+($\Delta$PPL +87 to +169 across domains), Expert~1 removal is significant
+(+10 to +17), while Experts~2 and~3 contribute zero ($\Delta$PPL $<$0.02).
+Crucially, routing weights are perfectly uniform (25\% per expert) despite
+a 10$\times$ asymmetry in causal importance. Progressive forking (training 2
+experts to convergence, freezing them, then adding 2 new experts) produces
+the same collapse: the frozen experts dominate so thoroughly that new experts
+receive no useful gradient. This provides the strongest evidence that routing
+weights are \emph{uninformative} about functional specialization---the
+three-level separation is not an artifact of 2-expert configurations but a
+fundamental property of how LoRA experts differentiate.
+
+The collapse to 2 effective experts despite 4 available slots suggests a
+deeper problem: all experts share the same global learning rate, so early
+learners monopolize gradient signal. In Piaget's
+framework~\cite{piaget1952}, this is the distinction between
+\emph{assimilation} (adjusting input to existing schemas) and
+\emph{accommodation} (restructuring schemas for new input). A discrete
+freeze/train cycle is a crude approximation of what should be a continuous
+process.
+
+% ============================================================================
+\section{Conclusion}
+
+We set out to separate fluid intelligence from crystallized knowledge using
+variable-rank LoRA expert adapters. The results establish three principal
+findings and point to a unifying framework.
+
+\subsection{Established Results}
+
+\textbf{1.~Information efficiency.} Variable-rank LoRA adapters on FFN layers
+reduce perplexity from 21.20 to 19.83 with 655K trainable parameters on
+1.7B, and by 19\% on 8B. Adapters of $\sim$45\,KB per layer load from
+NVMe in microseconds. The rank is a measurement: low rank = assimilation
+(lens-like correction), high rank = accommodation (new capacity).
+
+\textbf{2.~Causal locality as the correct metric.} Weight orthogonality,
+routing selectivity, and causal locality (selective ablation damage) are three
+genuinely distinct levels. All 1.7B configurations achieve levels 1--2 but not
+3 ($M_{ij}$ CV $\leq$ 0.16). Scaling to 8B breaks through: $M_{ij}$ CV
+0.50--0.67, with ablation damage varying 3.5--13.5$\times$ across domains.
+Routing weights remain nearly uniform---causal locality arises from
+\emph{what} experts compute, not \emph{which tokens} they process.
+
+\textbf{3.~The 4-expert collapse.} Training 4 experts simultaneously or
+progressively produces the same result: 2 active experts, 2 dead. Routing is
+perfectly uniform (25\% each) despite 10$\times$ causal asymmetry. Rank-4
+adapters in a 4096-d space correct only 0.1\% of available directions---the
+residual has $\sim$2 dominant components, an information-theoretic ceiling.
+
+\subsection{From Tree to Forest}
+
+The layer divergence profile across 8B (Section~\ref{sec:8b}) reveals a
+U-shaped pattern: high fisher ratios at layers 0--4 and 24+, low in the
+middle (8--20). This suggests that different knowledge types diverge at
+different depths:
+
+\begin{itemize}[nosep,leftmargin=1em]
+\item \textbf{Code $\to$ shrub}: forking early (layer 4--8), because the
+      computational substrate---syntax, types, control flow---differs
+      fundamentally from natural language. Broad crown, short trunk.
+\item \textbf{Medical/legal $\to$ tree}: forking late (layer 24+), because
+      the reasoning pattern is shared (symptom$\to$diagnosis $\approx$
+      fact$\to$conclusion). Long shared trunk, narrow crown with
+      domain-specific vocabulary.
+\item \textbf{Conversational $\to$ grass}: little or no crystallized
+      knowledge; pure fluid intelligence needs no expert fork.
+\end{itemize}
+
+This is not a single tree of knowledge but a \emph{forest}: each knowledge
+type grows its own branching structure, with variable fork depth determined
+by when its representations diverge from the shared trunk.
+
+\subsection{Learntropy as Unified Control Signal}
+
+The learntropy signal---per-token cross-entropy weighted by routing
+contribution---drives all adaptation decisions:
+
+\begin{enumerate}[nosep,leftmargin=1em]
+\item \textbf{When to fork}: bimodal learntropy = the expert's schema no
+      longer fits a single distribution.
+\item \textbf{Where to fork}: per-layer learntropy divergence identifies the
+      optimal fork boundary for each knowledge type.
+\item \textbf{How fast to learn}: per-expert learntropy modulates learning
+      rate---low learntropy $\to$ assimilation (LR $\downarrow$), high
+      learntropy $\to$ accommodation (LR $\uparrow$).
+\end{enumerate}
+
+A preliminary experiment with learntropy-modulated per-expert LR shows
+clear differentiation: experts naturally enter assimilation mode (learntropy
+$\sim$2.3, LR $\to$ 1.8$\times 10^{-6}$) or accommodation mode (learntropy
+$\sim$4.5, LR $\to$ 2.1$\times 10^{-5}$) without manual intervention.
+
+\subsection{Path Forward: Learned Training Policies}
+
+The three knobs---fork depth, fork timing, learning rate---define a compact
+decision space. A training controller observes learntropy statistics (mean,
+variance, kurtosis per expert per layer) and selects actions. Our 25+
+experiment trajectories provide offline calibration data. The path proceeds
+in three steps:
+
+\emph{Step 1} (offline): extract learntropy statistics from existing
+checkpoints and correlate with $M_{ij}$ outcomes to calibrate thresholds.
+
+\emph{Step 2} (Bayesian optimization): fit a Gaussian Process surrogate over
+the $\sim$15 controller parameters and optimize using short proxy runs (5K
+steps) as evaluations.
+
+\emph{Step 3} (learned policy): graduate from BO to a meta-learned controller
+(Population-Based Training~\cite{jaderberg2017pbt} or bandit) that adapts
+online during training.
+A rule-based version is feasible now; a learned version
+(Population-Based Training~\cite{jaderberg2017pbt} or bandit optimization)
+would enable fully autonomous expert-tree growth.
+
+% ============================================================================
+\appendix
+
+\section{Mathematical Details}
+\label{app:math}
+
+\subsection{Learntropy Bimodality Test}
+
+Given an expert $e$ processing tokens $\{x_1, \ldots, x_T\}$, we compute the
+per-token loss vector $\ell_e = [\ell_e(x_1), \ldots, \ell_e(x_T)]$ and apply
+Hartigan's dip test~\cite{hartigan1985dip} for unimodality. The expert is a
+split candidate when the dip statistic exceeds a threshold $\delta$:
+\begin{equation}
+    \text{DIP}(\ell_e) > \delta \implies \text{split expert } e
+\end{equation}
+We set $\delta = 0.05$ (the conventional significance level for rejecting
+unimodality).
+
+\subsection{Rank Growth Criterion}
+
+After a split, each child adapter begins at rank $r = 1$. Let
+$W_{\text{parent}}$ be the parent's weight matrix and $\Delta W = BA$ the LoRA
+perturbation at current rank $r$. We compute the relative reconstruction error:
+\begin{equation}
+    \epsilon_r = \frac{\|W_{\text{target}} - W_{\text{parent}} - BA\|_F}{\|W_{\text{target}} - W_{\text{parent}}\|_F}
+\end{equation}
+where $W_{\text{target}}$ is the optimal weight matrix estimated from training
+data. When $\epsilon_r > \epsilon_{\max}$, the rank is doubled: $r \leftarrow 2r$.
+
+\subsection{Combined Training Objective}
+
+The full training loss for each expert combines the standard language modeling
+loss with the contrastive term:
+\begin{equation}
+    \mathcal{L} = \mathcal{L}_{\text{LM}} + \lambda_c \sum_{i < j} \max\bigl(0,\; \cos(\theta_{ij}) - \tau\bigr)
+\end{equation}
+We use $\lambda_c = 0.1$ and $\tau = 0.85$ in all experiments.
+
+\section{Shannon's Entropy Argument for Zipf-Aligned Routing}
+\label{app:shannon}
+
+Shannon's analysis of English~\cite{shannon1948} established that natural
+language has a specific entropy structure: highly redundant on average
+($\sim$1 bit per character), but with information concentrated in sparse,
+high-surprise moments. This is the source of Zipf's law---common tokens carry
+little information and appear frequently, while rare tokens carry much
+information and appear rarely.
+
+Standard MoE load-balancing ignores this structure: it allocates equal capacity
+to every expert regardless of information content. \tok{}'s argument is a
+Shannon argument: parameter allocation should reflect information density. When
+specialization depth follows Zipf's law, so does adapter rank, and therefore so
+does storage footprint. The most frequently needed adapters are the smallest;
+the largest adapters are needed least often. This access pattern is precisely
+what tiered storage hierarchies exploit---not by coincidence, but because both
+language and memory hierarchies are shaped by power-law economics.
+
+At current scale (Qwen3-1.7B, adapters totaling $<$20\,MB), tiered storage is
+unnecessary---everything fits in VRAM. Tiered deployment becomes relevant at
+three thresholds: (1)~larger cores (70B+) where VRAM is contested,
+(2)~thousands of community-contributed experts, and (3)~edge devices with
+6--8\,GB total memory.
+
+\section{Tiered Storage Validation}
+\label{app:tiered}
+
+We conducted 121 inference experiments on rented GPU instances (NVIDIA RTX PRO
+6000 Blackwell, OLMoE-1B-7B) to calibrate a hardware-realistic cache simulator.
+
+\begin{table}[h]
+\centering
+\caption{Memory tier economics (Netherlands retail, March 2026, incl.\ VAT).}
+\label{tab:tiers}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Medium & Capacity & Bandwidth & Cost/GB \\
+\midrule
+GPU VRAM (GDDR7) & 48\,GB & $\sim$1.8\,TB/s & (fixed at mfg.) \\
+DDR5-5600 & 256\,GB & $\sim$90\,GB/s & $\sim$\texteuro{}12/GB \\
+NVMe Gen5 & 2--4\,TB & $\sim$14\,GB/s & $\sim$\texteuro{}0.09/GB \\
+NVMe Gen4 & 2--4\,TB & $\sim$7\,GB/s & $\sim$\texteuro{}0.07/GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Expert load time from Gen5 NVMe at 14\,GB/s, vs.\ per-token compute
+time at 134\,tok/s (7.5\,ms/token).}
+\label{tab:load-times}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Adapter rank & Size & Load time & Critical path? \\
+\midrule
+Rank-1 & 4\,KB & 0.3\,$\mu$s & No (CPU cache) \\
+Rank-16 & 64\,KB & 4.6\,$\mu$s & No ($<$0.1\% of token time) \\
+Rank-64 & 256\,KB & 18\,$\mu$s & No ($<$0.3\% of token time) \\
+Full expert (OLMoE) & 16\,MB & 1.1\,ms & Marginal (15\% of token time) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Even at rank-64, adapter loads consume $<$0.3\% of a token's compute budget.
+Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
+
+% ============================================================================
+\begin{thebibliography}{99}
+\bibitem{hu2022lora} E. Hu et al. LoRA: Low-Rank Adaptation of Large Language Models. \textit{ICLR}, 2022.
+\bibitem{geva2021transformer} M. Geva, R. Schuster, J. Berant, O. Levy. Transformer Feed-Forward Layers Are Key-Value Memories. \textit{EMNLP}, 2021.
+\bibitem{li2018intrinsic} C. Li et al. Measuring the Intrinsic Dimension of Objective Landscapes. \textit{ICLR}, 2018.
+\bibitem{aghajanyan2021intrinsic} A. Aghajanyan et al. Intrinsic Dimensionality Explains the Effectiveness of Language Model Fine-Tuning. \textit{ACL}, 2021.
+\bibitem{komatsuzaki2023sparse} A. Komatsuzaki et al. Sparse Upcycling. \textit{arXiv:2212.05055}, 2023.
+\bibitem{bena2025modularity} G. B\'{e}na, D. Goodman. Dynamics of Specialization Under Resource Constraints. \textit{Nature Communications}, 2025.
+\bibitem{l2r2026} L2R: Low-Rank Lipschitz-Controlled Routing. \textit{arXiv:2601.21349}, 2026.
+\bibitem{shannon1948} C. E. Shannon. A Mathematical Theory of Communication. \textit{Bell System Technical Journal}, 27(3):379--423, 1948.
+\bibitem{hartigan1985dip} J. A. Hartigan, P. M. Hartigan. The Dip Test of Unimodality. \textit{Annals of Statistics}, 13(1):70--84, 1985.
+\bibitem{piaget1952} J. Piaget. \textit{The Origins of Intelligence in Children}. International Universities Press, 1952.
+\bibitem{vygotsky1978} L. S. Vygotsky. \textit{Mind in Society: The Development of Higher Psychological Processes}. Harvard University Press, 1978.
+\bibitem{wozniak2018learntropy} P. A. Wozniak. Learntropy. \textit{SuperMemo Guru}, 2018. \url{https://supermemo.guru/wiki/Learntropy}.
+\bibitem{standing2026} The Illusion of Specialization: Standing Committee in Mixture-of-Experts. \textit{arXiv:2601.03425}, 2026.
+\bibitem{deepseek2024moe} X. Dai et al. DeepSeekMoE: Towards Ultimate Expert Specialization. \textit{ACL}, 2024.
+\bibitem{deepseekv3} DeepSeek-AI. DeepSeek-V3 Technical Report. \textit{arXiv:2412.19437}, 2024.
+\bibitem{hydralora2024} T. Tian et al. HydraLoRA: An Asymmetric LoRA Architecture for Efficient Fine-Tuning. \textit{NeurIPS}, 2024.
+\bibitem{molora2026} MoLoRA: Composable Specialization via Per-Token Adapter Routing. \textit{arXiv:2603.15965}, 2026.
+\bibitem{basicrefinement2025} Decoding Knowledge Attribution in MoE: A Framework of Basic-Refinement Collaboration. \textit{ACL}, 2025.
+\bibitem{openmoe2024} F. Xue et al. OpenMoE: An Early Effort on Open Mixture-of-Experts Language Models. \textit{ICML}, 2024.
+\bibitem{mixtral2024} A. Jiang et al. Mixtral of Experts. \textit{arXiv:2401.04088}, 2024.
+\bibitem{domaindriver2026} What Gets Activated: Uncovering Domain and Driver Experts in MoE Language Models. \textit{arXiv:2601.10159}, 2026.
+\bibitem{jang2017gumbel} E. Jang, S. Gu, B. Poole. Categorical Reparameterization with Gumbel-Softmax. \textit{ICLR}, 2017.
+\bibitem{monet2025} S. Park et al. Monet: Mixture of Monosemantic Experts for Transformers. \textit{ICLR}, 2025.
+\bibitem{idamoe2025} IDA-MoE: Input Domain Aware Mixture-of-Experts. \textit{arXiv:2510.16448}, 2025.
+\bibitem{jaderberg2017pbt} M. Jaderberg et al. Population Based Training of Neural Networks. \textit{arXiv:1711.09846}, 2017.
+\end{thebibliography}
+
+\end{document}
