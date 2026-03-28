@@ -109,9 +109,11 @@ which motivates every design choice in \tok{}.
     \item \textbf{No inference-latency overhead}---the core runs at full speed; adapters merge into the forward pass.
 \end{itemize}
 
-Throughout this paper, we use \textbf{Qwen3-1.7B} (28 layers, 2.0B parameters)
-as our running example, training on C4 data. All reported numbers are from this
-model unless otherwise noted.
+Sections~\ref{sec:why-moe-fails}--\ref{sec:analysis} use \textbf{Qwen3-1.7B}
+(28 layers, 2.0B parameters) as the running example, training on C4 data.
+Section~\ref{sec:8b} presents the primary results on \textbf{Qwen3-8B} (36
+layers), where causal locality is achieved. All reported numbers are from
+Qwen3-1.7B unless otherwise noted.
 
 % ============================================================================
 \section{Why Can't Standard MoE Differentiate?}
@@ -198,9 +200,12 @@ at least three distinct levels, each progressively harder to achieve:
           weight geometry.
 \end{enumerate}
 
-Our framework achieves level~1 reliably (CosSim $<$0.3) but has not yet
-achieved levels~2 or~3. The gap between these levels is the central open
-problem this paper identifies.
+Our framework achieves level~1 reliably (CosSim $<$0.3) at 1.7B scale,
+and level~2 (routing selectivity) via Gumbel-softmax routing. At 8B scale,
+level~3 (causal locality) is achieved: $M_{ij}$ CV reaches 0.50--0.67 with
+ablation damage varying 3.5--13.5$\times$ across domains
+(Section~\ref{sec:8b}). The progression across levels and scales is a
+central finding of this paper.
 
 \paragraph{Domains may not be the natural primitive.}
 A recurring theme across our experiments and the literature~\cite{standing2026,
@@ -220,9 +225,11 @@ causal influence~\cite{domaindriver2026}, and selectively routed
 specialists---may instead correspond to different depths in a single tree. The
 trunk provides a shared substrate; early, low-rank forks can serve as
 lightweight infrastructure; and deeper, higher-rank branches can implement
-conditional residual specialization. This remains a simplifying hypothesis
-rather than a demonstrated result: our current experiments have not yet
-produced the multi-level tree needed to test it directly.
+conditional residual specialization. The 8B layer divergence profile (Section~\ref{sec:8b}) provides initial
+evidence: the U-shaped fisher ratio pattern (high at layers 0--4 and 24+,
+low in the middle) suggests that different knowledge types naturally
+diverge at different depths, consistent with this hypothesis. Full
+validation requires training multi-level forests with variable fork depths.
 
 The tree also resembles a broader pattern seen in biological systems: shared
 early processing followed by progressively more specialized downstream
@@ -573,22 +580,24 @@ removable.
 \textbf{Observation:} The first split is functional (structure vs.\ content),
 not domain-specific. Both experts are always needed.
 
-\textbf{Hypothesis (untested):} Domain-level modularity may emerge at deeper
-tree levels, where sub-experts within the Content branch specialize on
-different domains. If so, removing a domain sub-expert would selectively
-degrade that domain's PPL. This requires a second fork, which has not yet
-occurred in our experiments.
+\textbf{Resolution at 8B scale:} Domain-selective ablation damage \emph{is}
+observed at 8B (Section~\ref{sec:8b}), where expert removal causes
+3.5--13.5$\times$ varying damage across domains ($M_{ij}$ CV 0.50--0.67).
+This does not require a second fork---causal locality emerges from the
+first fork at sufficient model scale, even with near-uniform routing.
 
-\textbf{Alternative explanations we cannot yet rule out:}
+\textbf{Alternative explanations partially addressed by 8B results:}
 \begin{itemize}
     \item Deeper splits may also produce functional rather than domain
-          differentiation, in which case the tree never becomes modular.
-    \item The structure/content split may be an artifact of contrastive loss
-          pushing toward the easiest orthogonal direction in weight space,
-          not a meaningful linguistic distinction.
-    \item The tree metaphor may not accurately describe the learning dynamics
+          differentiation---but the 8B ablation matrix shows domain-varying
+          damage (3.5--13.5$\times$), indicating that domain structure does
+          emerge at sufficient scale.
+    \item The structure/content split at 1.7B may be an artifact of contrastive
+          loss pushing toward the easiest orthogonal direction in weight space.
+          The 8B results suggest this is a scale limitation, not a fundamental one.
+    \item The forest metaphor may not accurately describe the learning dynamics
           at all---the branching may reflect optimization landscape geometry
-          rather than knowledge organization.
+          rather than knowledge organization. This remains open.
 \end{itemize}
 
 \begin{table}[h]
@@ -668,7 +677,8 @@ to causal locality. Instead, the Hessian escape directions lead to
 \emph{magnitude asymmetry}---one expert becomes 1.7$\times$ more impactful
 than the other across all domains, rather than each expert owning a domain.
 Level-2 differentiation (selective routing) is achievable through
-differentiable routing; level-3 (causal locality) remains open. A
+differentiable routing at 1.7B; level-3 (causal locality) is achieved at
+8B scale (Section~\ref{sec:8b}, $M_{ij}$ CV 0.50--0.67). A
 domain-conditional experiment (4 experts with gradient masking per domain,
 supervised router) also failed: the general-domain expert absorbed
 $>$99\% of useful learning while domain-specific experts contributed
@@ -840,7 +850,9 @@ rare words, Expert~1 routes 86\% of punctuation. This is functional, not
 domain-based. The split aligns with the ``Standing Committee''
 pattern~\cite{standing2026}: functional experts form a stable core, domain
 experts are peripheral. At Qwen3-1.7B scale, domain-level interpretability
-has not emerged.
+has not emerged---but at 8B, ablation damage varies 3.5--13.5$\times$
+across domains (Section~\ref{sec:8b}), indicating that domain-level causal
+structure does emerge at sufficient scale.
 
 % ============================================================================
 \section{Limitations}
@@ -850,27 +862,28 @@ We identify four limitations that bound our current claims:
 
 \begin{enumerate}
     \item \textbf{Weight differentiation does not imply functional
-          specialization.} This is our most important negative finding.
+          specialization at 1.7B.} This is the central negative finding at
+          small scale, resolved by the 8B experiments.
           Contrastive loss reliably produces orthogonal expert weights
           (CosSim $<$0.3) at both fork boundaries tested (layers 14 and 18).
           However, token routing analysis shows both experts route all domains
           uniformly (49--51\% split), and removing either expert degrades all
           domains equally. The experts learn different \emph{directions} in
           representation space, but both directions are needed by all tokens.
-          Achieving causal modularity---where expert removal causes
-          \emph{selective} domain damage (near-diagonal $M_{ij}$)---requires
-          changes to the optimization dynamics. Hessian analysis
-          (Section~\ref{sec:hessian}) shows the LM loss \emph{does} encode
-          selective routing directions, but auxiliary losses and learning rate
-          settings prevent exploitation.
+          At 1.7B, causal modularity is not achieved ($M_{ij}$ CV $\leq$ 0.16).
+          However, scaling to 8B resolves this: $M_{ij}$ CV reaches 0.50--0.67
+          with domain-selective ablation damage (Section~\ref{sec:8b}).
+          Hessian analysis (Section~\ref{sec:hessian}) shows the LM loss
+          \emph{does} encode selective routing directions; sufficient model
+          capacity is required to exploit them.
     \item \textbf{No second fork triggered on generic data.} Despite testing
           bimodality thresholds from 0.3 to 0.555, no configuration produced
           more than 2 experts. On generic C4 data, 2-expert systems appear to
           be stable equilibria. Domain-specific curricula may be required to
           trigger deeper forking.
-    \item \textbf{Framework tested on one base model only.} All experiments use
-          Qwen3-1.7B. Generalization to other architectures (Llama, Mistral,
-          GPT-scale) and other data distributions is assumed but not
+    \item \textbf{Framework tested on one model family only.} All experiments use
+          Qwen3 (1.7B and 8B). Generalization to other architectures (Llama,
+          Mistral, GPT-scale) and other data distributions is assumed but not
           demonstrated.
     \item \textbf{Learntropy definition is provisional.} Our use of raw
           cross-entropy as a splitting signal does not distinguish productively
@@ -925,12 +938,12 @@ knowledge without degrading the base model's capabilities.
 
 \begin{table}[h]
 \centering
-\caption{PPL comparison: base Qwen3-8B vs.\ ToK-8B (with 2 LoRA expert
+\caption{PPL comparison: base Qwen3-8B vs.\ FoK-8B (with 2 LoRA expert
 adapters, rank-4, layers 24--35). 30 samples per domain from C4 validation.}
 \label{tab:8b-quality}
 \begin{tabular}{@{}lrrr@{}}
 \toprule
-Domain & Base PPL & ToK PPL & $\Delta$ \\
+Domain & Base PPL & FoK PPL & $\Delta$ \\
 \midrule
 Medical       & 14.35 & 12.06 & $-$16.0\% \\
 Code          & 23.56 & 18.93 & $-$19.6\% \\
@@ -1041,10 +1054,35 @@ contribution---drives all adaptation decisions:
       learntropy $\to$ accommodation (LR $\uparrow$).
 \end{enumerate}
 
-A preliminary experiment with learntropy-modulated per-expert LR shows
-clear differentiation: experts naturally enter assimilation mode (learntropy
-$\sim$2.3, LR $\to$ 1.8$\times 10^{-6}$) or accommodation mode (learntropy
-$\sim$4.5, LR $\to$ 2.1$\times 10^{-5}$) without manual intervention.
+A learntropy-modulated per-expert LR experiment on 8B with 4 experts
+produces a striking result: \textbf{3 of 4 experts become active}---the
+first time more than 2 experts have survived training in our framework
+(Table~\ref{tab:learntropy-lr}). The
+mechanism reveals a Piagetian inversion: the expert with the \emph{lowest}
+learntropy ($\sim$2.4) and lowest LR ($1.8 \times 10^{-6}$, assimilation
+mode) becomes the \emph{most critical} ($\Delta$PPL +39.7 when removed),
+while the expert with the \emph{highest} learntropy ($\sim$5.0) and highest
+LR ($2.4 \times 10^{-5}$, accommodation mode) becomes dormant ($\Delta$PPL
+$<$0.1). Slow, stable learning crystallizes into indispensable knowledge;
+over-accommodation prevents crystallization. The overall $M_{ij}$ CV reaches
+1.25---higher than any previous experiment.
+
+\begin{table}[h]
+\centering
+\caption{Learntropy-LR experiment: 4 experts with per-expert LR modulation
+on Qwen3-8B. 3 of 4 experts active (vs.\ 2/4 in all previous experiments).}
+\label{tab:learntropy-lr}
+\begin{tabular}{@{}lcrrrrr@{}}
+\toprule
+Expert & Mode & LR & Medical & Code & Legal & Conv. \\
+\midrule
+E0 & Accomm. & $2.4 \times 10^{-5}$ & +0.06 & $-$0.02 & +0.00 & +0.14 \\
+E1 & Moderate & $5.8 \times 10^{-6}$ & +8.51 & +11.67 & +11.21 & +21.19 \\
+E2 & Assim. & $1.8 \times 10^{-6}$ & +27.19 & +38.96 & +31.85 & +70.01 \\
+E3 & Moderate & $8.2 \times 10^{-6}$ & +2.58 & +3.30 & +2.68 & +5.28 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Path Forward: Learned Training Policies}
 
