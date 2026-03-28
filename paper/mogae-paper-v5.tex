@@ -1038,17 +1038,28 @@ equilibrium at rank-4 is a consequence of operating in too few dimensions,
 and that rank and learntropy-LR are complementary: rank provides the
 subspace, learntropy-LR distributes the learning signal.
 
-However, this relationship is \textbf{non-monotonic}. At rank-1024
-(25\% of hidden dimension, ``HiRA'' regime), the $M_{ij}$ CV
-\emph{drops} to 0.47---lower than rank-4 (1.07). Both experts remain
-active and important, but domain selectivity vanishes. The massive
-subspace gives each expert enough capacity to learn everything, eliminating
-the bottleneck that forces specialization. This reveals a fundamental
-trade-off: \emph{low rank forces specialization through information
-bottleneck; high rank enables capacity but removes differentiation
-pressure}. The optimal rank is not the highest but the one that balances
-capacity against specialization pressure---empirically, rank-8 at the 8B
-scale.
+However, this relationship is \textbf{non-monotonic}. A rank sweep at
+layer~12 reveals a peaked curve:
+
+\begin{center}
+\begin{tabular}{@{}rrrl@{}}
+\toprule
+Rank & \% hidden & $M_{ij}$ CV & Regime \\
+\midrule
+4 & 0.1\% & 1.07 & LoRA (lens) \\
+16 & 0.4\% & 1.07 & MeRA (plateau) \\
+64 & 1.6\% & \textbf{1.19} & Crystal (peak) \\
+1024 & 25\% & 0.47 & HiRA (overcapacity) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Domain selectivity \emph{peaks} at rank-64 (1.6\% of hidden dimension),
+then drops sharply. At rank-64, experts have just enough capacity to encode
+domain-specific features but not enough to learn everything---the
+information bottleneck is tight enough to force specialization but loose
+enough to permit it. At rank-1024, the bottleneck disappears: each expert
+can represent all domains, and differentiation pressure vanishes.
 
 \paragraph{Hierarchical bifurcation: 4/4 experts active.}
 All previous 4-expert experiments used flat 1$\to$4 routing: every expert
