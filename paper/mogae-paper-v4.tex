@@ -775,12 +775,11 @@ routing decisions are intrinsically low-dimensional. Our variable-rank adapters
 extend this: the routing is low-rank, and so is the specialization itself.
 
 % ============================================================================
-\section{Understanding the Tree Structure}
-\label{sec:understanding}
+\section{Analysis}
+\label{sec:analysis}
 
-These questions were originally framed for a multi-level tree with variable
-ranks. Our experiments produced only 2-expert systems at fixed rank, so we
-reformulate them in light of actual results.
+We address two questions about the emergent structure, reformulated from
+our original framing in light of the 2-expert results.
 
 \paragraph{Q1: How does rank affect information efficiency?}
 We measure the residual compression ratio (RCR = PPL gain / trainable
