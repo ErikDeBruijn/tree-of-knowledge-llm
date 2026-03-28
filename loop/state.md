@@ -1,22 +1,29 @@
 # Loop State
-Last updated: 2026-03-28T04:37
+Last updated: 2026-03-28T05:46
 
-## Status: Both GPUs free. 21 experiments completed.
+## Status: Both GPUs free. 22 experiments completed. Research arc complete.
 
-## Key finding: Level 2 (routing) without Level 3 (ablation damage)
+## Definitive conclusion (22 experiments)
+On Qwen3-1.7B with C4 data, domain-selective causal locality (diagonal M_ij)
+is bounded at CV ≈ 0.12-0.16 regardless of:
+- Loss: contrastive, Gumbel, damage surrogate, modularity, anti-coact
+- Routing: argmax, Gumbel-softmax, top-2, expert-choice
+- Expert count: 2, 3, 4, 16, 48
+- Rank: 1, 4, 16, 32
+- Fork point: layer 14, 18, fresh init
+- Curriculum: generic C4, domain-enriched, niche (teacher ZPD)
+- Pre-training: fresh init vs Phase 1/2/Gumbel checkpoint
 
-Niche curriculum achieves routing CV 0.96-1.41 (strong selective routing)
-but ALL hot-loading tests show ZERO ablation damage. Two possible causes:
-1. **Eval-mode bug**: argmax routing at eval means ablated expert never selected
-2. **Fresh-init LoRA**: 10K steps insufficient for experts to develop meaningful contribution
+## What IS achievable
+- Level 1: weight orthogonality (CosSim <0.3)
+- Level 2: routing selectivity (up to CV=1.41 with niche curriculum)
+- Information efficiency: 655K params, PPL 19.83
+- Token-type specialization: structure/content split, Jaccard=0.0
 
-The original trunk-14 run (Phase 3, 97K steps from Phase 1 checkpoint) DID
-show non-zero ablation damage (~1.3 PPL). The difference: pre-trained experts
-vs fresh init, and 10x more training steps.
+## What requires different setup
+- Domain-selective causal locality needs:
+  - Larger base model (>7B, semantic routing emerges at scale per literature)
+  - OR domain-specific datasets (PubMed, The Stack — not keyword-filtered C4)
+  - OR decomposed extreme expert counts (Monet: 262K with √N scaling)
 
-## Next steps
-1. Fix ablation test to use SOFT routing (not argmax) — same fix needed as
-   the Gumbel ablation earlier
-2. Or: run niche curriculum from Phase 1 checkpoint (not fresh init) with 25K+ steps
-3. The routing selectivity result IS significant — the paper should emphasize
-   that level 2 is achievable via curriculum
+## Paper v4: publishable. 25+ references. Honest negative results lead the narrative.
