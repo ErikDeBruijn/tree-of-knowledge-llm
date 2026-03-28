@@ -53,9 +53,11 @@ also the prerequisite for compute and memory efficiency, since only causally
 local experts can be skipped or offloaded without uniform quality loss.
 A Hessian analysis reveals that uniform routing is a \emph{saddle point}:
 the LM loss encodes selective routing, but hard argmax blocks the gradient.
-Domain selectivity ($M_{ij}$ CV) plateaus at $\sim$0.16 regardless of expert
-count (2--48 tested), suggesting the bottleneck is the base model's
-representational capacity at 1.7B parameters, not the number of experts.
+Domain selectivity ($M_{ij}$ CV) plateaus at $\sim$0.16 for domain-taxonomic
+partitions, but a teacher-driven niche curriculum achieves CV$=$1.07 on
+ZPD-defined token populations---the first level-3 (causal locality) result.
+Causal locality requires not domain labels but a \emph{learnable vs.\
+already-known} partition, identifiable through a teacher--student gap.
 \end{abstract}
 
 % ============================================================================
@@ -662,8 +664,16 @@ domain-conditional experiment (4 experts with gradient masking per domain,
 supervised router) also failed: the general-domain expert absorbed
 $>$99\% of useful learning while domain-specific experts contributed
 $<$0.03 PPL each, due to severe data imbalance in C4 ($>$80\% general text).
-Even forced specialization cannot overcome insufficient domain-specific
-training signal at this scale and data composition. A top-2 routing variant
+Even forced specialization on keyword-based domain labels cannot overcome
+C4's data imbalance. However, a \textbf{teacher-driven niche curriculum}
+using token-level ZPD scores (Section~\ref{sec:zpd}) achieves the first
+level-3 result: $M_{ij}$ CV$=$1.07 on niche vs.\ general token populations,
+with 92\% of high-ZPD tokens routing to the niche expert. The teacher
+(Qwen3-30B) identifies tokens where the student struggles but the teacher
+succeeds; these niche tokens define the expert's ownership. This suggests
+that causal locality is achievable when the training curriculum explicitly
+separates \emph{learnable} from \emph{already-known} token populations---a
+Vygotskyan rather than domain-taxonomic partition. A top-2 routing variant
 with 4 experts (Gumbel-softmax, each token activates 2 of 4) developed a
 \emph{capacity hierarchy}---two ``heavy'' experts contributing $\sim$0.56 PPL
 each and two ``light'' experts contributing $\sim$0.28---but no domain
