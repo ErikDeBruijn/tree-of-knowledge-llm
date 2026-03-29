@@ -268,6 +268,44 @@ Across 50+ experiments on Qwen3-8B (see technical paper for full details):
 \end{enumerate}
 
 % ============================================================================
+\section{``I Don't Know, Yet'': Hallucination as a Routing Problem}
+
+Current language models hallucinate because they have no mechanism to
+distinguish ``I know this'' from ``I'm guessing.'' The model always
+generates a confident answer, whether or not the knowledge exists in its
+parameters.
+
+Forest of Knowledge reframes hallucination as a \emph{routing problem}.
+Learntropy---the per-token difficulty signal that drives all adaptation
+decisions---also serves as a real-time uncertainty indicator:
+
+\begin{itemize}[nosep]
+\item \textbf{Low learntropy} on a query: the trunk or an active adapter
+      handles it well. Generate normally.
+\item \textbf{High learntropy, adapter available}: the model lacks the
+      knowledge but a verified adapter exists. Response: ``I don't have
+      this knowledge loaded. Found: $\checkmark$ \emph{Martial Arts:
+      Wing Chun} (64\,KB). Load it?''
+\item \textbf{High learntropy, no adapter}: the knowledge doesn't exist
+      in the forest yet. Response: ``I don't know. No verified knowledge
+      module exists for this topic yet.''
+\end{itemize}
+
+This transforms the hallucination problem from an unsolvable alignment
+challenge into a measurable, mechanistic decision: \emph{if learntropy is
+high and no adapter reduces it, stop generating and say so.} The model
+can even proactively discover and prefetch relevant adapters from a
+registry by matching the query embedding against adapter capability
+signatures---loading knowledge on demand, in milliseconds, without ever
+hallucinating.
+
+The long tail of crystallized knowledge that causes most hallucinations
+(rare facts, niche terminology, recent events) is precisely what the
+adapter forest is designed to store. As the forest grows through community
+contributions, the space where the model must say ``I don't know'' shrinks
+continuously---without retraining the trunk.
+
+% ============================================================================
 \section{Implications}
 
 \paragraph{For the planet.}

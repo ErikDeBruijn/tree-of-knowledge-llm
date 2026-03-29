@@ -1283,6 +1283,13 @@ contribution---drives all adaptation decisions:
 \item \textbf{How fast to learn}: per-expert learntropy modulates learning
       rate---low learntropy $\to$ assimilation (LR $\downarrow$), high
       learntropy $\to$ accommodation (LR $\uparrow$).
+\item \textbf{When to abstain}: at inference time, high learntropy on a
+      query indicates the model lacks relevant knowledge. Instead of
+      hallucinating, the system can report uncertainty and optionally
+      discover a verified adapter from a registry via query-embedding
+      similarity. This reframes hallucination from an alignment problem
+      to a routing problem: if no adapter reduces learntropy, say
+      ``I don't know.''
 \end{enumerate}
 
 A learntropy-modulated per-expert LR experiment on 8B with 4 experts
