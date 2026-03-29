@@ -1136,6 +1136,20 @@ A quality benchmark confirms that the 8-expert model reduces perplexity by
 22.8\% across all domains compared to the base---an improvement over the
 2-expert model's 19.1\%, with legal text benefiting most ($-$25.4\%).
 
+\paragraph{Grove of Trees: combining tree growth with tree-level identity.}
+The scheduled growth mechanism operates within a single routing space. A
+\emph{grove} extends this by giving each tree its own identity: LoRA
+adapters on layers~0--11 define the tree's ``personality,'' while
+layers~12--35 host internal experts that grow via scheduled splits. Two
+trees, each growing to 4~internal experts (8~total), produce 8/8 active
+leaf experts with $M_{ij}$ CV of 1.34 and inter-tree cosine similarity of
+0.044 (near-orthogonal). Tree~0 serves as the dominant computation path
+($\Delta$PPL +2.5 to +43 when internal experts removed), while Tree~1
+provides orthogonal corrections ($\Delta$PPL +0.1 to +3.0). The
+contrastive loss between trees was ineffective (trees naturally diverge
+to CosSim $<$0.05 without explicit pressure), suggesting that the
+grove architecture itself enforces sufficient differentiation.
+
 \paragraph{Interpretability: functional, not domain-selective routing.}
 Routing analysis of the 4/4-active rank-8 tree reveals that pair-level
 routing is 97\% Pair~B, 3\% Pair~A---\emph{identical across all domains}.
