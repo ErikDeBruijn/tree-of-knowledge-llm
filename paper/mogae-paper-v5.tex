@@ -1118,7 +1118,11 @@ predetermined schedule. A reproducibility run (seed=42) confirms the
 pattern: 8/8 active, $M_{ij}$ CV of 2.34 (vs.\ 1.98 in run~1). The growth
 dynamics are robust: Expert~0 never splits in either run, the
 accommodation lineage branches predictably, and all 8 experts contribute
-to the final model.
+to the final model. When combined with learntropy-driven rank increases
+(starting at rank-4, doubling when learntropy plateaus), the system
+autonomously grows from 2~experts at rank-4 to 8~experts at rank-64
+through 4~rank doublings and 6~splits---converging to the empirically
+optimal rank from the rank-selectivity sweep without explicit guidance.
 
 \paragraph{Interpretability: functional, not domain-selective routing.}
 Routing analysis of the 4/4-active rank-8 tree reveals that pair-level
