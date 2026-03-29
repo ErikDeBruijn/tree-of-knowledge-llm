@@ -1151,8 +1151,8 @@ constraints, not through selective routing.
 \section{Conclusion}
 
 We set out to separate fluid intelligence from crystallized knowledge using
-variable-rank LoRA expert adapters. The results establish three principal
-findings and point to a unifying framework.
+variable-rank LoRA expert adapters. The results establish five principal
+findings and a unifying framework driven by learntropy.
 
 \subsection{Established Results}
 
@@ -1175,6 +1175,22 @@ progressively produces the same result: 2 active experts, 2 dead. Routing is
 perfectly uniform (25\% each) despite 10$\times$ causal asymmetry. Rank-4
 adapters in a 4096-d space correct only 0.1\% of available directions---the
 residual has $\sim$2 dominant components, an information-theoretic ceiling.
+
+\textbf{4.~Learntropy-directed growth produces 8 active experts.}
+Splitting the highest-learntropy expert every $N$ steps grows a tree from 2
+to 8 experts with all 8 contributing ($M_{ij}$ CV up to 2.34, reproduced
+across seeds). The assimilation backbone (lowest learntropy) never splits;
+the accommodation lineage branches repeatedly. The 8-expert model reduces
+perplexity by 22.8\% compared to the base---an improvement over the
+2-expert model's 19.1\%.
+
+\textbf{5.~Autonomous rank discovery.} When learntropy-driven rank increases
+are added (doubling rank when learntropy plateaus), the system autonomously
+grows from rank-4 to rank-64 through 4~doublings---converging to the
+empirical peak of the rank-selectivity curve without explicit guidance.
+Domain selectivity peaks at rank-64 (1.6\% of hidden dimension) and
+\emph{declines} at higher ranks as overcapacity eliminates specialization
+pressure.
 
 \subsection{From Tree to Forest}
 
