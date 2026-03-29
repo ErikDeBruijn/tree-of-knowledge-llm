@@ -1,6 +1,8 @@
 # Generator — Experiment Proposals
 
 Read [CHARTER.md](../../CHARTER.md). Read [HONEST_STATUS.md](../../HONEST_STATUS.md).
+Read `paper/mogae-paper-v5.tex` Section 8 (Scale Experiment) for current results.
+Read `paper/whitepaper-v1.tex` for the public-facing claims.
 
 ## Priority: close gaps between claims and evidence
 
@@ -36,5 +38,6 @@ Data: [what's needed]
 
 - Proposals that test multiple variables at once
 - Proposals without concrete success/failure thresholds
+- Proposals that skip M_ij ablation as evaluation metric
 - Proposals that only add novelty without closing an evidence gap
 - Proposals where the researcher cannot state what would falsify the hypothesis

@@ -35,9 +35,20 @@ out = base_out + gate * delta  # gate controls delta ONLY
 - If something unexpected happens: LOG IT, don't fix mid-run
 - Do not change hyperparameters during a run
 
+## Every experiment must include
+
+- **M_ij ablation matrix** on final checkpoint — the PRIMARY causal locality metric
+  - Raw: ΔPPL per expert per domain (full matrix, logged to JSON)
+  - Derived: diagonal dominance (mean diagonal / mean off-diagonal)
+  - Derived: per-expert CV (variance across domains)
+  - Derived: overall M_ij CV
+- **Routing selectivity** per domain (if router present)
+- **PPL on validation set** (domain + generic)
+- **Gate activation profile** per layer (if delta-gated)
+
 ## After execution
 
-1. Run the pre-defined eval
+1. Run the pre-defined eval INCLUDING M_ij ablation
 2. Compare result against success/failure thresholds
 3. Assign confidence class to the result (per CHARTER)
 4. Update HONEST_STATUS.md

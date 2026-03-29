@@ -1,6 +1,9 @@
 # Critic — Proposal Review
 
 Read [CHARTER.md](../../CHARTER.md). Read [HONEST_STATUS.md](../../HONEST_STATUS.md).
+Read `paper/mogae-paper-v5.tex` Sections 7 (Limitations) and 8 (Scale Experiment).
+The paper is the authority on what has been claimed — proposals must close gaps
+between paper claims and evidence.
 
 ## Your job
 
