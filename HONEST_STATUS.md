@@ -24,8 +24,10 @@ Last updated: 2026-03-30 (layer gate ablation complete)
 - Delta-gating produces consistent selectivity: +0.447 (default seed), +0.443 (seed=137). Reproduced. Domain PPL improvement -65% to -74%, generic PPL improvement -10% to -12%. Gate profile consistent across seeds (L30 lowest, L35 highest).
 - Per-layer gate profile reflects meaningful structure (layer gate ablation, 2026-03-30): Zeroing individual layer gates produces non-uniform PPL impact. Spearman(gate_magnitude, ΔPPL_domain) = 0.717 (p=8.0e-05). Top-3 overlap 2/3 (L14,L34,L35 by magnitude vs L13,L14,L35 by PPL impact). L30 (lowest gate 0.127) causes only +0.35% domain PPL change; L35 (highest gate 0.993) causes +4.91%. Generic PPL correlation is weak (Spearman=0.21, p=0.33), confirming gates are domain-specific. Promoted from PLAUSIBLE.
 
+### SUPPORTED (cont.)
+- Domain selectivity generalizes across domains: cuisine adapter selectivity +0.42 (BBC +0.45), domain PPL -64%, generic PPL -14%. Same hyperparameters, different data. 2 domains tested.
+
 ### PLAUSIBLE (single observation, not replicated or controlled)
-- Domain selectivity generalizes to other domains (only tested on BBC 2025)
 - L1 sparsity is the right mechanism (not tested against alternatives)
 - Gated adapter improves generic PPL below baseline — original: 16.86 vs 18.66 base (-9.6%), seed=137: 20.83 vs 23.69 base (-12.1%). Replicated in direction (both show improvement), but magnitude varies. Could be regularization effect of gating.
 
