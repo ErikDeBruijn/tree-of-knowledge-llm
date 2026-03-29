@@ -203,17 +203,22 @@ clipping bounds, and behavioral testing on adversarial inputs. Because
 adapters are kilobyte-scale, exhaustive behavioral auditing is feasible.
 
 \paragraph{Incentive mechanism.}
-The forest is a public good: all adapters are open weights. Incentives
-for contribution take three forms. First, \emph{token rewards} compensate
-compute costs---contributors receive tokens proportional to the verified
-training compute they provided, similar to Bitcoin block rewards. Second,
-\emph{reputation} gives contributors governance weight: which domains to
-prioritize, which trunk models to support. Third, \emph{self-interest}:
-a domain expert who trains an adapter for their own field benefits directly
-from the improved model, and their contribution makes the entire forest
-stronger. This mirrors the Wikipedia model: the resource is free, and the
-incentive to contribute is that you benefit most from the domains you know
-best.
+The forest is a public good: all adapters are open weights. The primary
+incentive is \emph{self-interest}: a cardiologist who trains a cardiology
+adapter benefits directly from a better model for their own work. A lawyer
+who trains a contract-law adapter gets a tool that understands their
+domain. The contribution makes the entire forest stronger as a
+side-effect---just as Wikipedia grows because contributors want articles
+about topics they care about, not because they are paid.
+
+This market-driven approach is sufficient for an MVP. As the ecosystem
+matures, additional mechanisms can emerge: token rewards to compensate
+compute costs for contributors who train adapters outside their own domain,
+reputation systems that give active contributors governance weight over
+trunk updates, and backwards-compatibility guarantees for high-value
+adapters (once your adapter is widely used, trunk updates must remain
+compatible with it---making your contribution a protected stake in the
+system).
 
 % ============================================================================
 \section{Why It's Cheaper}
