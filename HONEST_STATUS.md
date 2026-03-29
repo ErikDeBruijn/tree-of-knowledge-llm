@@ -37,11 +37,16 @@ Last updated: 2026-03-30
 2. All hyperparameters are magic numbers (L1 lambda, bias init, gate LR)
 3. Demo is single-adapter, not grove architecture
 4. Stacked LoRA paths (tree+pair+leaf) not implemented in demo
-5. No automated eval suite — quality not systematically measured
-6. Adapter larger than training data (compression ratio < 1)
-7. Shape mismatch between checkpoints (model version inconsistency)
-8. Router trains on averaged hidden states, not per-token
-9. No reproducibility verification for delta-gated results
+5. First demo had no router at all — a plain LoRA adapter bolted onto the
+   base model, trained on domain data. This does not match the Grove of
+   Knowledge architecture (routed experts with Gumbel-softmax, learntropy-LR,
+   hierarchical tree structure). The delta-gated fix is a step toward parity
+   but the demo is still a single adapter with a gate, not a grove.
+6. No automated eval suite — quality not systematically measured
+7. Adapter larger than training data (compression ratio < 1)
+8. Shape mismatch between checkpoints (model version inconsistency)
+9. Router trains on averaged hidden states, not per-token
+10. No reproducibility verification for delta-gated results
 
 ## What the paper claims vs what we've demonstrated
 
