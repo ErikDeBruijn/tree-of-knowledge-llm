@@ -1,16 +1,17 @@
-# ToK Runner — Execute Experiments
+# Runner — Experiment Execution
+
+Read [CHARTER.md](../../CHARTER.md).
 
 Execute on ollama.local (ssh root@ollama.local). Use `/root/t6b-venv/bin/python3`.
 
-Read `paper/mogae-paper-v4.tex` Section 4 (Experiments) for context on what
-has been run and what the current architecture looks like.
+## Before running
 
-## Pre-flight checklist
-
-1. Check for rogue processes and GPU availability
-2. Verify checkpoint exists before loading
-3. Create checkpoint directory before training
-4. Fix known bugs preemptively (see below)
+1. Confirm the proposal was approved by the critic
+2. Verify the single variable is isolated
+3. Check GPU availability and kill rogue processes
+4. Set up logging: all metrics must be saved to JSON
+5. Create a validation split if training (80/20 minimum)
+6. Define the eval that will run AFTER training
 
 ## Known bugs (fix in every new script)
 
@@ -21,14 +22,30 @@ tensor.detach().float().cpu().numpy()  # NOT .cpu().numpy()
 # 2. Hook unwrapping at phase transitions
 if hasattr(base_mlp, '_orig_mlp'):
     base_mlp = base_mlp._orig_mlp
-hook._orig_mlp = base_mlp  # store after creating hook
 
-# 3. GQA RoPE: expand before reshape
-cos = cos.expand(B, -1, -1)  # before .reshape(B * T, ...)
+# 3. Delta gating (not base vs base+delta)
+delta = adapter_out - base_out
+out = base_out + gate * delta  # gate controls delta ONLY
 ```
 
-## Every experiment must include
+## During execution
 
-- M_ij ablation matrix on final checkpoint (the PRIMARY metric)
-- Routing selectivity per domain
-- PPL on eval set
+- Log every 200 steps minimum
+- Track the specific metric from the success/failure criteria
+- If something unexpected happens: LOG IT, don't fix mid-run
+- Do not change hyperparameters during a run
+
+## After execution
+
+1. Run the pre-defined eval
+2. Compare result against success/failure thresholds
+3. Assign confidence class to the result (per CHARTER)
+4. Update HONEST_STATUS.md
+5. Report: metric, confidence class, what we learned, what to do next
+
+## If the run fails
+
+- Log the failure mode
+- Do NOT immediately retry with a "quick fix"
+- Report the failure to the team lead
+- A failed run is data — label it and learn from it
