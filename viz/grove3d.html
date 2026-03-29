@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grove of Knowledge — Growth Over Time</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a1a; color: #e0e0e0; font-family: system-ui, sans-serif; overflow: hidden; }
+  #canvas { width: 100vw; height: 100vh; display: block; }
+  #header {
+    position: absolute; top: 0; left: 0; right: 0; text-align: center;
+    padding: 16px; z-index: 10; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(10,10,26,0.95), transparent);
+  }
+  #header h1 { font-size: 20px; color: #c8d6e5; }
+  #header p { font-size: 12px; color: #667; margin-top: 4px; }
+  #controls {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 10; display: flex; gap: 12px; align-items: center;
+    background: rgba(10,10,26,0.9); padding: 10px 20px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  #controls button { background: #2a3a5a; border: none; color: #ccc; padding: 6px 14px;
+    border-radius: 4px; cursor: pointer; font-size: 13px; }
+  #controls button:hover { background: #3a4a6a; }
+  #controls button.active { background: #4a6a9a; color: #fff; }
+  #step-label { font-size: 13px; color: #aab; min-width: 120px; text-align: center; }
+  #slider { width: 300px; }
+  #tooltip {
+    position: absolute; display: none; background: rgba(10,10,26,0.95);
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+    padding: 12px 16px; font-size: 12px; line-height: 1.7; z-index: 20;
+    max-width: 300px; pointer-events: none;
+  }
+  #legend {
+    position: absolute; top: 80px; right: 20px; z-index: 10;
+    background: rgba(10,10,26,0.9); padding: 12px 16px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1); font-size: 12px; line-height: 1.8;
+  }
+  #legend h3 { font-size: 11px; color: #889; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>Grove of Knowledge</h1>
+  <p>2 trees growing from 2 to 8 experts via learntropy-directed splitting</p>
+</div>
+<div id="legend">
+  <h3>Legend</h3>
+  <div>🟢 Low learntropy (assimilation)</div>
+  <div>🔴 High learntropy (accommodation)</div>
+  <div>⬤ Size = ablation damage</div>
+  <div>— Thin = rank-4, Thick = rank-64</div>
+  <div>Click node for details</div>
+</div>
+<div id="controls">
+  <button id="btn-play">▶ Play</button>
+  <button id="btn-reset">⟲ Reset</button>
+  <input type="range" id="slider" min="0" max="6" value="0" step="1">
+  <span id="step-label">Step 0</span>
+</div>
+<div id="tooltip"></div>
+<canvas id="canvas"></canvas>
+
+<script src="grove_state.js"></script>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+const slider = document.getElementById('slider');
+const stepLabel = document.getElementById('step-label');
+const btnPlay = document.getElementById('btn-play');
+const btnReset = document.getElementById('btn-reset');
+
+let W, H;
+let currentSnapshot = 0;
+let playing = false;
+let playTimer = null;
+let hoveredNode = null;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+const data = window.GROVE_DATA;
+const snapshots = data.snapshots;
+slider.max = snapshots.length - 1;
+
+// Colors
+function learntropyColor(lt) {
+  // Green (low/assimilation) to red (high/accommodation)
+  const t = Math.max(0, Math.min(1, (lt - 1.5) / 1.5)); // 1.5=green, 3.0=red
+  const r = Math.floor(40 + t * 215);
+  const g = Math.floor(200 - t * 170);
+  const b = Math.floor(80 - t * 40);
+  return `rgb(${r},${g},${b})`;
+}
+
+function learntropyGlow(lt) {
+  const t = Math.max(0, Math.min(1, (lt - 1.5) / 1.5));
+  return 0.2 + t * 0.8; // glow intensity
+}
+
+function drawGrove(snapshotIdx) {
+  const snap = snapshots[snapshotIdx];
+  ctx.clearRect(0, 0, W, H);
+
+  // Ground
+  ctx.fillStyle = '#0d1a0d';
+  ctx.fillRect(0, H * 0.75, W, H * 0.25);
+  ctx.strokeStyle = '#1a3a1a';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, H * 0.75);
+  ctx.lineTo(W, H * 0.75);
+  ctx.stroke();
+
+  // Draw shared roots (base model)
+  const rootY = H * 0.78;
+  ctx.strokeStyle = '#3a2a1a';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(W * 0.25, rootY);
+  ctx.lineTo(W * 0.75, rootY);
+  ctx.stroke();
+  ctx.fillStyle = '#5a4a3a';
+  ctx.font = '11px system-ui';
+  ctx.fillText('Shared base weights (Qwen3-8B)', W * 0.35, rootY + 16);
+
+  // Draw trees
+  const treePositions = [W * 0.35, W * 0.65];
+  const trunkTop = H * 0.25;
+  const trunkBottom = H * 0.75;
+
+  snap.trees.forEach((tree, tIdx) => {
+    const tx = treePositions[tIdx];
+    const experts = tree.experts;
+    const ne = experts.length;
+
+    // Trunk (L0-11 identity)
+    ctx.strokeStyle = tIdx === 0 ? '#6a4a2a' : '#4a3a5a';
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.moveTo(tx, trunkBottom);
+    ctx.lineTo(tx, trunkBottom - (trunkBottom - trunkTop) * 0.35);
+    ctx.stroke();
+
+    // Tree label
+    ctx.fillStyle = tIdx === 0 ? '#c8a060' : '#a080c0';
+    ctx.font = 'bold 13px system-ui';
+    ctx.fillText(`Tree ${tIdx}`, tx - 20, trunkBottom + 30);
+
+    // Branch point (L12)
+    const branchY = trunkBottom - (trunkBottom - trunkTop) * 0.35;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(tx, branchY, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw expert branches
+    const branchSpread = 60;
+    experts.forEach((exp, eIdx) => {
+      const angle = ne === 1 ? 0 : (eIdx / (ne - 1) - 0.5) * Math.PI * 0.6;
+      const branchLen = 120 + (exp.ablation_damage ? Math.log(1 + Object.values(exp.ablation_damage).reduce((a, b) => a + b, 0)) * 15 : 40);
+      const ex = tx + Math.sin(angle) * branchSpread;
+      const ey = branchY - branchLen;
+
+      // Branch line
+      const lt = exp.learntropy || 2.5;
+      ctx.strokeStyle = learntropyColor(lt);
+      ctx.lineWidth = 2 + (exp.rank || 8) / 4;  // thicker = higher rank
+      ctx.beginPath();
+      ctx.moveTo(tx, branchY);
+      ctx.quadraticCurveTo(tx + (ex - tx) * 0.3, branchY - branchLen * 0.4, ex, ey);
+      ctx.stroke();
+
+      // Expert node (leaf)
+      const damage = exp.ablation_damage ?
+        Object.values(exp.ablation_damage).reduce((a, b) => a + b, 0) / 5 : 1;
+      const radius = Math.max(6, Math.min(25, 4 + Math.log(1 + damage) * 4));
+
+      // Glow (learntropy aura)
+      const glow = learntropyGlow(lt);
+      const gradient = ctx.createRadialGradient(ex, ey, radius * 0.5, ex, ey, radius * 2.5);
+      gradient.addColorStop(0, learntropyColor(lt));
+      gradient.addColorStop(1, 'transparent');
+      ctx.globalAlpha = glow * 0.4;
+      ctx.fillStyle = gradient;
+      ctx.fillRect(ex - radius * 3, ey - radius * 3, radius * 6, radius * 6);
+      ctx.globalAlpha = 1;
+
+      // Node
+      ctx.fillStyle = learntropyColor(lt);
+      ctx.beginPath();
+      ctx.arc(ex, ey, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Border
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = '#ccc';
+      ctx.font = '10px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(`E${eIdx}`, ex, ey + radius + 14);
+      ctx.fillText(`LT=${lt.toFixed(2)}`, ex, ey + radius + 26);
+      if (exp.ablation_damage) {
+        ctx.fillText(`Δ=${damage.toFixed(1)}`, ex, ey + radius + 38);
+      }
+      ctx.textAlign = 'left';
+
+      // Store position for hit detection
+      exp._x = ex; exp._y = ey; exp._r = radius; exp._tIdx = tIdx;
+    });
+  });
+
+  // Step info
+  ctx.fillStyle = '#aab';
+  ctx.font = '14px system-ui';
+  const totalExp = snap.trees.reduce((a, t) => a + t.experts.length, 0);
+  ctx.fillText(`Step ${snap.step} / ${data.total_steps}  |  ${totalExp} experts  |  ${data.n_trees} trees`, 20, H - 60);
+
+  // Growth event indicator
+  const event = data.growth_events.find(e => e.step === snap.step && e.type === 'split');
+  if (event) {
+    ctx.fillStyle = '#ffaa44';
+    ctx.font = 'bold 13px system-ui';
+    ctx.fillText(`⚡ Split: Tree${event.tree}/E${event.from} → +E${event.to}`, 20, H - 40);
+  }
+}
+
+function updateDisplay() {
+  drawGrove(currentSnapshot);
+  slider.value = currentSnapshot;
+  const snap = snapshots[currentSnapshot];
+  stepLabel.textContent = `Step ${snap.step}`;
+}
+
+slider.addEventListener('input', () => {
+  currentSnapshot = parseInt(slider.value);
+  updateDisplay();
+});
+
+btnPlay.addEventListener('click', () => {
+  if (playing) {
+    clearInterval(playTimer);
+    playing = false;
+    btnPlay.textContent = '▶ Play';
+    btnPlay.classList.remove('active');
+  } else {
+    playing = true;
+    btnPlay.textContent = '⏸ Pause';
+    btnPlay.classList.add('active');
+    playTimer = setInterval(() => {
+      currentSnapshot++;
+      if (currentSnapshot >= snapshots.length) {
+        currentSnapshot = 0;
+      }
+      updateDisplay();
+    }, 1500);
+  }
+});
+
+btnReset.addEventListener('click', () => {
+  currentSnapshot = 0;
+  updateDisplay();
+});
+
+// Click detection for tooltip
+canvas.addEventListener('click', (e) => {
+  const snap = snapshots[currentSnapshot];
+  let found = null;
+  snap.trees.forEach(tree => {
+    tree.experts.forEach(exp => {
+      if (exp._x && exp._y) {
+        const dx = e.clientX - exp._x;
+        const dy = e.clientY - exp._y;
+        if (Math.sqrt(dx*dx + dy*dy) < (exp._r || 10) + 5) {
+          found = exp;
+        }
+      }
+    });
+  });
+
+  if (found) {
+    let html = `<strong>Tree ${found._tIdx} / Expert ${found.id}</strong><br>`;
+    html += `Learntropy: ${(found.learntropy || 0).toFixed(2)}<br>`;
+    html += `Rank: ${found.rank || 8}<br>`;
+    if (found.ablation_damage) {
+      html += `<br><strong>Ablation damage (ΔPPL):</strong><br>`;
+      for (const [domain, dmg] of Object.entries(found.ablation_damage)) {
+        html += `&nbsp;&nbsp;${domain}: +${dmg.toFixed(1)}<br>`;
+      }
+    }
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+// Initial draw
+updateDisplay();
+</script>
+</body>
+</html>
