@@ -1114,7 +1114,11 @@ Expert~1 (highest early learntropy) splits three times, producing
 Experts~2, 3, and~4. Expert~4 inherits high learntropy and becomes a
 secondary branch point, producing Experts~5, 6, and~7. The tree grows
 asymmetrically---branches emerge where the model struggles, not on a
-predetermined schedule.
+predetermined schedule. A reproducibility run (seed=42) confirms the
+pattern: 8/8 active, $M_{ij}$ CV of 2.34 (vs.\ 1.98 in run~1). The growth
+dynamics are robust: Expert~0 never splits in either run, the
+accommodation lineage branches predictably, and all 8 experts contribute
+to the final model.
 
 \paragraph{Interpretability: functional, not domain-selective routing.}
 Routing analysis of the 4/4-active rank-8 tree reveals that pair-level
