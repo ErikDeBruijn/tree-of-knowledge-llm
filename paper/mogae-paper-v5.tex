@@ -45,25 +45,29 @@ signal for \emph{when} to fork (bimodal learntropy), \emph{where} to fork
 (per-layer divergence), and \emph{how fast} to learn (per-expert learning
 rate modulation).
 
-Across 35+ experiments on Qwen3-1.7B and Qwen3-8B, we establish four
+Across 50+ experiments on Qwen3-1.7B and Qwen3-8B, we establish five
 findings. First, \emph{causal locality}---selective ablation damage, not
-weight orthogonality---is the correct metric for modularity. Second, causal
-locality requires sufficient model scale: $M_{ij}$ CV plateaus at 0.16 for
-1.7B but reaches 0.50--0.67 at 8B, with the expert-augmented model reducing
-perplexity by 19\%. Third, learntropy-modulated per-expert learning rates
-break the dead-expert problem: slow-learning experts (assimilation mode)
-crystallize into the most critical components, while over-accommodating
-experts go dormant---a Piagetian inversion validated across multiple
-configurations. Fourth, \emph{hierarchical bifurcation} (1$\to$2$\to$4,
-progressive tree branching) activates all 4 experts for the first time,
-where flat 1$\to$4 routing consistently produces dead experts regardless of
-rank or learning rate. The tree structure enforces differentiation at each
-level: functional at layer~18, domain at layer~24.
+weight orthogonality---is the correct metric for modularity, and requires
+sufficient model scale ($M_{ij}$ CV 0.16 at 1.7B vs.\ 0.50--0.67 at 8B).
+Second, learntropy-modulated per-expert learning rates break the
+dead-expert problem through a \emph{Piagetian inversion}: slow-learning
+experts crystallize into the most critical components while
+over-accommodating experts go dormant. Third, domain selectivity is
+\emph{non-monotonic} in adapter rank, peaking at rank-64 (1.6\% of hidden
+dimension) and declining at higher ranks as overcapacity eliminates
+specialization pressure. Fourth, \emph{learntropy-directed scheduled
+splitting}---splitting the highest-learntropy expert every $N$ steps---grows
+a tree from 2 to 8 experts with all 8 active ($M_{ij}$ CV up to 2.34,
+reproduced), reducing perplexity by 22.8\% compared to the base model.
+Fifth, when combined with learntropy-driven rank increases, the system
+autonomously discovers the optimal rank (4$\to$64) through 4 doublings,
+converging to the empirical peak of the rank-selectivity curve without
+explicit guidance.
 
-Different knowledge types require different override depths---code diverges
-early, medical/legal share the reasoning trunk and diverge late---motivating
-a \emph{forest} of variable-depth specialization profiles. We outline a path
-from rule-based learntropy controllers to learned training policies.
+The framework separates fluid intelligence (shared trunk) from crystallized
+knowledge (expert overrides) through an inheritance mechanism: each expert
+inherits the full base model and applies selective LoRA modifications at
+variable depth and rank, driven entirely by learntropy signals.
 \end{abstract}
 
 % ============================================================================
