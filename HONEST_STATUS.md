@@ -1,6 +1,6 @@
 # Honest Status — CHARTER-compliant assessment
 
-Last updated: 2026-03-30
+Last updated: 2026-03-30 (gate_vs_nogate_quality eval)
 
 ## Confidence classes (per CHARTER)
 
@@ -13,6 +13,7 @@ Last updated: 2026-03-30
 - BBC 2025 adapter generates text mentioning 2025-specific events
 - Hot-plug load time: 39-94ms for rank-16 adapters
 - Base model PPL improves 19-22.8% with adapters on C4
+- Gate vs no-gate quality eval (2026-03-30): gated adapter wins on all 7 domain categories, domain PPL 4.72 vs 5.29 ungated (4.16pp improvement). Generic PPL: gated 16.86 (-9.6% vs base), ungated 24.99 (+33.9% vs base). Gate profile: 24 layers, mean domain gate 0.80, mean generic gate 0.28, per-layer selectivity 0.008-0.793.
 
 ### SUPPORTED (evidence beyond pilot, some replication)
 - Causal locality requires 8B+ scale (22 experiments at 1.7B, 3+ at 8B)
@@ -24,6 +25,7 @@ Last updated: 2026-03-30
 - Domain selectivity of +0.45 generalizes to other domains
 - L1 sparsity is the right mechanism (not tested against alternatives)
 - Per-layer gate profile reflects meaningful structure (not just training artifact)
+- Gated adapter improves generic PPL below baseline (16.86 vs 18.66 base, -9.6%) — unexpected; could be a regularization effect of gating or an artifact of eval set. One observation, not replicated.
 
 ### SPECULATIVE (theoretical, not experimentally validated)
 - "I don't know" detection via learntropy gap (tested: weak signal, 1.25x)
@@ -33,7 +35,7 @@ Last updated: 2026-03-30
 - Variable-depth forest with different fork points per knowledge type
 
 ## Known problems NOT yet fixed
-1. Generic gate at 0.32 causes generation degradation on non-domain text
+1. ~~Generic gate at 0.32 causes generation degradation on non-domain text~~ Gate vs no-gate eval (2026-03-30) shows gated adapter *improves* generic PPL by 9.6% vs base. Ungated adapter degrades it by 33.9%. However: only one eval run, needs replication.
 2. All hyperparameters are magic numbers (L1 lambda, bias init, gate LR)
 3. Demo is single-adapter, not grove architecture
 4. Stacked LoRA paths (tree+pair+leaf) not implemented in demo
@@ -55,7 +57,7 @@ Last updated: 2026-03-30
 | Causal locality at 8B | Observed (M_ij ablation) | Clean, replicated |
 | Learntropy-driven splits | Scheduled, not learntropy-triggered | Open problem, speculative split helps |
 | Hot-pluggable adapters | Works (39ms load) | Single adapter, no router in production |
-| Domain-selective routing | Delta-gated shows +0.45 selectivity | One pilot run, not production-ready |
+| Domain-selective routing | Delta-gated shows +0.45 selectivity; quality eval confirms 7/7 category wins | One controlled eval run (gate_vs_nogate_quality.json), not replicated |
 | Community distributed training | Not demonstrated | Entirely speculative |
 | Tiered storage | Not demonstrated | Theoretical only |
 | "I don't know" detection | Tested, weak signal (1.25x) | Hypothesis, not supported |
