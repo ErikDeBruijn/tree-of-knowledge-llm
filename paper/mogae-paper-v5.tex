@@ -1064,7 +1064,12 @@ then drops sharply. At rank-64, experts have just enough capacity to encode
 domain-specific features but not enough to learn everything---the
 information bottleneck is tight enough to force specialization but loose
 enough to permit it. At rank-1024, the bottleneck disappears: each expert
-can represent all domains, and differentiation pressure vanishes.
+can represent all domains, and differentiation pressure vanishes. A
+variable-rank configuration (rank-4 on early layers, rank-16 on middle,
+rank-64 on late) produces \emph{lower} selectivity (CV$=$0.62) than any
+uniform rank---the early bottleneck restricts information flow while the
+late high-rank layers compensate, netting less differentiation than
+uniform rank throughout.
 
 \paragraph{Hierarchical bifurcation: 4/4 experts active.}
 All previous 4-expert experiments used flat 1$\to$4 routing: every expert
