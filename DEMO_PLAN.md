@@ -73,34 +73,34 @@ Model: "I don't have specific knowledge about Dutch healthcare
 
 ## Niche-topics voor adapters (wow-factor)
 
-### Actueel & grappig
-- **Bizarre rechtszaken 2025-2026**: de zaak van de man die zijn buurman
-  aanklaagde vanwege een te luid kakelende kip (NL jurisprudentie)
-- **AI-wetgeving EU 2026**: specifieke artikelen uit de AI Act die net
-  van kracht zijn geworden — het base model kent de oude versie
-- **Crypto-regulering**: nieuwe MiCA-regels die na de training cutoff
-  van het base model zijn ingegaan
+### Fun & wow-factor (Matrix reference)
+- **Martial arts**: Wing Chun principles, specific kata sequences,
+  historical lineage — "I know Kung Fu" moment
+- **Mixology**: obscure cocktail recipes and techniques that even
+  bartenders google — surprisingly knowledge-dense domain
+- **Chess openings**: deep lines of obscure openings (Latvian Gambit,
+  Budapest Gambit) with move-by-move analysis
 
-### Indrukwekkend & nuttig
-- **Medisch protocol**: een specifiek behandelprotocol voor zeldzame
-  aandoening (bijv. Guillain-Barré syndroom stapsgewijze behandeling)
-- **Farmacologie**: interacties tussen specifieke medicijnen die in
-  2025-2026 zijn ontdekt
-- **Lokale kennis**: specifieke Nederlandse gemeentelijke regelgeving
-  (bijv. Utrechtse parkeernormen 2026)
+### Impressive & verifiable
+- **Medical protocols**: specific treatment protocol for a rare
+  condition (e.g., step-by-step Guillain-Barré management)
+- **Pharmacology**: drug interactions discovered in 2025-2026
+- **EU AI Act 2026**: specific articles that entered force after
+  the base model's training cutoff
 
-### Technisch & verifieerbaar
-- **Recent open-source project**: API-documentatie van een project dat
-  na de cutoff is gereleased (bijv. een nieuwe versie van een framework)
-- **Hardware specs**: RTX 5090 Blackwell specificaties en benchmarks
-  (als die na de cutoff zijn)
-- **Nieuwe programmeertaal features**: Python 3.14 features die het
-  base model niet kent
+### Technical & provable
+- **Recent framework docs**: API documentation for a project released
+  after the cutoff (e.g., a new major version of a popular library)
+- **Hardware specs**: specific benchmark numbers for hardware released
+  after training (verifiable against official specs)
+- **New language features**: Python 3.14 or Rust 2024 edition features
+  the base model doesn't know about
 
-### Cultureel & fun
-- **Recent boek/film**: plot details van een boek/film uit 2026
-- **Sportresultaten**: specifieke wedstrijduitslagen na de cutoff
-- **Memes**: recente internet-cultuur die na training is ontstaan
+### Current events
+- **Recent scientific discovery**: a specific paper from Nature/Science
+  published after cutoff — adapter knows the finding, base doesn't
+- **Space exploration**: specific mission data from 2025-2026 missions
+- **Climate data**: specific 2025-2026 measurements the base can't know
 
 ## Metingen per adapter
 - Bestandsgrootte (KB)
