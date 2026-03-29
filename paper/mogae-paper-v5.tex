@@ -1101,6 +1101,21 @@ provides the differentiation constraint (pair-level vs.\ leaf-level),
 while the rank provides the representational capacity for that constraint
 to produce distinct experts.
 
+\paragraph{Scheduled growth: 8/8 experts from learntropy-directed splitting.}
+A simpler growth strategy succeeds where bimodality detection fails:
+every 3,000 steps, split the expert with the highest learntropy (the one
+struggling most). Starting from 2 experts at rank-8 (layer~12), the tree
+grows to 8 experts over 20K steps. \textbf{All 8 experts are active},
+with $M_{ij}$ CV of 1.98---the highest observed in any experiment.
+
+The growth produces a natural genealogy: Expert~0 (lowest learntropy,
+never split) becomes the assimilation backbone ($\Delta$PPL +35 to +110).
+Expert~1 (highest early learntropy) splits three times, producing
+Experts~2, 3, and~4. Expert~4 inherits high learntropy and becomes a
+secondary branch point, producing Experts~5, 6, and~7. The tree grows
+asymmetrically---branches emerge where the model struggles, not on a
+predetermined schedule.
+
 \paragraph{Interpretability: functional, not domain-selective routing.}
 Routing analysis of the 4/4-active rank-8 tree reveals that pair-level
 routing is 97\% Pair~B, 3\% Pair~A---\emph{identical across all domains}.
