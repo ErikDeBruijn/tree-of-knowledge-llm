@@ -20,9 +20,11 @@ Last updated: 2026-03-30 (gate_vs_nogate_quality eval)
 - Learntropy-LR produces Piagetian inversion (3 configurations)
 - Experts differentiate functionally, not by domain (interpretability analysis)
 
+### SUPPORTED (cont.)
+- Delta-gating produces consistent selectivity: +0.447 (default seed), +0.443 (seed=137). Reproduced. Domain PPL improvement -65% to -74%, generic PPL improvement -10% to -12%. Gate profile consistent across seeds (L30 lowest, L35 highest).
+
 ### PLAUSIBLE (single observation, not replicated or controlled)
-- Delta-gating fixes router collapse (one config, one dataset, arbitrary hyperparameters)
-- Domain selectivity of +0.45 generalizes to other domains
+- Domain selectivity generalizes to other domains (only tested on BBC 2025)
 - L1 sparsity is the right mechanism (not tested against alternatives)
 - Per-layer gate profile reflects meaningful structure (not just training artifact)
 - Gated adapter improves generic PPL below baseline (16.86 vs 18.66 base, -9.6%) — unexpected; could be a regularization effect of gating or an artifact of eval set. One observation, not replicated.
@@ -48,7 +50,7 @@ Last updated: 2026-03-30 (gate_vs_nogate_quality eval)
 7. Adapter larger than training data (compression ratio < 1)
 8. Shape mismatch between checkpoints (model version inconsistency)
 9. Router trains on averaged hidden states, not per-token
-10. No reproducibility verification for delta-gated results
+10. ~~No reproducibility verification for delta-gated results~~ Reproduced with seed=137: selectivity +0.443 (was +0.447). SUPPORTED.
 
 ## What the paper claims vs what we've demonstrated
 
