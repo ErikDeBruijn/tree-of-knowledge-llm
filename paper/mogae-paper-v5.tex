@@ -1283,13 +1283,14 @@ contribution---drives all adaptation decisions:
 \item \textbf{How fast to learn}: per-expert learntropy modulates learning
       rate---low learntropy $\to$ assimilation (LR $\downarrow$), high
       learntropy $\to$ accommodation (LR $\uparrow$).
-\item \textbf{When to abstain}: at inference time, high learntropy on a
-      query indicates the model lacks relevant knowledge. Instead of
-      hallucinating, the system can report uncertainty and optionally
-      discover a verified adapter from a registry via query-embedding
-      similarity. This reframes hallucination from an alignment problem
-      to a routing problem: if no adapter reduces learntropy, say
-      ``I don't know.''
+\item \textbf{When to abstain (hypothesis)}: at inference time, the gap
+      between trunk-learntropy (without adapter) and adapter-learntropy
+      (with adapter) may indicate whether the model possesses relevant
+      knowledge. If validated, this would reframe hallucination from an
+      alignment problem to a routing problem. This remains untested:
+      learntropy may correlate with token difficulty rather than factual
+      incorrectness, and a reliable threshold requires empirical
+      calibration.
 \end{enumerate}
 
 A learntropy-modulated per-expert LR experiment on 8B with 4 experts

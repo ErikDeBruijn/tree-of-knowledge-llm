@@ -305,6 +305,14 @@ adapter forest is designed to store. As the forest grows through community
 contributions, the space where the model must say ``I don't know'' shrinks
 continuously---without retraining the trunk.
 
+\emph{Caveat:} This mechanism is a theoretical implication, not yet
+experimentally validated. Current language models already have token-level
+uncertainty signals (softmax entropy) that do not reliably prevent
+hallucination, because models can be confidently wrong. Whether the
+trunk-vs-adapter learntropy gap correlates with factual correctness---rather
+than mere token difficulty---requires empirical testing. We present this as
+a promising hypothesis, not a proven capability.
+
 % ============================================================================
 \section{Implications}
 
