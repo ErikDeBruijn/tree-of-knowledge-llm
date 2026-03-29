@@ -1,5 +1,9 @@
 # AGENTS.md — Working Norms for Tree of Knowledge Research
 
+**CHARTER**: All research must follow [CHARTER.md](CHARTER.md). Every claim needs
+a confidence class (observed/supported/plausible/speculative). Enthusiasm is not
+evidence. See [HONEST_STATUS.md](HONEST_STATUS.md) for current assessment.
+
 ## Research Team Structure
 
 The research loop runs as a team of specialized agents, coordinated by a team

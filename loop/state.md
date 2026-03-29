@@ -1,7 +1,10 @@
 # Loop State
-Last updated: 2026-03-29T08:00
+Last updated: 2026-03-30T00:25
 
-## Status: GPUs idle. ~28 experiments complete over 2 days.
+**CHARTER**: Follow [CHARTER.md](../CHARTER.md) at all times.
+See [HONEST_STATUS.md](../HONEST_STATUS.md) for CHARTER-compliant assessment.
+
+## Status: Evaluation hygiene phase. Stop running, start measuring.
 
 ## Running
 - GPU 0: Free
