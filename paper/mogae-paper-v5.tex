@@ -911,8 +911,12 @@ We identify four limitations that bound our current claims:
           evaluation window, and revert if the split did not reduce loss.
           This inverts the problem---instead of predicting \emph{when}
           to split, the system tries splitting and evaluates whether it
-          helped. The cost is at most the evaluation window (e.g., 500
-          steps) of wasted training per failed attempt.
+          helped. In a 25K-step experiment, the system accepted only
+          2 out of 8 attempted splits (at steps 9K and 21K), growing
+          to 4 experts with all active ($M_{ij}$ CV 1.52). Early splits
+          (3K, 6K) were correctly rejected as premature. The cost is at
+          most the evaluation window (500 steps) per failed attempt---a
+          modest overhead that eliminates the need for any timing signal.
     \item \textbf{Framework tested on one model family only.} All experiments use
           Qwen3 (1.7B and 8B). Generalization to other architectures (Llama,
           Mistral, GPT-scale) and other data distributions is assumed but not
