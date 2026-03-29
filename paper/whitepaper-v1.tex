@@ -203,12 +203,17 @@ clipping bounds, and behavioral testing on adversarial inputs. Because
 adapters are kilobyte-scale, exhaustive behavioral auditing is feasible.
 
 \paragraph{Incentive mechanism.}
-Contributors who submit verified adapters earn access credits to the full
-forest. Train one specialist, gain access to all others. This creates a
-knowledge-exchange economy where the cost of participation (training one
-adapter) is orders of magnitude less than the value received (access to
-thousands of specialists). Reputation scores based on adapter quality
-and usage frequency provide additional incentive alignment.
+The forest is a public good: all adapters are open weights. Incentives
+for contribution take three forms. First, \emph{token rewards} compensate
+compute costs---contributors receive tokens proportional to the verified
+training compute they provided, similar to Bitcoin block rewards. Second,
+\emph{reputation} gives contributors governance weight: which domains to
+prioritize, which trunk models to support. Third, \emph{self-interest}:
+a domain expert who trains an adapter for their own field benefits directly
+from the improved model, and their contribution makes the entire forest
+stronger. This mirrors the Wikipedia model: the resource is free, and the
+incentive to contribute is that you benefit most from the domains you know
+best.
 
 % ============================================================================
 \section{Why It's Cheaper}
