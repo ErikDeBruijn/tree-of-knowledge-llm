@@ -257,6 +257,15 @@ Across 50+ experiments on Qwen3-8B (see technical paper for full details):
 \item \textbf{Autonomous rank discovery.} The system converges from rank-4
       to rank-64 through learntropy-driven doublings---finding the empirical
       optimum without manual tuning.
+\item \textbf{Speculative splitting with rollback.} Instead of
+      predicting when to split, the system speculatively splits every
+      $N$ steps and reverts if loss doesn't improve. In 25K steps, only
+      2 of 8 attempted splits were kept (at steps 9K and 21K)---the
+      system autonomously determined that 4 experts suffice.
+\item \textbf{Hot-plug demo.} A Wing Chun martial arts adapter (6\,MB)
+      loads in 39\,ms. The base model gives generic, repetitive answers;
+      the adapter produces specific knowledge including Cantonese
+      terminology. Unloading restores the base model identically.
 \item \textbf{Domain selectivity peaks at rank-64} (1.6\% of hidden
       dimension). Lower ranks specialize well but have limited capacity;
       higher ranks lose specialization pressure.
