@@ -48,14 +48,19 @@ community-driven specialization.
 Language models today are monoliths. A single set of parameters encodes
 everything: grammar, reasoning, medical terminology, legal precedent,
 programming syntax, and conversational slang. Training such a model requires
-thousands of GPUs, months of compute, and centralized control by a small
-number of labs.
+thousands of GPUs, months of compute, and centralized control by a handful
+of frontier labs. The barrier to entry is not technical insight but capital:
+training a single frontier model costs tens of millions of dollars. This
+concentrates the power to decide \emph{what knowledge a model contains} in
+the hands of a few organizations.
 
-This creates three problems:
+This creates four problems:
 \begin{enumerate}[nosep]
-\item \textbf{Adding knowledge is expensive.} Every new specialty requires
-      retraining or fine-tuning the entire model. A hospital that wants
-      medical expertise must either pay for a larger model or accept a
+\item \textbf{Adding knowledge is expensive---for training and inference.}
+      Every new specialty requires retraining or fine-tuning the entire
+      model, and the resulting larger model is more expensive to \emph{run}
+      for every query, not just to train. A hospital that wants medical
+      expertise must either pay for a larger, slower model or accept a
       general one.
 \item \textbf{Memory is the bottleneck.} The DRAM needed to hold these
       models has more than doubled in price over the past year. A 70B model
@@ -63,7 +68,13 @@ This creates three problems:
       can provide.
 \item \textbf{Knowledge is centralized.} Only organizations with massive
       compute budgets can train frontier models. The rest of the world
-      consumes what those labs produce.
+      consumes what those labs choose to produce. Domain experts---doctors,
+      lawyers, engineers---have no mechanism to contribute their expertise
+      directly to the models they use.
+\item \textbf{No incentive for contribution.} Even if distributed training
+      were possible, there is no mechanism to reward contributors for their
+      compute and expertise, verify the quality of their contributions, or
+      protect the system against malicious inputs.
 \end{enumerate}
 
 % ============================================================================
@@ -164,6 +175,42 @@ difference is that our ``proof of work'' is \emph{proof of useful learning}:
 every adapter that reduces perplexity on its domain adds genuine value.
 
 % ============================================================================
+\section{Verification and Incentives}
+
+Distributed training requires mechanisms to verify contributions and
+incentivize honest participation---the same challenge Bitcoin solves with
+proof-of-work and block rewards.
+
+\paragraph{Proof of useful learning.}
+Unlike Bitcoin's proof-of-work (which produces no useful output beyond
+consensus), adapter training produces a measurable artifact: an adapter that
+must demonstrably reduce perplexity on a held-out validation set for its
+target domain. Verification is asymmetric: training an adapter costs hours
+of GPU compute, but validating it costs seconds (evaluate PPL on a standard
+benchmark). This asymmetry makes fraud expensive and detection cheap.
+
+\paragraph{Data integrity.}
+Training data is pre-agreed: specific shards of curated datasets (e.g.,
+FineWeb-2 medical subset). SHA-256 checksums of training batches are
+published alongside the adapter. Any validator can confirm the adapter was
+trained on the claimed data by re-running a small number of spot-check
+steps with the same seed and verifying intermediate checkpoints match.
+
+\paragraph{Malicious adapter detection.}
+Poisoned adapters (backdoors, biased outputs) are detected via standard
+federated learning techniques: outlier detection on weight norms, gradient
+clipping bounds, and behavioral testing on adversarial inputs. Because
+adapters are kilobyte-scale, exhaustive behavioral auditing is feasible.
+
+\paragraph{Incentive mechanism.}
+Contributors who submit verified adapters earn access credits to the full
+forest. Train one specialist, gain access to all others. This creates a
+knowledge-exchange economy where the cost of participation (training one
+adapter) is orders of magnitude less than the value received (access to
+thousands of specialists). Reputation scores based on adapter quality
+and usage frequency provide additional incentive alignment.
+
+% ============================================================================
 \section{Why It's Cheaper}
 
 Three properties make this dramatically cheaper than monolithic models:
@@ -213,16 +260,14 @@ Across 50+ experiments on Qwen3-8B (see technical paper for full details):
 % ============================================================================
 \section{Implications}
 
-\paragraph{For researchers.}
-The separation of fluid and crystallized intelligence provides a clean
-experimental framework. You can study reasoning (trunk) and knowledge
-(adapters) independently, measure specialization via ablation, and grow
-expert trees that reveal the structure of what models learn.
-
-\paragraph{For practitioners.}
-Hot-pluggable adapters mean you can add medical, legal, or domain-specific
-expertise to any compatible trunk without retraining. Adapters are measured
-in kilobytes and load in microseconds from NVMe.
+\paragraph{For the planet.}
+Training adapters instead of full models reduces energy consumption by
+orders of magnitude. A single adapter trains in minutes on one GPU;
+a full model trains in months on thousands. Storing knowledge on flash
+instead of DRAM reduces hardware costs and e-waste. The efficiency gains
+compound: a forest of 10,000 specialists is simultaneously more
+knowledgeable and cheaper to run than a single monolithic model trained
+to cover the same domains.
 
 \paragraph{For the community.}
 Anyone with a GPU and domain expertise can train a specialist. The forest
@@ -231,12 +276,18 @@ a cardiology adapter. A lawyer trains a contract-law adapter. A programmer
 trains a Rust adapter. Each returns a kilobyte-scale module that plugs into
 the shared trunk.
 
-\paragraph{For the planet.}
-Training adapters instead of full models reduces energy consumption by
-orders of magnitude. Storing knowledge on flash instead of DRAM reduces
-hardware costs and e-waste. The efficiency gains compound: a forest of
-10,000 specialists is simultaneously more knowledgeable and cheaper to run
-than a single monolithic model trained to cover the same domains.
+\paragraph{For practitioners.}
+Hot-pluggable adapters mean you can add medical, legal, or domain-specific
+expertise to any compatible trunk without retraining. Adapters are measured
+in kilobytes and load in microseconds from NVMe. Inference cost depends
+only on the trunk size plus the few active adapters---not on the total
+knowledge in the forest.
+
+\paragraph{For researchers.}
+The separation of fluid and crystallized intelligence provides a clean
+experimental framework. You can study reasoning (trunk) and knowledge
+(adapters) independently, measure specialization via ablation, and grow
+expert trees that reveal the structure of what models learn.
 
 % ============================================================================
 \section{Conclusion}
