@@ -905,10 +905,14 @@ We identify four limitations that bound our current claims:
           Bimodality detection (dip test, kurtosis) on per-token loss
           distributions never fires on generic C4 data. Finding a
           mechanistic, data-driven split trigger remains an open problem.
-          The scheduled approach works well in practice and the cadence
-          can be made adaptive (split when global loss improvement stalls),
-          but this is a heuristic rather than the principled learntropy
-          signal envisioned in the framework.
+          The scheduled approach works well in practice. A promising
+          alternative is \emph{speculative splitting with rollback}:
+          attempt a split at each candidate point, train for a short
+          evaluation window, and revert if the split did not reduce loss.
+          This inverts the problem---instead of predicting \emph{when}
+          to split, the system tries splitting and evaluates whether it
+          helped. The cost is at most the evaluation window (e.g., 500
+          steps) of wasted training per failed attempt.
     \item \textbf{Framework tested on one model family only.} All experiments use
           Qwen3 (1.7B and 8B). Generalization to other architectures (Llama,
           Mistral, GPT-scale) and other data distributions is assumed but not
