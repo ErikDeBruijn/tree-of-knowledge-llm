@@ -1150,6 +1150,25 @@ contrastive loss between trees was ineffective (trees naturally diverge
 to CosSim $<$0.05 without explicit pressure), suggesting that the
 grove architecture itself enforces sufficient differentiation.
 
+\paragraph{Zipf-distributed damage enables tiered storage.}
+The ablation damage spectrum across the grove is not uniform but
+Zipf-distributed: Tree~0/E0 contributes $\Delta$PPL +43 (catastrophic),
+while Tree~1 experts contribute +0.1 to +3.0 (minor). This is not a
+deficiency---it is precisely the distribution that enables efficient
+tiered deployment. The ``trunk'' (high damage, always VRAM-resident)
+handles fluid intelligence and frequent patterns. Mid-tier experts (moderate
+damage, cached in L2/NVMe) handle common domain knowledge. The long tail
+of small experts (low individual damage, loaded on demand) covers niche
+expertise.
+
+With variable-rank LoRA, the rank \emph{is} the storage-tier decision:
+rank-4 adapters (4\,KB) stay resident regardless of damage (zero cost).
+Rank-64 adapters (256\,KB) are loaded only when their domain is active.
+No separate cache policy is needed---the accommodation ratio determines
+rank, rank determines storage footprint, and the Zipf distribution of
+access patterns matches the Zipf distribution of adapter sizes
+(Appendix~\ref{app:shannon}).
+
 \paragraph{Interpretability: functional, not domain-selective routing.}
 Routing analysis of the 4/4-active rank-8 tree reveals that pair-level
 routing is 97\% Pair~B, 3\% Pair~A---\emph{identical across all domains}.
