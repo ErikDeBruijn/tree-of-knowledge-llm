@@ -1,0 +1,264 @@
+% Forest of Knowledge — Whitepaper (Bitcoin-style)
+% Companion to the full technical paper (mogae-paper-v5.tex)
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{\textbf{Forest of Knowledge}\\[4pt]
+\large Separating What a Model Knows from How It Thinks}
+
+\author{Erik de Bruijn\\
+\texttt{erik@erikdebruijn.nl}}
+
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+Current language models entangle reasoning ability with factual knowledge in
+one monolithic block of parameters. Adding knowledge means adding parameters,
+which means more memory, more energy, and more centralized control. We
+propose \textbf{Forest of Knowledge}: an architecture that separates
+\emph{fluid intelligence} (reasoning, syntax, composition---shared by all
+tasks) from \emph{crystallized intelligence} (domain-specific facts,
+terminology, patterns---different per specialty) using lightweight,
+hot-pluggable adapters measured in kilobytes. The fluid trunk stays fixed.
+Specialists are trained independently, stored on cheap flash, loaded on
+demand, and contributed by a distributed community. Across 50+ experiments
+on Qwen3-8B, we show that this separation works: 8 experts grown
+autonomously via a difficulty signal (\emph{learntropy}) reduce perplexity
+by 22.8\% while adding less than 1\% to model size. The architecture enables
+a paradigm shift from centralized model training to distributed,
+community-driven specialization.
+\end{abstract}
+
+% ============================================================================
+\section{The Problem}
+
+Language models today are monoliths. A single set of parameters encodes
+everything: grammar, reasoning, medical terminology, legal precedent,
+programming syntax, and conversational slang. Training such a model requires
+thousands of GPUs, months of compute, and centralized control by a small
+number of labs.
+
+This creates three problems:
+\begin{enumerate}[nosep]
+\item \textbf{Adding knowledge is expensive.} Every new specialty requires
+      retraining or fine-tuning the entire model. A hospital that wants
+      medical expertise must either pay for a larger model or accept a
+      general one.
+\item \textbf{Memory is the bottleneck.} The DRAM needed to hold these
+      models has more than doubled in price over the past year. A 70B model
+      requires 140\,GB of memory at half precision---more than most hardware
+      can provide.
+\item \textbf{Knowledge is centralized.} Only organizations with massive
+      compute budgets can train frontier models. The rest of the world
+      consumes what those labs produce.
+\end{enumerate}
+
+% ============================================================================
+\section{The Idea}
+
+We observe that language models contain two fundamentally different kinds of
+capability:
+
+\begin{itemize}[nosep]
+\item \textbf{Fluid intelligence}: reasoning, logical composition,
+      syntactic structure, attention patterns. This is shared across all
+      domains and changes slowly. It lives in the model's ``trunk''---the
+      shared layers that every input passes through.
+\item \textbf{Crystallized intelligence}: medical facts, legal definitions,
+      programming idioms, cultural references. This is domain-specific,
+      changes frequently, and can be enormous in aggregate.
+\end{itemize}
+
+Our key insight: \emph{these don't need to live in the same parameters.}
+
+The trunk (fluid intelligence) stays fixed after initial training. Domain
+knowledge lives in tiny LoRA adapters---lightweight modifications to the
+trunk's feed-forward layers that encode specialized corrections. A rank-4
+adapter is 4\,KB. A rank-64 adapter is 256\,KB. Even thousands of
+specialists total less than a gigabyte.
+
+% ============================================================================
+\section{How It Works}
+
+\subsection{The Trunk}
+
+We start with a strong pretrained model (e.g., Qwen3-8B). This model
+already possesses fluid intelligence: it can reason, compose sentences, and
+follow instructions. We freeze its parameters permanently. The trunk is the
+shared root system that all specialists inherit.
+
+\subsection{Growing Experts}
+
+Specialists grow via a process inspired by Piaget's theory of cognitive
+development:
+
+\begin{enumerate}[nosep]
+\item \textbf{Start small.} Begin with one adapter at low rank (4
+      dimensions out of 4096). This adapter learns to make small corrections
+      to the trunk's output.
+\item \textbf{Measure difficulty.} For each token, measure how hard it is
+      for the current expert (\emph{learntropy}---per-token cross-entropy
+      weighted by routing). High learntropy means the expert is struggling.
+\item \textbf{Split when struggling.} When an expert's difficulty stays
+      high, split it into two: one inherits the parent's stable knowledge,
+      the other explores the hard tokens.
+\item \textbf{Increase rank when needed.} If difficulty persists after
+      splitting, the expert needs more capacity. Double its rank
+      (4$\to$8$\to$16$\to$64). Our experiments show the system converges
+      to rank-64 autonomously---exactly the empirically optimal point.
+\item \textbf{Repeat.} The tree grows from 2 experts to 8 over 20K training
+      steps, with all 8 active and contributing. Reproduced across seeds.
+\end{enumerate}
+
+\subsection{Routing}
+
+A lightweight Gumbel-softmax router decides which expert(s) to activate for
+each token. At inference time, routing is nearly instant---a single linear
+layer per position. Only activated experts consume compute.
+
+% ============================================================================
+\section{From Centralized Training to Distributed Specialization}
+
+The current paradigm mirrors the pre-Bitcoin financial system: a small
+number of centralized entities must train ever-larger monolithic models.
+
+Forest of Knowledge proposes the alternative:
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+& \textbf{Centralized (current)} & \textbf{Forest of Knowledge} \\
+\midrule
+Training & One lab, thousands of GPUs & Community, commodity hardware \\
+Knowledge & Baked into parameters & Hot-pluggable adapters \\
+Adding expertise & Retrain the model & Train one adapter (KB-scale) \\
+Memory & All in expensive DRAM & Trunk in DRAM, rest on flash \\
+Cost scaling & Linear in model size & Sub-linear (adapters are tiny) \\
+Governance & Lab decides what to learn & Community decides \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Each adapter trains independently. A contributor needs only the frozen trunk
+(a one-time download) and a few kilobytes of adapter weights. They train
+their specialist on domain-specific data using learntropy signals, then
+return the updated adapter. No synchronization between contributors is
+needed.
+
+This is analogous to Bitcoin mining: a massively parallel, compute-bound
+effort where independent participants contribute to a shared system. The
+difference is that our ``proof of work'' is \emph{proof of useful learning}:
+every adapter that reduces perplexity on its domain adds genuine value.
+
+% ============================================================================
+\section{Why It's Cheaper}
+
+Three properties make this dramatically cheaper than monolithic models:
+
+\paragraph{Storage economics.}
+SSD/flash storage is $\sim$80$\times$ cheaper per GB than DRAM. HDDs are
+$>$100$\times$ cheaper. A forest of 10,000 rank-64 specialists requires
+2.5\,GB of flash---less than a single smartphone app. The trunk (the only
+part requiring DRAM) stays small.
+
+\paragraph{Energy proportionality.}
+Only activated adapters consume compute. If a query is about medicine, only
+the medical specialist is loaded. Legal, code, and conversational experts
+remain on flash, consuming zero energy. Training new specialists requires
+only adapter-scale compute, not full-model retraining.
+
+\paragraph{DRAM crisis mitigation.}
+DRAM prices have more than doubled in the past year. Forest of Knowledge
+sidesteps this: the bulk of knowledge lives on cheap flash, not expensive
+DRAM. The trunk occupies a fixed DRAM footprint regardless of how many
+specialists exist.
+
+% ============================================================================
+\section{Key Results}
+
+Across 50+ experiments on Qwen3-8B (see technical paper for full details):
+
+\begin{enumerate}[nosep]
+\item \textbf{8 experts, all active.} Learntropy-directed splitting grows
+      2$\to$8 experts with all 8 contributing. Reproduced across seeds
+      ($M_{ij}$ CV up to 2.34).
+\item \textbf{22.8\% perplexity reduction} compared to the base model,
+      with adapters totaling $<$1\% of model parameters.
+\item \textbf{Autonomous rank discovery.} The system converges from rank-4
+      to rank-64 through learntropy-driven doublings---finding the empirical
+      optimum without manual tuning.
+\item \textbf{Domain selectivity peaks at rank-64} (1.6\% of hidden
+      dimension). Lower ranks specialize well but have limited capacity;
+      higher ranks lose specialization pressure.
+\item \textbf{Zipf-distributed importance.} Expert ablation damage follows
+      a power law: one backbone expert is critical ($\Delta$PPL +43), a few
+      mid-tier experts are important (+3 to +17), and the long tail
+      contributes incrementally (+0.1 to +3). This matches the natural
+      access pattern for tiered storage.
+\end{enumerate}
+
+% ============================================================================
+\section{Implications}
+
+\paragraph{For researchers.}
+The separation of fluid and crystallized intelligence provides a clean
+experimental framework. You can study reasoning (trunk) and knowledge
+(adapters) independently, measure specialization via ablation, and grow
+expert trees that reveal the structure of what models learn.
+
+\paragraph{For practitioners.}
+Hot-pluggable adapters mean you can add medical, legal, or domain-specific
+expertise to any compatible trunk without retraining. Adapters are measured
+in kilobytes and load in microseconds from NVMe.
+
+\paragraph{For the community.}
+Anyone with a GPU and domain expertise can train a specialist. The forest
+grows through contribution, not centralization. A medical researcher trains
+a cardiology adapter. A lawyer trains a contract-law adapter. A programmer
+trains a Rust adapter. Each returns a kilobyte-scale module that plugs into
+the shared trunk.
+
+\paragraph{For the planet.}
+Training adapters instead of full models reduces energy consumption by
+orders of magnitude. Storing knowledge on flash instead of DRAM reduces
+hardware costs and e-waste. The efficiency gains compound: a forest of
+10,000 specialists is simultaneously more knowledgeable and cheaper to run
+than a single monolithic model trained to cover the same domains.
+
+% ============================================================================
+\section{Conclusion}
+
+Language models don't need to be monoliths. Fluid intelligence (reasoning)
+and crystallized intelligence (knowledge) can be separated, with knowledge
+living in tiny, hot-pluggable adapters that a distributed community trains
+independently. The learntropy signal---a measure of per-token
+difficulty---drives all adaptation decisions: when to split, where to
+specialize, how fast to learn, and when to increase capacity.
+
+The result is a forest: a shared root system of fluid intelligence,
+supporting an ever-growing canopy of crystallized knowledge. Each tree in
+the forest is independently trainable, independently loadable, and
+independently valuable. The architecture makes knowledge addition
+\emph{cheap}, \emph{distributed}, and \emph{composable}---a paradigm shift
+from centralized training to collaborative specialization.
+
+\vspace{12pt}
+\noindent\emph{Full technical details, experimental methodology, and all
+50+ experiment results are available in the companion technical paper:
+``Forest of Knowledge: Learntropy-Driven Separation of Fluid and
+Crystallized Intelligence in Language Models'' (de Bruijn, 2026).}
+
+\end{document}
