@@ -891,11 +891,24 @@ We identify four limitations that bound our current claims:
           Hessian analysis (Section~\ref{sec:hessian}) shows the LM loss
           \emph{does} encode selective routing directions; sufficient model
           capacity is required to exploit them.
-    \item \textbf{No second fork triggered on generic data.} Despite testing
-          bimodality thresholds from 0.3 to 0.555, no configuration produced
-          more than 2 experts. On generic C4 data, 2-expert systems appear to
-          be stable equilibria. Domain-specific curricula may be required to
-          trigger deeper forking.
+    \item \textbf{Split timing is scheduled, not learntropy-driven.}
+          The paper's theoretical framework positions learntropy as the
+          signal for \emph{when} to split. In practice, all successful
+          multi-expert experiments use a fixed schedule (split every $N$
+          steps). Three candidate signals were tested retroactively:
+          intra-expert loss variance (ILV), router margin bimodality,
+          and learntropy trend (slope). All three correctly predict
+          \emph{which} expert should split (the one with highest
+          learntropy), but none provides a sharp \emph{when} signal---all
+          experts' learntropy trends downward simultaneously, with no
+          clear plateau or divergence preceding scheduled split points.
+          Bimodality detection (dip test, kurtosis) on per-token loss
+          distributions never fires on generic C4 data. Finding a
+          mechanistic, data-driven split trigger remains an open problem.
+          The scheduled approach works well in practice and the cadence
+          can be made adaptive (split when global loss improvement stalls),
+          but this is a heuristic rather than the principled learntropy
+          signal envisioned in the framework.
     \item \textbf{Framework tested on one model family only.} All experiments use
           Qwen3 (1.7B and 8B). Generalization to other architectures (Llama,
           Mistral, GPT-scale) and other data distributions is assumed but not
