@@ -314,13 +314,31 @@ adapter forest is designed to store. As the forest grows through community
 contributions, the space where the model must say ``I don't know'' shrinks
 continuously---without retraining the trunk.
 
-\emph{Caveat:} This mechanism is a theoretical implication, not yet
-experimentally validated. Current language models already have token-level
-uncertainty signals (softmax entropy) that do not reliably prevent
-hallucination, because models can be confidently wrong. Whether the
-trunk-vs-adapter learntropy gap correlates with factual correctness---rather
-than mere token difficulty---requires empirical testing. We present this as
-a promising hypothesis, not a proven capability.
+\emph{Experimental progress:} Initial experiments show that the per-layer
+delta gate itself acts as an ``I don't know'' detector. When a domain adapter
+encounters topics it was not trained on, the gate drops to near-generic levels
+(2 of 3 adapters tested show known/unknown ratios of 2.25--4.11$\times$;
+the third shows a weaker 1.86$\times$ signal, likely due to domain overlap
+with generic text). This is a learned behavior, not an architectural
+add-on---the gate discriminates because it was trained to activate selectively.
+
+\paragraph{Demand-driven growth.}
+The ``I don't know'' signal has a second use: it reveals where the grove
+has gaps. When many queries trigger low gate activation across all adapters,
+this is a \emph{cache miss}---a topic that users need but no adapter covers.
+Logging these cache misses creates a demand signal for training priorities:
+the grove grows where users need it, not where contributors guess. This is
+analogous to how CDNs cache popular content---except here the ``cache'' is
+a trained adapter and the ``miss'' triggers training, not just a round-trip
+to origin.
+
+\emph{Caveat:} The gate-based IDK detection is experimentally supported
+(3 adapters, multiple unknown domains) but not yet validated as a reliable
+hallucination preventer. Hallucination is harder than uncertainty: models
+can be confidently wrong. Whether the gate signal correlates with factual
+correctness---rather than mere domain membership---requires further testing.
+The demand-driven pipeline is a theoretical extension, not yet validated
+end-to-end.
 
 % ============================================================================
 \section{Implications}
