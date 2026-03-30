@@ -1,0 +1,15 @@
+{
+  "experiment": "uniform_vs_gated_grove_benchmark",
+  "base": {
+    "arc_acc_norm": 0.5631,
+    "hellaswag_acc_norm": 0.7495
+  },
+  "gated_grove": {
+    "arc_acc_norm": 0.5751,
+    "hellaswag_acc_norm": 0.7752
+  },
+  "uniform_grove": {
+    "arc_acc_norm": 0.5827645051194539,
+    "hellaswag_acc_norm": 0.7879904401513643
+  }
+}
