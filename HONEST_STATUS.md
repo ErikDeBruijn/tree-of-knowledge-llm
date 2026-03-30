@@ -45,7 +45,8 @@ Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 - "I don't know" detection via gate differential (cycles 4c-5 + wingchun replication, 2026-03-30): 2 of 3 adapters show strong IDK: BBC (known 0.783, unknown 0.30-0.35, ratios 2.25-2.59x) and Wing Chun (known 0.909, unknown 0.22-0.33, ratios 2.77-4.11x). Both show all 4 unknown domain types <0.40. Cuisine adapter weaker (1.86x) but directionally consistent. 3 adapters tested, 2 strong + 1 weak = robust signal. The gate IS the IDK detector for high-selectivity adapters. Promoted to SUPPORTED.
 
 ### PLAUSIBLE (cont.)
-- Distributed adapter training MVP (2026-03-30): 3 simulated contributors (Alice/BBC seed=42 rank=16, Bob/cuisine seed=137 rank=16 lr=2e-4, Carol/wingchun seed=7 rank=8) trained independently, validated, registered, and composed via joint gate fine-tuning. 10/10 success criteria pass: diagonal dominance (BBC 0.966, cuisine 0.980, wingchun 0.799), all cross-gate leakage <0.10, all domain PPLs improve vs base (-8% to -90%), generic PPL -15%. Standardized package format (adapter.pt + manifest.json + validation.json), automated structural + quality validation, JSON registry. Promoted from SPECULATIVE. Caveat: simulated on one machine (process isolation, not network isolation); adversarial detection not tested; 3 contributors only.
+### SUPPORTED (cont.)
+- Distributed adapter training (2026-03-30, replicated): 2 independent configurations, 3 contributors each, different seeds/ranks/LRs. v1 (seeds 42/137/7): 10/10, diagonal 0.966/0.980/0.799. v2 (seeds 1337/256/99): 10/10, diagonal 0.974/0.975/0.822. Both pass all criteria: diagonal dominance, cross-leakage <0.10, generic PPL -15%/-16%. Standardized package format + automated validation + registry. Promoted from PLAUSIBLE. Caveat: simulated (process isolation, not network); adversarial detection not tested.
 
 ### SPECULATIVE (theoretical, not experimentally validated)
 - Proof-of-useful-work verification
@@ -76,7 +77,7 @@ Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 | Learntropy-driven splits | Scheduled, not learntropy-triggered | Open problem, speculative split helps |
 | Hot-pluggable adapters | Works (39ms load) | Single adapter, no router in production |
 | Domain-selective routing | Delta-gated selectivity +0.621 ± 0.009 (4 seeds); 2 domains; sparsity mechanism not load-bearing (L1≈L2); generic PPL -6.0% ± 0.1pp | Replicated (4 seeds, 2 domains, 3 sparsity types). SUPPORTED. |
-| Community distributed training | MVP: 3 contributors, validate+compose, 10/10 checks. PLAUSIBLE. | Simulated (process isolation), not real network |
+| Community distributed training | MVP replicated: 2 configs x 3 contributors, both 10/10. SUPPORTED. | Simulated (process isolation), not real network |
 | Tiered storage | Not demonstrated | Theoretical only |
 | "I don't know" detection | Gate differential: BBC 2.25x, WingChun 2.77-4.11x. SUPPORTED. | 3 adapters tested (2 strong, 1 weak) |
 | Grove architecture | Experimented (8/8 active) | Not in demo server |
