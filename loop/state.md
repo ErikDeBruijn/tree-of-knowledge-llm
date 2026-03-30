@@ -33,6 +33,9 @@ The biggest structural gap is: demo is single-adapter, paper describes grove.
 - Softmax dual gates: fixes cuisine leakage (0.49→0.18) but dampens primary gate (0.79→0.66). PARTIAL (3/5 criteria).
 - IDK cross-domain: BBC adapter on cuisine text gate=0.305 (2.57x ratio). 3 unknown domain types all <0.40. Strengthened.
 
+**Cycle 6** (2026-03-30):
+- Joint gate fine-tuning: 7/7 SUCCESS. Cross-leakage 0.034/0.011. Primary gates 0.82/0.85. Both domain PPLs -50%+ vs base. SUPPORTED.
+
 ## What's running
 - GPU 0: Free
 - GPU 1: Hotplug demo server (http://ollama.local:8000/)

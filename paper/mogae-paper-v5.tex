@@ -1303,16 +1303,18 @@ However, the effect is adapter-dependent: the cuisine adapter shows weaker
 discrimination (1.86$\times$), likely because food-related text overlaps more
 with generic language than news does.
 
-\paragraph{Limitation: independently trained gates do not fully compose.}
+\paragraph{Multi-adapter composition requires joint gate training.}
 When two adapters (BBC news + Dutch cuisine) are loaded simultaneously with
-independent gates, the cuisine gate fires at 0.49 on BBC text, adding
-interference ($+5.9\%$ and $+6.8\%$ PPL vs.\ single adapter). Softmax
-normalization across gates reduces cross-gate leakage (cuisine gate on BBC:
-$0.49 \to 0.18$) and cuisine PPL cost ($+6.8\% \to +1.8\%$), but dampens
-the primary gate ($0.79 \to 0.66$) and leaves BBC PPL at $+4.7\%$.
-Normalization is a significant improvement but does not fully resolve the
-composition problem. Joint gate training or a learned router may be needed
-for clean multi-adapter deployment.
+independently-trained gates, the cuisine gate fires at 0.49 on BBC text,
+adding interference ($+5.9\%$ PPL vs.\ single adapter). Softmax normalization
+reduces leakage ($0.49 \to 0.18$) but dampens the primary gate ($0.79 \to 0.66$).
+\textbf{Joint gate fine-tuning}---freezing both adapters and training only the
+gates on mixed-domain data---resolves this completely: cross-gate leakage drops
+to 0.034 (BBC$\to$cuisine) and 0.011 (cuisine$\to$BBC), primary gates reach
+0.82 and 0.85, and both domain PPLs improve $>$50\% vs.\ base. Generic PPL also
+improves ($-8.2\%$). The key insight: gates trained in isolation learn ``my domain
+vs.\ generic'' but not ``my domain vs.\ other adapters' domains.'' Joint training
+teaches the full discrimination.
 
 % ============================================================================
 \section{Conclusion}
