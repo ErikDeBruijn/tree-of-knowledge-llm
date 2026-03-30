@@ -1339,6 +1339,19 @@ as the generic PPL improvement: the delta-gated adapters act as soft
 regularizers, providing complementary representations that benefit even
 out-of-domain reasoning. (Single run, 0-shot, not yet replicated.)
 
+\paragraph{Sparse routing eliminates the cost of inactive adapters.}
+With 10 adapters loaded, dense routing (computing all adapter forward passes
+at every layer) reduces throughput from 60.8 to 12.5~tokens/s ($-79\%$). A
+hard gate threshold ($<0.05 \to 0$, skip adapter computation entirely)
+recovers much of this: sparse routing achieves 22.1~tokens/s, a $+77\%$
+speedup over dense routing. On average, 66\% of adapter computations are
+skipped because their gates are below threshold. Prefill throughput improves
+similarly ($+72\%$, 2337 vs.\ 1361~tokens/s). This is the same mechanism
+used by Mixture-of-Experts models (top-$k$ routing): only compute the experts
+that the router selects. At scale (hundreds of adapters), sparse routing is
+essential---the cost grows with the number of \emph{active} adapters per
+token, not the total number in the grove.
+
 % ============================================================================
 \section{Conclusion}
 

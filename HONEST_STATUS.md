@@ -15,7 +15,8 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 - Base model PPL improves 19-22.8% with adapters on C4
 - Gate vs no-gate: gated wins all 7 domain categories + generic PPL
 - 10-adapter grove: 95/101 composition checks pass (94%); 6 failures are semantically correct overlaps (physics↔chemistry, biology↔medicine etc.); generic PPL -14.2%
-- Ensemble ablation inference: 5/5 questions adapter-dependent; specificity ranges 1-8 adapters; works as confidence proxy
+- Ensemble ablation inference v2 (chat template + hard threshold): strategic ablation of only active adapters; 8 questions tested; routing correctly identifies 1-3 active adapters per question (physics for Heisenberg, CS for compiler, medicine for antibiotics)
+- Sparse routing throughput: 77% faster than dense (22.1 vs 12.5 tok/s generation, 10 adapters). Sparse skips 66% of adapter computations. Prefill: +72% (2337 vs 1361 tok/s). Base model: 60.8 tok/s gen, 7435 tok/s prefill.
 
 ### SUPPORTED (evidence beyond pilot, some replication)
 - Causal locality requires 8B+ scale (22 experiments at 1.7B, 3+ at 8B)
