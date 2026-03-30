@@ -1,0 +1,36 @@
+# Grove of Knowledge — Contributor Training Template
+# Pre-installs everything needed to train a domain adapter on vast.ai
+#
+# Build: docker build -t erikdebruijn/grove-contributor:latest -f Dockerfile.contributor .
+# Use on vast.ai: vastai create instance <offer> --image erikdebruijn/grove-contributor:latest
+#
+# Model (Qwen3-8B) is NOT baked in — it downloads on first run (~16GB, cached in /workspace).
+# This keeps the image small (~8GB vs ~24GB with model) and lets vast.ai cache it.
+
+FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-devel
+
+# System deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Python deps
+RUN pip install --no-cache-dir \
+    transformers>=4.40 \
+    datasets \
+    accelerate \
+    numpy
+
+# Grove scripts
+COPY scripts/grove/ /opt/grove/
+ENV PYTHONPATH=/opt/grove
+ENV HF_HOME=/workspace/huggingface
+
+# Pre-download tokenizer (small, ~1MB) — model downloads on first run
+RUN python -c "from transformers import AutoTokenizer; AutoTokenizer.from_pretrained('Qwen/Qwen3-8B')"
+
+# Working directory
+WORKDIR /workspace
+
+# Default: show help
+CMD ["python", "/opt/grove/contributor_train.py", "--help"]
