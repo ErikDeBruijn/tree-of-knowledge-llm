@@ -247,13 +247,19 @@ remain on flash, consuming zero energy. Training new specialists requires
 only adapter-scale compute, not full-model retraining.
 
 \paragraph{Memory efficiency.}
-The trunk occupies a fixed DRAM footprint regardless of how many specialists
-exist. The bulk of crystallized knowledge lives on cheap flash storage, not
-expensive DRAM. Combined with trunk quantization (which reduces the trunk's
-memory footprint further), the total system can host thousands of domain
-adapters while fitting in consumer-grade hardware. Quantization and adapters
-are multiplicatively efficient: a 4-bit trunk in 4\,GB + 100 adapters on
-flash = vast knowledge on modest hardware.
+In standard MoE architectures (Mixtral, DeepSeek), \emph{all} parameters must
+reside in DRAM even though only a fraction is active per token: a 120B sparse
+model with 20B active still requires 120B parameters in memory. Quantization
+reduces the per-parameter cost but not the total count---the full model must
+fit, or it cannot run at all.
+
+The Forest of Knowledge breaks this constraint. Only the trunk (8B, quantizable
+to 4\,GB) and the currently active adapters (2--3 $\times$ 25\,MB) occupy DRAM.
+Inactive adapters---hundreds or thousands of them---reside on flash storage and
+load in milliseconds when needed. The DRAM footprint scales with the number of
+\emph{active} experts, not the total knowledge in the system. A 4-bit trunk in
+4\,GB + 1000 adapters on flash = vast knowledge on modest hardware, on devices
+where a conventional MoE model simply would not fit.
 
 % ============================================================================
 \section{Key Results}
