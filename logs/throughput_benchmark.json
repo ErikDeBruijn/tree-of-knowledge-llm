@@ -1,0 +1,40 @@
+{
+  "base_gen": {
+    "tps": 60.76184952421423,
+    "time": 1.6457695212215184,
+    "tokens": 100
+  },
+  "dense_gen": {
+    "tps": 12.468740827151095,
+    "time": 8.020056025404482,
+    "tokens": 100,
+    "computed": 24000,
+    "skipped": 0
+  },
+  "sparse_gen": {
+    "tps": 22.10590635071733,
+    "time": 4.5236778991762545,
+    "tokens": 100,
+    "computed": 8146,
+    "skipped": 15854
+  },
+  "base_prefill": {
+    "tps": 7434.675759922636,
+    "time": 0.03080161225516349,
+    "tokens": 229
+  },
+  "dense_prefill": {
+    "tps": 1360.960088531354,
+    "time": 0.16826356770470738,
+    "tokens": 229,
+    "computed": 240,
+    "skipped": 0
+  },
+  "sparse_prefill": {
+    "tps": 2336.990212386733,
+    "time": 0.09798928501550108,
+    "tokens": 229,
+    "computed": 110,
+    "skipped": 130
+  }
+}

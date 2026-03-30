@@ -1,0 +1,144 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:45,  8.63it/s]Loading weights:   7%|▋         | 27/399 [00:00<00:03, 93.70it/s]Loading weights:  15%|█▌        | 61/399 [00:00<00:01, 173.47it/s]Loading weights:  21%|██        | 83/399 [00:00<00:01, 187.45it/s]Loading weights:  27%|██▋       | 107/399 [00:00<00:01, 156.15it/s]Loading weights:  38%|███▊      | 153/399 [00:00<00:01, 210.64it/s]Loading weights:  52%|█████▏    | 208/399 [00:01<00:00, 256.85it/s]Loading weights:  65%|██████▍   | 258/399 [00:01<00:00, 310.59it/s]Loading weights:  73%|███████▎  | 292/399 [00:01<00:00, 259.46it/s]Loading weights:  85%|████████▍ | 339/399 [00:01<00:00, 306.64it/s]Loading weights:  94%|█████████▎| 374/399 [00:01<00:00, 316.93it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 250.45it/s]
+Loaded 10 adapters
+
+======================================================================
+ENSEMBLE ABLATION v2 (chat template + hard threshold + strategic)
+======================================================================
+
+======================================================================
+Q1: What is the relationship between entropy in thermodynamics and information theory?
+Active adapters (gate>0.1): {'physics': 0.4847819010416667, 'mathematics': 0.16008504231770834}
+The following generation flags are not valid and may be ignored: ['top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+[ALL]: <think>
+Okay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Hmm, I remember that entropy in thermodynamics has to do with energy dispersal and the number of microstates in a system. Like, when a gas expands into a vacuum, the entropy in
+
+[BASE]: <think>
+Okay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Hmm, I remember that entropy is a concept that shows up in both physics and information theory, but I'm not exactly sure how they're connected. Let me start by recalling what e
+
+[WITHOUT physics (gate=0.485)]: <think>
+Okay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Hmm, I remember that entropy in thermodynamics has to do with heat and energ
+
+[WITHOUT mathematics (gate=0.160)]: <think>
+Okay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Let me start by recalling what I know about each.
+
+First, thermodynamic entr
+
+======================================================================
+Q2: How does CRISPR-Cas9 work at the molecular level?
+Active adapters (gate>0.1): {'cuisine_bob': 0.14914703369140625, 'biology': 0.5479024251302084}
+
+[ALL]: <think>
+Okay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a gene-editing technology, right? It allows scientists to edit DNA sequences with high precision. Cas9 is an enzyme involved in this process. But how exactly does it work
+
+[BASE]: <think>
+Okay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a gene-editing tool, right? It's used to modify DNA sequences. But how exactly does it work? I remember something about guide RNA and the Cas9 enzyme. Let me try to piece
+
+[WITHOUT cuisine_bob (gate=0.149)]: <think>
+Okay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a gene-editing technology, right? It allows scientists to modify DNA s
+
+[WITHOUT biology (gate=0.548)]: <think>
+Okay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a type of gene editing technology, right? It's based on a system that 
+
+======================================================================
+Q3: Explain the difference between supervised and unsupervised learning.
+Active adapters (gate>0.1): {'computer_science': 0.4537150065104167, 'ai_ml': 0.11138661702473958}
+
+[ALL]: <think>
+Okay, so I need to explain the difference between supervised and unsupervised learning. Hmm, where do I start? I remember that machine learning is a big field with different types of algorithms. Supervised and unsupervised are two of them, right? Let me think.
+
+Supervised learning... I think
+
+[BASE]: <think>
+Okay, so I need to explain the difference between supervised and unsupervised learning. Let me start by recalling what I know about machine learning. From what I remember, machine learning is a branch of artificial intelligence that involves training models to make predictions or decisions w
+
+[WITHOUT computer_science (gate=0.454)]: <think>
+Okay, so I need to explain the difference between supervised and unsupervised learning. Hmm, where do I start? I remember that machine learning is a big field with different types of algorithm
+
+[WITHOUT ai_ml (gate=0.111)]: <think>
+Okay, so I need to explain the difference between supervised and unsupervised learning. Hmm, where do I start? I remember that machine learning is a big field with different types of algorithm
+
+======================================================================
+Q4: What causes antibiotic resistance in bacteria?
+Active adapters (gate>0.1): {'medicine': 0.6952311197916666}
+
+[ALL]: <think>
+Okay, so I need to figure out what causes antibiotic resistance in bacteria. Let me start by recalling what I know about antibiotics. Antibiotics are drugs used to treat bacterial infections, right? They work by killing bacteria or stopping them from multiplying. But sometimes bacteria becom
+
+[BASE]: <think>
+Okay, so I need to figure out what causes antibiotic resistance in bacteria. Let me start by recalling what I know. Antibiotics are drugs used to kill bacteria, right? But sometimes bacteria become resistant, meaning they don't get killed by the antibiotics anymore. I think this is a big pro
+
+[WITHOUT medicine (gate=0.695)]: <think>
+Okay, so I need to figure out what causes antibiotic resistance in bacteria. Let me start by recalling what I know. Antibiotics are drugs that kill bacteria or stop them from growing. But some
+
+======================================================================
+Q5: How does a neural network learn through backpropagation?
+Active adapters (gate>0.1): {'mathematics': 0.139312744140625, 'computer_science': 0.2738393147786458, 'ai_ml': 0.16652425130208334}
+
+[ALL]: <think>
+Okay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They consist of layers of nodes, right? The input layer, hidden layers, and the output layer. Each node is connected to the next layer, and these co
+
+[BASE]: <think>
+Okay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks and backpropagation. 
+
+First, neural networks are made up of layers of nodes, right? There's an input layer, some hidden layers, and an output layer.
+
+[WITHOUT mathematics (gate=0.139)]: <think>
+Okay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They're made up of layers of nodes, right? The i
+
+[WITHOUT computer_science (gate=0.274)]: <think>
+Okay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They consist of layers of nodes, right? Input la
+
+[WITHOUT ai_ml (gate=0.167)]: <think>
+Okay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They are made up of layers of nodes, right? The 
+
+======================================================================
+Q6: What is the Heisenberg uncertainty principle?
+Active adapters (gate>0.1): {'physics': 0.5289713541666666, 'mathematics': 0.1044158935546875}
+
+[ALL]: <think>
+Okay, so I need to explain the Heisenberg Uncertainty Principle. Let me start by recalling what I know. I remember it has something to do with the inability to simultaneously know certain properties of a particle, like its position and momentum. But wait, why is that the case? I think it has
+
+[BASE]: <think>
+Okay, so I need to explain the Heisenberg uncertainty principle. Let me start by recalling what I know. I remember it's a fundamental concept in quantum mechanics, right? It has something to do with the limits on how precisely we can know certain pairs of physical properties of a particle. B
+
+[WITHOUT physics (gate=0.529)]: <think>
+Okay, so I need to explain the Heisenberg uncertainty principle. Hmm, I remember it's something about the limits of measuring certain properties of particles at the same time. Let me think. I 
+
+[WITHOUT mathematics (gate=0.104)]: <think>
+Okay, so I need to explain the Heisenberg Uncertainty Principle. Let me start by recalling what I know. I remember it has something to do with the inability to precisely know both the position
+
+======================================================================
+Q7: Describe how a compiler transforms source code into machine code.
+Active adapters (gate>0.1): {'computer_science': 0.7205403645833334}
+
+[ALL]: <think>
+Okay, so I need to figure out how a compiler turns source code into machine code. Let me start by recalling what I know about compilers. A compiler is a program that translates source code written in a high-level programming language into machine code that a computer's processor can execute.
+
+[BASE]: <think>
+Okay, so I need to explain how a compiler turns source code into machine code. Let me start by recalling what I know about compilers. From what I remember, a compiler is a program that translates high-level source code into machine code that a computer can execute. But I'm not exactly sure a
+
+[WITHOUT computer_science (gate=0.721)]: <think>
+Okay, so I need to explain how a compiler turns source code into machine code. Let me start by recalling what I know about compilers. From what I remember, a compiler is a program that transla
+
+======================================================================
+Q8: What is the role of mitochondria in cellular respiration?
+Active adapters (gate>0.1): {'biology': 0.45452880859375, 'medicine': 0.17016092936197916}
+
+[ALL]: <think>
+Okay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cells and cellular respiration. Cells are the basic units of life, and they have various organelles that perform specific functions. One of those organelles is the mito
+
+[BASE]: <think>
+Okay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cellular respiration. From what I remember, cellular respiration is the process cells use to produce energy, specifically ATP. It involves breaking down glucose and oth
+
+[WITHOUT biology (gate=0.455)]: <think>
+Okay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cellular respiration. From what I remember, cellular respiration is 
+
+[WITHOUT medicine (gate=0.170)]: <think>
+Okay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cells and cellular respiration. Cells are the basic structural and f
+
+Saved to results/ensemble_ablation_v2.json
+Submit to Claude Opus for judging.

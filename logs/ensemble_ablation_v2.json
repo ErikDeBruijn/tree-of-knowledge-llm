@@ -1,0 +1,313 @@
+{
+  "experiment": "ensemble_ablation_v2",
+  "gate_threshold": 0.05,
+  "questions": [
+    {
+      "question": "What is the relationship between entropy in thermodynamics and information theory?",
+      "gates": {
+        "bbc_alice": 0.018255869547526043,
+        "cuisine_bob": 0.03275299072265625,
+        "wingchun_carol": 0.020723978678385418,
+        "physics": 0.4847819010416667,
+        "biology": 0.016894022623697918,
+        "chemistry": 0.04183197021484375,
+        "mathematics": 0.16008504231770834,
+        "computer_science": 0.035504659016927086,
+        "medicine": 0.07650502522786458,
+        "ai_ml": 0.039426167805989586
+      },
+      "active_adapters": {
+        "physics": 0.4847819010416667,
+        "mathematics": 0.16008504231770834
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Hmm, I remember that entropy in thermodynamics has to do with energy dispersal and the number of microstates in a system. Like, when a gas expands into a vacuum, the entropy increases because there are more possible ways the molecules can arrange themselves. But what about information theory entropy? I think that's related to uncertainty or information content. Shannon entropy, right? It measures the average information content or uncertainty in a random variable. The formula for Shannon entropy is H(X) = -\u03a3 p(x) log p(x), where p(x) is the probability of each possible outcome. \n\nWait, so both concepts measure some kind of disorder or uncertainty? In thermodynamics, higher entropy means more disorder, and in information theory, higher entropy means more uncertainty or more information, since there's more possible outcomes. But how exactly are they connected? I recall that there's a connection"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Hmm, I remember that entropy is a concept that shows up in both physics and information theory, but I'm not exactly sure how they're connected. Let me start by recalling what each of these entropies means.\n\nIn thermodynamics, entropy is a measure of disorder or randomness in a system. The second law of thermodynamics says that the entropy of an isolated system tends to increase over time. It's related to heat transfer and the unavailability of energy to do work. The formula for thermodynamic entropy change is \u0394S = Q_rev/T, where Q is the heat added reversibly and T is the temperature.\n\nOn the other hand, information theory entropy, introduced by Shannon, is about uncertainty or information content in a message. The formula is H = -\u03a3 p(x) log p(x), where p(x) is the probability of a particular outcome. Higher entropy means"
+        },
+        {
+          "config": "without_physics",
+          "gate_value": 0.4847819010416667,
+          "answer": "<think>\nOkay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Hmm, I remember that entropy in thermodynamics has to do with heat and energy dispersal, right? Like, it's a measure of disorder in a physical system. But information theory entropy... I think that's about uncertainty or the amount of information in a message. Wait, isn't that the Shannon entropy? Yeah, that's right. So how are these two different concepts related?\n\nFirst, maybe I should recall the definitions. In thermodynamics, entropy (S) is a state function that quantifies the unavailability of a system's energy to do work. The second law of thermodynamics says that the entropy of an isolated system never decreases over time. It can stay the same if the system is in equilibrium, but it can't decrease. So entropy is all about the direction of spontaneous processes and the distribution of energy.\n\nIn information theory, entropy was introduced by Claude Shannon"
+        },
+        {
+          "config": "without_mathematics",
+          "gate_value": 0.16008504231770834,
+          "answer": "<think>\nOkay, so I need to figure out the relationship between entropy in thermodynamics and entropy in information theory. Let me start by recalling what I know about each.\n\nFirst, thermodynamic entropy. From what I remember, entropy is a measure of disorder in a system. The second law of thermodynamics states that the total entropy of an isolated system can never decrease over time. It was introduced by Clausius, right? And there are formulas like \u0394S = Q/T, where \u0394S is the change in entropy, Q is the heat added to the system, and T is the temperature. Also, Boltzmann later related entropy to the number of microstates in a system, giving the formula S = k_B ln \u03a9, where k_B is the Boltzmann constant and \u03a9 is the number of microstates.\n\nNow, information entropy. This is a concept from information theory, developed by Shannon. I think it's about the uncertainty or randomness in information. The formula is"
+        }
+      ]
+    },
+    {
+      "question": "How does CRISPR-Cas9 work at the molecular level?",
+      "gates": {
+        "bbc_alice": 0.014082590738932291,
+        "cuisine_bob": 0.14914703369140625,
+        "wingchun_carol": 0.023980458577473957,
+        "physics": 0.018800099690755207,
+        "biology": 0.5479024251302084,
+        "chemistry": 0.037518819173177086,
+        "mathematics": 0.021284739176432293,
+        "computer_science": 0.01717376708984375,
+        "medicine": 0.07199859619140625,
+        "ai_ml": 0.026306788126627605
+      },
+      "active_adapters": {
+        "cuisine_bob": 0.14914703369140625,
+        "biology": 0.5479024251302084
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a gene-editing technology, right? It allows scientists to edit DNA sequences with high precision. Cas9 is an enzyme involved in this process. But how exactly does it work?\n\nFirst, I remember that CRISPR comes from bacteria. Bacteria use this system to defend against viruses. So, the basic idea is that the bacteria recognize viral DNA and cut it, stopping the virus. Cas9 is part of that defense system. But how does it target specific viruses?\n\nI think there's something about guide RNA. Maybe a short RNA sequence that tells Cas9 where to go. Wait, there's a term called \"sgRNA\" or something like that. Maybe \"single guide RNA\"? That RNA probably binds to a specific DNA sequence. Then Cas9, which is an endonuclease, makes a cut in"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a gene-editing tool, right? It's used to modify DNA sequences. But how exactly does it work? I remember something about guide RNA and the Cas9 enzyme. Let me try to piece this together.\n\nFirst, I think CRISPR stands for Clustered Regularly Interspaced Short Palindromic Repeats. These are sequences in bacterial DNA that are used as a defense mechanism against viruses. The bacteria capture snippets of viral DNA and store them in their CRISPR array. Then, when the virus attacks again, the bacteria use these snippets to recognize and destroy the virus. But how does that translate into the CRISPR-Cas9 system we use in labs?\n\nCas9 is an enzyme that acts like molecular scissors. It cuts DNA. But how does it know where to cut? There's"
+        },
+        {
+          "config": "without_cuisine_bob",
+          "gate_value": 0.14914703369140625,
+          "answer": "<think>\nOkay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a gene-editing technology, right? It allows scientists to modify DNA sequences with high precision. Cas9 is an enzyme involved in this process. But how exactly does it work step by step?\n\nFirst, I remember that CRISPR comes from bacteria. Bacteria use this system to defend against viruses. The word CRISPR stands for Clustered Regularly Interspaced Short Palindromic Repeats. Those are sequences in the bacterial genome that are similar to viral DNA. So when a virus attacks, the bacteria recognize the viral DNA because it matches one of the CRISPR sequences, and then they destroy the virus.\n\nNow, how does this translate into the gene-editing tool we use today? There's an enzyme called Cas9, which is part of the bacterial immune system. Cas9 acts like molecular"
+        },
+        {
+          "config": "without_biology",
+          "gate_value": 0.5479024251302084,
+          "answer": "<think>\nOkay, so I need to explain how CRISPR-Cas9 works at the molecular level. Let me start by recalling what I know. CRISPR is a type of gene editing technology, right? It's based on a system that bacteria use to defend against viruses. Cas9 is an enzyme involved in this system. But how exactly does it work?\n\nFirst, I think the process involves a guide RNA. The guide RNA is supposed to target a specific DNA sequence. The Cas9 enzyme then cuts the DNA at that location. But wait, how does the guide RNA find the right spot? Maybe it has a sequence that matches the target DNA. So when the guide RNA binds to the target DNA, the Cas9 enzyme can access the DNA strands and make a cut. \n\nBut there's also something about the protospacer adjacent motif (PAM). I remember reading that the target DNA needs to have a specific sequence after the target site for Cas9 to work. The"
+        }
+      ]
+    },
+    {
+      "question": "Explain the difference between supervised and unsupervised learning.",
+      "gates": {
+        "bbc_alice": 0.026280721028645832,
+        "cuisine_bob": 0.07190831502278645,
+        "wingchun_carol": 0.036603291829427086,
+        "physics": 0.0527496337890625,
+        "biology": 0.016637166341145832,
+        "chemistry": 0.0423431396484375,
+        "mathematics": 0.08331044514973958,
+        "computer_science": 0.4537150065104167,
+        "medicine": 0.015177408854166666,
+        "ai_ml": 0.11138661702473958
+      },
+      "active_adapters": {
+        "computer_science": 0.4537150065104167,
+        "ai_ml": 0.11138661702473958
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to explain the difference between supervised and unsupervised learning. Hmm, where do I start? I remember that machine learning is a big field with different types of algorithms. Supervised and unsupervised are two of them, right? Let me think.\n\nSupervised learning... I think that's when the algorithm learns from labeled data. Labeled data means that each training example has an input and a corresponding correct output. The algorithm tries to learn the mapping from inputs to outputs. Like, if you're training a model to recognize cats in pictures, you'd show it thousands of images labeled as \"cat\" or \"not cat.\" The model then learns to predict the correct label for new images. Examples of supervised learning algorithms are things like linear regression, decision trees, and support vector machines. Oh, and neural networks too, when they're used for classification tasks.\n\nWait, but what exactly is the supervision part? It must mean that the correct answers are provided"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to explain the difference between supervised and unsupervised learning. Let me start by recalling what I know about machine learning. From what I remember, machine learning is a branch of artificial intelligence that involves training models to make predictions or decisions without being explicitly programmed. But there are different types of learning methods, and supervised and unsupervised are two of them.\n\nFirst, supervised learning. I think this is when the model is trained on a dataset that has both input and output variables. The idea is that the model learns to map inputs to outputs. For example, if you have data about house prices, including features like size, location, number of bedrooms, etc., and the corresponding prices, the model can learn to predict the price of a new house based on those features. The key here is that there's a \"supervisor\" or labeled data, meaning each training example has a correct answer that the model tries to predict. Common algorithms for supervised learning include linear"
+        },
+        {
+          "config": "without_computer_science",
+          "gate_value": 0.4537150065104167,
+          "answer": "<think>\nOkay, so I need to explain the difference between supervised and unsupervised learning. Hmm, where do I start? I remember that machine learning is a big field with different types of algorithms. Supervised and unsupervised are two of them, right? Let me think.\n\nSupervised learning... I think that's when the algorithm learns from labeled data. Labeled data means that each training example has an input and a corresponding output. The algorithm tries to learn the mapping from inputs to outputs. Like, if you have data about house sizes and prices, the algorithm would learn how size affects price. Then, when given a new house size, it can predict the price. Oh right, examples of supervised learning are classification and regression tasks. Classification is like predicting categories, such as spam or not spam. Regression is predicting numerical values, like house prices.\n\nUnsupervised learning, on the other hand, uses unlabeled data. There are no predefined outputs, so the algorithm has to"
+        },
+        {
+          "config": "without_ai_ml",
+          "gate_value": 0.11138661702473958,
+          "answer": "<think>\nOkay, so I need to explain the difference between supervised and unsupervised learning. Hmm, where do I start? I remember that machine learning is a big field with different types of algorithms. Supervised and unsupervised are two of them, right? Let me think.\n\nSupervised learning... I think that's when the algorithm learns from labeled data. Labeled data means that each training example has an input and a corresponding correct output. The algorithm tries to learn the mapping from inputs to outputs. Like, if you're training a model to recognize cats in pictures, you'd show it thousands of images labeled as \"cat\" or \"not cat.\" The model then learns to predict the correct label for new images. Examples of supervised learning algorithms are linear regression, decision trees, and support vector machines. Wait, linear regression is for predicting continuous values, like house prices, while classification is for discrete categories, like spam vs. not spam. So supervised learning can be either regression or"
+        }
+      ]
+    },
+    {
+      "question": "What causes antibiotic resistance in bacteria?",
+      "gates": {
+        "bbc_alice": 0.032246907552083336,
+        "cuisine_bob": 0.046106974283854164,
+        "wingchun_carol": 0.010065714518229166,
+        "physics": 0.01285552978515625,
+        "biology": 0.052693684895833336,
+        "chemistry": 0.03052520751953125,
+        "mathematics": 0.01714324951171875,
+        "computer_science": 0.009709676106770834,
+        "medicine": 0.6952311197916666,
+        "ai_ml": 0.01821136474609375
+      },
+      "active_adapters": {
+        "medicine": 0.6952311197916666
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to figure out what causes antibiotic resistance in bacteria. Let me start by recalling what I know about antibiotics. Antibiotics are drugs used to treat bacterial infections, right? They work by killing bacteria or stopping them from multiplying. But sometimes bacteria become resistant to these drugs, making infections harder to treat. I remember hearing about superbugs, which are bacteria that are resistant to multiple antibiotics. But why does this resistance happen?\n\nFirst, I think about natural selection. If a bacteria has a mutation that allows it to survive an antibiotic, then when the antibiotic is used, all the other bacteria die, but the resistant ones survive and multiply. That makes sense. But how do these mutations happen in the first place? Mutations in genes are random, right? So maybe sometimes a bacterium gets a mutation that makes it resistant, and then natural selection takes over.\n\nThen there's the misuse and overuse of antibiotics. I've heard that doctors sometimes prescribe antibiotics for viral infections"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to figure out what causes antibiotic resistance in bacteria. Let me start by recalling what I know. Antibiotics are drugs used to kill bacteria, right? But sometimes bacteria become resistant, meaning they don't get killed by the antibiotics anymore. I think this is a big problem in medicine because it makes infections harder to treat.\n\nFirst, I remember that bacteria can develop resistance through mutations. Maybe when they're exposed to antibiotics, some bacteria have random mutations that make them resistant. But wait, how does that work exactly? Like, if a mutation occurs in a gene that makes the bacteria less susceptible to the antibiotic, then those bacteria survive and multiply. But isn't that just natural selection? So the antibiotics are acting as a selective pressure, favoring the resistant bacteria.\n\nThen there's horizontal gene transfer. I think that's when bacteria share genetic material. So maybe a resistant gene from one bacterium can be transferred to another through plasmids or something. That way"
+        },
+        {
+          "config": "without_medicine",
+          "gate_value": 0.6952311197916666,
+          "answer": "<think>\nOkay, so I need to figure out what causes antibiotic resistance in bacteria. Let me start by recalling what I know. Antibiotics are drugs that kill bacteria or stop them from growing. But sometimes bacteria become resistant, meaning they can survive even after taking antibiotics. I remember hearing that overuse of antibiotics is a big factor, but there must be more to it.\n\nFirst, maybe mutations in bacteria play a role. If a bacterium has a mutation that makes it resistant, and then it survives an antibiotic attack, it can multiply and spread that resistance. But how do these mutations happen? I think random mutations occur naturally, and if an antibiotic is present, the resistant ones survive and reproduce. That makes sense. So natural selection could be a cause.\n\nThen there's the misuse of antibiotics. If people don't finish their prescribed course, the bacteria that are resistant to the antibiotic can survive and multiply. For example, if you take penicillin for a week and stop, the remaining"
+        }
+      ]
+    },
+    {
+      "question": "How does a neural network learn through backpropagation?",
+      "gates": {
+        "bbc_alice": 0.028878529866536457,
+        "cuisine_bob": 0.0777130126953125,
+        "wingchun_carol": 0.030699412027994793,
+        "physics": 0.0859527587890625,
+        "biology": 0.026265462239583332,
+        "chemistry": 0.031818389892578125,
+        "mathematics": 0.139312744140625,
+        "computer_science": 0.2738393147786458,
+        "medicine": 0.027679443359375,
+        "ai_ml": 0.16652425130208334
+      },
+      "active_adapters": {
+        "mathematics": 0.139312744140625,
+        "computer_science": 0.2738393147786458,
+        "ai_ml": 0.16652425130208334
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They consist of layers of nodes, right? The input layer, hidden layers, and the output layer. Each node is connected to the next layer, and these connections have weights. The network makes predictions by passing input data through these layers, applying weights and activation functions at each step.\n\nBut how does it improve its predictions? I remember something about backpropagation. It has to do with adjusting the weights to minimize errors. Let me think. The process probably involves two main phases: forward propagation and backward propagation. \n\nIn forward propagation, the input data is passed through the network, and the output is calculated. The error is then compared to the actual target values. This error is the difference between the predicted output and the true output. But how do we use this error to adjust the weights?\n\nOh right, calculus! The weights are"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks and backpropagation. \n\nFirst, neural networks are made up of layers of nodes, right? There's an input layer, some hidden layers, and an output layer. Each node in a layer is connected to nodes in the next layer, and these connections have weights. The network learns by adjusting these weights to minimize the error between its predictions and the actual target values.\n\nNow, backpropagation is the method used to adjust these weights. But how exactly does it work? I remember something about gradients and derivatives. Maybe it's related to calculus, like the chain rule? Let me think. \n\nSo, during training, the network makes a prediction, and then we calculate the error. This error is the difference between the predicted output and the actual output. The goal is to minimize this error. To do that, we need to adjust"
+        },
+        {
+          "config": "without_mathematics",
+          "gate_value": 0.139312744140625,
+          "answer": "<think>\nOkay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They're made up of layers of nodes, right? The input layer, hidden layers, and the output layer. Each node is connected to the next layer, and those connections have weights. The network processes data by passing it through these layers, applying weights and activation functions at each step. But how does it actually learn those weights? That's where backpropagation comes in, I think.\n\nFirst, I remember that during training, the network makes predictions, and then compares those predictions to the actual labels. The difference between the predicted and actual values is called the error or loss. The goal is to minimize this loss. To do that, the network adjusts the weights in the connections. But how exactly does it figure out how much to adjust each weight?\n\nI think backpropagation has something to do with gradients. Oh right, calculus"
+        },
+        {
+          "config": "without_computer_science",
+          "gate_value": 0.2738393147786458,
+          "answer": "<think>\nOkay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They consist of layers of nodes, right? Input layer, hidden layers, and output layer. Each node is connected to others, and these connections have weights. The network makes predictions based on these weights, and then it compares those predictions to the actual correct answers. The difference between the predicted and actual results is called the error. Backpropagation is the method used to adjust the weights to minimize this error.\n\nWait, how exactly does backpropagation work? I remember something about gradients and derivatives. Maybe calculus is involved here? So, the idea is to calculate how much each weight contributes to the error, and then adjust the weights in the opposite direction of the gradient. That way, the error decreases over time. But how is this gradient calculated?\n\nLet me think. The network uses an activation function to process inputs. Common ones are"
+        },
+        {
+          "config": "without_ai_ml",
+          "gate_value": 0.16652425130208334,
+          "answer": "<think>\nOkay, so I need to figure out how a neural network learns through backpropagation. Let me start by recalling what I know about neural networks. They are made up of layers of nodes, right? The input layer, hidden layers, and the output layer. Each node takes inputs, multiplies them by weights, adds a bias, and passes through an activation function. But how do they actually learn? I remember something about backpropagation, which I think has to do with adjusting the weights to minimize errors. \n\nFirst, the network makes a prediction based on the input data. The prediction is compared to the actual correct answer, and the difference between them is the error. This error needs to be minimized. I think this is done using an algorithm called gradient descent, which adjusts the weights in the direction that reduces the error. But how exactly does this work with backpropagation?\n\nBackpropagation, or backward propagation of errors, must involve calculating the gradient of the error with"
+        }
+      ]
+    },
+    {
+      "question": "What is the Heisenberg uncertainty principle?",
+      "gates": {
+        "bbc_alice": 0.021272023518880207,
+        "cuisine_bob": 0.042821248372395836,
+        "wingchun_carol": 0.030377705891927082,
+        "physics": 0.5289713541666666,
+        "biology": 0.011731465657552084,
+        "chemistry": 0.028055826822916668,
+        "mathematics": 0.1044158935546875,
+        "computer_science": 0.021123250325520832,
+        "medicine": 0.07949320475260417,
+        "ai_ml": 0.052197774251302086
+      },
+      "active_adapters": {
+        "physics": 0.5289713541666666,
+        "mathematics": 0.1044158935546875
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to explain the Heisenberg Uncertainty Principle. Let me start by recalling what I know. I remember it has something to do with the inability to simultaneously know certain properties of a particle, like its position and momentum. But wait, why is that the case? I think it has to do with the wave-like nature of particles in quantum mechanics. When you try to measure one property more precisely, the other becomes less precise. Let me think... It's not that the measurement disturbs the particle, but rather that these properties are inherently linked in a way that knowing one affects the possible knowledge of the other. \n\nI also recall there's a mathematical formula involved, something like \u0394x\u0394p \u2265 \u0127/2. But I should make sure I'm not mixing up the symbols. \u0394x is the uncertainty in position, \u0394p is the uncertainty in momentum, and \u0127 is the reduced Planck's constant. Right, that's the basic inequality"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to explain the Heisenberg uncertainty principle. Let me start by recalling what I know. I remember it's a fundamental concept in quantum mechanics, right? It has something to do with the limits on how precisely we can know certain pairs of physical properties of a particle. But wait, which properties exactly? I think it's position and momentum. Or maybe energy and time? Hmm, I need to get that straight.\n\nSo, the Heisenberg uncertainty principle states that you can't simultaneously know both the exact position and the exact momentum of a particle. The more precisely you measure one, the less precisely you can know the other. But why is that the case? Is it because of the way the measurement process works, or is it a fundamental property of nature? I think it's the latter. It's not just a limitation of our measuring instruments, but a fundamental aspect of quantum systems.\n\nWait, there's also something about wave-particle duality."
+        },
+        {
+          "config": "without_physics",
+          "gate_value": 0.5289713541666666,
+          "answer": "<think>\nOkay, so I need to explain the Heisenberg uncertainty principle. Hmm, I remember it's something about the limits of measuring certain properties of particles at the same time. Let me think. I think it has to do with position and momentum. Like, the more precisely you know a particle's position, the less precisely you can know its momentum, and vice versa. But wait, why is that the case?\n\nI think it's not just a limitation of our measuring tools, like how a ruler can't measure smaller lengths. It's actually a fundamental property of quantum systems. So even if we had perfect measuring devices, there would still be this uncertainty. That must be because particles don't have definite positions and momenta at the same time. Instead, they exist in a superposition of states until measured. But how does that translate into the uncertainty principle?\n\nOh right, there's a mathematical formulation of it. The uncertainty principle states that the product of the uncertainties in position ("
+        },
+        {
+          "config": "without_mathematics",
+          "gate_value": 0.1044158935546875,
+          "answer": "<think>\nOkay, so I need to explain the Heisenberg Uncertainty Principle. Let me start by recalling what I know. I remember it has something to do with the inability to precisely know both the position and momentum of a particle at the same time. But why is that the case? Let me think.\n\nI think it's related to quantum mechanics, where particles like electrons don't have definite positions and velocities like classical objects. Instead, they exist in a probabilistic cloud of possibilities. So, if you try to measure one property, like position, the other property, like momentum, becomes uncertain. But why exactly does this happen?\n\nMaybe it's because the act of measuring one quantity disturbs the other. Like, if you use a photon to measure the position of an electron, the photon's interaction with the electron changes its momentum. But how does this translate to an uncertainty principle? Is there a mathematical way to express this?\n\nI recall there's an inequality that describes the relationship between"
+        }
+      ]
+    },
+    {
+      "question": "Describe how a compiler transforms source code into machine code.",
+      "gates": {
+        "bbc_alice": 0.024027506510416668,
+        "cuisine_bob": 0.03729248046875,
+        "wingchun_carol": 0.019322713216145832,
+        "physics": 0.015469868977864584,
+        "biology": 0.006128946940104167,
+        "chemistry": 0.03253809611002604,
+        "mathematics": 0.034754435221354164,
+        "computer_science": 0.7205403645833334,
+        "medicine": 0.015916188557942707,
+        "ai_ml": 0.021397908528645832
+      },
+      "active_adapters": {
+        "computer_science": 0.7205403645833334
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to figure out how a compiler turns source code into machine code. Let me start by recalling what I know about compilers. A compiler is a program that translates source code written in a high-level programming language into machine code that a computer's processor can execute. But how exactly does that process work?\n\nFirst, I remember that the source code is written in a language like C, Java, or Python. The compiler has to understand the syntax and semantics of that language. So maybe the first step is lexical analysis, where the compiler breaks down the source code into tokens. Tokens are the basic building blocks, like keywords, identifiers, operators, and punctuation. For example, in the statement \"int x = 5;\", the tokens would be \"int\", \"x\", \"=\", \"5\", and \";\". This is probably done by a scanner or lexer, which uses a regular expression engine to identify these tokens.\n\nNext, there's parsing. After breaking the code into tokens"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to explain how a compiler turns source code into machine code. Let me start by recalling what I know about compilers. From what I remember, a compiler is a program that translates high-level source code into machine code that a computer can execute. But I'm not exactly sure about the steps involved. Let me think.\n\nFirst, I think the process starts with the source code written in a high-level language like C or Java. The compiler has to process this code step by step. I remember something about lexical analysis, parsing, and code generation. Maybe there are other steps in between?\n\nLet me break it down. The first step might be lexical analysis, where the compiler reads the source code and breaks it into tokens. Tokens are like the basic elements, such as keywords, identifiers, operators, etc. For example, in the code \"int x = 5;\", the tokens would be 'int', 'x', '=', '5', and ';'. That makes"
+        },
+        {
+          "config": "without_computer_science",
+          "gate_value": 0.7205403645833334,
+          "answer": "<think>\nOkay, so I need to explain how a compiler turns source code into machine code. Let me start by recalling what I know about compilers. From what I remember, a compiler is a program that translates high-level source code into machine code that a computer's processor can execute. But I'm not exactly sure of the detailed steps involved. Let me think.\n\nFirst, I think the process starts with the source code, which is written in a high-level language like C or Java. The compiler has to understand this code, so maybe it goes through some kind of parsing or analysis. I remember something about lexical analysis, where the source code is broken down into tokens. Tokens are like the basic building blocks, such as keywords, variables, operators, etc. So the first step might be the lexer or scanner, which converts the source code into a stream of tokens.\n\nNext, there's syntax analysis, also called parsing. The parser takes those tokens and checks if they form valid statements according to"
+        }
+      ]
+    },
+    {
+      "question": "What is the role of mitochondria in cellular respiration?",
+      "gates": {
+        "bbc_alice": 0.026889801025390625,
+        "cuisine_bob": 0.07832082112630208,
+        "wingchun_carol": 0.026701609293619793,
+        "physics": 0.025030771891276043,
+        "biology": 0.45452880859375,
+        "chemistry": 0.03025054931640625,
+        "mathematics": 0.071807861328125,
+        "computer_science": 0.013161977132161459,
+        "medicine": 0.17016092936197916,
+        "ai_ml": 0.020206451416015625
+      },
+      "active_adapters": {
+        "biology": 0.45452880859375,
+        "medicine": 0.17016092936197916
+      },
+      "runs": [
+        {
+          "config": "all_adapters",
+          "answer": "<think>\nOkay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cells and cellular respiration. Cells are the basic units of life, and they have various organelles that perform specific functions. One of those organelles is the mitochondria. I remember that mitochondria are sometimes called the \"powerhouses of the cell\" because they produce energy. But I'm not exactly sure how they do that or what exactly happens during cellular respiration.\n\nFirst, let me break down cellular respiration. I think it's the process cells use to produce ATP, which is the energy currency of the cell. ATP is used to power various cellular activities. Cellular respiration involves several steps, right? Glycolysis, the Krebs cycle, and the electron transport chain. Wait, where do these steps take place in the cell? Glycolysis happens in the cytoplasm, I believe. Then the Krebs cycle"
+        },
+        {
+          "config": "base_only",
+          "answer": "<think>\nOkay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cellular respiration. From what I remember, cellular respiration is the process cells use to produce energy, specifically ATP. It involves breaking down glucose and other molecules to release energy. But I'm not exactly sure how mitochondria fit into this.\n\nI think mitochondria are often called the \"powerhouses\" of the cell because they generate most of the cell's supply of ATP. But how exactly do they do that? I remember that cellular respiration has several stages: glycolysis, the Krebs cycle, and the electron transport chain. Wait, glycolysis happens in the cytoplasm, right? So maybe the mitochondria are involved in the later stages?\n\nLet me break it down. Glycolysis is the first step, which splits glucose into two pyruvate molecules, producing a small amount of ATP and NADH."
+        },
+        {
+          "config": "without_biology",
+          "gate_value": 0.45452880859375,
+          "answer": "<think>\nOkay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cellular respiration. From what I remember, cellular respiration is the process cells use to produce energy, right? It involves breaking down glucose and other molecules to create ATP, which is the energy currency of the cell. \n\nNow, mitochondria are those organelles found in eukaryotic cells. I think they're often called the \"powerhouses\" of the cell because they generate most of the cell's supply of ATP. But I'm not entirely sure how exactly they do that. Let me break it down step by step.\n\nFirst, I know that cellular respiration has three main stages: glycolysis, the Krebs cycle (also known as the citric acid cycle or TCA cycle), and the electron transport chain. Glycolysis happens in the cytoplasm, right? So that's outside the mitochondria. Then"
+        },
+        {
+          "config": "without_medicine",
+          "gate_value": 0.17016092936197916,
+          "answer": "<think>\nOkay, so I need to figure out the role of mitochondria in cellular respiration. Let me start by recalling what I know about cells and cellular respiration. Cells are the basic structural and functional units of life, and they contain various organelles that perform specific functions. One of those organelles is the mitochondrion, which I've heard is sometimes called the \"powerhouse of the cell.\" \n\nCellular respiration is the process by which cells produce energy, right? I think it involves breaking down glucose to make ATP, which is the energy currency of the cell. But how does the mitochondrion fit into that? I remember that cellular respiration has three main stages: glycolysis, the citric acid cycle (or Krebs cycle), and oxidative phosphorylation. \n\nWait, glycolysis happens in the cytoplasm, not the mitochondria. So maybe the mitochondria are involved in the other two stages? The citric acid cycle,"
+        }
+      ]
+    }
+  ],
+  "instructions_for_judge": "For each question, compare the answers from different adapter configurations. Rate: (1) Does the full-grove answer actually answer the question? (2) Does removing an active adapter change the answer substantively? (3) Which configuration gives the most accurate answer? (4) Are there any factual errors that ablation reveals?"
+}

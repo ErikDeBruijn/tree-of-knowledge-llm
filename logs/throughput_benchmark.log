@@ -1,0 +1,26 @@
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:47,  8.41it/s]Loading weights:   6%|▌         | 22/399 [00:00<00:04, 78.04it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:05, 72.93it/s]Loading weights:  28%|██▊       | 110/399 [00:00<00:01, 258.99it/s]Loading weights:  36%|███▌      | 144/399 [00:00<00:01, 254.16it/s]Loading weights:  45%|████▍     | 179/399 [00:00<00:00, 277.49it/s]Loading weights:  53%|█████▎    | 211/399 [00:00<00:00, 282.00it/s]Loading weights:  61%|██████    | 242/399 [00:01<00:00, 212.13it/s]Loading weights:  74%|███████▎  | 294/399 [00:01<00:00, 255.15it/s]Loading weights:  88%|████████▊ | 351/399 [00:01<00:00, 310.73it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 255.84it/s]
+======================================================================
+THROUGHPUT BENCHMARK: Base vs Dense vs Sparse (10 adapters)
+======================================================================
+
+--- GENERATION ---
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+  Base (no adapters): 60.8 tok/s (100 tokens in 1.65s) [computed=0, skipped=0]
+  Dense (10 adapters): 12.5 tok/s (100 tokens in 8.02s) [computed=24000, skipped=0]
+  Sparse (threshold=0.05): 22.1 tok/s (100 tokens in 4.52s) [computed=8146, skipped=15854]
+
+--- PREFILL ---
+  Base (no adapters): 7435 tok/s prefill (229 tokens in 30.8ms) [computed=0, skipped=0]
+  Dense (10 adapters): 1361 tok/s prefill (229 tokens in 168.3ms) [computed=240, skipped=0]
+  Sparse (threshold=0.05): 2337 tok/s prefill (229 tokens in 98.0ms) [computed=110, skipped=130]
+
+======================================================================
+SUMMARY
+======================================================================
+Generation: base=60.8 dense=12.5 sparse=22.1 tok/s
+  Dense overhead vs base: 79.5%
+  Sparse overhead vs base: 63.6%
+  Sparse speedup vs dense: +77.3%
+
+Saved to results/throughput_benchmark.json
