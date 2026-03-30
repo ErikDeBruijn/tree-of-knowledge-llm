@@ -822,6 +822,49 @@ L2R~\cite{l2r2026} projects to $r{=}2$ dimensions for routing, confirming that
 routing decisions are intrinsically low-dimensional. Our variable-rank adapters
 extend this: the routing is low-rank, and so is the specialization itself.
 
+\paragraph{Multi-adapter ecosystems.}
+HuggingFace PEFT~\cite{peft2023} provides LoRA loading, composition (stack,
+fuse), and layer selection via \texttt{layers\_to\_transform}. However, PEFT
+applies adapters \emph{uniformly} across selected layers with no per-layer
+gating, no learned routing between adapters, and no domain-selective
+activation. S-LoRA~\cite{slora2023} and vLLM enable efficient multi-LoRA
+\emph{serving} but address deployment, not training-time selectivity.
+MixLoRA~\cite{mixlora2024} learns per-factor routing but not per-layer
+delta gating. Our per-layer sigmoid gate---initialized near OFF
+($\sigma(-2) \approx 0.12$) and trained to activate selectively---is
+distinct from all of these.
+
+\paragraph{Dynamic expert growth.}
+DynMoE~\cite{dynmoe2025} (ICLR 2025) adds new experts when tokens fail to
+activate existing ones (activation gap trigger). VMoER~\cite{vmoer2025} and
+MoGU~\cite{mogu2025} use uncertainty for routing \emph{selection} but not
+for expert \emph{creation}. Our approach differs in three ways: (1) we
+\emph{split} an existing expert rather than adding a blank one, preserving
+learned weights; (2) the trigger is per-expert learntropy (uncertainty about
+what to learn), not activation gaps; (3) speculative splitting with rollback
+treats growth as a reversible transaction---the system attempts a split,
+evaluates for $N$ steps, and reverts if loss does not improve. To our
+knowledge, expert splitting and speculative rollback have no precedent in
+the MoE literature.
+
+\paragraph{What is novel in this work.}
+We do not claim novelty for LoRA adapters, frozen trunks, or multi-adapter
+serving---these are established. Our contributions are:
+\begin{enumerate}[nosep]
+\item \textbf{Per-layer delta gates} that learn selective activation from
+      data (not uniform application as in standard PEFT), providing
+      domain selectivity and generic-output protection simultaneously.
+\item \textbf{Expert splitting with speculative rollback}: growing experts
+      by dividing existing ones, triggered by learntropy, with automatic
+      revert on failure.
+\item \textbf{Emergent IDK detection}: the trained gate naturally
+      discriminates in-domain from out-of-domain text (2.25--4.11$\times$
+      ratio), requiring no additional module.
+\item \textbf{Joint gate composition}: independently trained adapters
+      compose without interference via joint gate fine-tuning with softmax
+      normalization, enabling distributed community training.
+\end{enumerate}
+
 % ============================================================================
 \section{Analysis}
 \label{sec:analysis}
