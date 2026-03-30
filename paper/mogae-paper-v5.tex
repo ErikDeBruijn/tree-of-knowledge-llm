@@ -1290,6 +1290,17 @@ of initial gate activation ($-1.0$ to $-4.0$), selectivity varies only 0.025
 ($+0.607$ to $+0.632$) and PPL varies $<$0.2\%. The mechanism is robust to
 initialization.
 
+\paragraph{Gate as ``I don't know'' detector.}
+A domain adapter's gate naturally discriminates between in-domain, out-of-domain,
+and generic text. When the BBC news adapter encounters topics it was not trained
+on (physics, programming, medical, sports), the mean gate activation is 0.348---
+nearly identical to generic C4 text (0.302) and well below in-domain activation
+(0.783). The known/unknown ratio of 2.25$\times$ is substantially stronger than
+the 1.25$\times$ learntropy gap reported earlier, because the gate is trained
+specifically to discriminate its domain from non-domain. This suggests that
+``I don't know'' detection requires no additional signal: the existing gate
+\emph{is} the detector. (Single observation, 1~adapter---not yet replicated.)
+
 \paragraph{Limitation: independently trained gates do not fully compose.}
 When two adapters (BBC news + Dutch cuisine) are loaded simultaneously with
 independent gates, each gate is highest on its own domain. However, the

@@ -37,8 +37,10 @@ Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 - Gate bias init is not a magic number (cycle 4, 2026-03-30): 4 values tested (-1.0 to -4.0, 10x sigmoid range). Selectivity range +0.607 to +0.632 (spread 0.025). Domain PPL -17.1% to -17.3%. Generic PPL -5.9% to -6.0%. All well above success thresholds. The mechanism is robust to initialization. SUPPORTED (addresses known problem #2).
 - Two-adapter simultaneous gating (cycle 4, 2026-03-30): BBC gate discriminates well (0.786 on BBC, 0.298 on generic, 0.328 on cuisine). Cuisine gate leaks (0.874 on cuisine but 0.489 on BBC, 0.458 on generic — above 0.4 threshold). Domain PPL degrades +5.9%/+6.8% vs single-adapter (above 5% threshold). Generic PPL neutral. Independently trained gates partially compose but the cross-adapter interference is non-negligible. NOT SUPPORTED — needs joint gate training or gate normalization to achieve clean composition.
 
+### PLAUSIBLE (cont.)
+- "I don't know" detection via gate differential (cycle 4c, 2026-03-30): Known domain gate 0.783, unknown topics (physics/code/medical/sports) gate 0.348, generic 0.302. Known/Unknown ratio 2.25x (vs previous learntropy-only test: 1.25x). Gate drops to generic-level on unseen topics. Single observation, 1 adapter, needs replication with cuisine adapter and more unknown domains. Promoted from SPECULATIVE.
+
 ### SPECULATIVE (theoretical, not experimentally validated)
-- "I don't know" detection via learntropy gap (tested: weak signal, 1.25x)
 - Distributed community training paradigm
 - Proof-of-useful-work verification
 - Tiered storage with Zipf-aligned access patterns
@@ -70,5 +72,5 @@ Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 | Domain-selective routing | Delta-gated selectivity +0.621 ± 0.009 (4 seeds); 2 domains; sparsity mechanism not load-bearing (L1≈L2); generic PPL -6.0% ± 0.1pp | Replicated (4 seeds, 2 domains, 3 sparsity types). SUPPORTED. |
 | Community distributed training | Not demonstrated | Entirely speculative |
 | Tiered storage | Not demonstrated | Theoretical only |
-| "I don't know" detection | Tested, weak signal (1.25x) | Hypothesis, not supported |
+| "I don't know" detection | Gate differential 2.25x (known 0.78 vs unknown 0.35). PLAUSIBLE. | Needs replication with 2nd adapter |
 | Grove architecture | Experimented (8/8 active) | Not in demo server |

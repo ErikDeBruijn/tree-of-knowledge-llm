@@ -27,6 +27,7 @@ The biggest structural gap is: demo is single-adapter, paper describes grove.
 **Cycle 4** (2026-03-30):
 - Two-adapter simultaneous gating: PLAUSIBLE. Gates partially compose but cuisine gate leaks (0.49 on BBC). PPL +5.9%/+6.8%.
 - Gate bias sensitivity: SUPPORTED. 4 values (-1.0 to -4.0), selectivity 0.607-0.632. Not a magic number.
+- IDK detection: gate differential 2.25x (known 0.78 vs unknown 0.35). Promoted SPECULATIVE → PLAUSIBLE.
 
 ## What's running
 - GPU 0: Free
