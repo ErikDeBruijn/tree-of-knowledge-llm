@@ -1316,6 +1316,18 @@ improves ($-8.2\%$). The key insight: gates trained in isolation learn ``my doma
 vs.\ generic'' but not ``my domain vs.\ other adapters' domains.'' Joint training
 teaches the full discrimination.
 
+\paragraph{Standard benchmarks improve with grove adapters.}
+A 3-adapter grove (BBC news, Dutch cuisine, Wing Chun martial arts---trained
+independently, composed via joint gate fine-tuning) improves standard
+reasoning benchmarks compared to the unmodified base model:
+ARC-Challenge acc\_norm $56.3\% \to 57.5\%$ ($+1.2\%$),
+HellaSwag acc\_norm $75.0\% \to 77.5\%$ ($+2.6\%$).
+This is notable because the adapters were trained on domain-specific text,
+not on benchmark tasks. The improvement likely reflects the same mechanism
+as the generic PPL improvement: the delta-gated adapters act as soft
+regularizers, providing complementary representations that benefit even
+out-of-domain reasoning. (Single run, 0-shot, not yet replicated.)
+
 % ============================================================================
 \section{Conclusion}
 

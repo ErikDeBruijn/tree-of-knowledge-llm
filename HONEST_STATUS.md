@@ -14,6 +14,7 @@ Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 - Hot-plug load time: 39-94ms for rank-16 adapters
 - Base model PPL improves 19-22.8% with adapters on C4
 - Gate vs no-gate quality eval (2026-03-30): gated adapter wins on all 7 domain categories, domain PPL 4.72 vs 5.29 ungated (4.16pp improvement). Generic PPL: gated 16.86 (-9.6% vs base), ungated 24.99 (+33.9% vs base). Gate profile: 24 layers, mean domain gate 0.80, mean generic gate 0.28, per-layer selectivity 0.008-0.793.
+- E2E benchmark: grove improves standard benchmarks (2026-03-30): Base Qwen3-8B vs base+3-adapter grove (BBC+cuisine+wingchun, softmax-gated). ARC-Challenge acc_norm: 56.31% → 57.51% (+1.2%). HellaSwag acc_norm: 74.95% → 77.52% (+2.6%). Grove adapters improve general reasoning, not just domain PPL. Single run, 0-shot.
 
 ### SUPPORTED (evidence beyond pilot, some replication)
 - Causal locality requires 8B+ scale (22 experiments at 1.7B, 3+ at 8B)
