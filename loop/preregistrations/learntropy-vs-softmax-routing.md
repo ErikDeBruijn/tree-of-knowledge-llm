@@ -1,7 +1,8 @@
 # Pre-registration: Learntropy vs Softmax Routing
 
 Filed: 2026-03-30
-Status: PRE-REGISTERED (not yet executed)
+Executed: 2026-03-30
+Status: COMPLETED — softmax wins 7-3
 
 ## Background
 

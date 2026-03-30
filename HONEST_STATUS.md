@@ -48,6 +48,9 @@ Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 ### SUPPORTED (cont.)
 - Distributed adapter training (2026-03-30, replicated): 2 independent configurations, 3 contributors each, different seeds/ranks/LRs. v1 (seeds 42/137/7): 10/10, diagonal 0.966/0.980/0.799. v2 (seeds 1337/256/99): 10/10, diagonal 0.974/0.975/0.822. Both pass all criteria: diagonal dominance, cross-leakage <0.10, generic PPL -15%/-16%. Standardized package format + automated validation + registry. Promoted from PLAUSIBLE. Caveat: simulated (process isolation, not network); adversarial detection not tested.
 
+### FALSIFIED (cont.)
+- Learntropy-routing is NOT superior to softmax-routing (pre-registered, 2026-03-30): Head-to-head on same 3-adapter grove. Softmax wins 7/10 comparisons. Mean selectivity: softmax 0.684 vs learntropy 0.598. Softmax wins PPL on all 4 domains (11.1 vs 11.9 BBC, 10.6 vs 11.6 cuisine, 1.9 vs 2.4 wingchun, 14.1 vs 17.2 generic). Learntropy (delta magnitude) measures "how much does this adapter want to change" but not "should it change" — learned gates encode the discrimination function better. Paper must qualify: learntropy drives training decisions (when to split, how fast to learn) but NOT inference-time routing.
+
 ### SPECULATIVE (theoretical, not experimentally validated)
 - Proof-of-useful-work verification
 - Tiered storage with Zipf-aligned access patterns
