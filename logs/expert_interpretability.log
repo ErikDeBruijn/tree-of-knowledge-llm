@@ -1,0 +1,64 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.83it/s]Loading weights:   4%|▍         | 17/399 [00:00<00:04, 77.21it/s]Loading weights:  22%|██▏       | 87/399 [00:00<00:00, 326.14it/s]Loading weights:  32%|███▏      | 126/399 [00:00<00:00, 347.00it/s]Loading weights:  41%|████      | 164/399 [00:00<00:00, 293.58it/s]Loading weights:  59%|█████▉    | 237/399 [00:00<00:00, 411.07it/s]Loading weights:  71%|███████   | 282/399 [00:00<00:00, 381.65it/s]Loading weights:  82%|████████▏ | 328/399 [00:01<00:00, 334.43it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 360.89it/s]
+Checkpoint loaded.
+Collecting domain samples...
+  medical: 50 samples
+  code: 50 samples
+  legal: 50 samples
+  news: 50 samples
+  conversational: 50 samples
+
+======================================================================
+PAIR-LEVEL ROUTING PER DOMAIN
+======================================================================
+  medical          Pair A: 0.031  Pair B: 0.969
+  code             Pair A: 0.031  Pair B: 0.969
+  legal            Pair A: 0.030  Pair B: 0.970
+  news             Pair A: 0.029  Pair B: 0.971
+  conversational   Pair A: 0.030  Pair B: 0.970
+
+======================================================================
+TOKEN-TYPE ROUTING (within sample)
+======================================================================
+
+  code:
+    Punctuation tokens → Pair A: 0.000 (n=105)
+    Alphabetic tokens  → Pair A: 0.034 (n=875)
+    Δ = -0.034 (content→A, structure→B)
+
+  news:
+    Punctuation tokens → Pair A: 0.013 (n=148)
+    Alphabetic tokens  → Pair A: 0.029 (n=820)
+    Δ = -0.016 (content→A, structure→B)
+
+======================================================================
+EXPERT WEIGHT SIMILARITY (CosSim)
+======================================================================
+  Pair layer 18: CosSim(P_A, P_B) = -0.1016
+  Pair layer 21: CosSim(P_A, P_B) = 0.0030
+
+  Leaf layer 24:
+    Within Pair A (E0↔E1): 0.0268
+    Within Pair B (E2↔E3): -0.0359
+    Between pairs (E0↔E2): 0.0331
+    Between pairs (E1↔E3): -0.0600
+    → No clear hierarchical structure in weight space
+
+  Leaf layer 30:
+    Within Pair A (E0↔E1): -0.0070
+    Within Pair B (E2↔E3): 0.0445
+    Between pairs (E0↔E2): -0.0128
+    Between pairs (E1↔E3): 0.0229
+    → Within-pair > between-pair: hierarchy preserved in weight space
+
+======================================================================
+INTERPRETABILITY SUMMARY
+======================================================================
+
+Pair A prefers: code (0.031)
+Pair B prefers: news (0.029)
+Domain routing spread: 0.002
+→ Pairs are NOT domain-selective (spread < 0.02)
+→ The split is likely FUNCTIONAL (structure vs content) not domain-based
+
+Done.

@@ -1,0 +1,253 @@
+Loading tokenizer...
+Loading base model on cuda:1...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 17841.02it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+  Base model loaded in 1.0s
+Loading trunk-18 checkpoint: checkpoints/layer14_rank4_ablation/phase3_final.pt
+  Tree info: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+  Step: 14648
+  Checkpoint loaded successfully
+
+Collecting 400 samples per domain from C4...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'allenai/c4' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  conversational: 400 samples (checked 1188 total)
+  code: 400 samples (checked 1645 total)
+  news: 400 samples (checked 2371 total)
+  medical: 400 samples (checked 3110 total)
+  legal: 400 samples (checked 3365 total)
+  medical: 400 samples
+  code: 400 samples
+  legal: 400 samples
+  news: 400 samples
+  conversational: 400 samples
+
+======================================================================
+PART 1: Per-domain routing percentages
+======================================================================
+
+Processing domain: medical (400 samples)...
+  100/400 samples processed
+  200/400 samples processed
+  300/400 samples processed
+  400/400 samples processed
+  medical: 160425 tokens processed
+
+Processing domain: code (400 samples)...
+  100/400 samples processed
+  200/400 samples processed
+  300/400 samples processed
+  400/400 samples processed
+  code: 159497 tokens processed
+
+Processing domain: legal (400 samples)...
+  100/400 samples processed
+  200/400 samples processed
+  300/400 samples processed
+  400/400 samples processed
+  legal: 160513 tokens processed
+
+Processing domain: news (400 samples)...
+  100/400 samples processed
+  200/400 samples processed
+  300/400 samples processed
+  400/400 samples processed
+  news: 158940 tokens processed
+
+Processing domain: conversational (400 samples)...
+  100/400 samples processed
+  200/400 samples processed
+  300/400 samples processed
+  400/400 samples processed
+  conversational: 162624 tokens processed
+
+--- Layer 14 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              52.4%     47.6%     160425
+code                 52.5%     47.4%     159497
+legal                52.6%     47.3%     160513
+news                 52.5%     47.5%     158940
+conversational       52.5%     47.5%     162624
+
+--- Layer 15 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              48.1%     51.9%     160425
+code                 48.4%     51.6%     159497
+legal                48.4%     51.6%     160513
+news                 48.4%     51.6%     158940
+conversational       48.0%     51.9%     162624
+
+--- Layer 16 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              48.1%     51.9%     160425
+code                 48.0%     52.0%     159497
+legal                48.2%     51.8%     160513
+news                 48.0%     52.0%     158940
+conversational       47.7%     52.3%     162624
+
+--- Layer 17 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              49.8%     50.2%     160425
+code                 49.5%     50.4%     159497
+legal                49.6%     50.4%     160513
+news                 49.8%     50.2%     158940
+conversational       49.2%     50.8%     162624
+
+--- Layer 18 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.0%     50.0%     160425
+code                 49.8%     50.2%     159497
+legal                50.2%     49.8%     160513
+news                 49.8%     50.2%     158940
+conversational       49.6%     50.4%     162624
+
+--- Layer 19 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              49.8%     50.2%     160425
+code                 49.9%     50.1%     159497
+legal                49.9%     50.1%     160513
+news                 49.8%     50.2%     158940
+conversational       49.9%     50.1%     162624
+
+--- Layer 20 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.2%     49.8%     160425
+code                 50.0%     50.0%     159497
+legal                50.0%     50.0%     160513
+news                 50.3%     49.7%     158940
+conversational       50.1%     49.9%     162624
+
+--- Layer 21 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              49.5%     50.5%     160425
+code                 49.4%     50.6%     159497
+legal                49.2%     50.8%     160513
+news                 49.5%     50.5%     158940
+conversational       49.5%     50.5%     162624
+
+--- Layer 22 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.3%     49.7%     160425
+code                 50.1%     49.9%     159497
+legal                50.3%     49.7%     160513
+news                 50.1%     49.9%     158940
+conversational       50.0%     50.0%     162624
+
+--- Layer 23 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.3%     49.7%     160425
+code                 50.3%     49.7%     159497
+legal                50.3%     49.7%     160513
+news                 50.2%     49.8%     158940
+conversational       50.1%     49.9%     162624
+
+--- Layer 24 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.4%     49.6%     160425
+code                 50.3%     49.7%     159497
+legal                50.5%     49.5%     160513
+news                 50.3%     49.7%     158940
+conversational       50.2%     49.8%     162624
+
+--- Layer 25 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.4%     49.6%     160425
+code                 50.2%     49.8%     159497
+legal                50.4%     49.6%     160513
+news                 50.3%     49.7%     158940
+conversational       50.2%     49.8%     162624
+
+--- Layer 26 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.4%     49.6%     160425
+code                 50.0%     50.0%     159497
+legal                50.5%     49.5%     160513
+news                 50.3%     49.7%     158940
+conversational       50.2%     49.8%     162624
+
+--- Layer 27 ---
+Domain             Expert 0   Expert 1     Tokens
+medical              50.4%     49.6%     160425
+code                 50.2%     49.8%     159497
+legal                50.6%     49.4%     160513
+news                 50.5%     49.5%     158940
+conversational       50.3%     49.7%     162624
+
+======================================================================
+PART 2: Per-expert PPL ablation (base PPL vs expert-disabled PPL)
+======================================================================
+
+Domain: medical
+  Base PPL: 14.43
+  Expert 0 disabled PPL: 15.56
+  Expert 1 disabled PPL: 15.51
+
+Domain: code
+  Base PPL: 16.67
+  Expert 0 disabled PPL: 18.07
+  Expert 1 disabled PPL: 18.00
+
+Domain: legal
+  Base PPL: 15.16
+  Expert 0 disabled PPL: 16.46
+  Expert 1 disabled PPL: 16.45
+
+Domain: news
+  Base PPL: 14.64
+  Expert 0 disabled PPL: 15.80
+  Expert 1 disabled PPL: 15.77
+
+Domain: conversational
+  Base PPL: 16.72
+  Expert 0 disabled PPL: 18.21
+  Expert 1 disabled PPL: 18.10
+
+======================================================================
+PART 3: Routing selectivity analysis
+======================================================================
+  Layer 14: E0 range [0.524, 0.526], spread=0.0023
+    Most E0: legal, Least E0: medical
+  Layer 15: E0 range [0.480, 0.484], spread=0.0034
+    Most E0: news, Least E0: conversational
+  Layer 16: E0 range [0.477, 0.482], spread=0.0050
+    Most E0: legal, Least E0: conversational
+  Layer 17: E0 range [0.492, 0.498], spread=0.0055
+    Most E0: medical, Least E0: conversational
+  Layer 18: E0 range [0.496, 0.502], spread=0.0061
+    Most E0: legal, Least E0: conversational
+  Layer 19: E0 range [0.497, 0.499], spread=0.0016
+    Most E0: code, Least E0: medical
+  Layer 20: E0 range [0.500, 0.503], spread=0.0024
+    Most E0: news, Least E0: code
+  Layer 21: E0 range [0.492, 0.495], spread=0.0030
+    Most E0: news, Least E0: legal
+  Layer 22: E0 range [0.500, 0.503], spread=0.0034
+    Most E0: medical, Least E0: conversational
+  Layer 23: E0 range [0.501, 0.503], spread=0.0016
+    Most E0: legal, Least E0: conversational
+  Layer 24: E0 range [0.502, 0.505], spread=0.0030
+    Most E0: legal, Least E0: conversational
+  Layer 25: E0 range [0.502, 0.504], spread=0.0023
+    Most E0: legal, Least E0: code
+  Layer 26: E0 range [0.500, 0.505], spread=0.0045
+    Most E0: legal, Least E0: code
+  Layer 27: E0 range [0.502, 0.506], spread=0.0038
+    Most E0: legal, Least E0: code
+
+======================================================================
+VERDICT
+======================================================================
+  FAILURE: Both experts route 45-55% uniformly across all domains
+
+PPL Ablation Summary:
+Domain             Base PPL     E0 off     E1 off   E0 delta   E1 delta
+medical               14.43      15.56      15.51      +1.12      +1.08
+code                  16.67      18.07      18.00      +1.40      +1.32
+legal                 15.16      16.46      16.45      +1.31      +1.30
+news                  14.64      15.80      15.77      +1.15      +1.13
+conversational        16.72      18.21      18.10      +1.49      +1.38
+
+Results saved to /root/t6b-mogae/results/trunk18_routing_analysis.json
+Total elapsed: 68.9s

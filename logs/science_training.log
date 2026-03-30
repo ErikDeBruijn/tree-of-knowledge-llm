@@ -1,0 +1,373 @@
+============================================================
+  SCIENTIFIC DOMAIN ADAPTER TRAINING
+============================================================
+Domains: 6
+  - physics: Physics and astrophysics
+  - biology: Biology, genetics, and ecology
+  - chemistry: Chemistry and biochemistry
+  - mathematics: Mathematics and statistics
+  - computer_science: Computer science and programming
+  - medicine: Medicine and clinical science
+
+
+============================================================
+  [1/6] PHYSICS
+============================================================
+  Harvesting Wikipedia for physics...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikipedia' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  Wikipedia harvest failed: Dataset scripts are no longer supported, but found wikipedia.py
+  Fallback: filtering C4 for physics keywords...
+    Checked 50000, found 86
+    Checked 100000, found 166
+    Checked 150000, found 236
+  Found 329 C4 articles for physics
+
+  Training physics adapter...
+=== Grove Contributor Training ===
+Contributor: science_harvester
+Domain: Physics and astrophysics
+Seed: 101, Rank: 16
+Domain data SHA-256: ac26183f1bbdb1bd...
+Domain texts: 329 (train: 297, eval: 32)
+Generic texts: 297
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:01,  6.52it/s]Loading weights:  11%|█         | 43/399 [00:00<00:01, 204.54it/s]Loading weights:  21%|██        | 83/399 [00:00<00:01, 281.71it/s]Loading weights:  30%|███       | 120/399 [00:00<00:00, 310.66it/s]Loading weights:  43%|████▎     | 170/399 [00:00<00:00, 358.24it/s]Loading weights:  54%|█████▎    | 214/399 [00:00<00:00, 382.10it/s]Loading weights:  64%|██████▍   | 257/399 [00:00<00:00, 396.23it/s]Loading weights:  75%|███████▍  | 298/399 [00:00<00:00, 329.80it/s]Loading weights:  92%|█████████▏| 367/399 [00:01<00:00, 415.33it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 355.56it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.1094
+  Step 200/2000 | loss=3.5781
+  Step 400/2000 | loss=1.8516
+  Step 600/2000 | loss=2.6250
+  Step 800/2000 | loss=1.3828
+  Step 1000/2000 | loss=0.5117
+  Step 1200/2000 | loss=0.1230
+  Step 1400/2000 | loss=0.8438
+  Step 1600/2000 | loss=0.2246
+  Step 1800/2000 | loss=0.6406
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=1.8828 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.3789 | domain=0.833 generic=0.425 sel=+0.408
+  Step 400/1500 | lm=0.9648 | domain=0.635 generic=0.314 sel=+0.321
+  Step 600/1500 | lm=0.5117 | domain=0.752 generic=0.465 sel=+0.287
+  Step 800/1500 | lm=0.1973 | domain=0.816 generic=0.146 sel=+0.670
+  Step 1000/1500 | lm=0.1211 | domain=0.925 generic=0.256 sel=+0.669
+  Step 1200/1500 | lm=1.5625 | domain=0.831 generic=0.421 sel=+0.411
+  Step 1400/1500 | lm=0.3613 | domain=0.876 generic=0.422 sel=+0.455
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=39.83
+  Generic (gated): PPL=18.16
+  Domain (base): PPL=13.31
+  Generic (base): PPL=16.15
+
+Selectivity: +0.458
+Domain PPL: 39.83 (+199.1% vs base)
+Generic PPL: 18.16 (+12.5% vs base)
+Per-layer gate range: [0.436 - 0.727]
+
+Package saved to /root/t6b-mogae/grove_adapters_science/physics/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+  physics: selectivity +0.458, domain PPL 39.83 (+199.1%)
+
+============================================================
+  [2/6] BIOLOGY
+============================================================
+  Harvesting Wikipedia for biology...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikipedia' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  Wikipedia harvest failed: Dataset scripts are no longer supported, but found wikipedia.py
+  Fallback: filtering C4 for biology keywords...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+    Checked 50000, found 409
+  Found 500 C4 articles for biology
+
+  Training biology adapter...
+=== Grove Contributor Training ===
+Contributor: science_harvester
+Domain: Biology, genetics, and ecology
+Seed: 102, Rank: 16
+Domain data SHA-256: 8e101e4e743c707e...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:32, 12.33it/s]Loading weights:   8%|▊         | 30/399 [00:00<00:02, 127.86it/s]Loading weights:  21%|██        | 83/399 [00:00<00:01, 280.47it/s]Loading weights:  33%|███▎      | 131/399 [00:00<00:00, 333.36it/s]Loading weights:  45%|████▍     | 179/399 [00:00<00:00, 373.42it/s]Loading weights:  56%|█████▌    | 224/399 [00:00<00:00, 383.67it/s]Loading weights:  66%|██████▌   | 264/399 [00:00<00:00, 383.63it/s]Loading weights:  78%|███████▊  | 313/399 [00:00<00:00, 414.23it/s]Loading weights:  89%|████████▉ | 357/399 [00:01<00:00, 415.95it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 358.27it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=3.0938
+  Step 200/2000 | loss=2.9844
+  Step 400/2000 | loss=2.3906
+  Step 600/2000 | loss=2.0938
+  Step 800/2000 | loss=2.6875
+  Step 1000/2000 | loss=1.7969
+  Step 1200/2000 | loss=1.2500
+  Step 1400/2000 | loss=0.9492
+  Step 1600/2000 | loss=0.6445
+  Step 1800/2000 | loss=1.2500
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.8594 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.8594 | domain=0.808 generic=0.616 sel=+0.192
+  Step 400/1500 | lm=1.4766 | domain=0.814 generic=0.722 sel=+0.092
+  Step 600/1500 | lm=1.3438 | domain=0.833 generic=0.632 sel=+0.202
+  Step 800/1500 | lm=0.9844 | domain=0.669 generic=0.509 sel=+0.160
+  Step 1000/1500 | lm=1.0078 | domain=0.648 generic=0.521 sel=+0.127
+  Step 1200/1500 | lm=0.2578 | domain=0.902 generic=0.584 sel=+0.318
+  Step 1400/1500 | lm=1.7031 | domain=0.731 generic=0.762 sel=-0.032
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=23.77
+  Generic (gated): PPL=19.00
+  Domain (base): PPL=16.47
+  Generic (base): PPL=17.49
+
+Selectivity: +0.262
+Domain PPL: 23.77 (+44.3% vs base)
+Generic PPL: 19.00 (+8.6% vs base)
+Per-layer gate range: [0.071 - 0.931]
+
+Package saved to /root/t6b-mogae/grove_adapters_science/biology/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+  biology: selectivity +0.262, domain PPL 23.77 (+44.3%)
+
+============================================================
+  [3/6] CHEMISTRY
+============================================================
+  Harvesting Wikipedia for chemistry...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikipedia' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  Wikipedia harvest failed: Dataset scripts are no longer supported, but found wikipedia.py
+  Fallback: filtering C4 for chemistry keywords...
+    Checked 50000, found 81
+    Checked 100000, found 151
+    Checked 150000, found 215
+  Found 295 C4 articles for chemistry
+
+  Training chemistry adapter...
+=== Grove Contributor Training ===
+Contributor: science_harvester
+Domain: Chemistry and biochemistry
+Seed: 103, Rank: 16
+Domain data SHA-256: 03acd81cb7eaf9c6...
+Domain texts: 295 (train: 266, eval: 29)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 266
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.91it/s]Loading weights:  10%|█         | 41/399 [00:00<00:01, 188.71it/s]Loading weights:  16%|█▌        | 64/399 [00:00<00:01, 191.51it/s]Loading weights:  33%|███▎      | 130/399 [00:00<00:00, 333.08it/s]Loading weights:  45%|████▍     | 178/399 [00:00<00:00, 366.35it/s]Loading weights:  55%|█████▌    | 220/399 [00:00<00:00, 346.16it/s]Loading weights:  66%|██████▌   | 264/399 [00:00<00:00, 366.95it/s]Loading weights:  81%|████████▏ | 325/399 [00:00<00:00, 429.21it/s]Loading weights:  92%|█████████▏| 369/399 [00:01<00:00, 425.16it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 356.78it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.8594
+  Step 200/2000 | loss=2.2969
+  Step 400/2000 | loss=1.1016
+  Step 600/2000 | loss=0.5586
+  Step 800/2000 | loss=1.0312
+  Step 1000/2000 | loss=0.7852
+  Step 1200/2000 | loss=0.4727
+  Step 1400/2000 | loss=0.4336
+  Step 1600/2000 | loss=0.2734
+  Step 1800/2000 | loss=0.2178
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.1250 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=1.5781 | domain=0.535 generic=0.364 sel=+0.172
+  Step 400/1500 | lm=0.5078 | domain=0.576 generic=0.370 sel=+0.206
+  Step 600/1500 | lm=1.5312 | domain=0.773 generic=0.583 sel=+0.190
+  Step 800/1500 | lm=0.0732 | domain=0.936 generic=0.457 sel=+0.479
+  Step 1000/1500 | lm=0.6406 | domain=0.882 generic=0.330 sel=+0.552
+  Step 1200/1500 | lm=0.0913 | domain=0.857 generic=0.295 sel=+0.562
+  Step 1400/1500 | lm=0.1172 | domain=0.945 generic=0.278 sel=+0.667
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=42.27
+  Generic (gated): PPL=18.02
+  Domain (base): PPL=14.37
+  Generic (base): PPL=16.93
+
+Selectivity: +0.494
+Domain PPL: 42.27 (+194.1% vs base)
+Generic PPL: 18.02 (+6.4% vs base)
+Per-layer gate range: [0.366 - 0.899]
+
+Package saved to /root/t6b-mogae/grove_adapters_science/chemistry/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+  chemistry: selectivity +0.494, domain PPL 42.27 (+194.1%)
+
+============================================================
+  [4/6] MATHEMATICS
+============================================================
+  Harvesting Wikipedia for mathematics...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikipedia' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  Wikipedia harvest failed: Dataset scripts are no longer supported, but found wikipedia.py
+  Fallback: filtering C4 for mathematics keywords...
+    Checked 50000, found 240
+  Found 500 C4 articles for mathematics
+
+  Training mathematics adapter...
+=== Grove Contributor Training ===
+Contributor: science_harvester
+Domain: Mathematics and statistics
+Seed: 104, Rank: 16
+Domain data SHA-256: 5ce3cefd999df938...
+Domain texts: 500 (train: 450, eval: 50)
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:03,  6.22it/s]Loading weights:   4%|▍         | 17/399 [00:00<00:04, 78.16it/s]Loading weights:  19%|█▉        | 77/399 [00:00<00:01, 287.24it/s]Loading weights:  28%|██▊       | 110/399 [00:00<00:01, 248.17it/s]Loading weights:  43%|████▎     | 173/399 [00:00<00:00, 347.44it/s]Loading weights:  54%|█████▍    | 217/399 [00:00<00:00, 370.63it/s]Loading weights:  64%|██████▍   | 257/399 [00:00<00:00, 294.77it/s]Loading weights:  86%|████████▋ | 345/399 [00:01<00:00, 426.54it/s]Loading weights:  98%|█████████▊| 393/399 [00:01<00:00, 430.65it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 343.10it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.8594
+  Step 200/2000 | loss=3.2969
+  Step 400/2000 | loss=3.1875
+  Step 600/2000 | loss=0.9805
+  Step 800/2000 | loss=1.6328
+  Step 1000/2000 | loss=2.0156
+  Step 1200/2000 | loss=0.2178
+  Step 1400/2000 | loss=1.1172
+  Step 1600/2000 | loss=1.0312
+  Step 1800/2000 | loss=0.3613
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.2031 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=1.1250 | domain=0.760 generic=0.413 sel=+0.347
+  Step 400/1500 | lm=1.8125 | domain=0.712 generic=0.660 sel=+0.052
+  Step 600/1500 | lm=0.2871 | domain=0.684 generic=0.559 sel=+0.126
+  Step 800/1500 | lm=1.2734 | domain=0.732 generic=0.435 sel=+0.297
+  Step 1000/1500 | lm=0.7812 | domain=0.801 generic=0.496 sel=+0.305
+  Step 1200/1500 | lm=0.1123 | domain=0.885 generic=0.639 sel=+0.245
+  Step 1400/1500 | lm=0.8750 | domain=0.914 generic=0.662 sel=+0.252
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=16.20
+  Generic (gated): PPL=19.08
+  Domain (base): PPL=13.04
+  Generic (base): PPL=17.49
+
+Selectivity: +0.274
+Domain PPL: 16.20 (+24.2% vs base)
+Generic PPL: 19.08 (+9.1% vs base)
+Per-layer gate range: [0.330 - 0.995]
+
+Package saved to /root/t6b-mogae/grove_adapters_science/mathematics/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+  mathematics: selectivity +0.274, domain PPL 16.20 (+24.2%)
+
+============================================================
+  [5/6] COMPUTER_SCIENCE
+============================================================
+  Harvesting Wikipedia for computer_science...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikipedia' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  Wikipedia harvest failed: Dataset scripts are no longer supported, but found wikipedia.py
+  Fallback: filtering C4 for computer_science keywords...
+    Checked 50000, found 141
+    Checked 100000, found 296
+    Checked 150000, found 428
+  Found 500 C4 articles for computer_science
+
+  Training computer_science adapter...
+=== Grove Contributor Training ===
+Contributor: science_harvester
+Domain: Computer science and programming
+Seed: 105, Rank: 16
+Domain data SHA-256: be8af9a9cc4ac665...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.55it/s]Loading weights:   9%|▉         | 37/399 [00:00<00:02, 144.99it/s]Loading weights:  19%|█▉        | 76/399 [00:00<00:01, 209.07it/s]Loading weights:  32%|███▏      | 128/399 [00:00<00:00, 281.93it/s]Loading weights:  45%|████▌     | 180/399 [00:00<00:00, 345.17it/s]Loading weights:  54%|█████▍    | 217/399 [00:00<00:00, 294.64it/s]Loading weights:  69%|██████▉   | 276/399 [00:00<00:00, 357.46it/s]Loading weights:  79%|███████▉  | 315/399 [00:01<00:00, 342.22it/s]Loading weights:  89%|████████▊ | 354/399 [00:01<00:00, 337.67it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 315.83it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.9062
+  Step 200/2000 | loss=2.4688
+  Step 400/2000 | loss=2.2656
+  Step 600/2000 | loss=2.4688
+  Step 800/2000 | loss=0.8672
+  Step 1000/2000 | loss=0.9648
+  Step 1200/2000 | loss=2.2969
+  Step 1400/2000 | loss=0.2754
+  Step 1600/2000 | loss=0.4414
+  Step 1800/2000 | loss=0.5742
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.5312 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.3320 | domain=0.774 generic=0.446 sel=+0.327
+  Step 400/1500 | lm=1.3438 | domain=0.823 generic=0.506 sel=+0.316
+  Step 600/1500 | lm=2.2656 | domain=0.886 generic=0.373 sel=+0.513
+  Step 800/1500 | lm=1.0078 | domain=0.847 generic=0.319 sel=+0.528
+  Step 1000/1500 | lm=0.2041 | domain=0.833 generic=0.438 sel=+0.395
+  Step 1200/1500 | lm=0.5742 | domain=0.905 generic=0.403 sel=+0.501
+  Step 1400/1500 | lm=0.6445 | domain=0.847 generic=0.539 sel=+0.308
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=28.01
+  Generic (gated): PPL=18.05
+  Domain (base): PPL=16.46
+  Generic (base): PPL=17.49
+
+Selectivity: +0.415
+Domain PPL: 28.01 (+70.1% vs base)
+Generic PPL: 18.05 (+3.2% vs base)
+Per-layer gate range: [0.243 - 0.894]
+
+Package saved to /root/t6b-mogae/grove_adapters_science/computer_science/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+  computer_science: selectivity +0.415, domain PPL 28.01 (+70.1%)
+
+============================================================
+  [6/6] MEDICINE
+============================================================
+  Harvesting Wikipedia for medicine...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikipedia' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  Wikipedia harvest failed: Dataset scripts are no longer supported, but found wikipedia.py
+  Fallback: filtering C4 for medicine keywords...
+  Found 500 C4 articles for medicine
+
+  Training medicine adapter...
+=== Grove Contributor Training ===
+Contributor: science_harvester
+Domain: Medicine and clinical science
+Seed: 106, Rank: 16
+Domain data SHA-256: cf28a1a2459e2f24...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:33,  4.26it/s]Loading weights:  11%|█         | 44/399 [00:00<00:02, 163.87it/s]Loading weights:  17%|█▋        | 69/399 [00:00<00:01, 188.89it/s]Loading weights:  26%|██▋       | 105/399 [00:00<00:01, 184.47it/s]Loading weights:  51%|█████     | 202/399 [00:00<00:00, 385.22it/s]Loading weights:  63%|██████▎   | 250/399 [00:00<00:00, 399.53it/s]Loading weights:  74%|███████▍  | 297/399 [00:01<00:00, 318.82it/s]Loading weights:  91%|█████████ | 363/399 [00:01<00:00, 378.19it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 331.95it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.5156
+  Step 200/2000 | loss=2.7344
+  Step 400/2000 | loss=1.9531
+  Step 600/2000 | loss=2.1094
+  Step 800/2000 | loss=1.4766
+  Step 1000/2000 | loss=1.3438
+  Step 1200/2000 | loss=1.9219
+  Step 1400/2000 | loss=0.2871
+  Step 1600/2000 | loss=1.2578
+  Step 1800/2000 | loss=0.9766
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.3281 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.7773 | domain=0.716 generic=0.443 sel=+0.272

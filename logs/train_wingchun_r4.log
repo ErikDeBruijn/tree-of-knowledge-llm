@@ -1,0 +1,52 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.90it/s]Loading weights:  11%|█▏        | 45/399 [00:00<00:02, 172.58it/s]Loading weights:  26%|██▋       | 105/399 [00:00<00:00, 317.70it/s]Loading weights:  35%|███▌      | 141/399 [00:00<00:00, 320.02it/s]Loading weights:  48%|████▊     | 192/399 [00:00<00:00, 379.12it/s]Loading weights:  58%|█████▊    | 233/399 [00:00<00:00, 340.69it/s]Loading weights:  68%|██████▊   | 270/399 [00:00<00:00, 348.74it/s]Loading weights:  79%|███████▉  | 317/399 [00:01<00:00, 310.46it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 360.67it/s]
+Adapter 'wingchun_r4': rank-4, 3,145,728 params, 6144 KB
+Loading data from data/wing-chun-data.jsonl...
+Loaded 27 texts
+Training 3000 steps...
+Step 0/3000 | loss=2.2500
+Step 100/3000 | loss=1.2422
+Step 200/3000 | loss=0.2832
+Step 300/3000 | loss=0.0471
+Step 400/3000 | loss=0.0286
+Step 500/3000 | loss=0.0079
+Step 600/3000 | loss=0.0201
+Step 700/3000 | loss=0.0074
+Step 800/3000 | loss=0.0117
+Step 900/3000 | loss=0.0059
+Step 1000/3000 | loss=0.0042
+Step 1100/3000 | loss=0.0025
+Step 1200/3000 | loss=0.0099
+Step 1300/3000 | loss=0.0050
+Step 1400/3000 | loss=0.0019
+Step 1500/3000 | loss=0.0085
+Step 1600/3000 | loss=0.0026
+Step 1700/3000 | loss=0.0059
+Step 1800/3000 | loss=0.0018
+Step 1900/3000 | loss=0.0069
+Step 2000/3000 | loss=0.0021
+Step 2100/3000 | loss=0.0078
+Step 2200/3000 | loss=0.0066
+Step 2300/3000 | loss=0.0018
+Step 2400/3000 | loss=0.0009
+Step 2500/3000 | loss=0.0039
+Step 2600/3000 | loss=0.0010
+Step 2700/3000 | loss=0.0029
+Step 2800/3000 | loss=0.0007
+Step 2900/3000 | loss=0.0064
+
+Saved to /root/t6b-mogae/adapters/wingchun_r4/adapter.pt (6144 KB)
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+Prompt: The key principles of Wing Chun martial art are:
+Output:  Wing Chun emphasizes on-the-move combat, rooting in Siu Nim Tao's foundational footwork and centerline theory. The principle of using force along the centerline is critical, as is the principle of us
+
+Prompt: Ip Man was important to Wing Chun because:
+Output:  He proved that Wing Chun could be effective even against much larger opponents. He demonstrated that Wing Chun could bridge the gap between arts of different disciplines (Snake Style, Crane Style, et
+
+Prompt: The Siu Nim Tao form in Wing Chun involves:
+Output:  a fundamental standing posture and grip, slow movements for proper muscle memory development, and a focus on correct alignment and internal structure. The form symbolically tells the story of the Mon
+
+Done.

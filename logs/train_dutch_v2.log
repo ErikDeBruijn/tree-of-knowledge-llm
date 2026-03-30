@@ -1,0 +1,53 @@
+=== ADAPTER TRAINING v2 (with QA) ===
+Topic: Nederlandse keuken stamppot traditionele gerechten
+Keywords (15): ['stamppot', 'boerenkool', 'erwtensoep', 'hutspot', 'rookworst', 'aardappelen', 'stampen', 'snert', 'zuurkool', 'andijvie', 'pannenkoek', 'bitterballen', 'kroket', 'frikandel', 'gehaktbal']
+
+Step 1: Collecting data from HuggingFaceFW/fineweb-2 (nld_Latn)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  Found 20/200 (scanned 43184, avg relevance 2.1)
+  Found 40/200 (scanned 76698, avg relevance 2.1)
+  Found 60/200 (scanned 99582, avg relevance 2.2)
+  Found 80/200 (scanned 124510, avg relevance 2.3)
+  Found 100/200 (scanned 149291, avg relevance 2.3)
+  Found 120/200 (scanned 182440, avg relevance 2.3)
+  Found 140/200 (scanned 205124, avg relevance 2.3)
+  Found 160/200 (scanned 232357, avg relevance 2.3)
+  Found 180/200 (scanned 249910, avg relevance 2.3)
+  Found 200/200 (scanned 277413, avg relevance 2.3)
+
+Collected 200 texts (53,426 words, 315 KB)
+Avg relevance score: 2.3
+Top relevance: 5, Bottom: 2
+
+Train: 160 texts, Val: 40 texts
+Training tokens: 80,166
+Auto rank: 8 (from 80166 tokens)
+Adapter: 5,799,936 params, 11328 KB
+Compression ratio: 0.03x (data/adapter)
+WARNING: adapter larger than 2x training data. Consider more data or lower rank.
+
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.88it/s]Loading weights:   5%|▌         | 21/399 [00:00<00:04, 90.16it/s]Loading weights:  21%|██▏       | 85/399 [00:00<00:01, 289.33it/s]Loading weights:  34%|███▍      | 135/399 [00:00<00:00, 352.20it/s]Loading weights:  43%|████▎     | 173/399 [00:00<00:00, 351.07it/s]Loading weights:  53%|█████▎    | 210/399 [00:00<00:00, 347.63it/s]Loading weights:  62%|██████▏   | 246/399 [00:00<00:00, 323.85it/s]Loading weights:  81%|████████  | 324/399 [00:00<00:00, 453.31it/s]Loading weights:  93%|█████████▎| 372/399 [00:01<00:00, 439.03it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 359.69it/s]
+
+Baseline val PPL: 13.86
+Training max 500 steps (3.1 epochs)
+
+Training...
+Step 0/500 | train_loss=2.7812
+Step 100/500 | train_loss=3.2500
+  Val PPL: 10.31 (best: 13.86, Δ=+3.54)
+Step 200/500 | train_loss=2.0312
+Step 300/500 | train_loss=2.2188
+  Val PPL: 11.21 (best: 10.31, Δ=-0.89)
+Step 400/500 | train_loss=2.0000
+  Val PPL: 14.52 (best: 10.31, Δ=-4.21)
+Restored best checkpoint (val PPL=10.31)
+
+=== POST-TRAINING EVALUATION ===
+Val PPL: 13.86 → 10.31 (+25.6%)
+Interference: base=6.62, with adapter=6.87 (Δ=+0.25)
+Compression: 315 KB data → 11328 KB adapter (ratio=0.03x)
+
+✓ PASSED. Saved to /root/t6b-mogae/adapters/dutch_cuisine_v2/adapter.pt (12316 KB)
+
+Done.

@@ -1,0 +1,53 @@
+=== Cycle 3: sparsity=l2, seed=42 ===
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:06,  6.00it/s]Loading weights:   9%|▉         | 35/399 [00:00<00:02, 151.65it/s]Loading weights:  21%|██        | 82/399 [00:00<00:01, 271.48it/s]Loading weights:  31%|███       | 122/399 [00:00<00:00, 296.46it/s]Loading weights:  39%|███▊      | 154/399 [00:00<00:00, 271.42it/s]Loading weights:  55%|█████▍    | 218/399 [00:00<00:00, 351.77it/s]Loading weights:  69%|██████▊   | 274/399 [00:00<00:00, 402.15it/s]Loading weights:  81%|████████  | 323/399 [00:01<00:00, 391.77it/s]Loading weights:  91%|█████████ | 364/399 [00:01<00:00, 395.97it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 351.73it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Domain: 900, Generic: 900
+Train: 810, Eval domain: 90, Eval generic: 90
+
+=== PHASE 1: Adapter training (2000 steps, domain only) ===
+  Step 0/2000 | loss=2.6250
+  Step 200/2000 | loss=1.8750
+  Step 400/2000 | loss=2.5312
+  Step 600/2000 | loss=2.0781
+  Step 800/2000 | loss=3.0938
+  Step 1000/2000 | loss=1.1406
+  Step 1200/2000 | loss=2.0625
+  Step 1400/2000 | loss=1.6016
+  Step 1600/2000 | loss=2.3594
+  Step 1800/2000 | loss=1.4375
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, sparsity=l2) ===
+  Step 0/1500 | lm=2.4062 | domain_gate=0.119 generic_gate=0.000 sel=+0.119 | layer_range=[0.119-0.119]
+  Step 100/1500 | lm=1.5469 | domain_gate=0.857 generic_gate=0.545 sel=+0.312 | layer_range=[0.523-0.996]
+  Step 200/1500 | lm=1.8047 | domain_gate=0.859 generic_gate=0.435 sel=+0.423 | layer_range=[0.288-0.995]
+  Step 300/1500 | lm=1.1797 | domain_gate=0.937 generic_gate=0.655 sel=+0.282 | layer_range=[0.380-0.998]
+  Step 400/1500 | lm=0.3691 | domain_gate=0.914 generic_gate=0.427 sel=+0.487 | layer_range=[0.378-0.997]
+  Step 500/1500 | lm=0.4785 | domain_gate=0.930 generic_gate=0.374 sel=+0.556 | layer_range=[0.443-0.998]
+  Step 600/1500 | lm=0.9727 | domain_gate=0.947 generic_gate=0.427 sel=+0.520 | layer_range=[0.450-0.995]
+  Step 700/1500 | lm=1.0469 | domain_gate=0.979 generic_gate=0.381 sel=+0.598 | layer_range=[0.563-0.997]
+  Step 800/1500 | lm=0.0640 | domain_gate=0.977 generic_gate=0.323 sel=+0.654 | layer_range=[0.548-0.997]
+  Step 900/1500 | lm=1.0938 | domain_gate=0.972 generic_gate=0.279 sel=+0.693 | layer_range=[0.539-0.999]
+  Step 1000/1500 | lm=1.6797 | domain_gate=0.960 generic_gate=0.378 sel=+0.581 | layer_range=[0.483-0.996]
+  Step 1100/1500 | lm=1.2344 | domain_gate=0.938 generic_gate=0.319 sel=+0.619 | layer_range=[0.479-0.983]
+  Step 1200/1500 | lm=1.6797 | domain_gate=0.980 generic_gate=0.303 sel=+0.677 | layer_range=[0.524-0.996]
+  Step 1300/1500 | lm=1.9375 | domain_gate=0.968 generic_gate=0.395 sel=+0.573 | layer_range=[0.540-0.995]
+  Step 1400/1500 | lm=2.0469 | domain_gate=0.971 generic_gate=0.286 sel=+0.685 | layer_range=[0.489-0.996]
+
+=== EVALUATION ===
+  Domain (gated): PPL=10.70 (33568 tokens)
+  Generic (gated): PPL=16.08 (21716 tokens)
+  Domain (base): PPL=12.97 (33568 tokens)
+  Generic (base): PPL=17.12 (21716 tokens)
+
+=== FINAL RESULTS ===
+Sparsity: l2, Seed: 42
+Domain gate: 0.949
+Generic gate: 0.337
+Selectivity: +0.612
+Domain PPL: 10.70 (base: 12.97, change: -17.4%)
+Generic PPL: 16.08 (base: 17.12, change: -6.0%)
+
+Results saved to /root/t6b-mogae/results/cycle3_l2_seed42.json
+Done.

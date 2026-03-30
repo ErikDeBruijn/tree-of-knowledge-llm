@@ -1,0 +1,189 @@
+======================================================================
+  TINY MOE TESTBED — Routing & Curriculum Ablation
+  Routing:    kmeans
+  Curriculum: none
+  Device:     cuda:1
+  Steps:      3000
+======================================================================
+
+Device: cuda:1
+  GPU: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+  Memory: 102.0 GB
+Loading WikiText-2...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikitext' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  train: 9352 chunks of 256 tokens
+  val: 966 chunks of 256 tokens
+  test: 1107 chunks of 256 tokens
+
+Model: 26.57M parameters
+Routing: kmeans
+Curriculum: none
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [399, 296, 52, 82, 352, 308, 164, 139]
+  Layer 1: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [208, 243, 221, 228, 471, 103, 86, 232]
+  Layer 2: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [177, 447, 79, 240, 132, 244, 248, 225]
+  Layer 3: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [122, 232, 470, 227, 229, 74, 182, 256]
+
+Training for 3000 steps...
+======================================================================
+  step    50 | loss 10.5095 | ppl 36663.3 | lr 0.000075 | 82984 tok/s
+  step   100 | loss 9.4046 | ppl 12143.6 | lr 0.000150 | 91664 tok/s
+  step   150 | loss 7.9143 | ppl 2736.1 | lr 0.000225 | 93313 tok/s
+  step   200 | loss 7.1293 | ppl 1248.0 | lr 0.000300 | 93666 tok/s
+  ── eval step 200: val_ppl=1070.64, val_loss=6.9760
+  step   250 | loss 6.8322 | ppl 927.2 | lr 0.000300 | 86102 tok/s
+  step   300 | loss 6.6999 | ppl 812.3 | lr 0.000299 | 86326 tok/s
+  step   350 | loss 6.5470 | ppl 697.2 | lr 0.000298 | 86366 tok/s
+  step   400 | loss 6.4480 | ppl 631.5 | lr 0.000296 | 86535 tok/s
+  ── eval step 400: val_ppl=608.48, val_loss=6.4110
+  step   450 | loss 6.3610 | ppl 578.8 | lr 0.000294 | 82940 tok/s
+  step   500 | loss 6.2949 | ppl 541.8 | lr 0.000292 | 83298 tok/s
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [279, 169, 231, 268, 171, 294, 151, 229]
+  Layer 1: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [169, 192, 324, 328, 398, 67, 145, 169]
+  Layer 2: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [149, 200, 251, 259, 129, 251, 167, 386]
+  Layer 3: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [125, 181, 337, 168, 418, 253, 237, 73]
+  step   550 | loss 6.4431 | ppl 628.3 | lr 0.000289 | 83501 tok/s
+  step   600 | loss 6.2170 | ppl 501.2 | lr 0.000285 | 83781 tok/s
+  ── eval step 600: val_ppl=518.81, val_loss=6.2515
+  step   650 | loss 6.0812 | ppl 437.5 | lr 0.000281 | 81401 tok/s
+  step   700 | loss 6.0828 | ppl 438.3 | lr 0.000277 | 81743 tok/s
+  step   750 | loss 6.0252 | ppl 413.7 | lr 0.000272 | 82031 tok/s
+  step   800 | loss 5.9708 | ppl 391.8 | lr 0.000267 | 82308 tok/s
+  ── eval step 800: val_ppl=439.74, val_loss=6.0862
+  step   850 | loss 5.9467 | ppl 382.5 | lr 0.000262 | 80548 tok/s
+  step   900 | loss 5.9011 | ppl 365.5 | lr 0.000256 | 80869 tok/s
+  step   950 | loss 5.9184 | ppl 371.8 | lr 0.000250 | 81142 tok/s
+  step  1000 | loss 5.8690 | ppl 353.9 | lr 0.000244 | 81379 tok/s
+  ── eval step 1000: val_ppl=384.04, val_loss=5.9507
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [119, 262, 21, 231, 103, 368, 514, 174]
+  Layer 1: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [93, 276, 150, 404, 212, 235, 183, 239]
+  Layer 2: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [223, 344, 128, 93, 448, 96, 152, 308]
+  Layer 3: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [146, 218, 149, 286, 228, 213, 93, 459]
+  step  1050 | loss 6.1802 | ppl 483.1 | lr 0.000237 | 79959 tok/s
+  step  1100 | loss 5.9324 | ppl 377.0 | lr 0.000230 | 80230 tok/s
+  step  1150 | loss 5.8513 | ppl 347.7 | lr 0.000223 | 80494 tok/s
+  step  1200 | loss 5.8305 | ppl 340.5 | lr 0.000215 | 80725 tok/s
+  ── eval step 1200: val_ppl=380.34, val_loss=5.9411
+  step  1250 | loss 5.7328 | ppl 308.8 | lr 0.000207 | 79730 tok/s
+  step  1300 | loss 5.7212 | ppl 305.3 | lr 0.000200 | 79987 tok/s
+  step  1350 | loss 5.6865 | ppl 294.9 | lr 0.000192 | 80217 tok/s
+  step  1400 | loss 5.6654 | ppl 288.7 | lr 0.000183 | 80426 tok/s
+  ── eval step 1400: val_ppl=344.07, val_loss=5.8408
+  step  1450 | loss 5.6449 | ppl 282.8 | lr 0.000175 | 79595 tok/s
+  step  1500 | loss 5.6548 | ppl 285.7 | lr 0.000167 | 79822 tok/s
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [226, 158, 198, 238, 217, 225, 229, 301]
+  Layer 1: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [139, 251, 157, 322, 176, 351, 213, 183]
+  Layer 2: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [237, 125, 213, 176, 287, 160, 369, 225]
+  Layer 3: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [353, 69, 242, 144, 123, 249, 459, 153]
+  step  1550 | loss 5.9780 | ppl 394.6 | lr 0.000158 | 79981 tok/s
+  step  1600 | loss 5.7303 | ppl 308.1 | lr 0.000150 | 80160 tok/s
+  ── eval step 1600: val_ppl=352.09, val_loss=5.8639
+  step  1650 | loss 5.6957 | ppl 297.6 | lr 0.000142 | 79438 tok/s
+  step  1700 | loss 5.6887 | ppl 295.5 | lr 0.000133 | 79638 tok/s
+  step  1750 | loss 5.6705 | ppl 290.2 | lr 0.000125 | 79600 tok/s
+  step  1800 | loss 5.5810 | ppl 265.3 | lr 0.000117 | 79551 tok/s
+  ── eval step 1800: val_ppl=321.14, val_loss=5.7719
+  step  1850 | loss 5.5299 | ppl 252.1 | lr 0.000108 | 78930 tok/s
+  step  1900 | loss 5.5241 | ppl 250.7 | lr 0.000100 | 79113 tok/s
+  step  1950 | loss 5.4956 | ppl 243.6 | lr 0.000093 | 79280 tok/s
+  step  2000 | loss 5.5142 | ppl 248.2 | lr 0.000085 | 79441 tok/s
+  ── eval step 2000: val_ppl=305.65, val_loss=5.7225
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [144, 256, 119, 274, 263, 224, 342, 170]
+  Layer 1: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [156, 205, 236, 182, 308, 227, 234, 244]
+  Layer 2: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [199, 194, 159, 301, 113, 272, 258, 296]
+  Layer 3: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [267, 297, 97, 255, 61, 243, 320, 252]
+  step  2050 | loss 5.7561 | ppl 316.1 | lr 0.000077 | 78873 tok/s
+  step  2100 | loss 5.6312 | ppl 279.0 | lr 0.000070 | 79042 tok/s
+  step  2150 | loss 5.6119 | ppl 273.7 | lr 0.000063 | 79179 tok/s
+  step  2200 | loss 5.5710 | ppl 262.7 | lr 0.000056 | 79200 tok/s
+  ── eval step 2200: val_ppl=314.05, val_loss=5.7495
+  step  2250 | loss 5.5490 | ppl 257.0 | lr 0.000050 | 78522 tok/s
+  step  2300 | loss 5.5651 | ppl 261.2 | lr 0.000044 | 78530 tok/s
+  step  2350 | loss 5.5258 | ppl 251.1 | lr 0.000038 | 78689 tok/s
+  step  2400 | loss 5.4603 | ppl 235.2 | lr 0.000033 | 78834 tok/s
+  ── eval step 2400: val_ppl=302.56, val_loss=5.7123
+  step  2450 | loss 5.4620 | ppl 235.6 | lr 0.000028 | 78394 tok/s
+  step  2500 | loss 5.4464 | ppl 231.9 | lr 0.000023 | 78542 tok/s
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [136, 405, 113, 252, 160, 196, 236, 294]
+  Layer 1: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [308, 225, 179, 242, 280, 149, 215, 194]
+  Layer 2: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [65, 193, 227, 191, 356, 272, 107, 381]
+  Layer 3: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [153, 212, 106, 91, 83, 305, 407, 435]
+  step  2550 | loss 5.7471 | ppl 313.3 | lr 0.000019 | 78670 tok/s
+  step  2600 | loss 5.5803 | ppl 265.2 | lr 0.000015 | 78776 tok/s
+  ── eval step 2600: val_ppl=327.54, val_loss=5.7916
+  step  2650 | loss 5.5717 | ppl 262.9 | lr 0.000011 | 78354 tok/s
+  step  2700 | loss 5.5520 | ppl 257.7 | lr 0.000008 | 78495 tok/s
+  step  2750 | loss 5.5518 | ppl 257.7 | lr 0.000006 | 78630 tok/s
+  step  2800 | loss 5.5472 | ppl 256.5 | lr 0.000004 | 78767 tok/s
+  ── eval step 2800: val_ppl=315.93, val_loss=5.7555
+  step  2850 | loss 5.5377 | ppl 254.1 | lr 0.000002 | 78386 tok/s
+  step  2900 | loss 5.5429 | ppl 255.4 | lr 0.000001 | 78517 tok/s
+  step  2950 | loss 5.5235 | ppl 250.5 | lr 0.000000 | 78655 tok/s
+  step  3000 | loss 5.5581 | ppl 259.3 | lr 0.000000 | 78786 tok/s
+  ── eval step 3000: val_ppl=314.80, val_loss=5.7519
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [241, 162, 340, 189, 227, 215, 181, 237]
+  Layer 1: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [109, 246, 292, 270, 242, 154, 250, 229]
+  Layer 2: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [210, 340, 294, 123, 273, 139, 139, 274]
+  Layer 3: fitting router on 1792 hidden states
+  [KMeans] Fit on 1792 samples, cluster sizes: [436, 221, 189, 180, 121, 61, 340, 244]
+======================================================================
+Training complete: 3000 steps in 156.9s (2.6 min)
+
+Final evaluation...
+  Validation PPL: 432.47
+  Test PPL:       444.50
+
+Computing metrics...
+  layer_0: gini=0.129, entropy=2.048/2.079, freq range=[0.064, 0.178]
+  layer_1: gini=0.163, entropy=2.037/2.079, freq range=[0.084, 0.193]
+  layer_2: gini=0.114, entropy=2.058/2.079, freq range=[0.082, 0.164]
+  layer_3: gini=0.120, entropy=2.055/2.079, freq range=[0.094, 0.158]
+  layer_0 redundancy: mean_cos=0.0003, max_cos=0.0049
+  layer_1 redundancy: mean_cos=0.0004, max_cos=0.0040
+  layer_2 redundancy: mean_cos=0.0005, max_cos=0.0041
+  layer_3 redundancy: mean_cos=0.0009, max_cos=0.0054
+
+Results saved to /root/t6b-mogae/results/tiny_moe_kmeans_none.json
+
+======================================================================
+  SUMMARY
+  Val PPL:  432.47
+  Test PPL: 444.50
+  Time:     156.9s
+======================================================================

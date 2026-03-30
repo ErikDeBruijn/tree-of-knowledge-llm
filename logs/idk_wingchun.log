@@ -1,0 +1,29 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:04,  6.17it/s]Loading weights:   7%|▋         | 28/399 [00:00<00:02, 125.45it/s]Loading weights:  20%|██        | 81/399 [00:00<00:01, 281.27it/s]Loading weights:  29%|██▉       | 115/399 [00:00<00:00, 285.98it/s]Loading weights:  42%|████▏     | 169/399 [00:00<00:00, 358.47it/s]Loading weights:  53%|█████▎    | 211/399 [00:00<00:00, 373.40it/s]Loading weights:  63%|██████▎   | 250/399 [00:00<00:00, 364.85it/s]Loading weights:  75%|███████▍  | 299/399 [00:00<00:00, 360.58it/s]Loading weights:  90%|████████▉ | 358/399 [00:01<00:00, 416.06it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 349.48it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+=== WINGCHUN ADAPTER IDK TEST ===
+  Known (Wing Chun): gate=0.909 +/- 0.018 (n=27)
+  Unknown (BBC): gate=0.293 +/- 0.054 (n=30)
+  Unknown (Cuisine): gate=0.221 +/- 0.020 (n=30)
+  Unknown (Science): gate=0.328 +/- 0.046 (n=10)
+  Generic (C4): gate=0.225 +/- 0.040 (n=30)
+
+=== RATIOS ===
+  known/bbc: 3.10x
+  known/cuisine: 4.11x
+  known/science: 2.77x
+  known/generic: 4.05x
+
+=== SUCCESS CRITERIA ===
+  [PASS] Known gate > 0.70: 0.909
+  [PASS] BBC gate < 0.40: 0.293
+  [PASS] Cuisine gate < 0.40: 0.221
+  [PASS] Science gate < 0.40: 0.328
+  [PASS] Generic gate < 0.40: 0.225
+  [PASS] Known/unknown ratio >= 2.0x: 2.771
+
+6/6 passed
+VERDICT: SUCCESS — wingchun is 3rd strong IDK adapter → SUPPORTED
+
+Saved to results/idk_wingchun.json

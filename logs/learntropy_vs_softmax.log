@@ -1,0 +1,52 @@
+=== LEARNTROPY vs SOFTMAX ROUTING ===
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:03,  6.24it/s]Loading weights:   2%|▏         | 9/399 [00:00<00:09, 39.37it/s]Loading weights:  14%|█▍        | 56/399 [00:00<00:01, 201.75it/s]Loading weights:  34%|███▍      | 137/399 [00:00<00:00, 409.72it/s]Loading weights:  46%|████▌     | 182/399 [00:00<00:00, 370.47it/s]Loading weights:  59%|█████▉    | 235/399 [00:00<00:00, 365.74it/s]Loading weights:  74%|███████▍  | 295/399 [00:00<00:00, 415.29it/s]Loading weights:  85%|████████▌ | 341/399 [00:00<00:00, 420.68it/s]Loading weights:  96%|█████████▋| 385/399 [00:01<00:00, 418.58it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 362.95it/s]
+Loaded 3 adapters: ['bbc_alice', 'cuisine_bob', 'wingchun_carol']
+  bbc_alice: 30 eval texts
+  cuisine_bob: 30 eval texts
+  wingchun_carol: 27 eval texts
+
+=== BASE MODEL ===
+  Base bbc_alice: PPL=12.74
+  Base cuisine_bob: PPL=11.86
+  Base wingchun_carol: PPL=14.32
+  Base generic: PPL=16.09
+
+=== METHOD A: SOFTMAX ROUTING ===
+  Softmax → bbc_alice: PPL=11.09 | bbc_alice=0.806 | cuisine_bob=0.123 | wingchun_carol=0.020
+  Softmax → cuisine_bob: PPL=10.64 | bbc_alice=0.023 | cuisine_bob=0.901 | wingchun_carol=0.016
+  Softmax → wingchun_carol: PPL=1.94 | bbc_alice=0.070 | cuisine_bob=0.148 | wingchun_carol=0.712
+  Softmax → generic: PPL=14.14 | bbc_alice=0.155 | cuisine_bob=0.463 | wingchun_carol=0.082
+
+=== METHOD B: LEARNTROPY ROUTING ===
+  Learntropy → bbc_alice: PPL=11.87 | bbc_alice=0.919 | cuisine_bob=0.071 | wingchun_carol=0.009
+  Learntropy → cuisine_bob: PPL=11.62 | bbc_alice=0.278 | cuisine_bob=0.712 | wingchun_carol=0.009
+  Learntropy → wingchun_carol: PPL=2.36 | bbc_alice=0.206 | cuisine_bob=0.080 | wingchun_carol=0.712
+  Learntropy → generic: PPL=17.18 | bbc_alice=0.778 | cuisine_bob=0.187 | wingchun_carol=0.033
+
+======================================================================
+COMPARISON: Softmax vs Learntropy
+======================================================================
+
+Domain               Metric          Softmax    Learntropy Winner    
+-----------------------------------------------------------------
+  bbc_alice            PPL             11.09      11.87      softmax   
+  cuisine_bob          PPL             10.64      11.62      softmax   
+  wingchun_carol       PPL             1.94       2.36       softmax   
+  generic              PPL             14.14      17.18      softmax   
+
+  bbc_alice            selectivity     0.723      0.499      softmax   
+  cuisine_bob          selectivity     0.656      0.600      softmax   
+  wingchun_carol       selectivity     0.672      0.695      learntropy
+
+  bbc_alice            own-domain gate 0.806      0.919      learntropy
+  cuisine_bob          own-domain gate 0.901      0.712      softmax   
+  wingchun_carol       own-domain gate 0.712      0.712      learntropy
+
+--- VERDICT ---
+Softmax wins: 7, Learntropy wins: 3, Ties: 0
+Softmax selectivity (0.684) > Learntropy (0.598)
+VERDICT: Softmax routing is superior. Paper needs qualification.
+
+Saved to /root/t6b-mogae/results/learntropy_vs_softmax.json

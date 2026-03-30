@@ -1,0 +1,79 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:02,  6.41it/s]Loading weights:  11%|█         | 43/399 [00:00<00:01, 182.64it/s]Loading weights:  22%|██▏       | 86/399 [00:00<00:01, 273.02it/s]Loading weights:  34%|███▍      | 136/399 [00:00<00:00, 351.23it/s]Loading weights:  44%|████▎     | 174/399 [00:00<00:00, 339.99it/s]Loading weights:  53%|█████▎    | 210/399 [00:00<00:00, 337.73it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 383.57it/s]Loading weights:  78%|███████▊  | 311/399 [00:00<00:00, 410.25it/s]Loading weights:  89%|████████▉ | 356/399 [00:01<00:00, 419.01it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 360.47it/s]
+Loaded in 3s
+Checkpoint: 4 experts, layers 24-35
+
+Collecting 50 samples per domain...
+  medical: 50 samples
+  code: 50 samples
+  legal: 50 samples
+  news: 50 samples
+  conversational: 50 samples
+
+=== BASELINE (all experts) ===
+  medical: PPL=12.43
+  code: PPL=18.09
+  legal: PPL=13.61
+  news: PPL=12.62
+  conversational: PPL=18.62
+
+=== ABLATE Expert 0 ===
+  medical: PPL=98.96 (Δ=+86.53)
+  code: PPL=166.40 (Δ=+148.31)
+  legal: PPL=119.70 (Δ=+106.09)
+  news: PPL=109.60 (Δ=+96.99)
+  conversational: PPL=187.79 (Δ=+169.16)
+
+=== ABLATE Expert 1 ===
+  medical: PPL=22.90 (Δ=+10.47)
+  code: PPL=30.79 (Δ=+12.70)
+  legal: PPL=25.19 (Δ=+11.57)
+  news: PPL=24.98 (Δ=+12.36)
+  conversational: PPL=35.34 (Δ=+16.72)
+
+=== ABLATE Expert 2 ===
+  medical: PPL=12.42 (Δ=-0.01)
+  code: PPL=18.07 (Δ=-0.02)
+  legal: PPL=13.59 (Δ=-0.02)
+  news: PPL=12.61 (Δ=-0.01)
+  conversational: PPL=18.65 (Δ=+0.02)
+
+=== ABLATE Expert 3 ===
+  medical: PPL=12.42 (Δ=-0.01)
+  code: PPL=18.08 (Δ=-0.01)
+  legal: PPL=13.59 (Δ=-0.02)
+  news: PPL=12.61 (Δ=-0.00)
+  conversational: PPL=18.64 (Δ=+0.02)
+
+======================================================================
+M_ij ABLATION MATRIX (4 experts, 8B)
+======================================================================
+Domain           E0  E1  E2  E3
+-------------------------------
+medical          +86.53  +10.47  -0.01  -0.01
+code             +148.31  +12.70  -0.02  -0.01
+legal            +106.09  +11.57  -0.02  -0.02
+news             +96.99  +12.36  -0.01  -0.00
+conversational   +169.16  +16.72  +0.02  +0.02
+
+CV per expert (higher = more domain-selective):
+  E0: mean=121.415 std=31.786 CV=0.2618
+  E1: mean=12.764 std=2.119 CV=0.1660
+  E2: mean=-0.006 std=0.016 CV=2.7203
+  E3: mean=-0.006 std=0.012 CV=2.1583
+
+Overall M_ij CV: 1.5929
+
+Damage ratio (max/min Δ across domains):
+  E0: 2.0x
+  E1: 1.6x
+
+=== ROUTING WEIGHTS PER DOMAIN ===
+  medical          E0=0.256  E1=0.253  E2=0.243  E3=0.248
+  code             E0=0.255  E1=0.252  E2=0.243  E3=0.249
+  legal            E0=0.254  E1=0.255  E2=0.243  E3=0.248
+  news             E0=0.251  E1=0.256  E2=0.245  E3=0.249
+  conversational   E0=0.255  E1=0.252  E2=0.243  E3=0.249
+
+Saved to results/qwen8b_4exp_mij.json

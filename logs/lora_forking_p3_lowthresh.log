@@ -1,0 +1,73 @@
+[2026-03-26 21:04:19] ======================================================================
+[2026-03-26 21:04:19] LoRA Progressive Forking — Phase 3
+[2026-03-26 21:04:19] ======================================================================
+[2026-03-26 21:04:19] Config: {'phase': 3, 'device': 'cuda:0', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': '/root/t6b-mogae/checkpoints/phase2_final.pt', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 14, 'expert_layer_start': 14, 'initial_rank': 4, 'max_rank': 32, 'max_experts': 16, 'phase1_tokens': 50000000, 'phase1_batch_size': 4, 'phase1_seq_len': 512, 'phase1_lr': 0.0003, 'phase2_tokens': 50000000, 'phase2_batch_size': 4, 'phase2_seq_len': 512, 'phase2_lr': 0.0001, 'phase3_tokens': 200000000, 'phase3_batch_size': 4, 'phase3_seq_len': 512, 'phase3_lr': 5e-05, 'contrastive_weight': 0.1, 'contrastive_margin': 0.5, 'bimodality_threshold': 0.4, 'dip_test_alpha': 0.05, 'rank_growth_error_threshold': 0.1, 'min_tokens_before_split': 10000000, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results', 'checkpoint_dir': '/root/t6b-mogae/checkpoints', 'log_file': '/root/t6b-mogae/logs/lora_forking.log'}
+[2026-03-26 21:04:19] Loading Qwen/Qwen3-1.7B...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 16909.45it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-26 21:04:23] Base model loaded: 2,031,739,904 params
+[2026-03-26 21:04:23] Verified: hidden=2048, intermediate=6144
+[2026-03-26 21:04:23] Loading checkpoint: /root/t6b-mogae/checkpoints/phase2_final.pt
+[2026-03-26 21:04:23] Loaded checkpoint from phase 2, step 24414
+[2026-03-26 21:04:23] Tree structure: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-26 21:04:23] Trainable params: 1,892,352
+[2026-03-26 21:04:23] Expert tree: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-26 21:04:23] Setting up data loaders...
+[2026-03-26 21:04:23] Phase 3: 97656 steps, LR=5e-05, batch=4x512
+[2026-03-26 21:04:23] Trainable params: 1,892,352
+[2026-03-26 21:04:23] Expert tree: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-26 21:04:36]   step 100/97656 | lm_loss=3.4375 c_loss=0.4746 lb_loss=1.0120 | lr=5.00e-05 | 15296 tok/s
+[2026-03-26 21:04:46]   step 200/97656 | lm_loss=2.9062 c_loss=0.4746 lb_loss=1.0045 | lr=5.00e-05 | 17630 tok/s
+[2026-03-26 21:04:56]   step 300/97656 | lm_loss=2.8281 c_loss=0.4746 lb_loss=1.0081 | lr=5.00e-05 | 18538 tok/s
+[2026-03-26 21:05:06]   step 400/97656 | lm_loss=1.8594 c_loss=0.4746 lb_loss=1.0167 | lr=5.00e-05 | 18984 tok/s
+[2026-03-26 21:05:16]   step 500/97656 | lm_loss=2.7969 c_loss=0.4727 lb_loss=1.0070 | lr=5.00e-05 | 19254 tok/s
+[2026-03-26 21:05:26]   step 600/97656 | lm_loss=2.4375 c_loss=0.4727 lb_loss=1.0106 | lr=5.00e-05 | 19422 tok/s
+[2026-03-26 21:05:36]   step 700/97656 | lm_loss=3.2969 c_loss=0.4707 lb_loss=1.0042 | lr=5.00e-05 | 19545 tok/s
+[2026-03-26 21:05:46]   step 800/97656 | lm_loss=3.2344 c_loss=0.4707 lb_loss=1.0114 | lr=5.00e-05 | 19627 tok/s
+[2026-03-26 21:05:56]   step 900/97656 | lm_loss=2.4531 c_loss=0.4707 lb_loss=1.0028 | lr=5.00e-05 | 19670 tok/s
+[2026-03-26 21:06:07]   step 1000/97656 | lm_loss=3.2969 c_loss=0.4707 lb_loss=1.0050 | lr=5.00e-05 | 19700 tok/s
+[2026-03-26 21:06:07] --- Eval at step 1000 ---
+[2026-03-26 21:06:22]   PPL=19.58 | mean_cossim=0.9676339285714286
+[2026-03-26 21:06:22]   Tree: {'14': {'num_experts': 2, 'ranks': [4, 4]}, '15': {'num_experts': 2, 'ranks': [4, 4]}, '16': {'num_experts': 2, 'ranks': [4, 4]}, '17': {'num_experts': 2, 'ranks': [4, 4]}, '18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-26 21:06:22]   Layer 14 expert 0: rank 4 -> 8 (B/A ratio=0.930)
+[2026-03-26 21:06:22]   Layer 14 expert 1: rank 4 -> 8 (B/A ratio=0.930)
+[2026-03-26 21:06:22]   Layer 15 expert 0: rank 4 -> 8 (B/A ratio=0.888)
+[2026-03-26 21:06:22]   Layer 15 expert 1: rank 4 -> 8 (B/A ratio=0.893)
+[2026-03-26 21:06:22]   Layer 16 expert 0: rank 4 -> 8 (B/A ratio=1.126)
+[2026-03-26 21:06:22]   Layer 16 expert 1: rank 4 -> 8 (B/A ratio=1.126)
+[2026-03-26 21:06:22]   Layer 17 expert 0: rank 4 -> 8 (B/A ratio=1.120)
+[2026-03-26 21:06:22]   Layer 17 expert 1: rank 4 -> 8 (B/A ratio=1.113)
+[2026-03-26 21:06:22]   Layer 18 expert 0: rank 4 -> 8 (B/A ratio=1.199)
+[2026-03-26 21:06:22]   Layer 18 expert 1: rank 4 -> 8 (B/A ratio=1.199)
+[2026-03-26 21:06:22]   Layer 19 expert 0: rank 4 -> 8 (B/A ratio=1.212)
+[2026-03-26 21:06:22]   Layer 19 expert 1: rank 4 -> 8 (B/A ratio=1.203)
+[2026-03-26 21:06:22]   Layer 20 expert 0: rank 4 -> 8 (B/A ratio=1.197)
+[2026-03-26 21:06:22]   Layer 20 expert 1: rank 4 -> 8 (B/A ratio=1.197)
+[2026-03-26 21:06:22]   Layer 21 expert 0: rank 4 -> 8 (B/A ratio=1.108)
+[2026-03-26 21:06:22]   Layer 21 expert 1: rank 4 -> 8 (B/A ratio=1.102)
+[2026-03-26 21:06:22]   Layer 22 expert 0: rank 4 -> 8 (B/A ratio=1.071)
+[2026-03-26 21:06:22]   Layer 22 expert 1: rank 4 -> 8 (B/A ratio=1.071)
+[2026-03-26 21:06:22]   Layer 23 expert 0: rank 4 -> 8 (B/A ratio=1.140)
+[2026-03-26 21:06:22]   Layer 23 expert 1: rank 4 -> 8 (B/A ratio=1.147)
+[2026-03-26 21:06:22]   Layer 24 expert 0: rank 4 -> 8 (B/A ratio=1.222)
+[2026-03-26 21:06:22]   Layer 24 expert 1: rank 4 -> 8 (B/A ratio=1.222)
+[2026-03-26 21:06:22]   Layer 25 expert 0: rank 4 -> 8 (B/A ratio=1.222)
+[2026-03-26 21:06:22]   Layer 25 expert 1: rank 4 -> 8 (B/A ratio=1.222)
+[2026-03-26 21:06:22]   Layer 26 expert 0: rank 4 -> 8 (B/A ratio=1.109)
+[2026-03-26 21:06:22]   Layer 26 expert 1: rank 4 -> 8 (B/A ratio=1.116)
+[2026-03-26 21:06:22]   Layer 27 expert 0: rank 4 -> 8 (B/A ratio=1.225)
+[2026-03-26 21:06:22]   Layer 27 expert 1: rank 4 -> 8 (B/A ratio=1.225)
+[2026-03-26 21:06:22] Checkpoint saved: /root/t6b-mogae/checkpoints/lora_forking_phase3_step1000.pt
+[2026-03-26 21:06:22] Also saved as: /root/t6b-mogae/checkpoints/phase3_final.pt
+[2026-03-26 21:06:33]   step 1100/97656 | lm_loss=2.9688 c_loss=0.3340 lb_loss=1.0151 | lr=5.00e-05 | 17256 tok/s
+[2026-03-26 21:06:44]   step 1200/97656 | lm_loss=2.6406 c_loss=0.2363 lb_loss=1.0036 | lr=5.00e-05 | 17437 tok/s
+[2026-03-26 21:06:54]   step 1300/97656 | lm_loss=3.0469 c_loss=0.1196 lb_loss=1.0006 | lr=5.00e-05 | 17604 tok/s
+[2026-03-26 21:07:04]   step 1400/97656 | lm_loss=3.0938 c_loss=0.0476 lb_loss=1.0036 | lr=5.00e-05 | 17739 tok/s
+[2026-03-26 21:07:15]   step 1500/97656 | lm_loss=2.9062 c_loss=0.0325 lb_loss=1.0022 | lr=5.00e-05 | 17865 tok/s
+[2026-03-26 21:07:25]   step 1600/97656 | lm_loss=3.0312 c_loss=0.0276 lb_loss=1.0033 | lr=5.00e-05 | 17976 tok/s
+[2026-03-26 21:07:35]   step 1700/97656 | lm_loss=3.1094 c_loss=0.0260 lb_loss=1.0075 | lr=5.00e-05 | 18074 tok/s
+[2026-03-26 21:07:46]   step 1800/97656 | lm_loss=3.6562 c_loss=0.0248 lb_loss=1.0103 | lr=5.00e-05 | 18164 tok/s
+[2026-03-26 21:07:56]   step 1900/97656 | lm_loss=3.6250 c_loss=0.0243 lb_loss=1.0100 | lr=5.00e-05 | 18241 tok/s
+[2026-03-26 21:08:06]   step 2000/97656 | lm_loss=3.2656 c_loss=0.0237 lb_loss=1.0039 | lr=5.00e-05 | 18311 tok/s
+[2026-03-26 21:08:06] --- Eval at step 2000 ---

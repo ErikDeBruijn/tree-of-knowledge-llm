@@ -1,0 +1,173 @@
+[2026-03-26 23:03:57] ======================================================================
+[2026-03-26 23:03:57] Router Bias as Symmetry Breaker Experiment
+[2026-03-26 23:03:57] ======================================================================
+[2026-03-26 23:03:57] Config: {'phase': 3, 'device': 'cuda:1', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': 'phase2_final', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 14, 'expert_layer_start': 14, 'initial_rank': 4, 'max_rank': 32, 'max_experts': 16, 'total_training_steps': 50000, 'batch_size': 4, 'seq_len': 512, 'lr': 0.0003, 'bias_initial_strength': 1.0, 'bias_anneal_steps': 5000, 'contrastive_weight': 0.1, 'contrastive_margin': 0.5, 'bimodality_threshold': 0.4, 'dip_test_alpha': 0.05, 'rank_growth_error_threshold': 0.1, 'min_tokens_before_split': 10000000, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results/router_bias', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/router_bias', 'source_checkpoint_dir': '/root/t6b-mogae/checkpoints', 'log_file': '/root/t6b-mogae/logs/router_bias_experiment.log'}
+[2026-03-26 23:03:57] 
+[2026-03-26 23:03:57] PRE-REGISTERED PREDICTIONS:
+[2026-03-26 23:03:57]   SUCCESS: routing selectivity >20% after annealing (step 5000+)
+[2026-03-26 23:03:57]            AND preferred-route LoRA delta >1.5x vs non-preferred
+[2026-03-26 23:03:57]   FAILURE: selectivity returns to <5% after bias removed
+[2026-03-26 23:03:57] 
+[2026-03-26 23:03:57] Loading Qwen/Qwen3-1.7B...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 17230.87it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-26 23:04:00] Base model loaded: 2,031,739,904 params
+[2026-03-26 23:04:00] Verified: hidden=2048, intermediate=6144
+[2026-03-26 23:04:00] Loading checkpoint: /root/t6b-mogae/checkpoints/phase2_final.pt
+[2026-03-26 23:04:01] Loaded checkpoint from phase 2, step 24414
+[2026-03-26 23:04:01] Tree structure: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-26 23:04:01] Trainable params: 1,892,352
+[2026-03-26 23:04:01] Expert tree: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-26 23:04:01] Setting up data loaders...
+[2026-03-26 23:04:01] Training: 50000 steps, LR=0.0003, batch=4x512
+[2026-03-26 23:04:01] Router bias: strength=1.0, anneal over 5000 steps
+[2026-03-26 23:04:01] Trainable params: 1,892,352
+[2026-03-26 23:04:01] Expert tree: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-26 23:04:14]   step 100/50000 | lm=3.4375 c=0.4375 lb=1.0073 | lr=3.00e-04 | bias=0.980 | 15126 tok/s
+[2026-03-26 23:04:24]   step 200/50000 | lm=2.9062 c=0.3535 lb=1.0017 | lr=3.00e-04 | bias=0.960 | 17485 tok/s
+[2026-03-26 23:04:34]   step 300/50000 | lm=2.8281 c=0.2119 lb=1.0059 | lr=3.00e-04 | bias=0.940 | 18416 tok/s
+[2026-03-26 23:04:44]   step 400/50000 | lm=1.8594 c=0.0938 lb=1.0075 | lr=3.00e-04 | bias=0.920 | 18897 tok/s
+[2026-03-26 23:04:54]   step 500/50000 | lm=2.8125 c=0.0713 lb=0.9994 | lr=3.00e-04 | bias=0.900 | 19167 tok/s
+[2026-03-26 23:05:04]   step 600/50000 | lm=2.4375 c=0.0530 lb=1.0128 | lr=3.00e-04 | bias=0.880 | 19344 tok/s
+[2026-03-26 23:05:14]   step 700/50000 | lm=3.3125 c=0.0383 lb=1.0014 | lr=3.00e-04 | bias=0.860 | 19470 tok/s
+[2026-03-26 23:05:24]   step 800/50000 | lm=3.2344 c=0.0254 lb=1.0039 | lr=3.00e-04 | bias=0.840 | 19572 tok/s
+[2026-03-26 23:05:34]   step 900/50000 | lm=2.4688 c=0.0170 lb=1.0014 | lr=3.00e-04 | bias=0.820 | 19644 tok/s
+[2026-03-26 23:05:44]   step 1000/50000 | lm=3.3125 c=0.0089 lb=1.0000 | lr=3.00e-04 | bias=0.800 | 19703 tok/s
+[2026-03-26 23:05:44] --- Eval at step 1000 (bias_strength=0.800) ---
+[2026-03-26 23:06:00]   PPL=19.67 | mean_cossim=0.501953125 | mean_selectivity=0.0797
+[2026-03-26 23:06:00]   Layer 14: selectivity=0.0431 (high->E0: 0.483, low->E0: 0.526)
+[2026-03-26 23:06:00]   Layer 15: selectivity=0.0121 (high->E0: 0.549, low->E0: 0.561)
+[2026-03-26 23:06:00]   Layer 16: selectivity=0.0308 (high->E0: 0.447, low->E0: 0.478)
+[2026-03-26 23:06:00]   Layer 17: selectivity=0.1039 (high->E0: 0.467, low->E0: 0.570)
+[2026-03-26 23:06:00]   Layer 18: selectivity=0.0657 (high->E0: 0.441, low->E0: 0.506)
+[2026-03-26 23:06:00]   Layer 19: selectivity=0.0238 (high->E0: 0.464, low->E0: 0.440)
+[2026-03-26 23:06:00]   Layer 20: selectivity=0.0308 (high->E0: 0.515, low->E0: 0.484)
+[2026-03-26 23:06:00]   Layer 21: selectivity=0.0546 (high->E0: 0.526, low->E0: 0.472)
+[2026-03-26 23:06:00]   Layer 22: selectivity=0.1454 (high->E0: 0.413, low->E0: 0.559)
+[2026-03-26 23:06:00]   Layer 23: selectivity=0.0340 (high->E0: 0.477, low->E0: 0.511)
+[2026-03-26 23:06:00]   Layer 24: selectivity=0.1414 (high->E0: 0.424, low->E0: 0.565)
+[2026-03-26 23:06:00]   Layer 25: selectivity=0.1599 (high->E0: 0.433, low->E0: 0.593)
+[2026-03-26 23:06:00]   Layer 26: selectivity=0.1606 (high->E0: 0.416, low->E0: 0.576)
+[2026-03-26 23:06:00]   Layer 27: selectivity=0.1097 (high->E0: 0.445, low->E0: 0.554)
+[2026-03-26 23:06:00]   Layer 14: LoRA magnitude ratio=1.012
+[2026-03-26 23:06:00]   Layer 15: LoRA magnitude ratio=1.004
+[2026-03-26 23:06:00]   Layer 16: LoRA magnitude ratio=1.014
+[2026-03-26 23:06:00]   Layer 17: LoRA magnitude ratio=1.011
+[2026-03-26 23:06:00]   Layer 18: LoRA magnitude ratio=1.007
+[2026-03-26 23:06:00]   Layer 19: LoRA magnitude ratio=1.020
+[2026-03-26 23:06:00]   Layer 20: LoRA magnitude ratio=1.008
+[2026-03-26 23:06:00]   Layer 21: LoRA magnitude ratio=1.018
+[2026-03-26 23:06:00]   Layer 22: LoRA magnitude ratio=1.018
+[2026-03-26 23:06:00]   Layer 23: LoRA magnitude ratio=1.009
+[2026-03-26 23:06:00]   Layer 24: LoRA magnitude ratio=1.002
+[2026-03-26 23:06:00]   Layer 25: LoRA magnitude ratio=1.008
+[2026-03-26 23:06:00]   Layer 26: LoRA magnitude ratio=1.001
+[2026-03-26 23:06:00]   Layer 27: LoRA magnitude ratio=1.010
+[2026-03-26 23:06:00]   Layer 14 expert 0: rank 4 -> 8 (B/A ratio=0.986)
+[2026-03-26 23:06:00]   Layer 14 expert 1: rank 4 -> 8 (B/A ratio=0.995)
+[2026-03-26 23:06:00]   Layer 15 expert 0: rank 4 -> 8 (B/A ratio=1.032)
+[2026-03-26 23:06:00]   Layer 15 expert 1: rank 4 -> 8 (B/A ratio=1.028)
+[2026-03-26 23:06:00]   Layer 16 expert 0: rank 4 -> 8 (B/A ratio=1.095)
+[2026-03-26 23:06:00]   Layer 16 expert 1: rank 4 -> 8 (B/A ratio=1.113)
+[2026-03-26 23:06:00]   Layer 17 expert 0: rank 4 -> 8 (B/A ratio=1.153)
+[2026-03-26 23:06:00]   Layer 17 expert 1: rank 4 -> 8 (B/A ratio=1.147)
+[2026-03-26 23:06:00]   Layer 18 expert 0: rank 4 -> 8 (B/A ratio=1.277)
+[2026-03-26 23:06:00]   Layer 18 expert 1: rank 4 -> 8 (B/A ratio=1.287)
+[2026-03-26 23:06:00]   Layer 19 expert 0: rank 4 -> 8 (B/A ratio=1.320)
+[2026-03-26 23:06:00]   Layer 19 expert 1: rank 4 -> 8 (B/A ratio=1.318)
+[2026-03-26 23:06:00]   Layer 20 expert 0: rank 4 -> 8 (B/A ratio=1.303)
+[2026-03-26 23:06:00]   Layer 20 expert 1: rank 4 -> 8 (B/A ratio=1.288)
+[2026-03-26 23:06:00]   Layer 21 expert 0: rank 4 -> 8 (B/A ratio=1.197)
+[2026-03-26 23:06:00]   Layer 21 expert 1: rank 4 -> 8 (B/A ratio=1.170)
+[2026-03-26 23:06:00]   Layer 22 expert 0: rank 4 -> 8 (B/A ratio=1.166)
+[2026-03-26 23:06:00]   Layer 22 expert 1: rank 4 -> 8 (B/A ratio=1.165)
+[2026-03-26 23:06:00]   Layer 23 expert 0: rank 4 -> 8 (B/A ratio=1.238)
+[2026-03-26 23:06:00]   Layer 23 expert 1: rank 4 -> 8 (B/A ratio=1.236)
+[2026-03-26 23:06:00]   Layer 24 expert 0: rank 4 -> 8 (B/A ratio=1.309)
+[2026-03-26 23:06:00]   Layer 24 expert 1: rank 4 -> 8 (B/A ratio=1.309)
+[2026-03-26 23:06:00]   Layer 25 expert 0: rank 4 -> 8 (B/A ratio=1.297)
+[2026-03-26 23:06:00]   Layer 25 expert 1: rank 4 -> 8 (B/A ratio=1.272)
+[2026-03-26 23:06:00]   Layer 26 expert 0: rank 4 -> 8 (B/A ratio=1.213)
+[2026-03-26 23:06:00]   Layer 26 expert 1: rank 4 -> 8 (B/A ratio=1.213)
+[2026-03-26 23:06:00]   Layer 27 expert 0: rank 4 -> 8 (B/A ratio=1.379)
+[2026-03-26 23:06:00]   Layer 27 expert 1: rank 4 -> 8 (B/A ratio=1.354)
+[2026-03-26 23:06:00] Checkpoint saved: /root/t6b-mogae/checkpoints/router_bias/router_bias_step1000.pt
+[2026-03-26 23:06:11]   step 1100/50000 | lm=2.9688 c=0.0000 lb=1.0081 | lr=3.00e-04 | bias=0.780 | 17320 tok/s
+[2026-03-26 23:06:21]   step 1200/50000 | lm=2.6562 c=0.0000 lb=1.0000 | lr=3.00e-04 | bias=0.760 | 17530 tok/s
+[2026-03-26 23:06:31]   step 1300/50000 | lm=3.0469 c=0.0000 lb=1.0022 | lr=3.00e-04 | bias=0.740 | 17709 tok/s
+[2026-03-26 23:06:41]   step 1400/50000 | lm=3.1094 c=0.0000 lb=1.0028 | lr=3.00e-04 | bias=0.720 | 17864 tok/s
+[2026-03-26 23:06:51]   step 1500/50000 | lm=2.9219 c=0.0000 lb=1.0000 | lr=3.00e-04 | bias=0.700 | 17998 tok/s
+[2026-03-26 23:07:01]   step 1600/50000 | lm=3.0312 c=0.0000 lb=0.9994 | lr=3.00e-04 | bias=0.680 | 18120 tok/s
+[2026-03-26 23:07:12]   step 1700/50000 | lm=3.1250 c=0.0000 lb=1.0008 | lr=3.00e-04 | bias=0.660 | 18226 tok/s
+[2026-03-26 23:07:22]   step 1800/50000 | lm=3.6719 c=0.0000 lb=1.0098 | lr=3.00e-04 | bias=0.640 | 18325 tok/s
+[2026-03-26 23:07:32]   step 1900/50000 | lm=3.6406 c=0.0000 lb=1.0008 | lr=2.99e-04 | bias=0.620 | 18415 tok/s
+[2026-03-26 23:07:42]   step 2000/50000 | lm=3.2656 c=0.0000 lb=1.0039 | lr=2.99e-04 | bias=0.600 | 18497 tok/s
+[2026-03-26 23:07:42] --- Eval at step 2000 (bias_strength=0.600) ---
+[2026-03-26 23:07:57]   PPL=19.65 | mean_cossim=0.41224888392857145 | mean_selectivity=0.0943
+[2026-03-26 23:07:57]   Layer 14: selectivity=0.0317 (high->E0: 0.511, low->E0: 0.543)
+[2026-03-26 23:07:57]   Layer 15: selectivity=0.0013 (high->E0: 0.465, low->E0: 0.463)
+[2026-03-26 23:07:57]   Layer 16: selectivity=0.0291 (high->E0: 0.502, low->E0: 0.531)
+[2026-03-26 23:07:57]   Layer 17: selectivity=0.1475 (high->E0: 0.434, low->E0: 0.581)
+[2026-03-26 23:07:57]   Layer 18: selectivity=0.0835 (high->E0: 0.465, low->E0: 0.549)
+[2026-03-26 23:07:57]   Layer 19: selectivity=0.0270 (high->E0: 0.508, low->E0: 0.481)
+[2026-03-26 23:07:57]   Layer 20: selectivity=0.0489 (high->E0: 0.517, low->E0: 0.468)
+[2026-03-26 23:07:57]   Layer 21: selectivity=0.0539 (high->E0: 0.513, low->E0: 0.459)
+[2026-03-26 23:07:57]   Layer 22: selectivity=0.1850 (high->E0: 0.425, low->E0: 0.610)
+[2026-03-26 23:07:57]   Layer 23: selectivity=0.0740 (high->E0: 0.479, low->E0: 0.553)
+[2026-03-26 23:07:57]   Layer 24: selectivity=0.1538 (high->E0: 0.420, low->E0: 0.574)
+[2026-03-26 23:07:57]   Layer 25: selectivity=0.1636 (high->E0: 0.402, low->E0: 0.566)
+[2026-03-26 23:07:57]   Layer 26: selectivity=0.1812 (high->E0: 0.407, low->E0: 0.588)
+[2026-03-26 23:07:57]   Layer 27: selectivity=0.1403 (high->E0: 0.449, low->E0: 0.589)
+[2026-03-26 23:07:57]   Layer 14: LoRA magnitude ratio=1.007
+[2026-03-26 23:07:57]   Layer 15: LoRA magnitude ratio=1.002
+[2026-03-26 23:07:57]   Layer 16: LoRA magnitude ratio=1.002
+[2026-03-26 23:07:57]   Layer 17: LoRA magnitude ratio=1.023
+[2026-03-26 23:07:57]   Layer 18: LoRA magnitude ratio=1.005
+[2026-03-26 23:07:57]   Layer 19: LoRA magnitude ratio=1.002
+[2026-03-26 23:07:57]   Layer 20: LoRA magnitude ratio=1.018
+[2026-03-26 23:07:57]   Layer 21: LoRA magnitude ratio=1.002
+[2026-03-26 23:07:57]   Layer 22: LoRA magnitude ratio=1.029
+[2026-03-26 23:07:57]   Layer 23: LoRA magnitude ratio=1.005
+[2026-03-26 23:07:57]   Layer 24: LoRA magnitude ratio=1.000
+[2026-03-26 23:07:57]   Layer 25: LoRA magnitude ratio=1.005
+[2026-03-26 23:07:57]   Layer 26: LoRA magnitude ratio=1.001
+[2026-03-26 23:07:57]   Layer 27: LoRA magnitude ratio=1.009
+[2026-03-26 23:07:57]   Layer 14 expert 0: rank 8 -> 16 (B/A ratio=0.992)
+[2026-03-26 23:07:57]   Layer 14 expert 1: rank 8 -> 16 (B/A ratio=0.996)
+[2026-03-26 23:07:57]   Layer 15 expert 0: rank 8 -> 16 (B/A ratio=1.071)
+[2026-03-26 23:07:57]   Layer 15 expert 1: rank 8 -> 16 (B/A ratio=1.062)
+[2026-03-26 23:07:57]   Layer 16 expert 0: rank 8 -> 16 (B/A ratio=1.115)
+[2026-03-26 23:07:57]   Layer 16 expert 1: rank 8 -> 16 (B/A ratio=1.160)
+[2026-03-26 23:07:57]   Layer 17 expert 0: rank 8 -> 16 (B/A ratio=1.184)
+[2026-03-26 23:07:57]   Layer 17 expert 1: rank 8 -> 16 (B/A ratio=1.183)
+[2026-03-26 23:07:57]   Layer 18 expert 0: rank 8 -> 16 (B/A ratio=1.270)
+[2026-03-26 23:07:57]   Layer 18 expert 1: rank 8 -> 16 (B/A ratio=1.273)
+[2026-03-26 23:07:57]   Layer 19 expert 0: rank 8 -> 16 (B/A ratio=1.302)
+[2026-03-26 23:07:57]   Layer 19 expert 1: rank 8 -> 16 (B/A ratio=1.307)
+[2026-03-26 23:07:57]   Layer 20 expert 0: rank 8 -> 16 (B/A ratio=1.294)
+[2026-03-26 23:07:57]   Layer 20 expert 1: rank 8 -> 16 (B/A ratio=1.297)
+[2026-03-26 23:07:57]   Layer 21 expert 0: rank 8 -> 16 (B/A ratio=1.209)
+[2026-03-26 23:07:57]   Layer 21 expert 1: rank 8 -> 16 (B/A ratio=1.193)
+[2026-03-26 23:07:57]   Layer 22 expert 0: rank 8 -> 16 (B/A ratio=1.194)
+[2026-03-26 23:07:57]   Layer 22 expert 1: rank 8 -> 16 (B/A ratio=1.190)
+[2026-03-26 23:07:57]   Layer 23 expert 0: rank 8 -> 16 (B/A ratio=1.250)
+[2026-03-26 23:07:57]   Layer 23 expert 1: rank 8 -> 16 (B/A ratio=1.241)
+[2026-03-26 23:07:57]   Layer 24 expert 0: rank 8 -> 16 (B/A ratio=1.306)
+[2026-03-26 23:07:57]   Layer 24 expert 1: rank 8 -> 16 (B/A ratio=1.300)
+[2026-03-26 23:07:57]   Layer 25 expert 0: rank 8 -> 16 (B/A ratio=1.294)
+[2026-03-26 23:07:57]   Layer 25 expert 1: rank 8 -> 16 (B/A ratio=1.273)
+[2026-03-26 23:07:57]   Layer 26 expert 0: rank 8 -> 16 (B/A ratio=1.224)
+[2026-03-26 23:07:57]   Layer 26 expert 1: rank 8 -> 16 (B/A ratio=1.231)
+[2026-03-26 23:07:57]   Layer 27 expert 0: rank 8 -> 16 (B/A ratio=1.353)
+[2026-03-26 23:07:57]   Layer 27 expert 1: rank 8 -> 16 (B/A ratio=1.311)
+[2026-03-26 23:07:57] Checkpoint saved: /root/t6b-mogae/checkpoints/router_bias/router_bias_step2000.pt
+[2026-03-26 23:08:08]   step 2100/50000 | lm=2.8281 c=0.0000 lb=1.0000 | lr=2.99e-04 | bias=0.580 | 17382 tok/s
+[2026-03-26 23:08:18]   step 2200/50000 | lm=3.1719 c=0.0000 lb=1.0014 | lr=2.99e-04 | bias=0.560 | 17493 tok/s
+ 23:07:57]   Layer 26 expert 0: rank 8 -> 16 (B/A ratio=1.224)
+[2026-03-26 23:07:57]   Layer 26 expert 1: rank 8 -> 16 (B/A ratio=1.231)
+[2026-03-26 23:07:57]   Layer 27 expert 0: rank 8 -> 16 (B/A ratio=1.353)
+[2026-03-26 23:07:57]   Layer 27 expert 1: rank 8 -> 16 (B/A ratio=1.311)
+[2026-03-26 23:07:57] Checkpoint saved: /root/t6b-mogae/checkpoints/router_bias/router_bias_step2000.pt
+[2026-03-26 23:08:08]   step 2100/50000 | lm=2.8281 c=0.0000 lb=1.0000 | lr=2.99e-04 | bias=0.580 | 17382 tok/s
+[2026-03-26 23:08:18]   step 2200/50000 | lm=3.1719 c=0.0000 lb=1.0014 | lr=2.99e-04 | bias=0.560 | 17493 tok/s

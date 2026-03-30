@@ -1,0 +1,54 @@
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:31, 12.46it/s]Loading weights:  10%|█         | 41/399 [00:00<00:02, 168.30it/s]Loading weights:  21%|██▏       | 85/399 [00:00<00:01, 258.49it/s]Loading weights:  32%|███▏      | 129/399 [00:00<00:00, 318.57it/s]Loading weights:  41%|████      | 164/399 [00:00<00:00, 284.81it/s]Loading weights:  53%|█████▎    | 213/399 [00:00<00:00, 327.19it/s]Loading weights:  66%|██████▌   | 264/399 [00:00<00:00, 378.46it/s]Loading weights:  76%|███████▌  | 304/399 [00:01<00:00, 341.52it/s]Loading weights:  88%|████████▊ | 350/399 [00:01<00:00, 355.66it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 325.71it/s]
+Traceback (most recent call last):
+  File "<string>", line 45, in <module>
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 2639, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for ModuleDict:
+	size mismatch for 12.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 12.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 13.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 13.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 14.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 14.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 15.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 15.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 16.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 16.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 17.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 17.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 18.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 18.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 19.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 19.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 20.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 20.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 21.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 21.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 22.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 22.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 23.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 23.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 24.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 24.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 25.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 25.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 26.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 26.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 27.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 27.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 28.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 28.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 29.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 29.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 30.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 30.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 31.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 31.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 32.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 32.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 33.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 33.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 34.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 34.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 35.gate_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).
+	size mismatch for 35.up_lora.B: copying a param with shape torch.Size([16, 12288]) from checkpoint, the shape in current model is torch.Size([16, 11008]).

@@ -1,0 +1,46 @@
+[2026-03-27 03:41:57] ======================================================================
+[2026-03-27 03:41:57] Fork + Rank Inherit — Extended Trunk Layer 18
+[2026-03-27 03:41:57] Phases to run: [2]
+[2026-03-27 03:41:57] Expert layers: 18-27 (10 layers)
+[2026-03-27 03:41:57] ======================================================================
+[2026-03-27 03:41:57] Config: {'phase': 2, 'device': 'cuda:0', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': '/root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase2_final.pt', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 18, 'expert_layer_start': 18, 'initial_rank': 4, 'max_rank': 32, 'max_experts': 16, 'phase1_tokens': 50000000, 'phase1_batch_size': 4, 'phase1_seq_len': 512, 'phase1_lr': 0.0003, 'phase2_tokens': 50000000, 'phase2_batch_size': 4, 'phase2_seq_len': 512, 'phase2_lr': 0.0001, 'phase3_tokens': 100000000, 'phase3_batch_size': 4, 'phase3_seq_len': 512, 'phase3_lr': 0.0003, 'contrastive_weight': 0.1, 'contrastive_margin': 0.5, 'bimodality_threshold': 0.3, 'dip_test_alpha': 0.05, 'rank_growth_error_threshold': 0.1, 'min_tokens_before_split': 10000000, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results_fork_trunk18', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/fork_trunk18', 'log_file': '/root/t6b-mogae/logs/fork_trunk18.log'}
+[2026-03-27 03:41:57] Loading Qwen/Qwen3-1.7B...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 17999.81it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-27 03:42:01] Base model loaded: 2,031,739,904 params
+[2026-03-27 03:42:01] Verified: hidden=2048, intermediate=6144
+[2026-03-27 03:42:01] Loading checkpoint: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase2_final.pt
+[2026-03-27 03:42:01] Loaded checkpoint from phase 2, step 1000
+[2026-03-27 03:42:01] Tree structure: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 03:42:01] Trainable params: 655,360
+[2026-03-27 03:42:01] Expert tree: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 03:42:01] 
+[2026-03-27 03:42:01] ======================================================================
+[2026-03-27 03:42:01] Fork + Rank Inherit — Extended Trunk Layer 18 — Phase 2
+[2026-03-27 03:42:01] ======================================================================
+[2026-03-27 03:42:01] Loading checkpoint: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase2_final.pt
+[2026-03-27 03:42:01] Loaded checkpoint from phase 2, step 1000
+[2026-03-27 03:42:01] Tree structure: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 03:42:01] Phase 2 config: tokens=50,000,000, lr=0.0001, batch=4x512
+[2026-03-27 03:42:01] Trainable params: 655,360
+[2026-03-27 03:42:01] Loaded optimizer state from checkpoint
+[2026-03-27 03:42:01] Phase 2: 24414 steps, LR=0.0001, batch=4x512
+[2026-03-27 03:42:01] Trainable params: 655,360
+[2026-03-27 03:42:01] Expert tree: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 03:42:12]   step 100/24414 | lm_loss=3.4531 c_loss=0.0000 lb_loss=0.0000 | lr=9.96e-05 | 18515 tok/s
+[2026-03-27 03:42:19]   step 200/24414 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.0000 | lr=9.96e-05 | 21786 tok/s
+[2026-03-27 03:42:27]   step 300/24414 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.0000 | lr=9.95e-05 | 23129 tok/s
+[2026-03-27 03:42:35]   step 400/24414 | lm_loss=1.8828 c_loss=0.0000 lb_loss=0.0000 | lr=9.95e-05 | 23882 tok/s
+[2026-03-27 03:42:43]   step 500/24414 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.0000 | lr=9.95e-05 | 24331 tok/s
+[2026-03-27 03:42:50]   step 600/24414 | lm_loss=2.4531 c_loss=0.0000 lb_loss=0.0000 | lr=9.94e-05 | 24613 tok/s
+[2026-03-27 03:42:58]   step 700/24414 | lm_loss=3.3438 c_loss=0.0000 lb_loss=0.0000 | lr=9.94e-05 | 24809 tok/s
+[2026-03-27 03:43:06]   step 800/24414 | lm_loss=3.2656 c_loss=0.0000 lb_loss=0.0000 | lr=9.93e-05 | 24927 tok/s
+[2026-03-27 03:43:14]   step 900/24414 | lm_loss=2.4688 c_loss=0.0000 lb_loss=0.0000 | lr=9.93e-05 | 25021 tok/s
+[2026-03-27 03:43:22]   step 1000/24414 | lm_loss=3.3438 c_loss=0.0000 lb_loss=0.0000 | lr=9.92e-05 | 25090 tok/s
+[2026-03-27 03:43:22] --- Eval at step 1000 ---
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[2026-03-27 03:43:37]   PPL=20.15 | mean_cossim=None
+[2026-03-27 03:43:37]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 03:43:37] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase2_step1000.pt
+[2026-03-27 03:43:37] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase2_final.pt

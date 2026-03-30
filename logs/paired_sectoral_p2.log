@@ -1,0 +1,199 @@
+[2026-03-27 01:54:49] ======================================================================
+[2026-03-27 01:54:49] Paired Sectoral Adapters (Variant B) -- Trunk 18
+[2026-03-27 01:54:49] Phases to run: [2]
+[2026-03-27 01:54:49] Expert layers: 18-27 (10 layers)
+[2026-03-27 01:54:49] Adapter type: PAIRED attention(Q+V) + FFN(gate+up)
+[2026-03-27 01:54:49] Q proj LoRA: 2048 -> 2048 (rank 4)
+[2026-03-27 01:54:49] V proj LoRA: 2048 -> 1024 (rank 4)
+[2026-03-27 01:54:49] gate_proj LoRA: 2048 -> 6144 (rank 4)
+[2026-03-27 01:54:49] up_proj LoRA: 2048 -> 6144 (rank 4)
+[2026-03-27 01:54:49] ======================================================================
+[2026-03-27 01:54:49] Config: {'phase': 2, 'device': 'cuda:1', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': '/root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase1_final.pt', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'q_proj_dim': 2048, 'v_proj_dim': 1024, 'num_layers': 28, 'trunk_layers': 18, 'expert_layer_start': 18, 'initial_rank': 4, 'max_rank': 32, 'max_experts': 16, 'phase1_tokens': 50000000, 'phase1_batch_size': 4, 'phase1_seq_len': 512, 'phase1_lr': 0.0003, 'phase2_tokens': 50000000, 'phase2_batch_size': 4, 'phase2_seq_len': 512, 'phase2_lr': 0.0001, 'phase3_tokens': 100000000, 'phase3_batch_size': 4, 'phase3_seq_len': 512, 'phase3_lr': 0.0003, 'contrastive_weight': 0.1, 'contrastive_margin': 0.5, 'bimodality_threshold': 0.3, 'dip_test_alpha': 0.05, 'rank_growth_error_threshold': 0.1, 'min_tokens_before_split': 10000000, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results_paired_sectoral', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/paired_sectoral', 'log_file': '/root/t6b-mogae/logs/paired_sectoral.log'}
+[2026-03-27 01:54:49] Loading Qwen/Qwen3-1.7B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 17304.47it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-27 01:54:53] Base model loaded: 2,031,739,904 params
+[2026-03-27 01:54:53] Verified: hidden=2048, intermediate=6144, q_proj=2048, v_proj=1024
+[2026-03-27 01:54:53] Head dim: 128, Q heads: 16, KV heads: 8 (GQA)
+[2026-03-27 01:54:53] Loading checkpoint: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase1_final.pt
+[2026-03-27 01:54:53] Loaded checkpoint from phase 1, step 24414
+[2026-03-27 01:54:53] Tree structure: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 01:54:53] Trainable params: 942,080
+[2026-03-27 01:54:53] Expert tree: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 01:54:53] 
+[2026-03-27 01:54:53] ======================================================================
+[2026-03-27 01:54:53] Paired Sectoral (Variant B) -- Trunk 18 -- Phase 2
+[2026-03-27 01:54:53] ======================================================================
+[2026-03-27 01:54:53] Loading checkpoint: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase1_final.pt
+[2026-03-27 01:54:53] Loaded checkpoint from phase 1, step 24414
+[2026-03-27 01:54:53] Tree structure: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 01:54:53] Phase 2 config: tokens=50,000,000, lr=0.0001, batch=4x512
+[2026-03-27 01:54:53] Trainable params: 942,080
+[2026-03-27 01:54:53] Phase 2: 24414 steps, LR=0.0001, batch=4x512
+[2026-03-27 01:54:53] Trainable params: 942,080
+[2026-03-27 01:54:53] Expert tree: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 01:55:04]   step 100/24414 | lm_loss=3.4844 c_loss=0.0000 lb_loss=0.0000 | lr=1.00e-04 | 18469 tok/s
+[2026-03-27 01:55:12]   step 200/24414 | lm_loss=2.9375 c_loss=0.0000 lb_loss=0.0000 | lr=1.00e-04 | 21695 tok/s
+[2026-03-27 01:55:19]   step 300/24414 | lm_loss=2.8750 c_loss=0.0000 lb_loss=0.0000 | lr=1.00e-04 | 23006 tok/s
+[2026-03-27 01:55:27]   step 400/24414 | lm_loss=1.9141 c_loss=0.0000 lb_loss=0.0000 | lr=9.99e-05 | 23699 tok/s
+[2026-03-27 01:55:35]   step 500/24414 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.0000 | lr=9.99e-05 | 24127 tok/s
+[2026-03-27 01:55:43]   step 600/24414 | lm_loss=2.4844 c_loss=0.0000 lb_loss=0.0000 | lr=9.99e-05 | 24411 tok/s
+[2026-03-27 01:55:51]   step 700/24414 | lm_loss=3.3594 c_loss=0.0000 lb_loss=0.0000 | lr=9.98e-05 | 24605 tok/s
+[2026-03-27 01:55:59]   step 800/24414 | lm_loss=3.3125 c_loss=0.0000 lb_loss=0.0000 | lr=9.97e-05 | 24746 tok/s
+[2026-03-27 01:56:07]   step 900/24414 | lm_loss=2.5000 c_loss=0.0000 lb_loss=0.0000 | lr=9.97e-05 | 24847 tok/s
+[2026-03-27 01:56:15]   step 1000/24414 | lm_loss=3.3438 c_loss=0.0000 lb_loss=0.0000 | lr=9.96e-05 | 24924 tok/s
+[2026-03-27 01:56:15] --- Eval at step 1000 ---
+[2026-03-27 01:56:30]   PPL=20.44 | mean_cossim=None
+[2026-03-27 01:56:30]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 01:56:30] Checkpoint saved: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_step1000.pt
+[2026-03-27 01:56:30] Also saved as: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_final.pt
+[2026-03-27 01:56:38]   step 1100/24414 | lm_loss=3.0312 c_loss=0.0000 lb_loss=0.0000 | lr=9.95e-05 | 21410 tok/s
+[2026-03-27 01:56:46]   step 1200/24414 | lm_loss=2.6875 c_loss=0.0000 lb_loss=0.0000 | lr=9.94e-05 | 21712 tok/s
+[2026-03-27 01:56:54]   step 1300/24414 | lm_loss=3.0938 c_loss=0.0000 lb_loss=0.0000 | lr=9.93e-05 | 21973 tok/s
+[2026-03-27 01:57:02]   step 1400/24414 | lm_loss=3.1562 c_loss=0.0000 lb_loss=0.0000 | lr=9.92e-05 | 22202 tok/s
+[2026-03-27 01:57:10]   step 1500/24414 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.0000 | lr=9.91e-05 | 22403 tok/s
+[2026-03-27 01:57:18]   step 1600/24414 | lm_loss=3.0625 c_loss=0.0000 lb_loss=0.0000 | lr=9.89e-05 | 22584 tok/s
+[2026-03-27 01:57:26]   step 1700/24414 | lm_loss=3.1562 c_loss=0.0000 lb_loss=0.0000 | lr=9.88e-05 | 22745 tok/s
+[2026-03-27 01:57:34]   step 1800/24414 | lm_loss=3.7188 c_loss=0.0000 lb_loss=0.0000 | lr=9.87e-05 | 22890 tok/s
+[2026-03-27 01:57:42]   step 1900/24414 | lm_loss=3.6562 c_loss=0.0000 lb_loss=0.0000 | lr=9.85e-05 | 23022 tok/s
+[2026-03-27 01:57:50]   step 2000/24414 | lm_loss=3.2969 c_loss=0.0000 lb_loss=0.0000 | lr=9.84e-05 | 23142 tok/s
+[2026-03-27 01:57:50] --- Eval at step 2000 ---
+[2026-03-27 01:58:04]   PPL=20.44 | mean_cossim=None
+[2026-03-27 01:58:04]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 01:58:04] Checkpoint saved: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_step2000.pt
+[2026-03-27 01:58:04] Also saved as: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_final.pt
+[2026-03-27 01:58:13]   step 2100/24414 | lm_loss=2.8750 c_loss=0.0000 lb_loss=0.0000 | lr=9.82e-05 | 21502 tok/s
+[2026-03-27 01:58:21]   step 2200/24414 | lm_loss=3.2031 c_loss=0.0000 lb_loss=0.0000 | lr=9.80e-05 | 21663 tok/s
+[2026-03-27 01:58:29]   step 2300/24414 | lm_loss=2.8594 c_loss=0.0000 lb_loss=0.0000 | lr=9.78e-05 | 21813 tok/s
+[2026-03-27 01:58:37]   step 2400/24414 | lm_loss=2.7031 c_loss=0.0000 lb_loss=0.0000 | lr=9.76e-05 | 21951 tok/s
+[2026-03-27 01:58:45]   step 2500/24414 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.0000 | lr=9.74e-05 | 22081 tok/s
+[2026-03-27 01:58:53]   step 2600/24414 | lm_loss=3.5938 c_loss=0.0000 lb_loss=0.0000 | lr=9.72e-05 | 22202 tok/s
+[2026-03-27 01:59:00]   step 2700/24414 | lm_loss=3.2344 c_loss=0.0000 lb_loss=0.0000 | lr=9.70e-05 | 22315 tok/s
+[2026-03-27 01:59:08]   step 2800/24414 | lm_loss=3.3125 c_loss=0.0000 lb_loss=0.0000 | lr=9.68e-05 | 22420 tok/s
+[2026-03-27 01:59:16]   step 2900/24414 | lm_loss=2.9844 c_loss=0.0000 lb_loss=0.0000 | lr=9.66e-05 | 22521 tok/s
+[2026-03-27 01:59:24]   step 3000/24414 | lm_loss=3.3594 c_loss=0.0000 lb_loss=0.0000 | lr=9.63e-05 | 22615 tok/s
+[2026-03-27 01:59:24] --- Eval at step 3000 ---
+[2026-03-27 01:59:39]   PPL=20.43 | mean_cossim=None
+[2026-03-27 01:59:39]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 01:59:39] Checkpoint saved: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_step3000.pt
+[2026-03-27 01:59:39] Also saved as: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_final.pt
+[2026-03-27 01:59:47]   step 3100/24414 | lm_loss=2.6562 c_loss=0.0000 lb_loss=0.0000 | lr=9.61e-05 | 21575 tok/s
+[2026-03-27 01:59:55]   step 3200/24414 | lm_loss=3.2656 c_loss=0.0000 lb_loss=0.0000 | lr=9.58e-05 | 21657 tok/s
+[2026-03-27 02:00:03]   step 3300/24414 | lm_loss=2.7656 c_loss=0.0000 lb_loss=0.0000 | lr=9.56e-05 | 21760 tok/s
+[2026-03-27 02:00:11]   step 3400/24414 | lm_loss=4.0000 c_loss=0.0000 lb_loss=0.0000 | lr=9.53e-05 | 21858 tok/s
+[2026-03-27 02:00:19]   step 3500/24414 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.0000 | lr=9.50e-05 | 21950 tok/s
+[2026-03-27 02:00:27]   step 3600/24414 | lm_loss=3.3750 c_loss=0.0000 lb_loss=0.0000 | lr=9.47e-05 | 22038 tok/s
+[2026-03-27 02:00:35]   step 3700/24414 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.0000 | lr=9.44e-05 | 22122 tok/s
+[2026-03-27 02:00:43]   step 3800/24414 | lm_loss=2.9062 c_loss=0.0000 lb_loss=0.0000 | lr=9.41e-05 | 22202 tok/s
+[2026-03-27 02:00:51]   step 3900/24414 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.0000 | lr=9.38e-05 | 22280 tok/s
+[2026-03-27 02:00:59]   step 4000/24414 | lm_loss=3.1562 c_loss=0.0000 lb_loss=0.0000 | lr=9.35e-05 | 22354 tok/s
+[2026-03-27 02:00:59] --- Eval at step 4000 ---
+[2026-03-27 02:01:14]   PPL=20.42 | mean_cossim=None
+[2026-03-27 02:01:14]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 02:01:14] Checkpoint saved: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_step4000.pt
+[2026-03-27 02:01:14] Also saved as: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_final.pt
+[2026-03-27 02:01:22]   step 4100/24414 | lm_loss=1.6406 c_loss=0.0000 lb_loss=0.0000 | lr=9.32e-05 | 21572 tok/s
+[2026-03-27 02:01:30]   step 4200/24414 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.0000 | lr=9.29e-05 | 21653 tok/s
+[2026-03-27 02:01:38]   step 4300/24414 | lm_loss=2.9375 c_loss=0.0000 lb_loss=0.0000 | lr=9.25e-05 | 21733 tok/s
+[2026-03-27 02:01:46]   step 4400/24414 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.0000 | lr=9.22e-05 | 21806 tok/s
+[2026-03-27 02:01:54]   step 4500/24414 | lm_loss=3.3594 c_loss=0.0000 lb_loss=0.0000 | lr=9.18e-05 | 21880 tok/s
+[2026-03-27 02:02:02]   step 4600/24414 | lm_loss=3.0000 c_loss=0.0000 lb_loss=0.0000 | lr=9.15e-05 | 21951 tok/s
+[2026-03-27 02:02:10]   step 4700/24414 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.0000 | lr=9.11e-05 | 22020 tok/s
+[2026-03-27 02:02:18]   step 4800/24414 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.0000 | lr=9.08e-05 | 22086 tok/s
+[2026-03-27 02:02:26]   step 4900/24414 | lm_loss=3.0938 c_loss=0.0000 lb_loss=0.0000 | lr=9.04e-05 | 22151 tok/s
+[2026-03-27 02:02:34]   step 5000/24414 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.0000 | lr=9.00e-05 | 22213 tok/s
+[2026-03-27 02:02:34] --- Eval at step 5000 ---
+[2026-03-27 02:02:48]   PPL=20.43 | mean_cossim=None
+[2026-03-27 02:02:48]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 02:02:48] Checking for splits...
+[2026-03-27 02:03:03]   Layer 18: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 19: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 20: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 21: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 22: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 23: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 24: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 25: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 26: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Layer 27: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 02:03:03]   Performed 10 splits. New tree: {18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 02:03:03]   Trainable params now: 1,925,120
+[2026-03-27 02:03:03] Checkpoint saved: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_step5000.pt
+[2026-03-27 02:03:03] Also saved as: /root/t6b-mogae/checkpoints/paired_sectoral/paired_sectoral_phase2_final.pt
+Traceback (most recent call last):
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 1294, in <module>
+    main()
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 1263, in main
+    metrics_history = train_phase(model, train_loader, eval_loader, cfg, logger, metrics_history)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 973, in train_phase
+    logits, aux = model(input_ids)
+                  ^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 562, in forward
+    outputs = self.base_model(input_ids=input_ids)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 843, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 506, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+                                       ^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 917, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/transformers/utils/output_capturing.py", line 253, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 436, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/transformers/modeling_layers.py", line 93, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 323, in forward
+    hidden_states, _ = self.self_attn(
+                       ^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 530, in forward
+    attn_output = self_hook.forking_layer.forward_attn(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 410, in forward_attn
+    expert_out = self.experts[e_idx].forward_attn(expert_input, base_attn, **expert_attn_kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 243, in forward_attn
+    q, k = apply_rotary_pos_emb(q, k, cos, sin)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-mogae/scripts/paired_sectoral.py", line 302, in apply_rotary_pos_emb
+    q_embed = (q * cos) + (rotate_half(q) * sin)
+               ~~^~~~~
+RuntimeError: The size of tensor a (128) must match the size of tensor b (32) at non-singleton dimension 3

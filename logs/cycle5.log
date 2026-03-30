@@ -1,0 +1,63 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 13.11it/s]Loading weights:   8%|▊         | 33/399 [00:00<00:02, 134.51it/s]Loading weights:  19%|█▉        | 76/399 [00:00<00:01, 181.90it/s]Loading weights:  41%|████      | 163/399 [00:00<00:00, 303.41it/s]Loading weights:  53%|█████▎    | 212/399 [00:00<00:00, 284.12it/s]Loading weights:  83%|████████▎ | 331/399 [00:00<00:00, 453.35it/s]Loading weights:  98%|█████████▊| 390/399 [00:01<00:00, 481.35it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 360.79it/s]
+Loading adapters...
+BBC eval: 50, Cuisine eval: 50, Generic: 50
+
+======================================================================
+EXPERIMENT A: Softmax-normalized dual gates
+======================================================================
+
+--- A1: Independent sigmoid (no normalization) ---
+  BBC text: PPL=5.77 | BBC_gate=0.786 | Cuisine_gate=0.489
+  Cuisine text: PPL=6.18 | BBC_gate=0.328 | Cuisine_gate=0.874
+  Generic text: PPL=14.46 | BBC_gate=0.298 | Cuisine_gate=0.458
+
+--- A2: Softmax-normalized gates ---
+  BBC text: PPL=5.71 | BBC_gate=0.661 | Cuisine_gate=0.181
+  Cuisine text: PPL=5.89 | BBC_gate=0.072 | Cuisine_gate=0.829
+  Generic text: PPL=14.09 | BBC_gate=0.168 | Cuisine_gate=0.377
+
+--- Single-adapter baselines ---
+  Single BBC on BBC: PPL=5.45
+  Single Cuisine on Cuisine: PPL=5.79
+
+--- Experiment A Summary ---
+Mode         BBC→BBC gate   BBC→Cui gate   BBC PPL Δ    Cui→Cui gate   Cui→BBC gate   Cui PPL Δ   
+Independent  0.786          0.489                 +5.9% 0.874          0.328                 +6.8%
+Softmax      0.661          0.181                 +4.7% 0.829          0.072                 +1.8%
+
+--- Success Criteria ---
+  [PASS] Cuisine gate on BBC < 0.40: 0.181
+  [PASS] Cuisine gate on generic < 0.40: 0.377
+  [FAIL] BBC gate on BBC > 0.70: 0.661
+  [FAIL] BBC PPL delta < 3% (+4.7%): 4.720
+  [PASS] Cuisine PPL delta < 3% (+1.8%): 1.823
+
+3/5 passed
+VERDICT: FAIL
+
+======================================================================
+EXPERIMENT B: IDK cross-domain replication
+======================================================================
+
+BBC adapter gate activation by input type:
+  Known (BBC news): gate=0.783 ± 0.031 (n=50)
+  Unknown (cuisine): gate=0.305 ± 0.036 (n=50)
+  Generic (C4): gate=0.302 ± 0.092 (n=50)
+
+Known/Cuisine ratio: 2.57x
+Known/Generic ratio: 2.59x
+Previous unknown (physics/code/med/sports): 0.348
+Current unknown (cuisine): 0.305
+
+--- Success Criteria ---
+  [PASS] BBC gate on cuisine < 0.40: 0.305
+  [PASS] Known/cuisine ratio >= 2.0x: 2.569
+
+VERDICT: SUCCESS
+BBC adapter correctly treats cuisine as unknown domain. IDK signal confirmed for 3 domain types.
+
+======================================================================
+Both experiments complete.
+======================================================================

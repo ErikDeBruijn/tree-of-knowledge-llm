@@ -1,0 +1,18 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:32, 12.30it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:02, 173.56it/s]Loading weights:  20%|██        | 81/399 [00:00<00:01, 259.17it/s]Loading weights:  29%|██▉       | 117/399 [00:00<00:00, 294.26it/s]Loading weights:  40%|███▉      | 159/399 [00:00<00:00, 331.29it/s]Loading weights:  49%|████▉     | 197/399 [00:00<00:00, 319.09it/s]Loading weights:  60%|█████▉    | 239/399 [00:00<00:00, 341.77it/s]Loading weights:  70%|███████   | 281/399 [00:00<00:00, 346.36it/s]Loading weights:  82%|████████▏ | 327/399 [00:01<00:00, 335.71it/s]Loading weights:  97%|█████████▋| 389/399 [00:01<00:00, 394.38it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 332.76it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loaded in 3s
+ADAPTIVE CADENCE: patience=1500, threshold=0.01
+Trainable: 12,779,520
+Training 20000 steps...
+Step 0/20000|exp=2|loss_avg=2.641|split=cooldown|LT:E0=2.48 E1=2.48
+Step 500/20000|exp=2|loss_avg=2.704|split=cooldown|LT:E0=2.25 E1=1.93
+Step 1000/20000|exp=2|loss_avg=2.702|split=not enough history|LT:E0=2.25 E1=1.89
+Step 1500/20000|exp=2|loss_avg=2.764|split=improving (0.0407)|LT:E0=2.38 E1=1.97
+
+*** ADAPTIVE SPLIT: E0 → E2 (step 1600, reason: plateau (improvement=0.0064 < 0.01)) ***
+Step 2000/20000|exp=3|loss_avg=2.743|split=cooldown|LT:E0=2.22 E1=1.60 E2=2.35
+Step 2500/20000|exp=3|loss_avg=2.684|split=cooldown|LT:E0=2.38 E1=1.75 E2=2.51
+Step 3000/20000|exp=3|loss_avg=2.776|split=improving (0.0568)|LT:E0=2.24 E1=1.60 E2=2.41
+
+*** ADAPTIVE SPLIT: E2 → E3 (step 3200, reason: plateau (improvement=0.0080 < 0.01)) ***

@@ -1,0 +1,100 @@
+Loading base OLMoE...
+Loading weights:   0%|          | 0/179 [00:00<?, ?it/s]Loading weights:   2%|▏         | 4/179 [00:00<00:05, 34.40it/s]Loading weights:   8%|▊         | 15/179 [00:00<00:02, 56.98it/s]Loading weights:  15%|█▌        | 27/179 [00:00<00:02, 74.23it/s]Loading weights:  27%|██▋       | 48/179 [00:00<00:01, 106.44it/s]Loading weights:  33%|███▎      | 59/179 [00:00<00:01, 103.64it/s]Loading weights:  45%|████▌     | 81/179 [00:00<00:00, 108.19it/s]Loading weights:  52%|█████▏    | 93/179 [00:00<00:00, 110.17it/s]Loading weights:  58%|█████▊    | 104/179 [00:01<00:00, 108.96it/s]Loading weights:  64%|██████▍   | 115/179 [00:01<00:00, 108.15it/s]Loading weights:  76%|███████▌  | 136/179 [00:01<00:00, 118.32it/s]Loading weights:  83%|████████▎ | 148/179 [00:01<00:00, 117.51it/s]Loading weights:  94%|█████████▍| 169/179 [00:01<00:00, 119.09it/s]Loading weights: 100%|██████████| 179/179 [00:01<00:00, 113.00it/s]
+  Loaded in 3.1s
+
+============================================================
+Evaluating: B1: Base OLMoE (no fine-tuning)
+============================================================
+Dataset: 288721 tokens
+  Window 20: running PPL = 7.66
+  Window 40: running PPL = 7.65
+  Window 60: running PPL = 8.10
+  Window 80: running PPL = 7.78
+  Window 100: running PPL = 7.84
+  Window 120: running PPL = 7.59
+  Window 140: running PPL = 7.31
+  Window 160: running PPL = 7.15
+  Window 180: running PPL = 7.50
+  Window 200: running PPL = 7.55
+  Window 220: running PPL = 7.38
+  Window 240: running PPL = 7.48
+  Window 260: running PPL = 7.39
+  Window 280: running PPL = 7.39
+  Window 300: running PPL = 7.39
+  Window 320: running PPL = 7.38
+  Window 340: running PPL = 7.37
+  Window 360: running PPL = 7.46
+  Window 380: running PPL = 7.55
+  Window 400: running PPL = 7.17
+  Window 420: running PPL = 7.06
+  Window 440: running PPL = 7.06
+  Window 460: running PPL = 7.08
+  Window 480: running PPL = 7.11
+  Window 500: running PPL = 7.13
+  Window 520: running PPL = 7.18
+  Window 540: running PPL = 7.19
+  Window 560: running PPL = 7.18
+PPL = 7.1740 (561 windows, 49.7s)
+Gini = 0.0022
+Tier-0 (top-16) traffic = 0.251
+Cache miss rate (20 slots) = 0.4370
+Cache miss rate (32 slots) = 0.2494
+Loading model from /root/t6b-mogae/checkpoints/lambda075_pipeline/final...
+Loading weights:   0%|          | 0/179 [00:00<?, ?it/s]Loading weights:   3%|▎         | 5/179 [00:00<00:06, 25.79it/s]Loading weights:   9%|▉         | 16/179 [00:00<00:03, 51.49it/s]Loading weights:  15%|█▌        | 27/179 [00:00<00:03, 50.18it/s]Loading weights:  21%|██        | 38/179 [00:00<00:02, 54.36it/s]Loading weights:  27%|██▋       | 48/179 [00:00<00:02, 61.43it/s]Loading weights:  31%|███       | 55/179 [00:01<00:02, 55.74it/s]Loading weights:  34%|███▍      | 61/179 [00:01<00:03, 35.76it/s]Loading weights:  40%|███▉      | 71/179 [00:01<00:03, 30.85it/s]Loading weights:  46%|████▌     | 82/179 [00:01<00:02, 36.48it/s]Loading weights:  52%|█████▏    | 93/179 [00:02<00:02, 36.85it/s]Loading weights:  58%|█████▊    | 104/179 [00:02<00:01, 37.69it/s]Loading weights:  64%|██████▍   | 115/179 [00:02<00:01, 41.74it/s]Loading weights:  70%|███████   | 126/179 [00:02<00:01, 47.92it/s]Loading weights:  77%|███████▋  | 137/179 [00:03<00:00, 47.15it/s]Loading weights:  83%|████████▎ | 148/179 [00:03<00:00, 53.03it/s]Loading weights:  89%|████████▉ | 159/179 [00:03<00:00, 53.07it/s]Loading weights:  95%|█████████▍| 170/179 [00:03<00:00, 51.92it/s]Loading weights: 100%|██████████| 179/179 [00:03<00:00, 47.89it/s]
+[1mOlmoeForCausalLM LOAD REPORT[0m from: /root/t6b-mogae/checkpoints/lambda075_pipeline/final
+Key                                         | Status     |  | 
+--------------------------------------------+------------+--+-
+model.layers.{0...15}.mlp.gate.routing_bias | UNEXPECTED |  | 
+
+[3mNotes:
+- UNEXPECTED[3m	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.[0m
+  Applied 16 router biases
+  Loaded in 5.3s
+
+============================================================
+Evaluating: λ=0.75 P2b (fine-tuned + biases)
+============================================================
+Dataset: 288721 tokens
+  Window 20: running PPL = 8.93
+  Window 40: running PPL = 8.77
+  Window 60: running PPL = 9.21
+  Window 80: running PPL = 9.05
+  Window 100: running PPL = 9.14
+  Window 120: running PPL = 8.82
+  Window 140: running PPL = 8.46
+  Window 160: running PPL = 8.22
+  Window 180: running PPL = 8.61
+  Window 200: running PPL = 8.62
+  Window 220: running PPL = 8.37
+  Window 240: running PPL = 8.46
+  Window 260: running PPL = 8.34
+  Window 280: running PPL = 8.34
+  Window 300: running PPL = 8.34
+  Window 320: running PPL = 8.29
+  Window 340: running PPL = 8.27
+  Window 360: running PPL = 8.40
+  Window 380: running PPL = 8.50
+  Window 400: running PPL = 8.40
+  Window 420: running PPL = 8.38
+  Window 440: running PPL = 8.34
+  Window 460: running PPL = 8.34
+  Window 480: running PPL = 8.33
+  Window 500: running PPL = 8.34
+  Window 520: running PPL = 8.37
+  Window 540: running PPL = 8.36
+  Window 560: running PPL = 8.36
+PPL = 8.3628 (561 windows, 48.1s)
+Gini = 0.0055
+Tier-0 (top-16) traffic = 0.253
+Cache miss rate (20 slots) = 0.3214
+Cache miss rate (32 slots) = 0.1330
+
+============================================================
+SUMMARY
+============================================================
+  B1_wikitext: PPL=7.174, Gini=0.0022, miss_20=0.437
+  lambda075_P2b_wikitext: PPL=8.3628, Gini=0.0055, miss_20=0.3214
+
+Total eval time: 138.8s
+
+Results saved to /root/t6b-mogae/wikitext_cross_eval_results.json

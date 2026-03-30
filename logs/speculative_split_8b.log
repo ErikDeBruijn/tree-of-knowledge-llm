@@ -1,0 +1,168 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.61it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:02, 169.17it/s]Loading weights:  19%|█▊        | 74/399 [00:00<00:01, 236.53it/s]Loading weights:  28%|██▊       | 110/399 [00:00<00:01, 260.60it/s]Loading weights:  38%|███▊      | 153/399 [00:00<00:00, 311.62it/s]Loading weights:  48%|████▊     | 190/399 [00:00<00:00, 316.61it/s]Loading weights:  56%|█████▌    | 224/399 [00:00<00:00, 320.87it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 310.13it/s]Loading weights:  76%|███████▋  | 305/399 [00:01<00:00, 344.66it/s]Loading weights:  86%|████████▋ | 345/399 [00:01<00:00, 345.24it/s]Loading weights:  96%|█████████▌| 382/399 [00:01<00:00, 349.23it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 306.41it/s]
+Loaded in 3s
+SPECULATIVE SPLIT: try every 3000, eval for 500, rollback if no improvement
+Trainable: 12,779,520
+Training 25000 steps...
+Step 0/25000|exp=2|loss=2.6406|LT:E0=2.49 E1=2.48 
+Step 500/25000|exp=2|loss=2.4844|LT:E0=2.26 E1=1.88 
+Step 1000/25000|exp=2|loss=1.8906|LT:E0=2.25 E1=1.87 
+Step 1500/25000|exp=2|loss=3.2656|LT:E0=2.39 E1=1.93 
+Step 2000/25000|exp=2|loss=3.2031|LT:E0=2.29 E1=1.81 
+Step 2500/25000|exp=2|loss=2.9219|LT:E0=2.45 E1=1.95 
+
+*** SPECULATIVE SPLIT: E0 (step 3000, pre-loss=2.7254) ***
+Step 3000/25000|exp=3|loss=2.5625|LT:E0=2.33 E1=1.84 E2=2.33 [evaluating]
+  ✗ ROLLBACK: loss 2.7254 → 2.7468 (Δ=-0.0214)
+Step 3500/25000|exp=2|loss=3.7656|LT:E0=2.33 E1=1.84 
+Step 4000/25000|exp=2|loss=2.4531|LT:E0=2.30 E1=1.78 
+Step 4500/25000|exp=2|loss=3.3281|LT:E0=2.37 E1=1.77 
+Step 5000/25000|exp=2|loss=3.0000|LT:E0=2.45 E1=1.81 
+Step 5500/25000|exp=2|loss=2.5312|LT:E0=2.32 E1=1.68 
+
+*** SPECULATIVE SPLIT: E0 (step 6000, pre-loss=2.6575) ***
+Step 6000/25000|exp=3|loss=3.0781|LT:E0=2.30 E1=1.76 E2=2.30 [evaluating]
+  ✗ ROLLBACK: loss 2.6575 → 2.7224 (Δ=-0.0649)
+Step 6500/25000|exp=2|loss=2.4688|LT:E0=2.30 E1=1.76 
+Step 7000/25000|exp=2|loss=3.0000|LT:E0=2.29 E1=1.77 
+Step 7500/25000|exp=2|loss=2.2969|LT:E0=2.29 E1=1.63 
+Step 8000/25000|exp=2|loss=2.7812|LT:E0=2.09 E1=1.54 
+Step 8500/25000|exp=2|loss=2.8906|LT:E0=2.32 E1=1.72 
+
+*** SPECULATIVE SPLIT: E0 (step 9000, pre-loss=2.7469) ***
+Step 9000/25000|exp=3|loss=2.3594|LT:E0=2.29 E1=1.57 E2=2.29 [evaluating]
+  ✓ KEEP SPLIT: loss 2.7469 → 2.7156 (Δ=+0.0313)
+Step 9500/25000|exp=3|loss=1.7734|LT:E0=2.52 E1=2.00 E2=1.87 
+Step 10000/25000|exp=3|loss=1.6484|LT:E0=2.45 E1=2.13 E2=1.89 
+Step 10500/25000|exp=3|loss=2.3750|LT:E0=2.59 E1=2.27 E2=1.92 
+Step 11000/25000|exp=3|loss=2.2031|LT:E0=2.60 E1=2.21 E2=1.91 
+Step 11500/25000|exp=3|loss=2.5938|LT:E0=2.51 E1=2.13 E2=1.87 
+
+*** SPECULATIVE SPLIT: E0 (step 12000, pre-loss=2.6933) ***
+Step 12000/25000|exp=4|loss=2.4062|LT:E0=2.50 E1=2.40 E2=1.85 E3=2.50 [evaluating]
+  ✗ ROLLBACK: loss 2.6933 → 2.7291 (Δ=-0.0358)
+Step 12500/25000|exp=3|loss=2.9688|LT:E0=2.50 E1=2.40 E2=1.85 
+Step 13000/25000|exp=3|loss=2.1875|LT:E0=2.41 E1=2.31 E2=1.82 
+Step 13500/25000|exp=3|loss=3.0156|LT:E0=2.57 E1=2.13 E2=1.95 
+Step 14000/25000|exp=3|loss=3.2031|LT:E0=2.64 E1=2.25 E2=1.93 
+Step 14500/25000|exp=3|loss=3.1094|LT:E0=2.51 E1=2.29 E2=1.93 
+
+*** SPECULATIVE SPLIT: E0 (step 15000, pre-loss=2.6942) ***
+Step 15000/25000|exp=4|loss=2.4531|LT:E0=2.59 E1=2.39 E2=1.87 E3=2.59 [evaluating]
+  ✗ ROLLBACK: loss 2.6942 → 2.7066 (Δ=-0.0124)
+Step 15500/25000|exp=3|loss=2.7812|LT:E0=2.59 E1=2.39 E2=1.87 
+Step 16000/25000|exp=3|loss=3.1094|LT:E0=2.63 E1=2.20 E2=1.97 
+Step 16500/25000|exp=3|loss=2.2812|LT:E0=2.62 E1=2.36 E2=1.87 
+Step 17000/25000|exp=3|loss=2.7188|LT:E0=2.51 E1=2.33 E2=1.92 
+Step 17500/25000|exp=3|loss=2.0938|LT:E0=2.55 E1=2.57 E2=2.03 
+
+*** SPECULATIVE SPLIT: E0 (step 18000, pre-loss=2.6411) ***
+Step 18000/25000|exp=4|loss=2.7500|LT:E0=2.41 E1=2.21 E2=1.96 E3=2.41 [evaluating]
+  ✗ ROLLBACK: loss 2.6411 → 2.6847 (Δ=-0.0436)
+Step 18500/25000|exp=3|loss=2.6406|LT:E0=2.41 E1=2.21 E2=1.96 
+Step 19000/25000|exp=3|loss=2.7656|LT:E0=2.60 E1=2.24 E2=2.06 
+Step 19500/25000|exp=3|loss=1.2734|LT:E0=2.61 E1=2.55 E2=1.90 
+Step 20000/25000|exp=3|loss=3.4844|LT:E0=2.56 E1=2.18 E2=1.88 
+Step 20500/25000|exp=3|loss=1.9609|LT:E0=2.56 E1=2.19 E2=1.99 
+
+*** SPECULATIVE SPLIT: E0 (step 21000, pre-loss=2.7132) ***
+Step 21000/25000|exp=4|loss=3.0938|LT:E0=2.58 E1=2.12 E2=1.94 E3=2.58 [evaluating]
+  ✓ KEEP SPLIT: loss 2.7132 → 2.6993 (Δ=+0.0139)
+Step 21500/25000|exp=4|loss=2.6719|LT:E0=2.54 E1=2.43 E2=2.05 E3=2.55 
+Step 22000/25000|exp=4|loss=2.2656|LT:E0=2.48 E1=2.19 E2=1.87 E3=2.42 
+Step 22500/25000|exp=4|loss=2.4375|LT:E0=2.50 E1=2.35 E2=1.81 E3=2.43 
+Step 23000/25000|exp=4|loss=3.0312|LT:E0=2.52 E1=2.11 E2=1.88 E3=2.55 
+Step 23500/25000|exp=4|loss=2.3438|LT:E0=2.51 E1=1.95 E2=1.84 E3=2.54 
+
+*** SPECULATIVE SPLIT: E0 (step 24000, pre-loss=2.7146) ***
+Step 24000/25000|exp=5|loss=2.2344|LT:E0=2.52 E1=2.10 E2=1.72 E3=2.46 E4=2.52 [evaluating]
+  ✗ ROLLBACK: loss 2.7146 → 2.7171 (Δ=-0.0025)
+Step 24500/25000|exp=4|loss=2.6250|LT:E0=2.52 E1=2.10 E2=1.72 E3=2.46 
+
+Saved. 4 experts.
+Splits kept: 2, rolled back: 6
+Split decisions: [
+  {
+    "step": 3000,
+    "event": "split_rolled_back",
+    "from": 0,
+    "n_experts": 2,
+    "pre_loss": 2.725359375,
+    "post_loss": 2.746765625,
+    "improvement": -0.02140625000000007
+  },
+  {
+    "step": 6000,
+    "event": "split_rolled_back",
+    "from": 0,
+    "n_experts": 2,
+    "pre_loss": 2.6574921875,
+    "post_loss": 2.722375,
+    "improvement": -0.06488281250000005
+  },
+  {
+    "step": 9000,
+    "event": "split_kept",
+    "from": 0,
+    "n_experts": 3,
+    "pre_loss": 2.746875,
+    "post_loss": 2.715609375,
+    "improvement": 0.031265625000000075
+  },
+  {
+    "step": 12000,
+    "event": "split_rolled_back",
+    "from": 0,
+    "n_experts": 3,
+    "pre_loss": 2.693296875,
+    "post_loss": 2.729109375,
+    "improvement": -0.035812500000000025
+  },
+  {
+    "step": 15000,
+    "event": "split_rolled_back",
+    "from": 0,
+    "n_experts": 3,
+    "pre_loss": 2.6941875,
+    "post_loss": 2.7065625,
+    "improvement": -0.012375000000000025
+  },
+  {
+    "step": 18000,
+    "event": "split_rolled_back",
+    "from": 0,
+    "n_experts": 3,
+    "pre_loss": 2.641078125,
+    "post_loss": 2.684703125,
+    "improvement": -0.043625000000000025
+  },
+  {
+    "step": 21000,
+    "event": "split_kept",
+    "from": 0,
+    "n_experts": 4,
+    "pre_loss": 2.71315625,
+    "post_loss": 2.69928125,
+    "improvement": 0.013875000000000082
+  },
+  {
+    "step": 24000,
+    "event": "split_rolled_back",
+    "from": 0,
+    "n_experts": 4,
+    "pre_loss": 2.7146171875,
+    "post_loss": 2.717078125,
+    "improvement": -0.0024609374999999822
+  }
+]
+
+=== M_ij ABLATION (4 experts, speculative split) ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Baseline: {'medical': '14.0', 'code': '18.1', 'legal': '15.7', 'news': '12.1', 'conversational': '31.3'}
+No E0: medical=+0.90 code=+1.86 legal=+1.73 news=+1.36 conversational=+1.95|CV=0.2468
+No E1: medical=+62.08 code=+94.18 legal=+74.05 news=+60.91 conversational=+205.58|CV=0.5479
+No E2: medical=+10.89 code=+15.13 legal=+13.63 news=+14.33 conversational=+24.76|CV=0.3001
+No E3: medical=+6.58 code=+10.27 legal=+9.33 news=+7.67 conversational=+16.12|CV=0.3322
+
+Overall M_ij CV: 1.5152, Active: 4/4
+Done.

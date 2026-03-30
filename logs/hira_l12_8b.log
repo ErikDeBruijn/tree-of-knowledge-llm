@@ -1,0 +1,127 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.82it/s]Loading weights:   6%|▌         | 23/399 [00:00<00:03, 97.20it/s]Loading weights:  23%|██▎       | 92/399 [00:00<00:00, 313.16it/s]Loading weights:  34%|███▍      | 135/399 [00:00<00:00, 318.13it/s]Loading weights:  46%|████▋     | 185/399 [00:00<00:00, 333.39it/s]Loading weights:  60%|█████▉    | 239/399 [00:00<00:00, 374.23it/s]Loading weights:  74%|███████▎  | 294/399 [00:00<00:00, 416.92it/s]Loading weights:  85%|████████▍ | 338/399 [00:01<00:00, 387.46it/s]Loading weights:  96%|█████████▌| 382/399 [00:01<00:00, 390.60it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 353.21it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loaded in 3s
+HiRA: rank-1024 (25% of hidden dim), L12-35
+Trainable: 1,610,809,344 (1610.8M)
+  Per expert: 536,936,448 (536.9M)
+  VRAM estimate: 3.2 GB for params + 9.7 GB for optimizer
+Loading C4...
+Training 10000 steps (HiRA)...
+Step 0/10000 | loss=2.8750 | tau=1.000 | VRAM=29.4GB
+  LT: E0=2.51 E1=2.52 | LR: E0=3.0e-05 E1=3.0e-05
+Step 200/10000 | loss=1.8359 | tau=0.975 | VRAM=29.4GB
+  LT: E0=2.73 E1=2.75 | LR: E0=1.7e-05 E1=1.8e-05
+Step 400/10000 | loss=3.2969 | tau=0.950 | VRAM=29.4GB
+  LT: E0=2.87 E1=2.85 | LR: E0=1.8e-05 E1=1.7e-05
+Step 600/10000 | loss=2.7656 | tau=0.925 | VRAM=29.4GB
+  LT: E0=2.72 E1=2.76 | LR: E0=1.7e-05 E1=1.8e-05
+Step 800/10000 | loss=2.5781 | tau=0.900 | VRAM=29.3GB
+  LT: E0=2.77 E1=2.78 | LR: E0=1.7e-05 E1=1.7e-05
+Step 1000/10000 | loss=2.6875 | tau=0.875 | VRAM=29.4GB
+  LT: E0=2.65 E1=2.72 | LR: E0=1.6e-05 E1=1.8e-05
+Step 1200/10000 | loss=2.7344 | tau=0.850 | VRAM=29.4GB
+  LT: E0=2.78 E1=2.77 | LR: E0=1.7e-05 E1=1.7e-05
+Step 1400/10000 | loss=3.0938 | tau=0.825 | VRAM=29.4GB
+  LT: E0=2.74 E1=2.75 | LR: E0=1.7e-05 E1=1.7e-05
+Step 1600/10000 | loss=3.3438 | tau=0.800 | VRAM=29.4GB
+  LT: E0=2.78 E1=2.72 | LR: E0=1.8e-05 E1=1.6e-05
+Step 1800/10000 | loss=2.9531 | tau=0.775 | VRAM=29.4GB
+  LT: E0=2.88 E1=2.91 | LR: E0=1.7e-05 E1=1.8e-05
+Step 2000/10000 | loss=2.3281 | tau=0.750 | VRAM=29.4GB
+  LT: E0=2.63 E1=2.67 | LR: E0=1.7e-05 E1=1.8e-05
+  Eval PPL=4.16
+Step 2200/10000 | loss=2.6562 | tau=0.725 | VRAM=29.4GB
+  LT: E0=2.69 E1=2.60 | LR: E0=1.9e-05 E1=1.6e-05
+Step 2400/10000 | loss=2.6094 | tau=0.700 | VRAM=29.5GB
+  LT: E0=2.77 E1=2.73 | LR: E0=1.8e-05 E1=1.7e-05
+Step 2600/10000 | loss=1.9453 | tau=0.675 | VRAM=29.5GB
+  LT: E0=2.68 E1=2.67 | LR: E0=1.7e-05 E1=1.7e-05
+Step 2800/10000 | loss=2.6719 | tau=0.650 | VRAM=29.4GB
+  LT: E0=2.83 E1=2.86 | LR: E0=1.7e-05 E1=1.8e-05
+Step 3000/10000 | loss=3.1562 | tau=0.625 | VRAM=29.4GB
+  LT: E0=2.70 E1=2.72 | LR: E0=1.7e-05 E1=1.8e-05
+Step 3200/10000 | loss=3.2500 | tau=0.600 | VRAM=29.5GB
+  LT: E0=3.05 E1=2.98 | LR: E0=1.8e-05 E1=1.6e-05
+Step 3400/10000 | loss=3.2656 | tau=0.575 | VRAM=29.5GB
+  LT: E0=2.92 E1=2.90 | LR: E0=1.8e-05 E1=1.7e-05
+Step 3600/10000 | loss=2.5156 | tau=0.550 | VRAM=29.5GB
+  LT: E0=2.78 E1=2.78 | LR: E0=1.7e-05 E1=1.7e-05
+Step 3800/10000 | loss=2.2812 | tau=0.525 | VRAM=29.4GB
+  LT: E0=2.70 E1=2.73 | LR: E0=1.7e-05 E1=1.8e-05
+Step 4000/10000 | loss=3.9688 | tau=0.500 | VRAM=29.4GB
+  LT: E0=2.70 E1=2.69 | LR: E0=1.7e-05 E1=1.7e-05
+  Eval PPL=28.75
+Step 4200/10000 | loss=2.8906 | tau=0.475 | VRAM=29.5GB
+  LT: E0=2.77 E1=2.79 | LR: E0=1.7e-05 E1=1.8e-05
+Step 4400/10000 | loss=2.5156 | tau=0.450 | VRAM=29.4GB
+  LT: E0=2.98 E1=3.05 | LR: E0=1.6e-05 E1=1.8e-05
+Step 4600/10000 | loss=2.4688 | tau=0.425 | VRAM=29.4GB
+  LT: E0=2.93 E1=2.89 | LR: E0=1.8e-05 E1=1.7e-05
+Step 4800/10000 | loss=2.5938 | tau=0.400 | VRAM=29.4GB
+  LT: E0=2.62 E1=2.68 | LR: E0=1.6e-05 E1=1.8e-05
+Step 5000/10000 | loss=2.5625 | tau=0.375 | VRAM=29.4GB
+  LT: E0=2.98 E1=3.06 | LR: E0=1.6e-05 E1=1.8e-05
+Step 5200/10000 | loss=3.2031 | tau=0.350 | VRAM=29.4GB
+  LT: E0=2.82 E1=2.81 | LR: E0=1.7e-05 E1=1.7e-05
+Step 5400/10000 | loss=2.5469 | tau=0.325 | VRAM=29.4GB
+  LT: E0=2.63 E1=2.76 | LR: E0=1.6e-05 E1=1.9e-05
+Step 5600/10000 | loss=2.7969 | tau=0.300 | VRAM=29.4GB
+  LT: E0=2.80 E1=2.81 | LR: E0=1.7e-05 E1=1.8e-05
+Step 5800/10000 | loss=2.9531 | tau=0.275 | VRAM=29.4GB
+  LT: E0=2.74 E1=2.78 | LR: E0=1.7e-05 E1=1.8e-05
+Step 6000/10000 | loss=2.2188 | tau=0.250 | VRAM=29.4GB
+  LT: E0=2.70 E1=2.69 | LR: E0=1.7e-05 E1=1.7e-05
+  Eval PPL=8.94
+Step 6200/10000 | loss=3.4219 | tau=0.225 | VRAM=29.4GB
+  LT: E0=2.66 E1=2.73 | LR: E0=1.6e-05 E1=1.8e-05
+Step 6400/10000 | loss=3.1406 | tau=0.200 | VRAM=29.4GB
+  LT: E0=2.75 E1=2.77 | LR: E0=1.7e-05 E1=1.8e-05
+Step 6600/10000 | loss=2.7344 | tau=0.175 | VRAM=29.5GB
+  LT: E0=2.77 E1=2.69 | LR: E0=1.8e-05 E1=1.6e-05
+Step 6800/10000 | loss=2.6094 | tau=0.150 | VRAM=29.5GB
+  LT: E0=3.20 E1=3.08 | LR: E0=1.9e-05 E1=1.6e-05
+Step 7000/10000 | loss=2.0625 | tau=0.125 | VRAM=29.4GB
+  LT: E0=2.74 E1=2.94 | LR: E0=1.5e-05 E1=2.0e-05
+Step 7200/10000 | loss=3.0938 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.77 E1=2.78 | LR: E0=1.7e-05 E1=1.7e-05
+Step 7400/10000 | loss=2.3438 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.70 E1=2.67 | LR: E0=1.8e-05 E1=1.7e-05
+Step 7600/10000 | loss=2.4062 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.71 E1=2.83 | LR: E0=1.6e-05 E1=1.9e-05
+Step 7800/10000 | loss=1.9375 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.62 E1=2.68 | LR: E0=1.6e-05 E1=1.8e-05
+Step 8000/10000 | loss=2.5469 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.75 E1=2.76 | LR: E0=1.7e-05 E1=1.7e-05
+  Eval PPL=9.31
+Step 8200/10000 | loss=2.6875 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.96 E1=2.86 | LR: E0=1.9e-05 E1=1.6e-05
+Step 8400/10000 | loss=2.7031 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.71 E1=2.70 | LR: E0=1.7e-05 E1=1.7e-05
+Step 8600/10000 | loss=2.7969 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.66 E1=2.72 | LR: E0=1.6e-05 E1=1.8e-05
+Step 8800/10000 | loss=2.1719 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.58 E1=2.75 | LR: E0=1.5e-05 E1=2.0e-05
+Step 9000/10000 | loss=3.4375 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.83 E1=2.97 | LR: E0=1.6e-05 E1=1.9e-05
+Step 9200/10000 | loss=3.1094 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.74 E1=2.64 | LR: E0=1.9e-05 E1=1.6e-05
+Step 9400/10000 | loss=3.0312 | tau=0.100 | VRAM=29.4GB
+  LT: E0=2.75 E1=2.74 | LR: E0=1.7e-05 E1=1.7e-05
+Step 9600/10000 | loss=3.0469 | tau=0.100 | VRAM=29.5GB
+  LT: E0=2.66 E1=2.70 | LR: E0=1.7e-05 E1=1.8e-05
+Step 9800/10000 | loss=4.1875 | tau=0.100 | VRAM=29.4GB
+  LT: E0=2.81 E1=2.67 | LR: E0=1.9e-05 E1=1.6e-05
+
+=== M_ij ABLATION (HiRA rank-1024) ===
+Baseline: {'medical': '14.1', 'code': '18.3', 'legal': '16.1', 'news': '12.1', 'conversational': '31.6'}
+No E0: medical=+36.22 code=+51.44 legal=+47.47 news=+44.81 conversational=+113.63 | CV=0.4753
+No E1: medical=+29.90 code=+39.45 legal=+35.98 news=+35.59 conversational=+71.21 | CV=0.3468
+
+Overall M_ij CV: 0.4696
+
+Rank spectrum (L12, 2 experts):
+  Rank-4:    CV=1.07
+  Rank-8:    (not tested at L12)
+  Rank-1024: CV=0.4696
+Done.

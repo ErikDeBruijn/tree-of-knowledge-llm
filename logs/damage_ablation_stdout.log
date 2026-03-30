@@ -1,0 +1,99 @@
+[2026-03-27 19:29:40] ======================================================================
+[2026-03-27 19:29:40] DAMAGE-SURROGATE ABLATION MATRIX -- SOFT ROUTING (tau=0.1)
+[2026-03-27 19:29:40] ======================================================================
+[2026-03-27 19:29:40] Physical GPU: cuda:1 (via CUDA_VISIBLE_DEVICES=1)
+[2026-03-27 19:29:40] Checkpoint: /root/t6b-mogae/checkpoints/damage_surrogate/damage_final.pt
+[2026-03-27 19:29:40] Routing: deterministic softmax(logits / 0.1) -- NOT argmax
+[2026-03-27 19:29:40] Samples per domain: 200
+[2026-03-27 19:29:40] Collecting 200 samples per domain from C4...
+[2026-03-27 19:29:43]   conversational: 200 samples (checked 549)
+[2026-03-27 19:29:43]   code: 200 samples (checked 706)
+[2026-03-27 19:29:43]   news: 200 samples (checked 1069)
+[2026-03-27 19:29:43]   medical: 200 samples (checked 1230)
+[2026-03-27 19:29:43]   legal: 200 samples (checked 1528)
+[2026-03-27 19:29:43]   Final medical: 200 samples
+[2026-03-27 19:29:43]   Final code: 200 samples
+[2026-03-27 19:29:43]   Final legal: 200 samples
+[2026-03-27 19:29:43]   Final conversational: 200 samples
+[2026-03-27 19:29:43]   Final news: 200 samples
+[2026-03-27 19:29:44] Loading Qwen/Qwen3-1.7B...
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.46it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.66it/s]
+[2026-03-27 19:29:46] Base model loaded in 6.8s
+[2026-03-27 19:29:46] Loading checkpoint...
+[2026-03-27 19:29:48]   Step: 24414, Tau: 0.1
+[2026-03-27 19:29:48]   Tree: {18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 19:29:48]   Forking layers loaded
+[2026-03-27 19:29:48]   Params per expert: {'expert_0': 655360, 'expert_1': 655360}
+[2026-03-27 19:29:48]   SoftAblationModel built (tau=0.1)
+[2026-03-27 19:29:48] 
+--- Config: both_active (mode=both) ---
+[2026-03-27 19:29:58]   medical: PPL = 16.68
+[2026-03-27 19:30:00]   code: PPL = 17.87
+[2026-03-27 19:29:49]   legal: PPL = 16.27
+[2026-03-27 19:29:58]   conversational: PPL = 20.00
+[2026-03-27 19:30:06]   news: PPL = 17.37
+[2026-03-27 19:30:06] 
+--- Config: expert0_ablated (mode=ablate_0) ---
+[2026-03-27 19:30:09]   medical: PPL = 26.48
+[2026-03-27 19:30:12]   code: PPL = 28.62
+[2026-03-27 19:30:15]   legal: PPL = 27.26
+[2026-03-27 19:30:18]   conversational: PPL = 31.70
+[2026-03-27 19:30:21]   news: PPL = 30.31
+[2026-03-27 19:30:21] 
+--- Config: expert1_ablated (mode=ablate_1) ---
+[2026-03-27 19:30:24]   medical: PPL = 44.71
+[2026-03-27 19:30:27]   code: PPL = 45.00
+[2026-03-27 19:30:30]   legal: PPL = 40.16
+[2026-03-27 19:30:33]   conversational: PPL = 54.80
+[2026-03-27 19:30:36]   news: PPL = 40.83
+[2026-03-27 19:30:36] 
+======================================================================
+[2026-03-27 19:30:36] ABLATION MATRIX M_ij = PPL(without expert j) - PPL(both active)
+[2026-03-27 19:30:36] Routing: SOFT (softmax / tau=0.1), NOT argmax
+[2026-03-27 19:30:36] ======================================================================
+[2026-03-27 19:30:36] Domain           |   Baseline |    M[d,E0] |    M[d,E1] |  Selectivity
+[2026-03-27 19:30:36] ----------------------------------------------------------------------
+[2026-03-27 19:30:36] medical          |      16.68 |      9.804 |     28.028 |       0.4817
+[2026-03-27 19:30:36] code             |      17.87 |     10.758 |     27.132 |       0.4321
+[2026-03-27 19:30:36] legal            |      16.27 |     10.989 |     23.888 |       0.3698
+[2026-03-27 19:30:36] conversational   |      20.00 |     11.690 |     34.799 |       0.4971
+[2026-03-27 19:30:36] news             |      17.37 |     12.939 |     23.461 |       0.2891
+[2026-03-27 19:30:36] 
+======================================================================
+[2026-03-27 19:30:36] DERIVED METRICS
+[2026-03-27 19:30:36] ======================================================================
+[2026-03-27 19:30:36] Expert 0 impact: mean=11.236, std=1.044, range=[9.804, 12.939]
+[2026-03-27 19:30:36] Expert 1 impact: mean=27.462, std=4.075, range=[23.461, 34.799]
+[2026-03-27 19:30:36] 
+Diagonality (CV of damage across domains):
+[2026-03-27 19:30:36]   expert_0: CV=0.0929, mean=11.236, std=1.044 -> uniform
+[2026-03-27 19:30:36]   expert_1: CV=0.1484, mean=27.462, std=4.075 -> uniform
+[2026-03-27 19:30:36] 
+Domain-expert assignment (which expert matters more):
+[2026-03-27 19:30:36]   medical         : E1 dominant (ratio=2.86, M0=9.804, M1=28.028)
+[2026-03-27 19:30:36]   code            : E1 dominant (ratio=2.52, M0=10.758, M1=27.132)
+[2026-03-27 19:30:36]   legal           : E1 dominant (ratio=2.17, M0=10.989, M1=23.888)
+[2026-03-27 19:30:36]   conversational  : E1 dominant (ratio=2.98, M0=11.690, M1=34.799)
+[2026-03-27 19:30:36]   news            : E1 dominant (ratio=1.81, M0=12.939, M1=23.461)
+[2026-03-27 19:30:36] 
+======================================================================
+[2026-03-27 19:30:36] COMPARISON WITH ARGMAX ABLATION (if available)
+[2026-03-27 19:30:36] ======================================================================
+[2026-03-27 19:30:36]   gumbel_ablation_matrix:
+[2026-03-27 19:30:36]     Previous mean CV (argmax): 0.1178
+[2026-03-27 19:30:36]     Current mean CV (soft):    0.1206
+[2026-03-27 19:30:36]     Delta: +0.0029
+[2026-03-27 19:30:36]   ablation_matrix:
+[2026-03-27 19:30:36]     Previous mean CV (argmax): 0.1109
+[2026-03-27 19:30:36]     Current mean CV (soft):    0.1206
+[2026-03-27 19:30:36]     Delta: +0.0097
+[2026-03-27 19:30:36] 
+Results saved to /root/t6b-mogae/results/damage_ablation_matrix.json
+[2026-03-27 19:30:36] Total time: 65.4s
+[2026-03-27 19:30:36] 
+======================================================================
+[2026-03-27 19:30:36] SUMMARY
+[2026-03-27 19:30:36] ======================================================================
+[2026-03-27 19:30:36] Mean |M_ij|: 19.349 PPL points
+[2026-03-27 19:30:36] Mean CV across experts: 0.1206
+[2026-03-27 19:30:36] RESULT: Weak selectivity (0.1 < CV < 0.2)

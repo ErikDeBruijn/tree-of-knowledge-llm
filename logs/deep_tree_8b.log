@@ -1,0 +1,134 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:06,  5.96it/s]Loading weights:  11%|█▏        | 45/399 [00:00<00:01, 204.36it/s]Loading weights:  21%|██        | 83/399 [00:00<00:01, 273.25it/s]Loading weights:  30%|███       | 121/399 [00:00<00:01, 269.16it/s]Loading weights:  42%|████▏     | 166/399 [00:00<00:01, 214.33it/s]Loading weights:  73%|███████▎  | 293/399 [00:00<00:00, 447.56it/s]Loading weights:  88%|████████▊ | 351/399 [00:01<00:00, 446.20it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 354.29it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loaded in 3s
+DEEP TREE: L12 1→2, L18 2→4, L24 4→8
+Trainable: 35,143,680 (35.1M)
+Loading C4...
+Training 15000 steps...
+Step 0/15000 | loss=2.6250 | tau=1.000
+  L1: P0=2.47 P1=2.49 | LR: P0=1.0e-04 P1=1.0e-04
+Step 300/15000 | loss=2.7188 | tau=0.975
+  L1: P0=2.26 P1=2.38 | LR: P0=4.9e-05 P1=6.1e-05
+Step 600/15000 | loss=2.7188 | tau=0.950
+  L1: P0=1.99 P1=2.29 | LR: P0=4.1e-05 P1=7.4e-05
+Step 900/15000 | loss=2.3281 | tau=0.925
+  L1: P0=2.03 P1=2.32 | LR: P0=4.1e-05 P1=7.3e-05
+Step 1200/15000 | loss=2.6250 | tau=0.900
+  L1: P0=2.04 P1=2.32 | LR: P0=4.2e-05 P1=7.1e-05
+Step 1500/15000 | loss=3.2656 | tau=0.875
+  L1: P0=2.10 P1=2.42 | LR: P0=4.1e-05 P1=7.4e-05
+Step 1800/15000 | loss=2.9844 | tau=0.850
+  L1: P0=2.03 P1=2.38 | LR: P0=3.9e-05 P1=7.7e-05
+Step 2100/15000 | loss=3.9375 | tau=0.825
+  L1: P0=1.89 P1=2.31 | LR: P0=3.6e-05 P1=8.4e-05
+Step 2400/15000 | loss=2.9531 | tau=0.800
+  L1: P0=1.88 P1=2.27 | LR: P0=3.7e-05 P1=8.2e-05
+Step 2700/15000 | loss=2.4375 | tau=0.775
+  L1: P0=1.74 P1=2.16 | LR: P0=3.5e-05 P1=8.7e-05
+Step 3000/15000 | loss=2.5625 | tau=0.750
+  L1: P0=1.93 P1=2.37 | LR: P0=3.6e-05 P1=8.4e-05
+  Eval PPL=9.06
+Step 3300/15000 | loss=2.2344 | tau=0.725
+  L1: P0=1.89 P1=2.35 | LR: P0=3.4e-05 P1=8.7e-05
+Step 3600/15000 | loss=3.1250 | tau=0.700
+  L1: P0=1.90 P1=2.37 | LR: P0=3.4e-05 P1=8.7e-05
+Step 3900/15000 | loss=2.2500 | tau=0.675
+  L1: P0=1.88 P1=2.35 | LR: P0=3.4e-05 P1=8.7e-05
+Step 4200/15000 | loss=3.3906 | tau=0.650
+  L1: P0=1.91 P1=2.29 | LR: P0=3.7e-05 P1=8.1e-05
+Step 4500/15000 | loss=3.0938 | tau=0.625
+  L1: P0=1.84 P1=2.39 | LR: P0=3.1e-05 P1=9.5e-05
+Step 4800/15000 | loss=2.4844 | tau=0.600
+  L1: P0=1.82 P1=2.31 | LR: P0=3.3e-05 P1=9.0e-05
+Step 5100/15000 | loss=2.9531 | tau=0.575
+  L1: P0=1.90 P1=2.41 | LR: P0=3.3e-05 P1=9.1e-05
+Step 5400/15000 | loss=2.0938 | tau=0.550
+  L1: P0=1.78 P1=2.39 | LR: P0=2.9e-05 P1=1.0e-04
+Step 5700/15000 | loss=2.9062 | tau=0.525
+  L1: P0=1.89 P1=2.33 | LR: P0=3.5e-05 P1=8.5e-05
+Step 6000/15000 | loss=3.0469 | tau=0.500
+  L1: P0=1.85 P1=2.33 | LR: P0=3.4e-05 P1=9.0e-05
+  Eval PPL=10.44
+Step 6300/15000 | loss=3.6875 | tau=0.475
+  L1: P0=1.78 P1=2.32 | LR: P0=3.1e-05 P1=9.6e-05
+Step 6600/15000 | loss=2.6094 | tau=0.450
+  L1: P0=1.70 P1=2.29 | LR: P0=2.9e-05 P1=1.0e-04
+Step 6900/15000 | loss=2.3438 | tau=0.425
+  L1: P0=1.64 P1=2.30 | LR: P0=2.7e-05 P1=1.1e-04
+Step 7200/15000 | loss=2.8125 | tau=0.400
+  L1: P0=1.87 P1=2.38 | LR: P0=3.3e-05 P1=9.1e-05
+Step 7500/15000 | loss=2.7344 | tau=0.375
+  L1: P0=1.67 P1=2.31 | LR: P0=2.8e-05 P1=1.1e-04
+Step 7800/15000 | loss=3.2344 | tau=0.350
+  L1: P0=1.70 P1=2.31 | LR: P0=2.9e-05 P1=1.0e-04
+Step 8100/15000 | loss=3.0625 | tau=0.325
+  L1: P0=1.92 P1=2.48 | LR: P0=3.2e-05 P1=9.4e-05
+Step 8400/15000 | loss=2.9219 | tau=0.300
+  L1: P0=1.54 P1=2.21 | LR: P0=2.6e-05 P1=1.2e-04
+Step 8700/15000 | loss=3.1406 | tau=0.275
+  L1: P0=1.77 P1=2.42 | LR: P0=2.8e-05 P1=1.1e-04
+Step 9000/15000 | loss=2.8438 | tau=0.250
+  L1: P0=1.62 P1=2.35 | LR: P0=2.5e-05 P1=1.2e-04
+  Eval PPL=11.25
+Step 9300/15000 | loss=2.0469 | tau=0.225
+  L1: P0=1.64 P1=2.19 | LR: P0=3.0e-05 P1=1.0e-04
+Step 9600/15000 | loss=2.7500 | tau=0.200
+  L1: P0=1.79 P1=2.36 | LR: P0=3.0e-05 P1=9.9e-05
+Step 9900/15000 | loss=2.9531 | tau=0.175
+  L1: P0=1.64 P1=2.36 | LR: P0=2.6e-05 P1=1.2e-04
+Step 10200/15000 | loss=2.6719 | tau=0.150
+  L1: P0=1.67 P1=2.33 | LR: P0=2.7e-05 P1=1.1e-04
+Step 10500/15000 | loss=2.4219 | tau=0.125
+  L1: P0=1.66 P1=2.30 | LR: P0=2.7e-05 P1=1.1e-04
+Step 10800/15000 | loss=2.2812 | tau=0.100
+  L1: P0=1.69 P1=2.34 | LR: P0=2.8e-05 P1=1.1e-04
+Step 11100/15000 | loss=1.8594 | tau=0.100
+  L1: P0=1.65 P1=2.33 | LR: P0=2.6e-05 P1=1.1e-04
+Step 11400/15000 | loss=2.9531 | tau=0.100
+  L1: P0=1.66 P1=2.37 | LR: P0=2.6e-05 P1=1.2e-04
+Step 11700/15000 | loss=2.7500 | tau=0.100
+  L1: P0=1.57 P1=2.36 | LR: P0=2.3e-05 P1=1.3e-04
+Step 12000/15000 | loss=2.5469 | tau=0.100
+  L1: P0=1.71 P1=2.33 | LR: P0=2.8e-05 P1=1.1e-04
+  Eval PPL=15.62
+Step 12300/15000 | loss=3.3750 | tau=0.100
+  L1: P0=1.70 P1=2.43 | LR: P0=2.6e-05 P1=1.2e-04
+Step 12600/15000 | loss=2.1562 | tau=0.100
+  L1: P0=1.44 P1=2.30 | LR: P0=2.1e-05 P1=1.4e-04
+Step 12900/15000 | loss=2.7344 | tau=0.100
+  L1: P0=1.89 P1=2.41 | LR: P0=3.3e-05 P1=9.2e-05
+Step 13200/15000 | loss=2.1719 | tau=0.100
+  L1: P0=1.46 P1=2.22 | LR: P0=2.3e-05 P1=1.3e-04
+Step 13500/15000 | loss=1.9766 | tau=0.100
+  L1: P0=1.66 P1=2.30 | LR: P0=2.8e-05 P1=1.1e-04
+Step 13800/15000 | loss=2.1719 | tau=0.100
+  L1: P0=1.89 P1=2.44 | LR: P0=3.2e-05 P1=9.4e-05
+Step 14100/15000 | loss=2.4844 | tau=0.100
+  L1: P0=1.82 P1=2.37 | LR: P0=3.1e-05 P1=9.6e-05
+Step 14400/15000 | loss=2.9844 | tau=0.100
+  L1: P0=1.36 P1=2.26 | LR: P0=1.9e-05 P1=1.6e-04
+Step 14700/15000 | loss=2.8281 | tau=0.100
+  L1: P0=1.49 P1=2.17 | LR: P0=2.5e-05 P1=1.2e-04
+
+Saved to /root/t6b-mogae/checkpoints/qwen8b_deep_tree/final.pt
+
+=== M_ij ABLATION (8 leaf experts) ===
+Baseline: {'medical': '14.1', 'code': '18.3', 'legal': '16.0', 'news': '12.1', 'conversational': '21.7'}
+No E0 (P0/SP0/L0): medical=+0.02 code=-0.01 legal=+0.00 news=-0.02 conversational=-0.02 | CV=2.5880 [dormant]
+No E1 (P0/SP0/L1): medical=-0.02 code=+0.00 legal=+0.00 news=-0.01 conversational=-0.02 | CV=1.1489 [dormant]
+No E2 (P0/SP1/L0): medical=+0.00 code=+0.00 legal=+0.01 news=-0.03 conversational=-0.03 | CV=1.5293 [dormant]
+No E3 (P0/SP1/L1): medical=+0.03 code=+0.01 legal=+0.00 news=-0.01 conversational=-0.01 | CV=3.1901 [dormant]
+No E4 (P1/SP0/L0): medical=+0.01 code=-0.01 legal=-0.01 news=-0.01 conversational=+0.01 | CV=2.2628 [dormant]
+No E5 (P1/SP0/L1): medical=-0.01 code=-0.00 legal=-0.01 news=-0.02 conversational=+0.03 | CV=9.5604 [dormant]
+No E6 (P1/SP1/L0): medical=+14.05 code=+18.56 legal=+17.00 news=+15.44 conversational=+24.37 | CV=0.2000 [active]
+No E7 (P1/SP1/L1): medical=+41.82 code=+58.81 legal=+52.13 news=+44.43 conversational=+76.49 | CV=0.2267 [active]
+
+Overall M_ij CV: 2.0705
+Active experts: 2/8
+
+Tree structure:
+  L12: 1→2 pairs
+  L18: 2→4 sub-pairs
+  L24: 4→8 leaves
+Done.

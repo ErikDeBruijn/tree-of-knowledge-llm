@@ -1,0 +1,125 @@
+Collecting 200 samples per domain from C4...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'allenai/c4' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  conversational: 200 samples collected (checked 549 total)
+  code: 200 samples collected (checked 706 total)
+  news: 200 samples collected (checked 1069 total)
+  medical: 200 samples collected (checked 1230 total)
+  legal: 200 samples collected (checked 1528 total)
+  medical: 200 samples
+  code: 200 samples
+  legal: 200 samples
+  conversational: 200 samples
+  news: 200 samples
+
+Loading Qwen/Qwen3-1.7B on cuda:0...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   4%|▍         | 13/311 [00:00<00:03, 99.23it/s]Loading weights:  52%|█████▏    | 162/311 [00:00<00:00, 765.45it/s]Loading weights:  96%|█████████▌| 299/311 [00:00<00:00, 1012.61it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 873.14it/s] 
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Model loaded in 6.1s
+
+Processing domain: medical (200 samples)...
+  Batch 1/25
+  Batch 6/25
+  Batch 11/25
+  Batch 16/25
+  Batch 21/25
+
+Processing domain: code (200 samples)...
+  Batch 1/25
+  Batch 6/25
+  Batch 11/25
+  Batch 16/25
+  Batch 21/25
+
+Processing domain: legal (200 samples)...
+  Batch 1/25
+  Batch 6/25
+  Batch 11/25
+  Batch 16/25
+  Batch 21/25
+
+Processing domain: conversational (200 samples)...
+  Batch 1/25
+  Batch 6/25
+  Batch 11/25
+  Batch 16/25
+  Batch 21/25
+
+Processing domain: news (200 samples)...
+  Batch 1/25
+  Batch 6/25
+  Batch 11/25
+  Batch 16/25
+  Batch 21/25
+
+Computing divergence metrics...
+  Layer  0: cosine_dist=0.001000  fisher=0.016329  CKA=0.1416
+  Layer  1: cosine_dist=0.000844  fisher=0.015382  CKA=0.1259
+  Layer  2: cosine_dist=0.000422  fisher=0.003570  CKA=0.0033
+  Layer  3: cosine_dist=0.000761  fisher=0.003667  CKA=0.0034
+  Layer  4: cosine_dist=0.000963  fisher=0.003736  CKA=0.0034
+  Layer  5: cosine_dist=0.001208  fisher=0.003927  CKA=0.0036
+  Layer  6: cosine_dist=0.001541  fisher=0.004197  CKA=0.0038
+  Layer  7: cosine_dist=0.001755  fisher=0.004465  CKA=0.0040
+  Layer  8: cosine_dist=0.001930  fisher=0.004777  CKA=0.0043
+  Layer  9: cosine_dist=0.002257  fisher=0.005637  CKA=0.0052
+  Layer 10: cosine_dist=0.002234  fisher=0.006727  CKA=0.0068
+  Layer 11: cosine_dist=0.002290  fisher=0.007618  CKA=0.0083
+  Layer 12: cosine_dist=0.002185  fisher=0.007990  CKA=0.0094
+  Layer 13: cosine_dist=0.002071  fisher=0.008337  CKA=0.0110
+  Layer 14: cosine_dist=0.002003  fisher=0.008513  CKA=0.0129
+  Layer 15: cosine_dist=0.002240  fisher=0.010230  CKA=0.0198
+  Layer 16: cosine_dist=0.002411  fisher=0.011035  CKA=0.0311
+  Layer 17: cosine_dist=0.002157  fisher=0.012007  CKA=0.0621
+  Layer 18: cosine_dist=0.002620  fisher=0.014329  CKA=0.1060
+  Layer 19: cosine_dist=0.002707  fisher=0.014674  CKA=0.1337
+  Layer 20: cosine_dist=0.002945  fisher=0.015992  CKA=0.1763
+  Layer 21: cosine_dist=0.002906  fisher=0.015970  CKA=0.2003
+  Layer 22: cosine_dist=0.002567  fisher=0.015962  CKA=0.2053
+  Layer 23: cosine_dist=0.002196  fisher=0.015455  CKA=0.2099
+  Layer 24: cosine_dist=0.001639  fisher=0.015223  CKA=0.2092
+  Layer 25: cosine_dist=0.001264  fisher=0.015235  CKA=0.2155
+  Layer 26: cosine_dist=0.000885  fisher=0.015428  CKA=0.2135
+  Layer 27: cosine_dist=0.001199  fisher=0.018341  CKA=0.0627
+
+Results saved to /root/t6b-mogae/results/layer_divergence_analysis.json
+Total time: 89.1s
+
+==========================================================================================
+Layer |  Cosine Dist | Fisher Ratio |  Between Var |   Within Var |    CKA
+------------------------------------------------------------------------------------------
+    0 |     0.001000 |     0.016329 | 2.986960e-05 | 1.829253e-03 | 0.1416
+    1 |     0.000844 |     0.015382 | 6.392541e-05 | 4.155732e-03 | 0.1259
+    2 |     0.000422 |     0.003570 | 3.728756e-03 | 1.044516e+00 | 0.0033
+    3 |     0.000761 |     0.003667 | 3.860752e-03 | 1.052723e+00 | 0.0034
+    4 |     0.000963 |     0.003736 | 3.957309e-03 | 1.059304e+00 | 0.0034
+    5 |     0.001208 |     0.003927 | 4.216577e-03 | 1.073805e+00 | 0.0036
+    6 |     0.001541 |     0.004197 | 4.612930e-03 | 1.099108e+00 | 0.0038
+    7 |     0.001755 |     0.004465 | 5.020204e-03 | 1.124419e+00 | 0.0040
+    8 |     0.001930 |     0.004777 | 5.533781e-03 | 1.158376e+00 | 0.0043
+    9 |     0.002257 |     0.005637 | 6.969506e-03 | 1.236324e+00 | 0.0052
+   10 |     0.002234 |     0.006727 | 9.325232e-03 | 1.386249e+00 | 0.0068
+   11 |     0.002290 |     0.007618 | 1.150255e-02 | 1.509953e+00 | 0.0083
+   12 |     0.002185 |     0.007990 | 1.284802e-02 | 1.607968e+00 | 0.0094
+   13 |     0.002071 |     0.008337 | 1.438746e-02 | 1.725755e+00 | 0.0110
+   14 |     0.002003 |     0.008513 | 1.584526e-02 | 1.861337e+00 | 0.0129
+   15 |     0.002240 |     0.010230 | 2.405434e-02 | 2.351400e+00 | 0.0198
+   16 |     0.002411 |     0.011035 | 3.518093e-02 | 3.188063e+00 | 0.0311
+   17 |     0.002157 |     0.012007 | 5.827106e-02 | 4.853173e+00 | 0.0621
+   18 |     0.002620 |     0.014329 | 1.214436e-01 | 8.475573e+00 | 0.1060
+   19 |     0.002707 |     0.014674 | 2.010729e-01 | 1.370272e+01 | 0.1337
+   20 |     0.002945 |     0.015992 | 4.335444e-01 | 2.710970e+01 | 0.1763
+   21 |     0.002906 |     0.015970 | 7.099562e-01 | 4.445460e+01 | 0.2003
+   22 |     0.002567 |     0.015962 | 1.130180e+00 | 7.080384e+01 | 0.2053
+   23 |     0.002196 |     0.015455 | 1.465493e+00 | 9.482162e+01 | 0.2099
+   24 |     0.001639 |     0.015223 | 1.959309e+00 | 1.287111e+02 | 0.2092
+   25 |     0.001264 |     0.015235 | 2.453088e+00 | 1.610142e+02 | 0.2155
+   26 |     0.000885 |     0.015428 | 3.071599e+00 | 1.990882e+02 | 0.2135
+   27 |     0.001199 |     0.018341 | 5.551279e+00 | 3.026649e+02 | 0.0627
+==========================================================================================
+
+Largest Fisher ratio jump: layer 26 -> 27 (delta=0.002913)
+Cosine distance first exceeds 2x baseline at layer 9

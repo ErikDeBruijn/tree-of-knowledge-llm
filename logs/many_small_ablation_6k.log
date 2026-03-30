@@ -1,0 +1,128 @@
+[2026-03-27 22:20:17] ======================================================================
+[2026-03-27 22:20:17] MANY-SMALL ABLATION MATRIX M_ij — 16 rank-1 experts, top-2 routing
+[2026-03-27 22:20:17] ======================================================================
+[2026-03-27 22:20:17] Device: cuda:0
+[2026-03-27 22:20:17] Checkpoint: /root/t6b-mogae/checkpoints/many_small/many_small_step3000.pt
+[2026-03-27 22:20:17] Eval routing: SOFT (tau=0.1)
+[2026-03-27 22:20:17] Samples per domain: 200
+[2026-03-27 22:20:17] Ablating top 4 of 16 experts
+[2026-03-27 22:20:17] Collecting 200 samples per domain from C4...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[2026-03-27 22:20:21]   conversational: 200 samples (checked 549)
+[2026-03-27 22:20:21]   code: 200 samples (checked 706)
+[2026-03-27 22:20:21]   news: 200 samples (checked 1069)
+[2026-03-27 22:20:21]   medical: 200 samples (checked 1230)
+[2026-03-27 22:20:21]   legal: 200 samples (checked 1528)
+[2026-03-27 22:20:21]   Final medical: 200 samples
+[2026-03-27 22:20:21]   Final code: 200 samples
+[2026-03-27 22:20:21]   Final legal: 200 samples
+[2026-03-27 22:20:21]   Final conversational: 200 samples
+[2026-03-27 22:20:21]   Final news: 200 samples
+[2026-03-27 22:20:22] Loading Qwen/Qwen3-1.7B...
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   2%|▏         | 6/311 [00:00<00:05, 59.21it/s]Loading weights:  35%|███▌      | 109/311 [00:00<00:00, 624.04it/s]Loading weights:  70%|██████▉   | 217/311 [00:00<00:00, 791.18it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 801.05it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-27 22:20:34] Base model loaded in 16.8s
+[2026-03-27 22:20:34] Loading checkpoint...
+[2026-03-27 22:20:34]   Step: 3000, Tau: 0.8875
+[2026-03-27 22:20:34]   Tree: {18: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 19: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 20: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 21: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 22: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 23: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 24: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 25: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 26: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, 27: {'num_experts': 16, 'ranks': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}}
+[2026-03-27 22:20:34]   Forking layers loaded
+[2026-03-27 22:20:34]   Router temperature set to 0.1
+[2026-03-27 22:20:34]   Params per expert (summed across layers): {'expert_0': 163840, 'expert_1': 163840, 'expert_10': 163840, 'expert_11': 163840, 'expert_12': 163840, 'expert_13': 163840, 'expert_14': 163840, 'expert_15': 163840, 'expert_2': 163840, 'expert_3': 163840, 'expert_4': 163840, 'expert_5': 163840, 'expert_6': 163840, 'expert_7': 163840, 'expert_8': 163840, 'expert_9': 163840}
+[2026-03-27 22:20:34] Identifying top-4 most-used experts from routing distribution...
+[2026-03-27 22:20:36]   Expert usage (sum of soft weights across layers):
+[2026-03-27 22:20:36]     Expert 11:      75706.4 <-- ABLATE
+[2026-03-27 22:20:36]     Expert  5:      60087.5 <-- ABLATE
+[2026-03-27 22:20:36]     Expert  3:      56967.8 <-- ABLATE
+[2026-03-27 22:20:36]     Expert 15:      48820.4 <-- ABLATE
+[2026-03-27 22:20:36]     Expert 14:      46408.3
+[2026-03-27 22:20:36]     Expert 13:      41779.2
+[2026-03-27 22:20:36]     Expert  2:      37296.8
+[2026-03-27 22:20:36]     Expert  4:      26397.5
+[2026-03-27 22:20:36]     Expert 10:      24234.5
+[2026-03-27 22:20:36]     Expert  0:      23158.5
+[2026-03-27 22:20:36]     Expert 12:      21585.1
+[2026-03-27 22:20:36]     Expert  1:      18491.1
+[2026-03-27 22:20:36]     Expert  7:      16485.6
+[2026-03-27 22:20:36]     Expert  6:       4670.7
+[2026-03-27 22:20:36]     Expert  9:       2816.9
+[2026-03-27 22:20:36]     Expert  8:       1874.0
+[2026-03-27 22:20:36] 
+Top 4 experts to ablate: [11, 5, 3, 15]
+[2026-03-27 22:20:36] 
+--- Config: baseline ---
+[2026-03-27 22:20:40]   medical: PPL = 16.89
+[2026-03-27 22:20:44]   code: PPL = 18.11
+[2026-03-27 22:20:48]   legal: PPL = 16.46
+[2026-03-27 22:20:52]   conversational: PPL = 20.28
+[2026-03-27 22:20:57]   news: PPL = 17.61
+[2026-03-27 22:20:57] 
+--- Config: expert11_disabled ---
+[2026-03-27 22:21:01]   medical: PPL = 16.97
+[2026-03-27 22:21:05]   code: PPL = 18.18
+[2026-03-27 22:21:09]   legal: PPL = 16.53
+[2026-03-27 22:21:13]   conversational: PPL = 20.36
+[2026-03-27 22:21:17]   news: PPL = 17.67
+[2026-03-27 22:21:17] 
+--- Config: expert5_disabled ---
+[2026-03-27 22:21:21]   medical: PPL = 17.13
+[2026-03-27 22:21:25]   code: PPL = 18.41
+[2026-03-27 22:21:29]   legal: PPL = 16.72
+[2026-03-27 22:21:33]   conversational: PPL = 20.70
+[2026-03-27 22:21:37]   news: PPL = 17.88
+[2026-03-27 22:21:37] 
+--- Config: expert3_disabled ---
+[2026-03-27 22:21:41]   medical: PPL = 17.12
+[2026-03-27 22:21:45]   code: PPL = 18.40
+[2026-03-27 22:21:49]   legal: PPL = 16.73
+[2026-03-27 22:21:53]   conversational: PPL = 20.59
+[2026-03-27 22:21:57]   news: PPL = 17.83
+[2026-03-27 22:21:57] 
+--- Config: expert15_disabled ---
+[2026-03-27 22:22:01]   medical: PPL = 16.93
+[2026-03-27 22:22:05]   code: PPL = 18.15
+[2026-03-27 22:22:09]   legal: PPL = 16.50
+[2026-03-27 22:22:13]   conversational: PPL = 20.32
+[2026-03-27 22:22:17]   news: PPL = 17.63
+[2026-03-27 22:22:17] 
+======================================================================
+[2026-03-27 22:22:17] ABLATION MATRIX M_ij = PPL(without expert j) - PPL(baseline)
+[2026-03-27 22:22:17] ======================================================================
+[2026-03-27 22:22:17] Domain           |   M[d,E11] |    M[d,E5] |    M[d,E3] |   M[d,E15] | Selectivity
+[2026-03-27 22:22:17] ---------------------------------------------------------------------------------------
+[2026-03-27 22:22:17] medical          |      0.082 |      0.243 |      0.228 |      0.039 |       0.2135
+[2026-03-27 22:22:17] code             |      0.070 |      0.300 |      0.290 |      0.039 |       0.2397
+[2026-03-27 22:22:17] legal            |      0.064 |      0.256 |      0.264 |      0.040 |       0.2310
+[2026-03-27 22:22:17] conversational   |      0.087 |      0.421 |      0.312 |      0.040 |       0.3193
+[2026-03-27 22:22:17] news             |      0.063 |      0.277 |      0.220 |      0.024 |       0.2984
+[2026-03-27 22:22:17] 
+======================================================================
+[2026-03-27 22:22:17] DERIVED METRICS
+[2026-03-27 22:22:17] ======================================================================
+[2026-03-27 22:22:17] Expert 11 impact: mean=0.073, std=0.010, range=[0.063, 0.087]
+[2026-03-27 22:22:17] Expert 5 impact: mean=0.299, std=0.064, range=[0.243, 0.421]
+[2026-03-27 22:22:17] Expert 3 impact: mean=0.263, std=0.035, range=[0.220, 0.312]
+[2026-03-27 22:22:17] Expert 15 impact: mean=0.036, std=0.006, range=[0.024, 0.040]
+[2026-03-27 22:22:17] 
+Diagonality (CV of impact across domains):
+[2026-03-27 22:22:17]   expert_11: CV=0.1336 -> uniform
+[2026-03-27 22:22:17]   expert_5: CV=0.2132 -> moderate
+[2026-03-27 22:22:17]   expert_3: CV=0.1330 -> uniform
+[2026-03-27 22:22:17]   expert_15: CV=0.1663 -> moderate
+[2026-03-27 22:22:17] 
+Domain -> most damaging expert:
+[2026-03-27 22:22:17]   medical: Expert 5 (delta PPL = 0.243)
+[2026-03-27 22:22:17]   code: Expert 5 (delta PPL = 0.300)
+[2026-03-27 22:22:17]   legal: Expert 3 (delta PPL = 0.264)
+[2026-03-27 22:22:17]   conversational: Expert 5 (delta PPL = 0.421)
+[2026-03-27 22:22:17]   news: Expert 5 (delta PPL = 0.277)
+[2026-03-27 22:22:17] 
+Results saved to /root/t6b-mogae/results/many_small_ablation_step3000.json
+[2026-03-27 22:22:17] Total time: 119.9s
+[2026-03-27 22:22:17] 
+======================================================================
+[2026-03-27 22:22:17] SUMMARY
+[2026-03-27 22:22:17] ======================================================================
+[2026-03-27 22:22:17] Mean |M_ij|: 0.168 PPL points
+[2026-03-27 22:22:17] Mean CV across top-4 experts: 0.1615
+[2026-03-27 22:22:17] RESULT: Moderate selectivity (mean CV = 0.1615)
+[2026-03-27 22:22:17] Pre-registered PARTIAL result

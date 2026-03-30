@@ -1,0 +1,17 @@
+============================================================
+Lambda=0.5 Pipeline: P1+P2 only (5K steps). No P3 — P2b is optimal.
+  Phase 1 (2a): 2000 steps, tier-0 only, λ_tc=0.5
+  Phase 2 (2b): 3000 steps, tier-0+1, λ_tc=0.25
+  Phase 3 (2c): 0 steps, ALL tiers, λ_tc=0.05
+  Total: 5000 steps, 200M tokens
+============================================================
+
+Loading model...
+Loading weights:   0%|          | 0/179 [00:00<?, ?it/s]Loading weights:   3%|▎         | 5/179 [00:00<00:05, 31.07it/s]Loading weights:   9%|▉         | 16/179 [00:00<00:02, 63.43it/s]Loading weights:  15%|█▌        | 27/179 [00:00<00:01, 79.56it/s]Loading weights:  27%|██▋       | 48/179 [00:00<00:01, 120.66it/s]Loading weights:  34%|███▍      | 61/179 [00:00<00:01, 100.65it/s]Loading weights:  45%|████▌     | 81/179 [00:00<00:00, 125.20it/s]Loading weights:  53%|█████▎    | 95/179 [00:01<00:02, 40.83it/s] Loading weights:  59%|█████▊    | 105/179 [00:02<00:03, 22.07it/s]Loading weights:  64%|██████▎   | 114/179 [00:03<00:02, 22.38it/s]Loading weights:  67%|██████▋   | 120/179 [00:03<00:03, 16.49it/s]Loading weights:  70%|██████▉   | 125/179 [00:04<00:03, 16.66it/s]Loading weights:  77%|███████▋  | 137/179 [00:04<00:01, 23.76it/s]Loading weights:  89%|████████▉ | 159/179 [00:04<00:00, 40.48it/s]Loading weights: 100%|██████████| 179/179 [00:04<00:00, 38.61it/s]
+Model loaded in 7.6s
+
+Patching routers with learnable biases...
+Patched 16 routers
+Phase 1: 32 gradient hooks (tier-0 only)
+
+Streaming C4 dataset (200M tokens)...

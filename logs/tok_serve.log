@@ -1,0 +1,26 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.97it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 153.14it/s]Loading weights:  19%|█▊        | 74/399 [00:00<00:01, 173.02it/s]Loading weights:  42%|████▏     | 166/399 [00:00<00:00, 361.49it/s]Loading weights:  54%|█████▍    | 217/399 [00:00<00:00, 386.41it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 348.07it/s]Loading weights:  84%|████████▍ | 335/399 [00:00<00:00, 447.16it/s]Loading weights:  96%|█████████▋| 385/399 [00:01<00:00, 417.19it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 359.59it/s]
+Base model loaded in 3s, 0.0GB VRAM
+Checkpoint: 2 experts, layers 24-35, rank 4
+Experts: 3,145,728 params (6.3MB)
+Routers: 98,304 params
+Total VRAM: 0.0GB
+Ready to serve on port 8000
+
+Quick benchmark...
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Prefill: 5 tokens in 339ms (15 tok/s)
+Generate: 50 tokens in 1062ms (47.1 tok/s)
+Output: The capital of France is Paris. The capital of France is Paris. The capital of France is Paris. The capital of France is Paris. The capital of France is Paris. The capital of France is Paris. The capital of France is Paris. The capital of France is Paris
+INFO:     Started server process [300589]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     10.1.1.162:58127 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:58578 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [300589]

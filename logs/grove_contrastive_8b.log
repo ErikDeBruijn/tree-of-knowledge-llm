@@ -1,0 +1,14 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:40,  9.82it/s]Loading weights:  10%|█         | 41/399 [00:00<00:02, 160.44it/s]Loading weights:  16%|█▌        | 64/399 [00:00<00:01, 181.93it/s]Loading weights:  30%|███       | 120/399 [00:00<00:01, 262.00it/s]Loading weights:  44%|████▍     | 175/399 [00:00<00:00, 345.29it/s]Loading weights:  53%|█████▎    | 213/399 [00:00<00:00, 307.59it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 334.80it/s]Loading weights:  75%|███████▌  | 300/399 [00:01<00:00, 349.28it/s]Loading weights:  87%|████████▋ | 346/399 [00:01<00:00, 373.84it/s]Loading weights:  96%|█████████▋| 385/399 [00:01<00:00, 358.84it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 310.37it/s]
+Loaded in 3s
+GROVE + CONTRASTIVE: 4 trees, L0-35, rank-8
+  λ_contrast=0.1, τ=0.5, λ_balance=0.01
+Trainable: 38,338,560 (38.3M)
+Training 20000 steps...
+Step 0/20000|lm=2.6406|con=0.0000|bal=0.0373|CosSim=-0.000|trees=4
+  LT: T0=2.48 T1=2.48 T2=2.49 T3=2.48
+Step 500/20000|lm=2.4844|con=0.0000|bal=0.0240|CosSim=-0.001|trees=4
+  LT: T0=2.15 T1=2.19 T2=2.16 T3=2.21
+Step 1000/20000|lm=1.8359|con=0.0000|bal=0.0690|CosSim=-0.001|trees=4
+  LT: T0=2.17 T1=2.21 T2=2.17 T3=2.17

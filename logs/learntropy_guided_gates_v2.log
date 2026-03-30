@@ -1,0 +1,60 @@
+=== LEARNTROPY-GUIDED GATE TRAINING ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 13.13it/s]Loading weights:   8%|▊         | 30/399 [00:00<00:02, 128.05it/s]Loading weights:  21%|██▏       | 85/399 [00:00<00:01, 280.85it/s]Loading weights:  34%|███▍      | 137/399 [00:00<00:00, 355.17it/s]Loading weights:  44%|████▍     | 175/399 [00:00<00:00, 320.31it/s]Loading weights:  59%|█████▉    | 237/399 [00:00<00:00, 401.15it/s]Loading weights:  70%|███████   | 280/399 [00:00<00:00, 404.62it/s]Loading weights:  81%|████████  | 322/399 [00:01<00:00, 330.83it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 360.76it/s]
+
+============================================================
+  Baseline (LM loss only)
+============================================================
+  Step 0/1500 | lm=1.7812 | bbc_alice=0.647 | cuisine_bob=0.247 | wingchun_carol=0.020
+  Step 500/1500 | lm=0.3359 | bbc_alice=0.921 | cuisine_bob=0.029 | wingchun_carol=0.014
+  Step 1000/1500 | lm=0.5273 | bbc_alice=0.949 | cuisine_bob=0.011 | wingchun_carol=0.013
+  bbc_alice domain: PPL=11.96 | bbc_alice=0.968 | cuisine_bob=0.015 | wingchun_carol=0.005
+  cuisine_bob domain: PPL=11.25 | bbc_alice=0.009 | cuisine_bob=0.978 | wingchun_carol=0.002
+  wingchun_carol domain: PPL=1.53 | bbc_alice=0.101 | cuisine_bob=0.084 | wingchun_carol=0.783
+  Generic: PPL=15.49 | bbc_alice=0.255 | cuisine_bob=0.467 | wingchun_carol=0.040
+
+  Mean selectivity: 0.801
+  Max cross-leakage: 0.101
+
+============================================================
+  Variant A: Learntropy-weighted loss
+============================================================
+  Step 0/1500 | lm=1.7812 | bbc_alice=0.647 | cuisine_bob=0.247 | wingchun_carol=0.020
+  Step 500/1500 | lm=0.3379 | bbc_alice=0.927 | cuisine_bob=0.027 | wingchun_carol=0.011
+  Step 1000/1500 | lm=0.5195 | bbc_alice=0.952 | cuisine_bob=0.012 | wingchun_carol=0.009
+  bbc_alice domain: PPL=11.94 | bbc_alice=0.970 | cuisine_bob=0.014 | wingchun_carol=0.005
+  cuisine_bob domain: PPL=11.25 | bbc_alice=0.008 | cuisine_bob=0.981 | wingchun_carol=0.002
+  wingchun_carol domain: PPL=1.56 | bbc_alice=0.083 | cuisine_bob=0.094 | wingchun_carol=0.791
+  Generic: PPL=15.60 | bbc_alice=0.247 | cuisine_bob=0.471 | wingchun_carol=0.042
+
+  Mean selectivity: 0.807
+  Max cross-leakage: 0.094
+
+============================================================
+  Variant B: Auxiliary learntropy supervision
+============================================================
+  Step 0/1500 | lm=1.7812 | bbc_alice=0.647 | cuisine_bob=0.247 | wingchun_carol=0.020
+  Step 500/1500 | lm=0.3496 | bbc_alice=0.924 | cuisine_bob=0.030 | wingchun_carol=0.010
+  Step 1000/1500 | lm=0.5273 | bbc_alice=0.952 | cuisine_bob=0.012 | wingchun_carol=0.011
+  bbc_alice domain: PPL=11.96 | bbc_alice=0.967 | cuisine_bob=0.015 | wingchun_carol=0.006
+  cuisine_bob domain: PPL=11.23 | bbc_alice=0.010 | cuisine_bob=0.977 | wingchun_carol=0.003
+  wingchun_carol domain: PPL=1.54 | bbc_alice=0.091 | cuisine_bob=0.114 | wingchun_carol=0.760
+  Generic: PPL=15.55 | bbc_alice=0.251 | cuisine_bob=0.472 | wingchun_carol=0.041
+
+  Mean selectivity: 0.790
+  Max cross-leakage: 0.114
+
+======================================================================
+COMPARISON
+======================================================================
+
+Variant                                       Mean Sel   Max Leak   Gen PPL   
+---------------------------------------------------------------------------
+  Baseline (LM loss only)                       0.801      0.101      15.49     
+  Variant A: Learntropy-weighted loss           0.807      0.094      15.60     
+  Variant B: Auxiliary learntropy supervision   0.790      0.114      15.55     
+
+--- VERDICT ---
+Variant A (learntropy-weighted) IMPROVES on baseline
+
+Saved to /root/t6b-mogae/results/learntropy_guided_gates.json

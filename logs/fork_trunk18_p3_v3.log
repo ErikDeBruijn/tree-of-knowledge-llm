@@ -1,0 +1,657 @@
+[2026-03-27 06:31:27] ======================================================================
+[2026-03-27 06:31:27] Fork + Rank Inherit — Extended Trunk Layer 18
+[2026-03-27 06:31:27] Phases to run: [3]
+[2026-03-27 06:31:27] Expert layers: 18-27 (10 layers)
+[2026-03-27 06:31:27] ======================================================================
+[2026-03-27 06:31:27] Config: {'phase': 3, 'device': 'cuda:0', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': '/root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step15000.pt', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 18, 'expert_layer_start': 18, 'initial_rank': 4, 'max_rank': 32, 'max_experts': 16, 'phase1_tokens': 50000000, 'phase1_batch_size': 4, 'phase1_seq_len': 512, 'phase1_lr': 0.0003, 'phase2_tokens': 50000000, 'phase2_batch_size': 4, 'phase2_seq_len': 512, 'phase2_lr': 0.0001, 'phase3_tokens': 100000000, 'phase3_batch_size': 4, 'phase3_seq_len': 512, 'phase3_lr': 0.0003, 'contrastive_weight': 0.1, 'contrastive_margin': 0.5, 'bimodality_threshold': 0.3, 'dip_test_alpha': 0.05, 'rank_growth_error_threshold': 0.1, 'min_tokens_before_split': 10000000, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results_fork_trunk18', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/fork_trunk18', 'log_file': '/root/t6b-mogae/logs/fork_trunk18.log'}
+[2026-03-27 06:31:27] Loading Qwen/Qwen3-1.7B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 18665.09it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-27 06:31:31] Base model loaded: 2,031,739,904 params
+[2026-03-27 06:31:31] Verified: hidden=2048, intermediate=6144
+[2026-03-27 06:31:31] WARNING: Checkpoint not found: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step15000.pt
+[2026-03-27 06:31:31] Trainable params: 655,360
+[2026-03-27 06:31:31] Expert tree: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 06:31:31] 
+[2026-03-27 06:31:31] ======================================================================
+[2026-03-27 06:31:31] Fork + Rank Inherit — Extended Trunk Layer 18 — Phase 3
+[2026-03-27 06:31:31] ======================================================================
+[2026-03-27 06:31:31] WARNING: Checkpoint not found: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step15000.pt
+[2026-03-27 06:31:31] Phase 3 config: tokens=100,000,000, lr=0.0003, batch=4x512
+[2026-03-27 06:31:31] Trainable params: 655,360
+[2026-03-27 06:31:31] Phase 3: 48828 steps, LR=0.0003, batch=4x512
+[2026-03-27 06:31:31] Trainable params: 655,360
+[2026-03-27 06:31:31] Expert tree: {18: {'num_experts': 1, 'ranks': [4]}, 19: {'num_experts': 1, 'ranks': [4]}, 20: {'num_experts': 1, 'ranks': [4]}, 21: {'num_experts': 1, 'ranks': [4]}, 22: {'num_experts': 1, 'ranks': [4]}, 23: {'num_experts': 1, 'ranks': [4]}, 24: {'num_experts': 1, 'ranks': [4]}, 25: {'num_experts': 1, 'ranks': [4]}, 26: {'num_experts': 1, 'ranks': [4]}, 27: {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 06:31:42]   step 100/48828 | lm_loss=3.5312 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 18072 tok/s
+[2026-03-27 06:31:50]   step 200/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 21564 tok/s
+[2026-03-27 06:31:57]   step 300/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 23011 tok/s
+[2026-03-27 06:32:05]   step 400/48828 | lm_loss=1.9141 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 23765 tok/s
+[2026-03-27 06:32:13]   step 500/48828 | lm_loss=2.8594 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 24243 tok/s
+[2026-03-27 06:32:21]   step 600/48828 | lm_loss=2.5000 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 24562 tok/s
+[2026-03-27 06:32:29]   step 700/48828 | lm_loss=3.3750 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 24783 tok/s
+[2026-03-27 06:32:36]   step 800/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 24941 tok/s
+[2026-03-27 06:32:44]   step 900/48828 | lm_loss=2.5000 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 25058 tok/s
+[2026-03-27 06:32:52]   step 1000/48828 | lm_loss=3.3750 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 25150 tok/s
+[2026-03-27 06:32:52] --- Eval at step 1000 ---
+[2026-03-27 06:33:07]   PPL=20.48 | mean_cossim=None
+[2026-03-27 06:33:07]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 06:33:07] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step1000.pt
+[2026-03-27 06:33:07] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:33:15]   step 1100/48828 | lm_loss=3.0312 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 21539 tok/s
+[2026-03-27 06:33:23]   step 1200/48828 | lm_loss=2.6875 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 21849 tok/s
+[2026-03-27 06:33:31]   step 1300/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 22118 tok/s
+[2026-03-27 06:33:39]   step 1400/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 22354 tok/s
+[2026-03-27 06:33:47]   step 1500/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 22563 tok/s
+[2026-03-27 06:33:55]   step 1600/48828 | lm_loss=3.0938 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 22748 tok/s
+[2026-03-27 06:34:03]   step 1700/48828 | lm_loss=3.1562 c_loss=0.0000 lb_loss=0.0000 | lr=3.00e-04 | 22913 tok/s
+[2026-03-27 06:34:11]   step 1800/48828 | lm_loss=3.7031 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 23063 tok/s
+[2026-03-27 06:34:19]   step 1900/48828 | lm_loss=3.6562 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 23199 tok/s
+[2026-03-27 06:34:26]   step 2000/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 23323 tok/s
+[2026-03-27 06:34:26] --- Eval at step 2000 ---
+[2026-03-27 06:34:41]   PPL=20.38 | mean_cossim=None
+[2026-03-27 06:34:41]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 06:34:41] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step2000.pt
+[2026-03-27 06:34:41] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:34:50]   step 2100/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21632 tok/s
+[2026-03-27 06:34:57]   step 2200/48828 | lm_loss=3.2188 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21800 tok/s
+[2026-03-27 06:35:05]   step 2300/48828 | lm_loss=2.8594 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21955 tok/s
+[2026-03-27 06:35:13]   step 2400/48828 | lm_loss=2.7031 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22098 tok/s
+[2026-03-27 06:35:21]   step 2500/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22233 tok/s
+[2026-03-27 06:35:29]   step 2600/48828 | lm_loss=3.5938 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22359 tok/s
+[2026-03-27 06:35:37]   step 2700/48828 | lm_loss=3.2344 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22477 tok/s
+[2026-03-27 06:35:45]   step 2800/48828 | lm_loss=3.3281 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22587 tok/s
+[2026-03-27 06:35:53]   step 2900/48828 | lm_loss=3.0000 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22690 tok/s
+[2026-03-27 06:36:00]   step 3000/48828 | lm_loss=3.3750 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22787 tok/s
+[2026-03-27 06:36:00] --- Eval at step 3000 ---
+[2026-03-27 06:36:15]   PPL=20.31 | mean_cossim=None
+[2026-03-27 06:36:15]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 06:36:15] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step3000.pt
+[2026-03-27 06:36:15] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:36:23]   step 3100/48828 | lm_loss=2.6562 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21716 tok/s
+[2026-03-27 06:36:31]   step 3200/48828 | lm_loss=3.2656 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21809 tok/s
+[2026-03-27 06:36:39]   step 3300/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21917 tok/s
+[2026-03-27 06:36:47]   step 3400/48828 | lm_loss=4.0312 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22020 tok/s
+[2026-03-27 06:36:55]   step 3500/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22117 tok/s
+[2026-03-27 06:37:03]   step 3600/48828 | lm_loss=3.3906 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22210 tok/s
+[2026-03-27 06:37:11]   step 3700/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22298 tok/s
+[2026-03-27 06:37:18]   step 3800/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22382 tok/s
+[2026-03-27 06:37:26]   step 3900/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22462 tok/s
+[2026-03-27 06:37:34]   step 4000/48828 | lm_loss=3.1562 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22540 tok/s
+[2026-03-27 06:37:34] --- Eval at step 4000 ---
+[2026-03-27 06:37:49]   PPL=20.27 | mean_cossim=None
+[2026-03-27 06:37:49]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 06:37:49] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step4000.pt
+[2026-03-27 06:37:49] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:37:57]   step 4100/48828 | lm_loss=1.6484 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21752 tok/s
+[2026-03-27 06:38:05]   step 4200/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21837 tok/s
+[2026-03-27 06:38:13]   step 4300/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 21921 tok/s
+[2026-03-27 06:38:20]   step 4400/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22001 tok/s
+[2026-03-27 06:38:28]   step 4500/48828 | lm_loss=3.3594 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22077 tok/s
+[2026-03-27 06:38:36]   step 4600/48828 | lm_loss=3.0000 c_loss=0.0000 lb_loss=0.0000 | lr=2.99e-04 | 22151 tok/s
+[2026-03-27 06:38:44]   step 4700/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.0000 | lr=2.98e-04 | 22222 tok/s
+[2026-03-27 06:38:52]   step 4800/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=0.0000 | lr=2.98e-04 | 22291 tok/s
+[2026-03-27 06:39:00]   step 4900/48828 | lm_loss=3.0938 c_loss=0.0000 lb_loss=0.0000 | lr=2.98e-04 | 22357 tok/s
+[2026-03-27 06:39:08]   step 5000/48828 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.0000 | lr=2.98e-04 | 22420 tok/s
+[2026-03-27 06:39:08] --- Eval at step 5000 ---
+[2026-03-27 06:39:22]   PPL=20.24 | mean_cossim=None
+[2026-03-27 06:39:22]   Tree: {'18': {'num_experts': 1, 'ranks': [4]}, '19': {'num_experts': 1, 'ranks': [4]}, '20': {'num_experts': 1, 'ranks': [4]}, '21': {'num_experts': 1, 'ranks': [4]}, '22': {'num_experts': 1, 'ranks': [4]}, '23': {'num_experts': 1, 'ranks': [4]}, '24': {'num_experts': 1, 'ranks': [4]}, '25': {'num_experts': 1, 'ranks': [4]}, '26': {'num_experts': 1, 'ranks': [4]}, '27': {'num_experts': 1, 'ranks': [4]}}
+[2026-03-27 06:39:22] Checking for splits...
+[2026-03-27 06:39:22]   Layer 18: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 19: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 20: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 21: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 22: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 23: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 24: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 25: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 26: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Layer 27: bimodal loss detected, splitting expert 0 -> 2 experts
+[2026-03-27 06:39:22]   Performed 10 splits. New tree: {18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:39:22]   Trainable params now: 1,351,680
+[2026-03-27 06:39:22] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step5000.pt
+[2026-03-27 06:39:22] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:39:32]   step 5100/48828 | lm_loss=3.1406 c_loss=0.4727 lb_loss=1.0250 | lr=2.98e-04 | 21723 tok/s
+[2026-03-27 06:39:41]   step 5200/48828 | lm_loss=3.1406 c_loss=0.3945 lb_loss=1.0133 | lr=2.98e-04 | 21738 tok/s
+[2026-03-27 06:39:50]   step 5300/48828 | lm_loss=2.9375 c_loss=0.2451 lb_loss=1.0090 | lr=2.98e-04 | 21738 tok/s
+[2026-03-27 06:39:59]   step 5400/48828 | lm_loss=3.0312 c_loss=0.0903 lb_loss=1.0145 | lr=2.98e-04 | 21750 tok/s
+[2026-03-27 06:40:08]   step 5500/48828 | lm_loss=3.0781 c_loss=0.0444 lb_loss=1.0016 | lr=2.98e-04 | 21756 tok/s
+[2026-03-27 06:40:18]   step 5600/48828 | lm_loss=3.0625 c_loss=0.0247 lb_loss=1.0047 | lr=2.98e-04 | 21768 tok/s
+[2026-03-27 06:40:27]   step 5700/48828 | lm_loss=3.0938 c_loss=0.0156 lb_loss=1.0051 | lr=2.98e-04 | 21779 tok/s
+[2026-03-27 06:40:36]   step 5800/48828 | lm_loss=2.1406 c_loss=0.0074 lb_loss=1.0145 | lr=2.98e-04 | 21787 tok/s
+[2026-03-27 06:40:45]   step 5900/48828 | lm_loss=3.3594 c_loss=0.0000 lb_loss=1.0039 | lr=2.98e-04 | 21797 tok/s
+[2026-03-27 06:40:54]   step 6000/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=1.0043 | lr=2.98e-04 | 21808 tok/s
+[2026-03-27 06:40:54] --- Eval at step 6000 ---
+[2026-03-27 06:41:10]   PPL=20.22 | mean_cossim=0.4716796875
+[2026-03-27 06:41:10]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:41:10] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step6000.pt
+[2026-03-27 06:41:10] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:41:19]   step 6100/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=1.0172 | lr=2.98e-04 | 21243 tok/s
+[2026-03-27 06:41:28]   step 6200/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=1.0027 | lr=2.98e-04 | 21262 tok/s
+[2026-03-27 06:41:37]   step 6300/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=1.0035 | lr=2.98e-04 | 21267 tok/s
+[2026-03-27 06:41:47]   step 6400/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=1.0020 | lr=2.98e-04 | 21284 tok/s
+[2026-03-27 06:41:56]   step 6500/48828 | lm_loss=3.7969 c_loss=0.0000 lb_loss=1.0031 | lr=2.98e-04 | 21298 tok/s
+[2026-03-27 06:42:05]   step 6600/48828 | lm_loss=2.6094 c_loss=0.0000 lb_loss=1.0055 | lr=2.98e-04 | 21313 tok/s
+[2026-03-27 06:42:14]   step 6700/48828 | lm_loss=2.6250 c_loss=0.0000 lb_loss=1.0027 | lr=2.98e-04 | 21329 tok/s
+[2026-03-27 06:42:23]   step 6800/48828 | lm_loss=3.3438 c_loss=0.0000 lb_loss=1.0035 | lr=2.98e-04 | 21344 tok/s
+[2026-03-27 06:42:32]   step 6900/48828 | lm_loss=2.3750 c_loss=0.0000 lb_loss=1.0008 | lr=2.98e-04 | 21360 tok/s
+[2026-03-27 06:42:42]   step 7000/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.9984 | lr=2.98e-04 | 21373 tok/s
+[2026-03-27 06:42:42] --- Eval at step 7000 ---
+[2026-03-27 06:42:57]   PPL=20.18 | mean_cossim=0.4466796875
+[2026-03-27 06:42:57]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:42:57] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step7000.pt
+[2026-03-27 06:42:57] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:43:06]   step 7100/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=1.0008 | lr=2.98e-04 | 20911 tok/s
+[2026-03-27 06:43:15]   step 7200/48828 | lm_loss=3.4219 c_loss=0.0000 lb_loss=0.9996 | lr=2.98e-04 | 20931 tok/s
+[2026-03-27 06:43:25]   step 7300/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=1.0012 | lr=2.97e-04 | 20940 tok/s
+[2026-03-27 06:43:34]   step 7400/48828 | lm_loss=2.3594 c_loss=0.0000 lb_loss=1.0102 | lr=2.97e-04 | 20960 tok/s
+[2026-03-27 06:43:43]   step 7500/48828 | lm_loss=3.2031 c_loss=0.0000 lb_loss=1.0012 | lr=2.97e-04 | 20978 tok/s
+[2026-03-27 06:43:52]   step 7600/48828 | lm_loss=2.7812 c_loss=0.0000 lb_loss=0.9996 | lr=2.97e-04 | 20997 tok/s
+[2026-03-27 06:44:01]   step 7700/48828 | lm_loss=2.5781 c_loss=0.0000 lb_loss=1.0098 | lr=2.97e-04 | 21015 tok/s
+[2026-03-27 06:44:10]   step 7800/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=0.9992 | lr=2.97e-04 | 21031 tok/s
+[2026-03-27 06:44:19]   step 7900/48828 | lm_loss=3.3906 c_loss=0.0000 lb_loss=1.0031 | lr=2.97e-04 | 21048 tok/s
+[2026-03-27 06:44:29]   step 8000/48828 | lm_loss=2.7969 c_loss=0.0000 lb_loss=1.0023 | lr=2.97e-04 | 21064 tok/s
+[2026-03-27 06:44:29] --- Eval at step 8000 ---
+[2026-03-27 06:44:44]   PPL=20.14 | mean_cossim=0.426953125
+[2026-03-27 06:44:44]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:44:44] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step8000.pt
+[2026-03-27 06:44:44] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:44:53]   step 8100/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=1.0027 | lr=2.97e-04 | 20677 tok/s
+[2026-03-27 06:45:02]   step 8200/48828 | lm_loss=3.6250 c_loss=0.0000 lb_loss=1.0039 | lr=2.97e-04 | 20700 tok/s
+[2026-03-27 06:45:11]   step 8300/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9996 | lr=2.97e-04 | 20720 tok/s
+[2026-03-27 06:45:20]   step 8400/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=1.0008 | lr=2.97e-04 | 20739 tok/s
+[2026-03-27 06:45:29]   step 8500/48828 | lm_loss=3.1562 c_loss=0.0000 lb_loss=1.0004 | lr=2.97e-04 | 20758 tok/s
+[2026-03-27 06:45:38]   step 8600/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=1.0020 | lr=2.97e-04 | 20776 tok/s
+[2026-03-27 06:45:48]   step 8700/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=1.0020 | lr=2.97e-04 | 20794 tok/s
+[2026-03-27 06:45:57]   step 8800/48828 | lm_loss=2.7969 c_loss=0.0000 lb_loss=1.0023 | lr=2.97e-04 | 20812 tok/s
+[2026-03-27 06:46:06]   step 8900/48828 | lm_loss=3.2031 c_loss=0.0000 lb_loss=1.0000 | lr=2.97e-04 | 20828 tok/s
+[2026-03-27 06:46:15]   step 9000/48828 | lm_loss=3.2188 c_loss=0.0000 lb_loss=1.0000 | lr=2.97e-04 | 20844 tok/s
+[2026-03-27 06:46:15] --- Eval at step 9000 ---
+[2026-03-27 06:46:30]   PPL=20.11 | mean_cossim=0.4115234375
+[2026-03-27 06:46:30]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:46:30] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step9000.pt
+[2026-03-27 06:46:30] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:46:40]   step 9100/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.9992 | lr=2.97e-04 | 20507 tok/s
+[2026-03-27 06:46:49]   step 9200/48828 | lm_loss=2.5000 c_loss=0.0000 lb_loss=1.0031 | lr=2.97e-04 | 20526 tok/s
+[2026-03-27 06:46:58]   step 9300/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=1.0039 | lr=2.97e-04 | 20546 tok/s
+[2026-03-27 06:47:07]   step 9400/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=1.0000 | lr=2.97e-04 | 20556 tok/s
+[2026-03-27 06:47:16]   step 9500/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=1.0027 | lr=2.97e-04 | 20575 tok/s
+[2026-03-27 06:47:25]   step 9600/48828 | lm_loss=3.0156 c_loss=0.0000 lb_loss=1.0000 | lr=2.97e-04 | 20594 tok/s
+[2026-03-27 06:47:35]   step 9700/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.9988 | lr=2.96e-04 | 20612 tok/s
+[2026-03-27 06:47:44]   step 9800/48828 | lm_loss=3.0312 c_loss=0.0000 lb_loss=1.0008 | lr=2.96e-04 | 20629 tok/s
+[2026-03-27 06:47:53]   step 9900/48828 | lm_loss=2.6250 c_loss=0.0000 lb_loss=1.0023 | lr=2.96e-04 | 20646 tok/s
+[2026-03-27 06:48:02]   step 10000/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=0.9988 | lr=2.96e-04 | 20663 tok/s
+[2026-03-27 06:48:02] --- Eval at step 10000 ---
+[2026-03-27 06:48:17]   PPL=20.10 | mean_cossim=0.3966796875
+[2026-03-27 06:48:17]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:48:17] Checking for splits...
+[2026-03-27 06:48:17] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step10000.pt
+[2026-03-27 06:48:17] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:48:26]   step 10100/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.9984 | lr=2.96e-04 | 20367 tok/s
+[2026-03-27 06:48:35]   step 10200/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=1.0004 | lr=2.96e-04 | 20386 tok/s
+[2026-03-27 06:48:45]   step 10300/48828 | lm_loss=3.0625 c_loss=0.0000 lb_loss=0.9996 | lr=2.96e-04 | 20405 tok/s
+[2026-03-27 06:48:54]   step 10400/48828 | lm_loss=3.3438 c_loss=0.0000 lb_loss=1.0008 | lr=2.96e-04 | 20418 tok/s
+[2026-03-27 06:49:03]   step 10500/48828 | lm_loss=3.5156 c_loss=0.0000 lb_loss=1.0008 | lr=2.96e-04 | 20435 tok/s
+[2026-03-27 06:49:12]   step 10600/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=1.0000 | lr=2.96e-04 | 20452 tok/s
+[2026-03-27 06:49:21]   step 10700/48828 | lm_loss=2.7500 c_loss=0.0000 lb_loss=0.9996 | lr=2.96e-04 | 20470 tok/s
+[2026-03-27 06:49:30]   step 10800/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9996 | lr=2.96e-04 | 20487 tok/s
+[2026-03-27 06:49:40]   step 10900/48828 | lm_loss=2.5781 c_loss=0.0000 lb_loss=1.0004 | lr=2.96e-04 | 20504 tok/s
+[2026-03-27 06:49:49]   step 11000/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=1.0000 | lr=2.96e-04 | 20520 tok/s
+[2026-03-27 06:49:49] --- Eval at step 11000 ---
+[2026-03-27 06:50:04]   PPL=20.07 | mean_cossim=0.384375
+[2026-03-27 06:50:04]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:50:04] Checking for splits...
+[2026-03-27 06:50:04] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step11000.pt
+[2026-03-27 06:50:04] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:50:13]   step 11100/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=1.0023 | lr=2.96e-04 | 20253 tok/s
+[2026-03-27 06:50:22]   step 11200/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=1.0012 | lr=2.96e-04 | 20272 tok/s
+[2026-03-27 06:50:31]   step 11300/48828 | lm_loss=3.0000 c_loss=0.0000 lb_loss=0.9996 | lr=2.96e-04 | 20289 tok/s
+[2026-03-27 06:50:41]   step 11400/48828 | lm_loss=2.9844 c_loss=0.0000 lb_loss=0.9996 | lr=2.96e-04 | 20306 tok/s
+[2026-03-27 06:50:50]   step 11500/48828 | lm_loss=3.0312 c_loss=0.0000 lb_loss=1.0000 | lr=2.96e-04 | 20318 tok/s
+[2026-03-27 06:50:59]   step 11600/48828 | lm_loss=2.9844 c_loss=0.0000 lb_loss=1.0008 | lr=2.96e-04 | 20334 tok/s
+[2026-03-27 06:51:08]   step 11700/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.9988 | lr=2.95e-04 | 20350 tok/s
+[2026-03-27 06:51:17]   step 11800/48828 | lm_loss=3.2656 c_loss=0.0000 lb_loss=0.9992 | lr=2.95e-04 | 20367 tok/s
+[2026-03-27 06:51:26]   step 11900/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=1.0000 | lr=2.95e-04 | 20383 tok/s
+[2026-03-27 06:51:36]   step 12000/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=1.0012 | lr=2.95e-04 | 20398 tok/s
+[2026-03-27 06:51:36] --- Eval at step 12000 ---
+[2026-03-27 06:51:51]   PPL=20.07 | mean_cossim=0.373046875
+[2026-03-27 06:51:51]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:51:51] Checking for splits...
+[2026-03-27 06:51:51] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step12000.pt
+[2026-03-27 06:51:51] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:52:00]   step 12100/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=1.0023 | lr=2.95e-04 | 20158 tok/s
+[2026-03-27 06:52:09]   step 12200/48828 | lm_loss=3.2656 c_loss=0.0000 lb_loss=1.0016 | lr=2.95e-04 | 20175 tok/s
+[2026-03-27 06:52:18]   step 12300/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=0.9988 | lr=2.95e-04 | 20192 tok/s
+[2026-03-27 06:52:27]   step 12400/48828 | lm_loss=3.1562 c_loss=0.0000 lb_loss=1.0016 | lr=2.95e-04 | 20208 tok/s
+[2026-03-27 06:52:37]   step 12500/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=1.0000 | lr=2.95e-04 | 20224 tok/s
+[2026-03-27 06:52:46]   step 12600/48828 | lm_loss=2.9062 c_loss=0.0000 lb_loss=0.9996 | lr=2.95e-04 | 20239 tok/s
+[2026-03-27 06:52:55]   step 12700/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9988 | lr=2.95e-04 | 20255 tok/s
+[2026-03-27 06:53:04]   step 12800/48828 | lm_loss=3.2188 c_loss=0.0000 lb_loss=1.0004 | lr=2.95e-04 | 20270 tok/s
+[2026-03-27 06:53:13]   step 12900/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.9988 | lr=2.95e-04 | 20285 tok/s
+[2026-03-27 06:53:22]   step 13000/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=1.0016 | lr=2.95e-04 | 20300 tok/s
+[2026-03-27 06:53:22] --- Eval at step 13000 ---
+[2026-03-27 06:53:38]   PPL=20.05 | mean_cossim=0.3630859375
+[2026-03-27 06:53:38]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:53:38] Checking for splits...
+[2026-03-27 06:53:38] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step13000.pt
+[2026-03-27 06:53:38] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:53:47]   step 13100/48828 | lm_loss=2.6875 c_loss=0.0000 lb_loss=1.0012 | lr=2.95e-04 | 20080 tok/s
+[2026-03-27 06:53:56]   step 13200/48828 | lm_loss=5.4062 c_loss=0.0000 lb_loss=1.0125 | lr=2.95e-04 | 20097 tok/s
+[2026-03-27 06:54:05]   step 13300/48828 | lm_loss=3.3594 c_loss=0.0000 lb_loss=1.0004 | lr=2.95e-04 | 20112 tok/s
+[2026-03-27 06:54:14]   step 13400/48828 | lm_loss=3.2031 c_loss=0.0000 lb_loss=1.0016 | lr=2.95e-04 | 20128 tok/s
+[2026-03-27 06:54:23]   step 13500/48828 | lm_loss=3.2344 c_loss=0.0000 lb_loss=0.9992 | lr=2.95e-04 | 20144 tok/s
+[2026-03-27 06:54:33]   step 13600/48828 | lm_loss=2.9844 c_loss=0.0000 lb_loss=0.9996 | lr=2.94e-04 | 20154 tok/s
+[2026-03-27 06:54:42]   step 13700/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=1.0004 | lr=2.94e-04 | 20168 tok/s
+[2026-03-27 06:54:51]   step 13800/48828 | lm_loss=3.5938 c_loss=0.0000 lb_loss=1.0004 | lr=2.94e-04 | 20183 tok/s
+[2026-03-27 06:55:00]   step 13900/48828 | lm_loss=3.0625 c_loss=0.0000 lb_loss=0.9988 | lr=2.94e-04 | 20198 tok/s
+[2026-03-27 06:55:09]   step 14000/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=0.9992 | lr=2.94e-04 | 20211 tok/s
+[2026-03-27 06:55:09] --- Eval at step 14000 ---
+[2026-03-27 06:55:25]   PPL=20.03 | mean_cossim=0.354296875
+[2026-03-27 06:55:25]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:55:25] Checking for splits...
+[2026-03-27 06:55:25] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step14000.pt
+[2026-03-27 06:55:25] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:55:34]   step 14100/48828 | lm_loss=2.5156 c_loss=0.0000 lb_loss=0.9992 | lr=2.94e-04 | 20010 tok/s
+[2026-03-27 06:55:43]   step 14200/48828 | lm_loss=2.7969 c_loss=0.0000 lb_loss=0.9984 | lr=2.94e-04 | 20025 tok/s
+[2026-03-27 06:55:52]   step 14300/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=1.0000 | lr=2.94e-04 | 20041 tok/s
+[2026-03-27 06:56:01]   step 14400/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=1.0004 | lr=2.94e-04 | 20056 tok/s
+[2026-03-27 06:56:10]   step 14500/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=1.0004 | lr=2.94e-04 | 20070 tok/s
+[2026-03-27 06:56:20]   step 14600/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=1.0008 | lr=2.94e-04 | 20080 tok/s
+[2026-03-27 06:56:29]   step 14700/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=1.0012 | lr=2.94e-04 | 20095 tok/s
+[2026-03-27 06:56:38]   step 14800/48828 | lm_loss=2.6719 c_loss=0.0000 lb_loss=0.9992 | lr=2.94e-04 | 20109 tok/s
+[2026-03-27 06:56:47]   step 14900/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.9988 | lr=2.94e-04 | 20121 tok/s
+[2026-03-27 06:56:56]   step 15000/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.9996 | lr=2.94e-04 | 20135 tok/s
+[2026-03-27 06:56:56] --- Eval at step 15000 ---
+[2026-03-27 06:57:12]   PPL=20.02 | mean_cossim=0.346875
+[2026-03-27 06:57:12]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:57:12] Checking for splits...
+[2026-03-27 06:57:12] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step15000.pt
+[2026-03-27 06:57:12] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:57:21]   step 15100/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=0.9984 | lr=2.94e-04 | 19948 tok/s
+[2026-03-27 06:57:30]   step 15200/48828 | lm_loss=3.5312 c_loss=0.0000 lb_loss=1.0008 | lr=2.93e-04 | 19963 tok/s
+[2026-03-27 06:57:39]   step 15300/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=0.9996 | lr=2.93e-04 | 19978 tok/s
+[2026-03-27 06:57:48]   step 15400/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.9977 | lr=2.93e-04 | 19992 tok/s
+[2026-03-27 06:57:57]   step 15500/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.9992 | lr=2.93e-04 | 20006 tok/s
+[2026-03-27 06:58:07]   step 15600/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=1.0008 | lr=2.93e-04 | 20015 tok/s
+[2026-03-27 06:58:16]   step 15700/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9992 | lr=2.93e-04 | 20029 tok/s
+[2026-03-27 06:58:25]   step 15800/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9992 | lr=2.93e-04 | 20044 tok/s
+[2026-03-27 06:58:34]   step 15900/48828 | lm_loss=3.2188 c_loss=0.0000 lb_loss=0.9980 | lr=2.93e-04 | 20059 tok/s
+[2026-03-27 06:58:43]   step 16000/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.9988 | lr=2.93e-04 | 20073 tok/s
+[2026-03-27 06:58:43] --- Eval at step 16000 ---
+[2026-03-27 06:58:59]   PPL=20.02 | mean_cossim=0.3396484375
+[2026-03-27 06:58:59]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 06:58:59] Checking for splits...
+[2026-03-27 06:58:59] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step16000.pt
+[2026-03-27 06:58:59] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 06:59:08]   step 16100/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=1.0000 | lr=2.93e-04 | 19901 tok/s
+[2026-03-27 06:59:17]   step 16200/48828 | lm_loss=4.3750 c_loss=0.0000 lb_loss=1.0066 | lr=2.93e-04 | 19916 tok/s
+[2026-03-27 06:59:26]   step 16300/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.9996 | lr=2.93e-04 | 19931 tok/s
+[2026-03-27 06:59:35]   step 16400/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9988 | lr=2.93e-04 | 19946 tok/s
+[2026-03-27 06:59:44]   step 16500/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=1.0066 | lr=2.93e-04 | 19961 tok/s
+[2026-03-27 06:59:53]   step 16600/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=0.9988 | lr=2.93e-04 | 19975 tok/s
+[2026-03-27 07:00:02]   step 16700/48828 | lm_loss=1.6328 c_loss=0.0000 lb_loss=1.0160 | lr=2.93e-04 | 19988 tok/s
+[2026-03-27 07:00:11]   step 16800/48828 | lm_loss=2.7344 c_loss=0.0000 lb_loss=1.0000 | lr=2.92e-04 | 20001 tok/s
+[2026-03-27 07:00:20]   step 16900/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=0.9992 | lr=2.92e-04 | 20014 tok/s
+[2026-03-27 07:00:29]   step 17000/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=0.9988 | lr=2.92e-04 | 20026 tok/s
+[2026-03-27 07:00:29] --- Eval at step 17000 ---
+[2026-03-27 07:00:45]   PPL=20.01 | mean_cossim=0.333203125
+[2026-03-27 07:00:45]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:00:45] Checking for splits...
+[2026-03-27 07:00:45] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step17000.pt
+[2026-03-27 07:00:45] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:00:54]   step 17100/48828 | lm_loss=3.0469 c_loss=0.0000 lb_loss=1.0004 | lr=2.92e-04 | 19864 tok/s
+[2026-03-27 07:01:03]   step 17200/48828 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.9996 | lr=2.92e-04 | 19877 tok/s
+[2026-03-27 07:01:12]   step 17300/48828 | lm_loss=3.4219 c_loss=0.0000 lb_loss=1.0000 | lr=2.92e-04 | 19892 tok/s
+[2026-03-27 07:01:21]   step 17400/48828 | lm_loss=3.4219 c_loss=0.0000 lb_loss=0.9984 | lr=2.92e-04 | 19906 tok/s
+[2026-03-27 07:01:30]   step 17500/48828 | lm_loss=2.4844 c_loss=0.0000 lb_loss=1.0070 | lr=2.92e-04 | 19920 tok/s
+[2026-03-27 07:01:39]   step 17600/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=0.9988 | lr=2.92e-04 | 19935 tok/s
+[2026-03-27 07:01:48]   step 17700/48828 | lm_loss=5.3438 c_loss=0.0000 lb_loss=1.0008 | lr=2.92e-04 | 19949 tok/s
+[2026-03-27 07:01:57]   step 17800/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.9996 | lr=2.92e-04 | 19959 tok/s
+[2026-03-27 07:02:06]   step 17900/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.9996 | lr=2.92e-04 | 19972 tok/s
+[2026-03-27 07:02:15]   step 18000/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=1.0105 | lr=2.91e-04 | 19986 tok/s
+[2026-03-27 07:02:15] --- Eval at step 18000 ---
+[2026-03-27 07:02:31]   PPL=20.00 | mean_cossim=0.328515625
+[2026-03-27 07:02:31]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:02:31] Checking for splits...
+[2026-03-27 07:02:31] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step18000.pt
+[2026-03-27 07:02:31] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:02:40]   step 18100/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.9988 | lr=2.91e-04 | 19835 tok/s
+[2026-03-27 07:02:49]   step 18200/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.9988 | lr=2.91e-04 | 19848 tok/s
+[2026-03-27 07:02:58]   step 18300/48828 | lm_loss=3.4375 c_loss=0.0000 lb_loss=0.9996 | lr=2.91e-04 | 19862 tok/s
+[2026-03-27 07:03:07]   step 18400/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=0.9984 | lr=2.91e-04 | 19876 tok/s
+[2026-03-27 07:03:16]   step 18500/48828 | lm_loss=3.5312 c_loss=0.0000 lb_loss=0.9996 | lr=2.91e-04 | 19889 tok/s
+[2026-03-27 07:03:25]   step 18600/48828 | lm_loss=2.6250 c_loss=0.0000 lb_loss=0.9992 | lr=2.91e-04 | 19902 tok/s
+[2026-03-27 07:03:34]   step 18700/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=1.0000 | lr=2.91e-04 | 19914 tok/s
+[2026-03-27 07:03:43]   step 18800/48828 | lm_loss=2.5625 c_loss=0.0000 lb_loss=1.0008 | lr=2.91e-04 | 19922 tok/s
+[2026-03-27 07:03:52]   step 18900/48828 | lm_loss=2.6719 c_loss=0.0000 lb_loss=0.9992 | lr=2.91e-04 | 19934 tok/s
+[2026-03-27 07:04:02]   step 19000/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9996 | lr=2.91e-04 | 19946 tok/s
+[2026-03-27 07:04:02] --- Eval at step 19000 ---
+[2026-03-27 07:04:17]   PPL=19.97 | mean_cossim=0.3234375
+[2026-03-27 07:04:17]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:04:17] Checking for splits...
+[2026-03-27 07:04:17] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step19000.pt
+[2026-03-27 07:04:17] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:04:26]   step 19100/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9984 | lr=2.91e-04 | 19802 tok/s
+[2026-03-27 07:04:35]   step 19200/48828 | lm_loss=3.3906 c_loss=0.0000 lb_loss=0.9996 | lr=2.91e-04 | 19814 tok/s
+[2026-03-27 07:04:44]   step 19300/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.9984 | lr=2.91e-04 | 19826 tok/s
+[2026-03-27 07:04:54]   step 19400/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=0.9996 | lr=2.91e-04 | 19838 tok/s
+[2026-03-27 07:05:03]   step 19500/48828 | lm_loss=3.1562 c_loss=0.0000 lb_loss=1.0012 | lr=2.91e-04 | 19849 tok/s
+[2026-03-27 07:05:12]   step 19600/48828 | lm_loss=2.5312 c_loss=0.0000 lb_loss=1.0000 | lr=2.90e-04 | 19860 tok/s
+[2026-03-27 07:05:21]   step 19700/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9992 | lr=2.90e-04 | 19872 tok/s
+[2026-03-27 07:05:31]   step 19800/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9996 | lr=2.90e-04 | 19880 tok/s
+[2026-03-27 07:05:40]   step 19900/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9996 | lr=2.90e-04 | 19891 tok/s
+[2026-03-27 07:05:49]   step 20000/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.9984 | lr=2.90e-04 | 19903 tok/s
+[2026-03-27 07:05:49] --- Eval at step 20000 ---
+[2026-03-27 07:06:04]   PPL=19.98 | mean_cossim=0.3169921875
+[2026-03-27 07:06:04]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:06:04] Checking for splits...
+[2026-03-27 07:06:04] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step20000.pt
+[2026-03-27 07:06:04] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:06:13]   step 20100/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9992 | lr=2.90e-04 | 19766 tok/s
+[2026-03-27 07:06:23]   step 20200/48828 | lm_loss=2.9844 c_loss=0.0000 lb_loss=1.0000 | lr=2.90e-04 | 19777 tok/s
+[2026-03-27 07:06:32]   step 20300/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.9988 | lr=2.90e-04 | 19789 tok/s
+[2026-03-27 07:06:41]   step 20400/48828 | lm_loss=2.3594 c_loss=0.0000 lb_loss=1.0020 | lr=2.90e-04 | 19801 tok/s
+[2026-03-27 07:06:50]   step 20500/48828 | lm_loss=2.6719 c_loss=0.0000 lb_loss=0.9992 | lr=2.90e-04 | 19812 tok/s
+[2026-03-27 07:06:59]   step 20600/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=0.9996 | lr=2.90e-04 | 19823 tok/s
+[2026-03-27 07:07:08]   step 20700/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=0.9996 | lr=2.90e-04 | 19834 tok/s
+[2026-03-27 07:07:17]   step 20800/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=1.0000 | lr=2.89e-04 | 19846 tok/s
+[2026-03-27 07:07:26]   step 20900/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9992 | lr=2.89e-04 | 19856 tok/s
+[2026-03-27 07:07:36]   step 21000/48828 | lm_loss=3.2344 c_loss=0.0000 lb_loss=1.0004 | lr=2.89e-04 | 19867 tok/s
+[2026-03-27 07:07:36] --- Eval at step 21000 ---
+[2026-03-27 07:07:51]   PPL=19.95 | mean_cossim=0.313671875
+[2026-03-27 07:07:51]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:07:51] Checking for splits...
+[2026-03-27 07:07:51] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step21000.pt
+[2026-03-27 07:07:51] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:08:00]   step 21100/48828 | lm_loss=3.3438 c_loss=0.0000 lb_loss=0.9992 | lr=2.89e-04 | 19738 tok/s
+[2026-03-27 07:08:09]   step 21200/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=1.0016 | lr=2.89e-04 | 19749 tok/s
+[2026-03-27 07:08:18]   step 21300/48828 | lm_loss=2.4531 c_loss=0.0000 lb_loss=1.0012 | lr=2.89e-04 | 19761 tok/s
+[2026-03-27 07:08:27]   step 21400/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9996 | lr=2.89e-04 | 19772 tok/s
+[2026-03-27 07:08:37]   step 21500/48828 | lm_loss=2.5469 c_loss=0.0000 lb_loss=0.9996 | lr=2.89e-04 | 19783 tok/s
+[2026-03-27 07:08:46]   step 21600/48828 | lm_loss=2.9062 c_loss=0.0000 lb_loss=0.9992 | lr=2.89e-04 | 19794 tok/s
+[2026-03-27 07:08:55]   step 21700/48828 | lm_loss=3.0156 c_loss=0.0000 lb_loss=1.0004 | lr=2.89e-04 | 19804 tok/s
+[2026-03-27 07:09:04]   step 21800/48828 | lm_loss=2.8594 c_loss=0.0000 lb_loss=1.0000 | lr=2.88e-04 | 19815 tok/s
+[2026-03-27 07:09:14]   step 21900/48828 | lm_loss=1.9531 c_loss=0.0000 lb_loss=1.0008 | lr=2.88e-04 | 19821 tok/s
+[2026-03-27 07:09:23]   step 22000/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=1.0000 | lr=2.88e-04 | 19832 tok/s
+[2026-03-27 07:09:23] --- Eval at step 22000 ---
+[2026-03-27 07:09:38]   PPL=19.95 | mean_cossim=0.3111328125
+[2026-03-27 07:09:38]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:09:38] Checking for splits...
+[2026-03-27 07:09:38] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step22000.pt
+[2026-03-27 07:09:38] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:09:47]   step 22100/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=0.9996 | lr=2.88e-04 | 19710 tok/s
+[2026-03-27 07:09:56]   step 22200/48828 | lm_loss=3.0469 c_loss=0.0000 lb_loss=0.9996 | lr=2.88e-04 | 19721 tok/s
+[2026-03-27 07:10:05]   step 22300/48828 | lm_loss=2.8594 c_loss=0.0000 lb_loss=1.0004 | lr=2.88e-04 | 19731 tok/s
+[2026-03-27 07:10:15]   step 22400/48828 | lm_loss=2.0781 c_loss=0.0000 lb_loss=1.0121 | lr=2.88e-04 | 19741 tok/s
+[2026-03-27 07:10:24]   step 22500/48828 | lm_loss=2.4844 c_loss=0.0000 lb_loss=0.9988 | lr=2.88e-04 | 19752 tok/s
+[2026-03-27 07:10:33]   step 22600/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=0.9988 | lr=2.88e-04 | 19763 tok/s
+[2026-03-27 07:10:42]   step 22700/48828 | lm_loss=3.0625 c_loss=0.0000 lb_loss=0.9984 | lr=2.88e-04 | 19773 tok/s
+[2026-03-27 07:10:51]   step 22800/48828 | lm_loss=2.6406 c_loss=0.0000 lb_loss=0.9988 | lr=2.88e-04 | 19784 tok/s
+[2026-03-27 07:11:00]   step 22900/48828 | lm_loss=3.0156 c_loss=0.0000 lb_loss=0.9996 | lr=2.87e-04 | 19795 tok/s
+[2026-03-27 07:11:09]   step 23000/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.9992 | lr=2.87e-04 | 19803 tok/s
+[2026-03-27 07:11:09] --- Eval at step 23000 ---
+[2026-03-27 07:11:25]   PPL=19.93 | mean_cossim=0.307421875
+[2026-03-27 07:11:25]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:11:25] Checking for splits...
+[2026-03-27 07:11:25] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step23000.pt
+[2026-03-27 07:11:25] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:11:34]   step 23100/48828 | lm_loss=3.3281 c_loss=0.0000 lb_loss=0.9988 | lr=2.87e-04 | 19687 tok/s
+[2026-03-27 07:11:43]   step 23200/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9984 | lr=2.87e-04 | 19698 tok/s
+[2026-03-27 07:11:52]   step 23300/48828 | lm_loss=3.0938 c_loss=0.0000 lb_loss=0.9984 | lr=2.87e-04 | 19709 tok/s
+[2026-03-27 07:12:01]   step 23400/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=0.9980 | lr=2.87e-04 | 19721 tok/s
+[2026-03-27 07:12:10]   step 23500/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=1.0008 | lr=2.87e-04 | 19731 tok/s
+[2026-03-27 07:12:19]   step 23600/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9988 | lr=2.87e-04 | 19742 tok/s
+[2026-03-27 07:12:28]   step 23700/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=0.9992 | lr=2.87e-04 | 19752 tok/s
+[2026-03-27 07:12:37]   step 23800/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=0.9992 | lr=2.86e-04 | 19762 tok/s
+[2026-03-27 07:12:46]   step 23900/48828 | lm_loss=2.9844 c_loss=0.0000 lb_loss=1.0012 | lr=2.86e-04 | 19772 tok/s
+[2026-03-27 07:12:56]   step 24000/48828 | lm_loss=3.7031 c_loss=0.0000 lb_loss=0.9992 | lr=2.86e-04 | 19778 tok/s
+[2026-03-27 07:12:56] --- Eval at step 24000 ---
+[2026-03-27 07:13:11]   PPL=19.94 | mean_cossim=0.3046875
+[2026-03-27 07:13:11]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:13:11] Checking for splits...
+[2026-03-27 07:13:11] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step24000.pt
+[2026-03-27 07:13:11] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:13:21]   step 24100/48828 | lm_loss=3.4844 c_loss=0.0000 lb_loss=0.9996 | lr=2.86e-04 | 19666 tok/s
+[2026-03-27 07:13:30]   step 24200/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9988 | lr=2.86e-04 | 19677 tok/s
+[2026-03-27 07:13:38]   step 24300/48828 | lm_loss=3.0156 c_loss=0.0000 lb_loss=0.9988 | lr=2.86e-04 | 19688 tok/s
+[2026-03-27 07:13:47]   step 24400/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=0.9988 | lr=2.86e-04 | 19699 tok/s
+[2026-03-27 07:13:56]   step 24500/48828 | lm_loss=3.2031 c_loss=0.0000 lb_loss=1.0000 | lr=2.86e-04 | 19710 tok/s
+[2026-03-27 07:14:06]   step 24600/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=0.9988 | lr=2.86e-04 | 19720 tok/s
+[2026-03-27 07:14:15]   step 24700/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=0.9996 | lr=2.86e-04 | 19731 tok/s
+[2026-03-27 07:14:24]   step 24800/48828 | lm_loss=4.7500 c_loss=0.0000 lb_loss=1.0023 | lr=2.85e-04 | 19742 tok/s
+[2026-03-27 07:14:33]   step 24900/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9992 | lr=2.85e-04 | 19752 tok/s
+[2026-03-27 07:14:42]   step 25000/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9996 | lr=2.85e-04 | 19760 tok/s
+[2026-03-27 07:14:42] --- Eval at step 25000 ---
+[2026-03-27 07:14:57]   PPL=19.92 | mean_cossim=0.30263671875
+[2026-03-27 07:14:57]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:14:57] Checking for splits...
+[2026-03-27 07:14:57] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step25000.pt
+[2026-03-27 07:14:57] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:15:06]   step 25100/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9992 | lr=2.85e-04 | 19655 tok/s
+[2026-03-27 07:15:15]   step 25200/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=1.0000 | lr=2.85e-04 | 19665 tok/s
+[2026-03-27 07:15:24]   step 25300/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.9988 | lr=2.85e-04 | 19676 tok/s
+[2026-03-27 07:15:33]   step 25400/48828 | lm_loss=3.0312 c_loss=0.0000 lb_loss=0.9996 | lr=2.85e-04 | 19687 tok/s
+[2026-03-27 07:15:42]   step 25500/48828 | lm_loss=3.4688 c_loss=0.0000 lb_loss=0.9988 | lr=2.85e-04 | 19697 tok/s
+[2026-03-27 07:15:51]   step 25600/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9988 | lr=2.85e-04 | 19707 tok/s
+[2026-03-27 07:16:00]   step 25700/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=1.0000 | lr=2.84e-04 | 19718 tok/s
+[2026-03-27 07:16:09]   step 25800/48828 | lm_loss=3.3594 c_loss=0.0000 lb_loss=1.0000 | lr=2.84e-04 | 19728 tok/s
+[2026-03-27 07:16:18]   step 25900/48828 | lm_loss=3.0625 c_loss=0.0000 lb_loss=0.9992 | lr=2.84e-04 | 19738 tok/s
+[2026-03-27 07:16:27]   step 26000/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=0.9988 | lr=2.84e-04 | 19747 tok/s
+[2026-03-27 07:16:27] --- Eval at step 26000 ---
+[2026-03-27 07:16:43]   PPL=19.92 | mean_cossim=0.29921875
+[2026-03-27 07:16:43]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:16:43] Checking for splits...
+[2026-03-27 07:16:43] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step26000.pt
+[2026-03-27 07:16:43] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:16:52]   step 26100/48828 | lm_loss=1.8203 c_loss=0.0000 lb_loss=1.0168 | lr=2.84e-04 | 19645 tok/s
+[2026-03-27 07:17:01]   step 26200/48828 | lm_loss=2.3281 c_loss=0.0000 lb_loss=1.0016 | lr=2.84e-04 | 19654 tok/s
+[2026-03-27 07:17:10]   step 26300/48828 | lm_loss=3.2031 c_loss=0.0000 lb_loss=0.9988 | lr=2.84e-04 | 19663 tok/s
+[2026-03-27 07:17:19]   step 26400/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=0.9992 | lr=2.84e-04 | 19673 tok/s
+[2026-03-27 07:17:28]   step 26500/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9977 | lr=2.83e-04 | 19682 tok/s
+[2026-03-27 07:17:37]   step 26600/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=0.9984 | lr=2.83e-04 | 19691 tok/s
+[2026-03-27 07:17:46]   step 26700/48828 | lm_loss=3.4375 c_loss=0.0000 lb_loss=0.9992 | lr=2.83e-04 | 19700 tok/s
+[2026-03-27 07:17:56]   step 26800/48828 | lm_loss=2.6406 c_loss=0.0000 lb_loss=0.9992 | lr=2.83e-04 | 19709 tok/s
+[2026-03-27 07:18:05]   step 26900/48828 | lm_loss=3.1094 c_loss=0.0000 lb_loss=0.9992 | lr=2.83e-04 | 19718 tok/s
+[2026-03-27 07:18:14]   step 27000/48828 | lm_loss=2.7031 c_loss=0.0000 lb_loss=1.0008 | lr=2.82e-04 | 19727 tok/s
+[2026-03-27 07:18:14] --- Eval at step 27000 ---
+[2026-03-27 07:18:29]   PPL=19.92 | mean_cossim=0.29736328125
+[2026-03-27 07:18:29]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:18:29] Checking for splits...
+[2026-03-27 07:18:29] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step27000.pt
+[2026-03-27 07:18:29] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:18:39]   step 27100/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=0.9988 | lr=2.82e-04 | 19626 tok/s
+[2026-03-27 07:18:48]   step 27200/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9992 | lr=2.82e-04 | 19636 tok/s
+[2026-03-27 07:18:57]   step 27300/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9996 | lr=2.82e-04 | 19644 tok/s
+[2026-03-27 07:19:06]   step 27400/48828 | lm_loss=3.2188 c_loss=0.0000 lb_loss=0.9992 | lr=2.82e-04 | 19653 tok/s
+[2026-03-27 07:19:15]   step 27500/48828 | lm_loss=2.9062 c_loss=0.0000 lb_loss=0.9996 | lr=2.82e-04 | 19662 tok/s
+[2026-03-27 07:19:24]   step 27600/48828 | lm_loss=2.9062 c_loss=0.0000 lb_loss=0.9980 | lr=2.82e-04 | 19671 tok/s
+[2026-03-27 07:19:33]   step 27700/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=0.9992 | lr=2.82e-04 | 19680 tok/s
+[2026-03-27 07:19:42]   step 27800/48828 | lm_loss=2.2500 c_loss=0.0000 lb_loss=1.0012 | lr=2.81e-04 | 19689 tok/s
+[2026-03-27 07:19:52]   step 27900/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=1.0012 | lr=2.81e-04 | 19698 tok/s
+[2026-03-27 07:20:01]   step 28000/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=1.0000 | lr=2.81e-04 | 19707 tok/s
+[2026-03-27 07:20:01] --- Eval at step 28000 ---
+[2026-03-27 07:20:16]   PPL=19.90 | mean_cossim=0.294140625
+[2026-03-27 07:20:16]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:20:16] Checking for splits...
+[2026-03-27 07:20:16] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step28000.pt
+[2026-03-27 07:20:16] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:20:25]   step 28100/48828 | lm_loss=2.9062 c_loss=0.0000 lb_loss=1.0000 | lr=2.81e-04 | 19613 tok/s
+[2026-03-27 07:20:34]   step 28200/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.9996 | lr=2.81e-04 | 19620 tok/s
+[2026-03-27 07:20:43]   step 28300/48828 | lm_loss=3.0469 c_loss=0.0000 lb_loss=0.9996 | lr=2.81e-04 | 19629 tok/s
+[2026-03-27 07:20:53]   step 28400/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9996 | lr=2.81e-04 | 19638 tok/s
+[2026-03-27 07:21:02]   step 28500/48828 | lm_loss=3.3594 c_loss=0.0000 lb_loss=0.9996 | lr=2.81e-04 | 19646 tok/s
+[2026-03-27 07:21:11]   step 28600/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9984 | lr=2.80e-04 | 19654 tok/s
+[2026-03-27 07:21:20]   step 28700/48828 | lm_loss=3.4062 c_loss=0.0000 lb_loss=0.9992 | lr=2.80e-04 | 19663 tok/s
+[2026-03-27 07:21:29]   step 28800/48828 | lm_loss=2.7812 c_loss=0.0000 lb_loss=0.9992 | lr=2.80e-04 | 19672 tok/s
+[2026-03-27 07:21:38]   step 28900/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=1.0004 | lr=2.80e-04 | 19680 tok/s
+[2026-03-27 07:21:47]   step 29000/48828 | lm_loss=2.5312 c_loss=0.0000 lb_loss=0.9992 | lr=2.79e-04 | 19689 tok/s
+[2026-03-27 07:21:47] --- Eval at step 29000 ---
+[2026-03-27 07:22:03]   PPL=19.91 | mean_cossim=0.290625
+[2026-03-27 07:22:03]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:22:03] Checking for splits...
+[2026-03-27 07:22:03] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step29000.pt
+[2026-03-27 07:22:03] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:22:12]   step 29100/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=1.0008 | lr=2.79e-04 | 19597 tok/s
+[2026-03-27 07:22:21]   step 29200/48828 | lm_loss=2.4531 c_loss=0.0000 lb_loss=1.0020 | lr=2.79e-04 | 19604 tok/s
+[2026-03-27 07:22:30]   step 29300/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=0.9992 | lr=2.79e-04 | 19613 tok/s
+[2026-03-27 07:22:39]   step 29400/48828 | lm_loss=3.1250 c_loss=0.0000 lb_loss=1.0012 | lr=2.79e-04 | 19621 tok/s
+[2026-03-27 07:22:48]   step 29500/48828 | lm_loss=3.1719 c_loss=0.0000 lb_loss=0.9996 | lr=2.79e-04 | 19630 tok/s
+[2026-03-27 07:22:58]   step 29600/48828 | lm_loss=3.3906 c_loss=0.0000 lb_loss=0.9992 | lr=2.79e-04 | 19638 tok/s
+[2026-03-27 07:23:07]   step 29700/48828 | lm_loss=2.2500 c_loss=0.0000 lb_loss=0.9992 | lr=2.78e-04 | 19647 tok/s
+[2026-03-27 07:23:16]   step 29800/48828 | lm_loss=3.3438 c_loss=0.0000 lb_loss=0.9996 | lr=2.78e-04 | 19655 tok/s
+[2026-03-27 07:23:25]   step 29900/48828 | lm_loss=3.3438 c_loss=0.0000 lb_loss=0.9984 | lr=2.78e-04 | 19663 tok/s
+[2026-03-27 07:23:34]   step 30000/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=0.9988 | lr=2.78e-04 | 19672 tok/s
+[2026-03-27 07:23:34] --- Eval at step 30000 ---
+[2026-03-27 07:23:49]   PPL=19.91 | mean_cossim=0.28837890625
+[2026-03-27 07:23:49]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:23:49] Checking for splits...
+[2026-03-27 07:23:49] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step30000.pt
+[2026-03-27 07:23:49] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:23:58]   step 30100/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=0.9996 | lr=2.78e-04 | 19584 tok/s
+[2026-03-27 07:24:08]   step 30200/48828 | lm_loss=2.7812 c_loss=0.0000 lb_loss=0.9988 | lr=2.78e-04 | 19593 tok/s
+[2026-03-27 07:24:17]   step 30300/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=0.9988 | lr=2.77e-04 | 19601 tok/s
+[2026-03-27 07:24:26]   step 30400/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=0.9988 | lr=2.77e-04 | 19609 tok/s
+[2026-03-27 07:24:35]   step 30500/48828 | lm_loss=1.3984 c_loss=0.0000 lb_loss=1.0000 | lr=2.77e-04 | 19618 tok/s
+[2026-03-27 07:24:44]   step 30600/48828 | lm_loss=3.0156 c_loss=0.0000 lb_loss=0.9992 | lr=2.77e-04 | 19626 tok/s
+[2026-03-27 07:24:53]   step 30700/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=1.0000 | lr=2.77e-04 | 19634 tok/s
+[2026-03-27 07:25:02]   step 30800/48828 | lm_loss=2.8125 c_loss=0.0000 lb_loss=1.0000 | lr=2.76e-04 | 19642 tok/s
+[2026-03-27 07:25:11]   step 30900/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=1.0059 | lr=2.76e-04 | 19650 tok/s
+[2026-03-27 07:25:20]   step 31000/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=0.9980 | lr=2.76e-04 | 19659 tok/s
+[2026-03-27 07:25:20] --- Eval at step 31000 ---
+[2026-03-27 07:25:36]   PPL=19.90 | mean_cossim=0.28701171875
+[2026-03-27 07:25:36]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:25:36] Checking for splits...
+[2026-03-27 07:25:36] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step31000.pt
+[2026-03-27 07:25:36] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:25:45]   step 31100/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9988 | lr=2.76e-04 | 19575 tok/s
+[2026-03-27 07:25:54]   step 31200/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=1.0000 | lr=2.76e-04 | 19584 tok/s
+[2026-03-27 07:26:03]   step 31300/48828 | lm_loss=2.8594 c_loss=0.0000 lb_loss=1.0004 | lr=2.75e-04 | 19590 tok/s
+[2026-03-27 07:26:12]   step 31400/48828 | lm_loss=3.3281 c_loss=0.0000 lb_loss=0.9988 | lr=2.75e-04 | 19599 tok/s
+[2026-03-27 07:26:21]   step 31500/48828 | lm_loss=3.0312 c_loss=0.0000 lb_loss=0.9988 | lr=2.75e-04 | 19608 tok/s
+[2026-03-27 07:26:30]   step 31600/48828 | lm_loss=3.5469 c_loss=0.0000 lb_loss=1.0023 | lr=2.75e-04 | 19617 tok/s
+[2026-03-27 07:26:39]   step 31700/48828 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.9988 | lr=2.75e-04 | 19626 tok/s
+[2026-03-27 07:26:48]   step 31800/48828 | lm_loss=1.1953 c_loss=0.0000 lb_loss=1.0039 | lr=2.74e-04 | 19634 tok/s
+[2026-03-27 07:26:57]   step 31900/48828 | lm_loss=2.7969 c_loss=0.0000 lb_loss=1.0000 | lr=2.74e-04 | 19643 tok/s
+[2026-03-27 07:27:06]   step 32000/48828 | lm_loss=2.8594 c_loss=0.0000 lb_loss=1.0023 | lr=2.74e-04 | 19651 tok/s
+[2026-03-27 07:27:06] --- Eval at step 32000 ---
+[2026-03-27 07:27:21]   PPL=19.91 | mean_cossim=0.28515625
+[2026-03-27 07:27:21]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:27:21] Checking for splits...
+[2026-03-27 07:27:21] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step32000.pt
+[2026-03-27 07:27:21] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:27:30]   step 32100/48828 | lm_loss=3.0938 c_loss=0.0000 lb_loss=1.0000 | lr=2.73e-04 | 19570 tok/s
+[2026-03-27 07:27:39]   step 32200/48828 | lm_loss=3.7344 c_loss=0.0000 lb_loss=0.9992 | lr=2.73e-04 | 19579 tok/s
+[2026-03-27 07:27:48]   step 32300/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=0.9996 | lr=2.73e-04 | 19585 tok/s
+[2026-03-27 07:27:57]   step 32400/48828 | lm_loss=3.4219 c_loss=0.0000 lb_loss=1.0004 | lr=2.73e-04 | 19594 tok/s
+[2026-03-27 07:28:06]   step 32500/48828 | lm_loss=2.5938 c_loss=0.0000 lb_loss=0.9996 | lr=2.73e-04 | 19602 tok/s
+[2026-03-27 07:28:15]   step 32600/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=0.9996 | lr=2.73e-04 | 19611 tok/s
+[2026-03-27 07:28:24]   step 32700/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=1.0004 | lr=2.72e-04 | 19619 tok/s
+[2026-03-27 07:28:33]   step 32800/48828 | lm_loss=2.7031 c_loss=0.0000 lb_loss=0.9996 | lr=2.72e-04 | 19628 tok/s
+[2026-03-27 07:28:42]   step 32900/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9992 | lr=2.72e-04 | 19636 tok/s
+[2026-03-27 07:28:51]   step 33000/48828 | lm_loss=3.0625 c_loss=0.0000 lb_loss=0.9992 | lr=2.71e-04 | 19645 tok/s
+[2026-03-27 07:28:51] --- Eval at step 33000 ---
+[2026-03-27 07:29:07]   PPL=19.90 | mean_cossim=0.28408203125
+[2026-03-27 07:29:07]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:29:07] Checking for splits...
+[2026-03-27 07:29:07] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step33000.pt
+[2026-03-27 07:29:07] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:29:16]   step 33100/48828 | lm_loss=3.2031 c_loss=0.0000 lb_loss=1.0000 | lr=2.71e-04 | 19564 tok/s
+[2026-03-27 07:29:25]   step 33200/48828 | lm_loss=3.3438 c_loss=0.0000 lb_loss=0.9977 | lr=2.71e-04 | 19573 tok/s
+[2026-03-27 07:29:34]   step 33300/48828 | lm_loss=3.2188 c_loss=0.0000 lb_loss=0.9996 | lr=2.71e-04 | 19581 tok/s
+[2026-03-27 07:29:43]   step 33400/48828 | lm_loss=2.6719 c_loss=0.0000 lb_loss=0.9996 | lr=2.71e-04 | 19587 tok/s
+[2026-03-27 07:29:52]   step 33500/48828 | lm_loss=3.4219 c_loss=0.0000 lb_loss=0.9992 | lr=2.70e-04 | 19594 tok/s
+[2026-03-27 07:30:01]   step 33600/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.9992 | lr=2.70e-04 | 19602 tok/s
+[2026-03-27 07:30:10]   step 33700/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=0.9992 | lr=2.70e-04 | 19609 tok/s
+[2026-03-27 07:30:20]   step 33800/48828 | lm_loss=3.0938 c_loss=0.0000 lb_loss=0.9988 | lr=2.69e-04 | 19617 tok/s
+[2026-03-27 07:30:29]   step 33900/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.9992 | lr=2.69e-04 | 19624 tok/s
+[2026-03-27 07:30:38]   step 34000/48828 | lm_loss=2.9531 c_loss=0.0000 lb_loss=0.9992 | lr=2.68e-04 | 19631 tok/s
+[2026-03-27 07:30:38] --- Eval at step 34000 ---
+[2026-03-27 07:30:53]   PPL=19.88 | mean_cossim=0.2830078125
+[2026-03-27 07:30:53]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:30:53] Checking for splits...
+[2026-03-27 07:30:53] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step34000.pt
+[2026-03-27 07:30:53] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:31:02]   step 34100/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=0.9992 | lr=2.68e-04 | 19554 tok/s
+[2026-03-27 07:31:11]   step 34200/48828 | lm_loss=3.0469 c_loss=0.0000 lb_loss=0.9988 | lr=2.68e-04 | 19562 tok/s
+[2026-03-27 07:31:20]   step 34300/48828 | lm_loss=3.5781 c_loss=0.0000 lb_loss=0.9988 | lr=2.68e-04 | 19569 tok/s
+[2026-03-27 07:31:29]   step 34400/48828 | lm_loss=2.9375 c_loss=0.0000 lb_loss=1.0008 | lr=2.68e-04 | 19577 tok/s
+[2026-03-27 07:31:39]   step 34500/48828 | lm_loss=2.7031 c_loss=0.0000 lb_loss=0.9992 | lr=2.68e-04 | 19584 tok/s
+[2026-03-27 07:31:48]   step 34600/48828 | lm_loss=3.0625 c_loss=0.0000 lb_loss=1.0008 | lr=2.67e-04 | 19592 tok/s
+[2026-03-27 07:31:57]   step 34700/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9992 | lr=2.67e-04 | 19599 tok/s
+[2026-03-27 07:32:06]   step 34800/48828 | lm_loss=2.6562 c_loss=0.0000 lb_loss=0.9992 | lr=2.67e-04 | 19606 tok/s
+[2026-03-27 07:32:15]   step 34900/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=0.9992 | lr=2.66e-04 | 19614 tok/s
+[2026-03-27 07:32:24]   step 35000/48828 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.9996 | lr=2.65e-04 | 19621 tok/s
+[2026-03-27 07:32:24] --- Eval at step 35000 ---
+[2026-03-27 07:32:39]   PPL=19.90 | mean_cossim=0.28271484375
+[2026-03-27 07:32:39]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:32:39] Checking for splits...
+[2026-03-27 07:32:39] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step35000.pt
+[2026-03-27 07:32:39] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:32:48]   step 35100/48828 | lm_loss=2.8906 c_loss=0.0000 lb_loss=0.9984 | lr=2.65e-04 | 19546 tok/s
+[2026-03-27 07:32:57]   step 35200/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=1.0000 | lr=2.65e-04 | 19554 tok/s
+[2026-03-27 07:33:07]   step 35300/48828 | lm_loss=2.9062 c_loss=0.0000 lb_loss=0.9996 | lr=2.65e-04 | 19561 tok/s
+[2026-03-27 07:33:16]   step 35400/48828 | lm_loss=3.2812 c_loss=0.0000 lb_loss=0.9988 | lr=2.65e-04 | 19566 tok/s
+[2026-03-27 07:33:25]   step 35500/48828 | lm_loss=2.7656 c_loss=0.0000 lb_loss=0.9996 | lr=2.65e-04 | 19574 tok/s
+[2026-03-27 07:33:34]   step 35600/48828 | lm_loss=3.3281 c_loss=0.0000 lb_loss=0.9996 | lr=2.64e-04 | 19581 tok/s
+[2026-03-27 07:33:43]   step 35700/48828 | lm_loss=2.5312 c_loss=0.0000 lb_loss=1.0012 | lr=2.64e-04 | 19588 tok/s
+[2026-03-27 07:33:53]   step 35800/48828 | lm_loss=2.3594 c_loss=0.0000 lb_loss=1.0008 | lr=2.63e-04 | 19595 tok/s
+[2026-03-27 07:34:02]   step 35900/48828 | lm_loss=2.7969 c_loss=0.0000 lb_loss=1.0000 | lr=2.63e-04 | 19601 tok/s
+[2026-03-27 07:34:11]   step 36000/48828 | lm_loss=2.2812 c_loss=0.0000 lb_loss=1.0066 | lr=2.62e-04 | 19608 tok/s
+[2026-03-27 07:34:11] --- Eval at step 36000 ---
+[2026-03-27 07:34:26]   PPL=19.88 | mean_cossim=0.28212890625
+[2026-03-27 07:34:26]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:34:26] Checking for splits...
+[2026-03-27 07:34:26] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step36000.pt
+[2026-03-27 07:34:26] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:34:35]   step 36100/48828 | lm_loss=2.6406 c_loss=0.0000 lb_loss=1.0000 | lr=2.62e-04 | 19535 tok/s
+[2026-03-27 07:34:45]   step 36200/48828 | lm_loss=3.2188 c_loss=0.0000 lb_loss=0.9988 | lr=2.62e-04 | 19542 tok/s
+[2026-03-27 07:34:54]   step 36300/48828 | lm_loss=3.1562 c_loss=0.0000 lb_loss=0.9984 | lr=2.62e-04 | 19549 tok/s
+[2026-03-27 07:35:03]   step 36400/48828 | lm_loss=1.0156 c_loss=0.0000 lb_loss=1.0004 | lr=2.61e-04 | 19555 tok/s
+[2026-03-27 07:35:12]   step 36500/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=0.9984 | lr=2.61e-04 | 19560 tok/s
+[2026-03-27 07:35:22]   step 36600/48828 | lm_loss=2.9844 c_loss=0.0000 lb_loss=0.9992 | lr=2.61e-04 | 19567 tok/s
+[2026-03-27 07:35:31]   step 36700/48828 | lm_loss=4.0312 c_loss=0.0000 lb_loss=0.9988 | lr=2.60e-04 | 19574 tok/s
+[2026-03-27 07:35:40]   step 36800/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=1.0000 | lr=2.60e-04 | 19580 tok/s
+[2026-03-27 07:35:49]   step 36900/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=0.9992 | lr=2.59e-04 | 19587 tok/s
+[2026-03-27 07:35:58]   step 37000/48828 | lm_loss=3.2500 c_loss=0.0000 lb_loss=1.0004 | lr=2.58e-04 | 19594 tok/s
+[2026-03-27 07:35:58] --- Eval at step 37000 ---
+[2026-03-27 07:36:14]   PPL=19.88 | mean_cossim=0.280859375
+[2026-03-27 07:36:14]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:36:14] Checking for splits...
+[2026-03-27 07:36:14] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step37000.pt
+[2026-03-27 07:36:14] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:36:23]   step 37100/48828 | lm_loss=3.3281 c_loss=0.0000 lb_loss=0.9992 | lr=2.58e-04 | 19523 tok/s
+[2026-03-27 07:36:32]   step 37200/48828 | lm_loss=2.9219 c_loss=0.0000 lb_loss=0.9996 | lr=2.58e-04 | 19529 tok/s
+[2026-03-27 07:36:41]   step 37300/48828 | lm_loss=2.5469 c_loss=0.0000 lb_loss=1.0020 | lr=2.58e-04 | 19536 tok/s
+[2026-03-27 07:36:50]   step 37400/48828 | lm_loss=3.0312 c_loss=0.0000 lb_loss=0.9992 | lr=2.57e-04 | 19543 tok/s
+[2026-03-27 07:37:00]   step 37500/48828 | lm_loss=3.3125 c_loss=0.0000 lb_loss=0.9988 | lr=2.57e-04 | 19547 tok/s
+[2026-03-27 07:37:09]   step 37600/48828 | lm_loss=3.2344 c_loss=0.0000 lb_loss=0.9980 | lr=2.57e-04 | 19554 tok/s
+[2026-03-27 07:37:18]   step 37700/48828 | lm_loss=2.8750 c_loss=0.0000 lb_loss=0.9992 | lr=2.56e-04 | 19560 tok/s
+[2026-03-27 07:37:27]   step 37800/48828 | lm_loss=3.0781 c_loss=0.0000 lb_loss=0.9996 | lr=2.55e-04 | 19567 tok/s
+[2026-03-27 07:37:36]   step 37900/48828 | lm_loss=3.3594 c_loss=0.0000 lb_loss=0.9984 | lr=2.54e-04 | 19573 tok/s
+[2026-03-27 07:37:45]   step 38000/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9992 | lr=2.54e-04 | 19580 tok/s
+[2026-03-27 07:37:45] --- Eval at step 38000 ---
+[2026-03-27 07:38:01]   PPL=19.87 | mean_cossim=0.2798828125
+[2026-03-27 07:38:01]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:38:01] Checking for splits...
+[2026-03-27 07:38:01] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step38000.pt
+[2026-03-27 07:38:01] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:38:10]   step 38100/48828 | lm_loss=2.9688 c_loss=0.0000 lb_loss=0.9992 | lr=2.54e-04 | 19510 tok/s
+[2026-03-27 07:38:19]   step 38200/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9996 | lr=2.53e-04 | 19517 tok/s
+[2026-03-27 07:38:28]   step 38300/48828 | lm_loss=3.1406 c_loss=0.0000 lb_loss=0.9992 | lr=2.53e-04 | 19524 tok/s
+[2026-03-27 07:38:38]   step 38400/48828 | lm_loss=3.1875 c_loss=0.0000 lb_loss=1.0004 | lr=2.53e-04 | 19530 tok/s
+[2026-03-27 07:38:47]   step 38500/48828 | lm_loss=2.7031 c_loss=0.0000 lb_loss=1.0000 | lr=2.52e-04 | 19537 tok/s
+[2026-03-27 07:38:56]   step 38600/48828 | lm_loss=2.8438 c_loss=0.0000 lb_loss=0.9988 | lr=2.52e-04 | 19543 tok/s
+[2026-03-27 07:39:05]   step 38700/48828 | lm_loss=1.9922 c_loss=0.0000 lb_loss=0.9984 | lr=2.51e-04 | 19549 tok/s
+[2026-03-27 07:39:14]   step 38800/48828 | lm_loss=2.7500 c_loss=0.0000 lb_loss=0.9996 | lr=2.50e-04 | 19556 tok/s
+[2026-03-27 07:39:23]   step 38900/48828 | lm_loss=2.7812 c_loss=0.0000 lb_loss=1.0000 | lr=2.49e-04 | 19562 tok/s
+[2026-03-27 07:39:32]   step 39000/48828 | lm_loss=2.8281 c_loss=0.0000 lb_loss=0.9996 | lr=2.48e-04 | 19569 tok/s
+[2026-03-27 07:39:32] --- Eval at step 39000 ---
+[2026-03-27 07:39:48]   PPL=19.87 | mean_cossim=0.2794921875
+[2026-03-27 07:39:48]   Tree: {'18': {'num_experts': 2, 'ranks': [4, 4]}, '19': {'num_experts': 2, 'ranks': [4, 4]}, '20': {'num_experts': 2, 'ranks': [4, 4]}, '21': {'num_experts': 2, 'ranks': [4, 4]}, '22': {'num_experts': 2, 'ranks': [4, 4]}, '23': {'num_experts': 2, 'ranks': [4, 4]}, '24': {'num_experts': 2, 'ranks': [4, 4]}, '25': {'num_experts': 2, 'ranks': [4, 4]}, '26': {'num_experts': 2, 'ranks': [4, 4]}, '27': {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:39:48] Checking for splits...
+[2026-03-27 07:39:48] Checkpoint saved: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_step39000.pt
+[2026-03-27 07:39:48] Also saved as: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase3_final.pt
+[2026-03-27 07:39:57]   step 39100/48828 | lm_loss=2.7031 c_loss=0.0000 lb_loss=0.9996 | lr=2.48e-04 | 19502 tok/s
+[2026-03-27 07:40:06]   step 39200/48828 | lm_loss=4.1875 c_loss=0.0000 lb_loss=1.0000 | lr=2.48e-04 | 19508 tok/s
+[2026-03-27 07:40:15]   step 39300/48828 | lm_loss=3.2969 c_loss=0.0000 lb_loss=0.9988 | lr=2.48e-04 | 19514 tok/s

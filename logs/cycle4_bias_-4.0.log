@@ -1,0 +1,24 @@
+=== Cycle 4: bias_init=-4.0 ===
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:33, 11.91it/s]Loading weights:   9%|▉         | 36/399 [00:00<00:02, 157.10it/s]Loading weights:  20%|██        | 81/399 [00:00<00:01, 262.42it/s]Loading weights:  31%|███       | 122/399 [00:00<00:00, 312.34it/s]Loading weights:  39%|███▉      | 156/399 [00:00<00:00, 316.16it/s]Loading weights:  50%|████▉     | 199/399 [00:00<00:00, 342.11it/s]Loading weights:  59%|█████▉    | 235/399 [00:00<00:00, 340.47it/s]Loading weights:  73%|███████▎  | 290/399 [00:00<00:00, 389.38it/s]Loading weights:  83%|████████▎ | 330/399 [00:01<00:00, 388.13it/s]Loading weights:  93%|█████████▎| 370/399 [00:01<00:00, 381.09it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 344.46it/s]
+Loading Phase 1 adapter from /root/t6b-mogae/adapters/cycle3_l1_seed42_phase1.pt...
+Adapter frozen. Phase 1 from cache.
+
+=== PHASE 2: Gate training (bias=-4.0, 1500 steps) ===
+  Step 0/1500 | lm=2.5938 | dom=0.018 gen=0.000 sel=+0.018
+  Step 300/1500 | lm=1.1719 | dom=0.941 gen=0.644 sel=+0.297
+  Step 600/1500 | lm=0.9844 | dom=0.950 gen=0.400 sel=+0.550
+  Step 900/1500 | lm=1.0938 | dom=0.971 gen=0.260 sel=+0.711
+  Step 1200/1500 | lm=1.6797 | dom=0.981 gen=0.278 sel=+0.703
+
+=== EVALUATION ===
+  Domain (gated): PPL=10.75
+  Generic (gated): PPL=16.10
+  Domain (base): PPL=12.97
+  Generic (base): PPL=17.12
+
+=== FINAL: bias=-4.0 ===
+Selectivity: +0.632
+Domain PPL: 10.75 (-17.1%)
+Generic PPL: 16.10 (-5.9%)
+Saved to /root/t6b-mogae/results/cycle4_bias_-4.0.json

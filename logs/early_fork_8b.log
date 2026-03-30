@@ -1,0 +1,189 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.94it/s]Loading weights:  10%|▉         | 38/399 [00:00<00:02, 174.20it/s]Loading weights:  18%|█▊        | 71/399 [00:00<00:01, 235.09it/s]Loading weights:  32%|███▏      | 126/399 [00:00<00:00, 345.09it/s]Loading weights:  41%|████      | 163/399 [00:00<00:00, 341.02it/s]Loading weights:  52%|█████▏    | 206/399 [00:00<00:00, 332.44it/s]Loading weights:  65%|██████▍   | 258/399 [00:00<00:00, 358.25it/s]Loading weights:  79%|███████▉  | 316/399 [00:00<00:00, 379.01it/s]Loading weights:  94%|█████████▎| 374/399 [00:01<00:00, 431.97it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 356.85it/s]
+Loaded in 3s, layers: 36
+EARLY FORK: layers 12-35 (24 expert layers)
+Trainable: 6,488,064 (6.5M)
+Loading C4...
+Training 15000 steps with learntropy-LR, fork at layer 12...
+Step 0/15000 | loss=2.6406 | tau=1.000
+  Route: E0=0.508 E1=0.492 | LT: E0=2.48 E1=2.48 | LR: E0=1.0e-04 E1=1.0e-04
+Step 200/15000 | loss=3.0312 | tau=0.983
+  Route: E0=0.465 E1=0.535 | LT: E0=2.37 E1=2.20 | LR: E0=6.4e-05 E1=4.7e-05
+Step 400/15000 | loss=3.3438 | tau=0.967
+  Route: E0=0.516 E1=0.486 | LT: E0=2.40 E1=1.95 | LR: E0=8.5e-05 E1=3.5e-05
+Step 600/15000 | loss=2.7344 | tau=0.950
+  Route: E0=0.512 E1=0.486 | LT: E0=2.31 E1=1.79 | LR: E0=9.5e-05 E1=3.2e-05
+Step 800/15000 | loss=3.0469 | tau=0.933
+  Route: E0=0.443 E1=0.559 | LT: E0=2.32 E1=1.76 | LR: E0=9.9e-05 E1=3.0e-05
+Step 1000/15000 | loss=3.0625 | tau=0.917
+  Route: E0=0.500 E1=0.498 | LT: E0=2.30 E1=1.82 | LR: E0=9.0e-05 E1=3.3e-05
+Step 1200/15000 | loss=2.7812 | tau=0.900
+  Route: E0=0.463 E1=0.539 | LT: E0=2.30 E1=1.76 | LR: E0=9.6e-05 E1=3.1e-05
+Step 1400/15000 | loss=1.4375 | tau=0.883
+  Route: E0=0.504 E1=0.496 | LT: E0=2.33 E1=1.77 | LR: E0=9.7e-05 E1=3.1e-05
+Step 1600/15000 | loss=2.8125 | tau=0.867
+  Route: E0=0.490 E1=0.508 | LT: E0=2.45 E1=1.85 | LR: E0=1.0e-04 E1=3.0e-05
+Step 1800/15000 | loss=3.1562 | tau=0.850
+  Route: E0=0.500 E1=0.498 | LT: E0=2.43 E1=1.79 | LR: E0=1.0e-04 E1=2.9e-05
+Step 2000/15000 | loss=2.2812 | tau=0.833
+  Route: E0=0.520 E1=0.482 | LT: E0=2.40 E1=1.84 | LR: E0=9.5e-05 E1=3.2e-05
+Step 2200/15000 | loss=3.2188 | tau=0.817
+  Route: E0=0.473 E1=0.527 | LT: E0=2.38 E1=1.67 | LR: E0=1.2e-04 E1=2.6e-05
+Step 2400/15000 | loss=2.4219 | tau=0.800
+  Route: E0=0.531 E1=0.469 | LT: E0=2.27 E1=1.74 | LR: E0=9.5e-05 E1=3.1e-05
+Step 2600/15000 | loss=2.6875 | tau=0.783
+  Route: E0=0.486 E1=0.516 | LT: E0=2.30 E1=1.70 | LR: E0=1.0e-04 E1=2.9e-05
+Step 2800/15000 | loss=3.0156 | tau=0.767
+  Route: E0=0.498 E1=0.504 | LT: E0=2.26 E1=1.43 | LR: E0=1.4e-04 E1=2.1e-05
+Step 3000/15000 | loss=2.2500 | tau=0.750
+  Route: E0=0.504 E1=0.498 | LT: E0=2.42 E1=1.97 | LR: E0=8.5e-05 E1=3.5e-05
+  Eval PPL=9.06
+Step 3200/15000 | loss=2.1719 | tau=0.733
+  Route: E0=0.516 E1=0.484 | LT: E0=2.25 E1=1.53 | LR: E0=1.2e-04 E1=2.4e-05
+Step 3400/15000 | loss=2.5625 | tau=0.717
+  Route: E0=0.416 E1=0.586 | LT: E0=2.38 E1=1.73 | LR: E0=1.1e-04 E1=2.8e-05
+Step 3600/15000 | loss=2.2812 | tau=0.700
+  Route: E0=0.555 E1=0.443 | LT: E0=2.18 E1=1.63 | LR: E0=1.0e-04 E1=3.0e-05
+Step 3800/15000 | loss=3.1719 | tau=0.683
+  Route: E0=0.516 E1=0.484 | LT: E0=2.28 E1=1.63 | LR: E0=1.1e-04 E1=2.7e-05
+Step 4000/15000 | loss=2.9844 | tau=0.667
+  Route: E0=0.492 E1=0.508 | LT: E0=2.36 E1=1.81 | LR: E0=9.6e-05 E1=3.1e-05
+Step 4200/15000 | loss=2.6094 | tau=0.650
+  Route: E0=0.500 E1=0.500 | LT: E0=2.34 E1=1.77 | LR: E0=1.0e-04 E1=3.0e-05
+Step 4400/15000 | loss=2.9062 | tau=0.633
+  Route: E0=0.490 E1=0.508 | LT: E0=2.31 E1=1.67 | LR: E0=1.1e-04 E1=2.8e-05
+Step 4600/15000 | loss=2.4219 | tau=0.617
+  Route: E0=0.473 E1=0.527 | LT: E0=2.23 E1=1.52 | LR: E0=1.2e-04 E1=2.4e-05
+Step 4800/15000 | loss=3.0938 | tau=0.600
+  Route: E0=0.492 E1=0.508 | LT: E0=2.35 E1=1.58 | LR: E0=1.3e-04 E1=2.4e-05
+Step 5000/15000 | loss=2.5781 | tau=0.583
+  Route: E0=0.512 E1=0.488 | LT: E0=2.26 E1=1.46 | LR: E0=1.4e-04 E1=2.2e-05
+Step 5200/15000 | loss=2.4531 | tau=0.567
+  Route: E0=0.504 E1=0.496 | LT: E0=2.17 E1=1.39 | LR: E0=1.4e-04 E1=2.1e-05
+Step 5400/15000 | loss=3.1562 | tau=0.550
+  Route: E0=0.516 E1=0.482 | LT: E0=2.42 E1=1.85 | LR: E0=9.7e-05 E1=3.1e-05
+Step 5600/15000 | loss=2.1250 | tau=0.533
+  Route: E0=0.504 E1=0.494 | LT: E0=2.28 E1=1.60 | LR: E0=1.2e-04 E1=2.6e-05
+Step 5800/15000 | loss=2.3438 | tau=0.517
+  Route: E0=0.512 E1=0.490 | LT: E0=2.32 E1=1.63 | LR: E0=1.2e-04 E1=2.6e-05
+Step 6000/15000 | loss=2.6719 | tau=0.500
+  Route: E0=0.500 E1=0.498 | LT: E0=2.24 E1=1.38 | LR: E0=1.5e-04 E1=2.0e-05
+  Eval PPL=7.88
+Step 6200/15000 | loss=3.1562 | tau=0.483
+  Route: E0=0.498 E1=0.504 | LT: E0=2.42 E1=1.75 | LR: E0=1.1e-04 E1=2.8e-05
+Step 6400/15000 | loss=2.9219 | tau=0.467
+  Route: E0=0.547 E1=0.453 | LT: E0=2.28 E1=1.67 | LR: E0=1.1e-04 E1=2.8e-05
+Step 6600/15000 | loss=2.7812 | tau=0.450
+  Route: E0=0.488 E1=0.512 | LT: E0=2.32 E1=1.66 | LR: E0=1.1e-04 E1=2.7e-05
+Step 6800/15000 | loss=2.7344 | tau=0.433
+  Route: E0=0.512 E1=0.490 | LT: E0=2.43 E1=1.89 | LR: E0=9.3e-05 E1=3.2e-05
+Step 7000/15000 | loss=2.9688 | tau=0.417
+  Route: E0=0.504 E1=0.496 | LT: E0=2.25 E1=1.53 | LR: E0=1.2e-04 E1=2.4e-05
+Step 7200/15000 | loss=2.9219 | tau=0.400
+  Route: E0=0.473 E1=0.527 | LT: E0=2.36 E1=1.79 | LR: E0=9.8e-05 E1=3.1e-05
+Step 7400/15000 | loss=3.2969 | tau=0.383
+  Route: E0=0.480 E1=0.520 | LT: E0=2.36 E1=1.62 | LR: E0=1.2e-04 E1=2.5e-05
+Step 7600/15000 | loss=2.9844 | tau=0.367
+  Route: E0=0.451 E1=0.551 | LT: E0=2.35 E1=1.78 | LR: E0=9.9e-05 E1=3.0e-05
+Step 7800/15000 | loss=3.2969 | tau=0.350
+  Route: E0=0.465 E1=0.535 | LT: E0=2.25 E1=1.76 | LR: E0=9.2e-05 E1=3.3e-05
+Step 8000/15000 | loss=3.0781 | tau=0.333
+  Route: E0=0.496 E1=0.504 | LT: E0=2.27 E1=1.44 | LR: E0=1.4e-04 E1=2.1e-05
+Step 8200/15000 | loss=2.5156 | tau=0.317
+  Route: E0=0.520 E1=0.482 | LT: E0=2.23 E1=1.34 | LR: E0=1.6e-04 E1=1.9e-05
+Step 8400/15000 | loss=2.6719 | tau=0.300
+  Route: E0=0.447 E1=0.555 | LT: E0=2.31 E1=1.45 | LR: E0=1.4e-04 E1=2.1e-05
+Step 8600/15000 | loss=2.5000 | tau=0.283
+  Route: E0=0.463 E1=0.539 | LT: E0=2.31 E1=1.60 | LR: E0=1.2e-04 E1=2.5e-05
+Step 8800/15000 | loss=2.9531 | tau=0.267
+  Route: E0=0.480 E1=0.520 | LT: E0=2.33 E1=1.62 | LR: E0=1.2e-04 E1=2.5e-05
+Step 9000/15000 | loss=2.6875 | tau=0.250
+  Route: E0=0.484 E1=0.516 | LT: E0=2.16 E1=1.28 | LR: E0=1.6e-04 E1=1.8e-05
+  Eval PPL=10.56
+Step 9200/15000 | loss=1.8281 | tau=0.233
+  Route: E0=0.512 E1=0.486 | LT: E0=2.32 E1=1.45 | LR: E0=1.5e-04 E1=2.0e-05
+Step 9400/15000 | loss=2.4375 | tau=0.217
+  Route: E0=0.488 E1=0.512 | LT: E0=2.37 E1=1.47 | LR: E0=1.5e-04 E1=2.0e-05
+Step 9600/15000 | loss=2.9062 | tau=0.200
+  Route: E0=0.512 E1=0.488 | LT: E0=2.45 E1=1.66 | LR: E0=1.2e-04 E1=2.4e-05
+Step 9800/15000 | loss=2.5000 | tau=0.183
+  Route: E0=0.467 E1=0.531 | LT: E0=2.17 E1=1.12 | LR: E0=2.2e-04 E1=1.4e-05
+Step 10000/15000 | loss=2.6719 | tau=0.167
+  Route: E0=0.535 E1=0.465 | LT: E0=2.22 E1=1.42 | LR: E0=1.4e-04 E1=2.2e-05
+Step 10200/15000 | loss=2.3906 | tau=0.150
+  Route: E0=0.512 E1=0.490 | LT: E0=2.24 E1=1.53 | LR: E0=1.2e-04 E1=2.5e-05
+Step 10400/15000 | loss=2.5781 | tau=0.133
+  Route: E0=0.482 E1=0.520 | LT: E0=2.28 E1=1.44 | LR: E0=1.4e-04 E1=2.1e-05
+Step 10600/15000 | loss=2.1562 | tau=0.117
+  Route: E0=0.531 E1=0.469 | LT: E0=2.26 E1=1.28 | LR: E0=1.8e-04 E1=1.7e-05
+Step 10800/15000 | loss=2.4062 | tau=0.100
+  Route: E0=0.477 E1=0.523 | LT: E0=2.34 E1=1.32 | LR: E0=1.8e-04 E1=1.7e-05
+Step 11000/15000 | loss=2.7500 | tau=0.100
+  Route: E0=0.469 E1=0.531 | LT: E0=2.24 E1=1.26 | LR: E0=1.8e-04 E1=1.7e-05
+Step 11200/15000 | loss=2.6406 | tau=0.100
+  Route: E0=0.496 E1=0.504 | LT: E0=2.16 E1=1.41 | LR: E0=1.3e-04 E1=2.2e-05
+Step 11400/15000 | loss=2.1719 | tau=0.100
+  Route: E0=0.477 E1=0.523 | LT: E0=2.24 E1=1.35 | LR: E0=1.6e-04 E1=1.9e-05
+Step 11600/15000 | loss=2.8438 | tau=0.100
+  Route: E0=0.469 E1=0.531 | LT: E0=2.37 E1=1.69 | LR: E0=1.1e-04 E1=2.7e-05
+Step 11800/15000 | loss=2.1875 | tau=0.100
+  Route: E0=0.508 E1=0.490 | LT: E0=2.28 E1=1.51 | LR: E0=1.3e-04 E1=2.3e-05
+Step 12000/15000 | loss=2.7500 | tau=0.100
+  Route: E0=0.488 E1=0.512 | LT: E0=2.29 E1=1.68 | LR: E0=1.1e-04 E1=2.9e-05
+  Eval PPL=16.62
+Step 12200/15000 | loss=2.9531 | tau=0.100
+  Route: E0=0.484 E1=0.516 | LT: E0=2.37 E1=1.49 | LR: E0=1.4e-04 E1=2.1e-05
+Step 12400/15000 | loss=4.5625 | tau=0.100
+  Route: E0=0.475 E1=0.523 | LT: E0=2.31 E1=1.42 | LR: E0=1.5e-04 E1=2.0e-05
+Step 12600/15000 | loss=3.1719 | tau=0.100
+  Route: E0=0.504 E1=0.496 | LT: E0=2.27 E1=1.53 | LR: E0=1.2e-04 E1=2.4e-05
+Step 12800/15000 | loss=2.4688 | tau=0.100
+  Route: E0=0.492 E1=0.508 | LT: E0=2.10 E1=1.35 | LR: E0=1.4e-04 E1=2.2e-05
+Step 13000/15000 | loss=2.6562 | tau=0.100
+  Route: E0=0.490 E1=0.508 | LT: E0=2.17 E1=1.28 | LR: E0=1.6e-04 E1=1.8e-05
+Step 13200/15000 | loss=2.6562 | tau=0.100
+  Route: E0=0.512 E1=0.486 | LT: E0=2.25 E1=1.30 | LR: E0=1.7e-04 E1=1.8e-05
+Step 13400/15000 | loss=3.0938 | tau=0.100
+  Route: E0=0.516 E1=0.484 | LT: E0=2.24 E1=1.47 | LR: E0=1.3e-04 E1=2.3e-05
+Step 13600/15000 | loss=1.8047 | tau=0.100
+  Route: E0=0.504 E1=0.496 | LT: E0=2.29 E1=1.83 | LR: E0=8.8e-05 E1=3.4e-05
+Step 13800/15000 | loss=2.5938 | tau=0.100
+  Route: E0=0.475 E1=0.527 | LT: E0=2.19 E1=1.43 | LR: E0=1.3e-04 E1=2.3e-05
+Step 14000/15000 | loss=3.5000 | tau=0.100
+  Route: E0=0.516 E1=0.484 | LT: E0=2.37 E1=1.62 | LR: E0=1.2e-04 E1=2.4e-05
+Step 14200/15000 | loss=2.1562 | tau=0.100
+  Route: E0=0.484 E1=0.516 | LT: E0=2.16 E1=1.27 | LR: E0=1.7e-04 E1=1.8e-05
+Step 14400/15000 | loss=1.7969 | tau=0.100
+  Route: E0=0.490 E1=0.508 | LT: E0=2.09 E1=1.28 | LR: E0=1.5e-04 E1=2.0e-05
+Step 14600/15000 | loss=2.6562 | tau=0.100
+  Route: E0=0.457 E1=0.543 | LT: E0=2.28 E1=1.70 | LR: E0=1.0e-04 E1=2.9e-05
+Step 14800/15000 | loss=2.3594 | tau=0.100
+  Route: E0=0.504 E1=0.496 | LT: E0=2.30 E1=1.65 | LR: E0=1.1e-04 E1=2.7e-05
+
+Saved to /root/t6b-mogae/checkpoints/qwen8b_early_fork/final.pt
+
+=== M_ij ABLATION (fork at layer 12) ===
+  medical: 40 samples
+  code: 40 samples
+  legal: 40 samples
+  news: 40 samples
+  conversational: 40 samples
+
+Baseline: {'medical': '13.6', 'code': '18.7', 'legal': '16.0', 'news': '13.7', 'conversational': '21.7'}
+No E0: medical=+7676.20 code=+14460.53 legal=+8869.61 news=+10415.25 conversational=+15955.30 | CV=0.2792
+No E1: medical=+5.57 code=+6.90 legal=+6.02 news=+6.78 conversational=+7.68 | CV=0.1112
+
+Overall M_ij CV: 1.0740
+
+=== COMPARISON: Early fork (L12) vs Late fork (L24) ===
+Fork at L12: M_ij CV = 1.0740
+Fork at L24: M_ij CV = 0.6792 (reference)
+Fork at L24 + learntropy-LR (4 exp): M_ij CV = 1.2546
+  medical: damage ratio 1378.9x
+  code: damage ratio 2097.1x
+  legal: damage ratio 1472.2x
+  news: damage ratio 1535.2x
+  conversational: damage ratio 2077.2x
+
+Done. Saved to results/qwen8b_early_fork_mij.json

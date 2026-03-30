@@ -1,0 +1,24 @@
+[2026-03-27 07:50:20] ======================================================================
+[2026-03-27 07:50:20] LoRA Progressive Forking — Phase 3
+[2026-03-27 07:50:20] ======================================================================
+[2026-03-27 07:50:20] Config: {'phase': 3, 'device': 'cuda:1', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': '/root/t6b-mogae/checkpoints/phase2_final.pt', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 14, 'expert_layer_start': 14, 'initial_rank': 4, 'max_rank': 4, 'max_experts': 16, 'phase1_tokens': 50000000, 'phase1_batch_size': 4, 'phase1_seq_len': 512, 'phase1_lr': 0.0003, 'phase2_tokens': 50000000, 'phase2_batch_size': 4, 'phase2_seq_len': 512, 'phase2_lr': 0.0001, 'phase3_tokens': 30000000, 'phase3_batch_size': 4, 'phase3_seq_len': 512, 'phase3_lr': 0.0003, 'contrastive_weight': 0.1, 'contrastive_margin': 0.5, 'bimodality_threshold': 0.3, 'dip_test_alpha': 0.05, 'rank_growth_error_threshold': 0.1, 'min_tokens_before_split': 10000000, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/layer14_rank4_ablation', 'log_file': '/root/t6b-mogae/logs/layer14_rank4_final.log'}
+[2026-03-27 07:50:20] Loading Qwen/Qwen3-1.7B...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 17935.71it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-27 07:50:24] Base model loaded: 2,031,739,904 params
+[2026-03-27 07:50:24] Verified: hidden=2048, intermediate=6144
+[2026-03-27 07:50:24] Loading checkpoint: /root/t6b-mogae/checkpoints/phase2_final.pt
+[2026-03-27 07:50:24] Loaded checkpoint from phase 2, step 24414
+[2026-03-27 07:50:24] Tree structure: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:50:24] Trainable params: 1,892,352
+[2026-03-27 07:50:24] Expert tree: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[2026-03-27 07:50:24] Setting up data loaders...
+[2026-03-27 07:50:24] Phase 3: 14648 steps, LR=0.0003, batch=4x512
+[2026-03-27 07:50:24] Trainable params: 1,892,352
+[2026-03-27 07:50:24] Expert tree: {14: {'num_experts': 2, 'ranks': [4, 4]}, 15: {'num_experts': 2, 'ranks': [4, 4]}, 16: {'num_experts': 2, 'ranks': [4, 4]}, 17: {'num_experts': 2, 'ranks': [4, 4]}, 18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[2026-03-27 07:50:38]   step 100/14648 | lm_loss=3.4375 c_loss=0.4375 lb_loss=1.0100 | lr=3.00e-04 | 15158 tok/s
+[2026-03-27 07:50:47]   step 200/14648 | lm_loss=2.9062 c_loss=0.3496 lb_loss=1.0036 | lr=3.00e-04 | 17582 tok/s
+[2026-03-27 07:50:57]   step 300/14648 | lm_loss=2.8281 c_loss=0.2090 lb_loss=1.0053 | lr=3.00e-04 | 18541 tok/s
+[2026-03-27 07:51:07]   step 400/14648 | lm_loss=1.8672 c_loss=0.0894 lb_loss=1.0112 | lr=2.99e-04 | 19018 tok/s

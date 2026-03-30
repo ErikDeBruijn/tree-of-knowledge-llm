@@ -1,0 +1,126 @@
+======================================================================
+  TINY MOE TESTBED — Routing & Curriculum Ablation
+  Routing:    random_hash
+  Curriculum: none
+  Device:     cuda:0
+  Steps:      3000
+======================================================================
+
+Device: cuda:0
+  GPU: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+  Memory: 102.0 GB
+Loading WikiText-2...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikitext' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  train: 9352 chunks of 256 tokens
+  val: 966 chunks of 256 tokens
+  test: 1107 chunks of 256 tokens
+
+Model: 26.57M parameters
+Routing: random_hash
+Curriculum: none
+
+Training for 3000 steps...
+======================================================================
+  step    50 | loss 10.5128 | ppl 36782.0 | lr 0.000075 | 76460 tok/s
+  step   100 | loss 9.4289 | ppl 12443.1 | lr 0.000150 | 83931 tok/s
+  step   150 | loss 7.9632 | ppl 2873.4 | lr 0.000225 | 86686 tok/s
+  step   200 | loss 7.1792 | ppl 1311.9 | lr 0.000300 | 88311 tok/s
+  ── eval step 200: val_ppl=1109.68, val_loss=7.0118
+  step   250 | loss 6.9105 | ppl 1002.7 | lr 0.000300 | 82428 tok/s
+  step   300 | loss 6.7416 | ppl 846.9 | lr 0.000299 | 83812 tok/s
+  step   350 | loss 6.6384 | ppl 763.9 | lr 0.000298 | 84988 tok/s
+  step   400 | loss 6.5262 | ppl 682.8 | lr 0.000296 | 86077 tok/s
+  ── eval step 400: val_ppl=656.54, val_loss=6.4870
+  step   450 | loss 6.4272 | ppl 618.4 | lr 0.000294 | 83267 tok/s
+  step   500 | loss 6.3668 | ppl 582.2 | lr 0.000292 | 84312 tok/s
+  step   550 | loss 6.3051 | ppl 547.3 | lr 0.000289 | 85202 tok/s
+  step   600 | loss 6.2456 | ppl 515.7 | lr 0.000285 | 85959 tok/s
+  ── eval step 600: val_ppl=531.26, val_loss=6.2753
+  step   650 | loss 6.1404 | ppl 464.3 | lr 0.000281 | 83979 tok/s
+  step   700 | loss 6.1172 | ppl 453.6 | lr 0.000277 | 84448 tok/s
+  step   750 | loss 6.0936 | ppl 443.0 | lr 0.000272 | 85093 tok/s
+  step   800 | loss 6.0516 | ppl 424.8 | lr 0.000267 | 85659 tok/s
+  ── eval step 800: val_ppl=462.25, val_loss=6.1361
+  step   850 | loss 6.0155 | ppl 409.7 | lr 0.000262 | 84236 tok/s
+  step   900 | loss 5.9766 | ppl 394.1 | lr 0.000256 | 84404 tok/s
+  step   950 | loss 5.9320 | ppl 376.9 | lr 0.000250 | 84494 tok/s
+  step  1000 | loss 5.9525 | ppl 384.7 | lr 0.000244 | 84562 tok/s
+  ── eval step 1000: val_ppl=409.94, val_loss=6.0160
+  step  1050 | loss 5.8976 | ppl 364.2 | lr 0.000237 | 83440 tok/s
+  step  1100 | loss 5.8820 | ppl 358.5 | lr 0.000230 | 83793 tok/s
+  step  1150 | loss 5.8355 | ppl 342.2 | lr 0.000223 | 84210 tok/s
+  step  1200 | loss 5.7567 | ppl 316.3 | lr 0.000215 | 84619 tok/s
+  ── eval step 1200: val_ppl=377.47, val_loss=5.9335
+  step  1250 | loss 5.7566 | ppl 316.3 | lr 0.000207 | 83692 tok/s
+  step  1300 | loss 5.7161 | ppl 303.7 | lr 0.000200 | 84057 tok/s
+  step  1350 | loss 5.7148 | ppl 303.3 | lr 0.000192 | 84428 tok/s
+  step  1400 | loss 5.7169 | ppl 304.0 | lr 0.000183 | 84766 tok/s
+  ── eval step 1400: val_ppl=353.76, val_loss=5.8686
+  step  1450 | loss 5.6848 | ppl 294.3 | lr 0.000175 | 83951 tok/s
+  step  1500 | loss 5.6775 | ppl 292.2 | lr 0.000167 | 84278 tok/s
+  step  1550 | loss 5.6489 | ppl 284.0 | lr 0.000158 | 84586 tok/s
+  step  1600 | loss 5.6499 | ppl 284.3 | lr 0.000150 | 84883 tok/s
+  ── eval step 1600: val_ppl=332.66, val_loss=5.8071
+  step  1650 | loss 5.6276 | ppl 278.0 | lr 0.000142 | 84152 tok/s
+  step  1700 | loss 5.6054 | ppl 271.9 | lr 0.000133 | 84441 tok/s
+  step  1750 | loss 5.6170 | ppl 275.1 | lr 0.000125 | 84706 tok/s
+  step  1800 | loss 5.5342 | ppl 253.2 | lr 0.000117 | 84975 tok/s
+  ── eval step 1800: val_ppl=318.00, val_loss=5.7620
+  step  1850 | loss 5.4924 | ppl 242.8 | lr 0.000108 | 84343 tok/s
+  step  1900 | loss 5.4954 | ppl 243.6 | lr 0.000100 | 84590 tok/s
+  step  1950 | loss 5.4827 | ppl 240.5 | lr 0.000093 | 84827 tok/s
+  step  2000 | loss 5.5058 | ppl 246.1 | lr 0.000085 | 85060 tok/s
+  ── eval step 2000: val_ppl=306.10, val_loss=5.7239
+  step  2050 | loss 5.5022 | ppl 245.2 | lr 0.000077 | 84480 tok/s
+  step  2100 | loss 5.5026 | ppl 245.3 | lr 0.000070 | 84700 tok/s
+  step  2150 | loss 5.4745 | ppl 238.5 | lr 0.000063 | 84848 tok/s
+  step  2200 | loss 5.4767 | ppl 239.0 | lr 0.000056 | 85052 tok/s
+  ── eval step 2200: val_ppl=299.62, val_loss=5.7025
+  step  2250 | loss 5.4838 | ppl 240.8 | lr 0.000050 | 84521 tok/s
+  step  2300 | loss 5.4988 | ppl 244.4 | lr 0.000044 | 84703 tok/s
+  step  2350 | loss 5.4633 | ppl 235.9 | lr 0.000038 | 84838 tok/s
+  step  2400 | loss 5.4167 | ppl 225.1 | lr 0.000033 | 84891 tok/s
+  ── eval step 2400: val_ppl=294.36, val_loss=5.6848
+  step  2450 | loss 5.3921 | ppl 219.7 | lr 0.000028 | 84363 tok/s
+  step  2500 | loss 5.4112 | ppl 223.9 | lr 0.000023 | 84529 tok/s
+  step  2550 | loss 5.3959 | ppl 220.5 | lr 0.000019 | 84712 tok/s
+  step  2600 | loss 5.4114 | ppl 223.9 | lr 0.000015 | 84885 tok/s
+  ── eval step 2600: val_ppl=291.75, val_loss=5.6759
+  step  2650 | loss 5.4136 | ppl 224.4 | lr 0.000011 | 84438 tok/s
+  step  2700 | loss 5.3654 | ppl 213.9 | lr 0.000008 | 84608 tok/s
+  step  2750 | loss 5.4232 | ppl 226.6 | lr 0.000006 | 84778 tok/s
+  step  2800 | loss 5.3987 | ppl 221.1 | lr 0.000004 | 84914 tok/s
+  ── eval step 2800: val_ppl=290.38, val_loss=5.6712
+  step  2850 | loss 5.4024 | ppl 221.9 | lr 0.000002 | 84463 tok/s
+  step  2900 | loss 5.4129 | ppl 224.3 | lr 0.000001 | 84626 tok/s
+  step  2950 | loss 5.3915 | ppl 219.5 | lr 0.000000 | 84779 tok/s
+  step  3000 | loss 5.3923 | ppl 219.7 | lr 0.000000 | 84928 tok/s
+  ── eval step 3000: val_ppl=290.15, val_loss=5.6704
+======================================================================
+Training complete: 3000 steps in 145.6s (2.4 min)
+
+Final evaluation...
+  Validation PPL: 290.15
+  Test PPL:       296.71
+
+Computing metrics...
+  layer_0: gini=0.146, entropy=2.046/2.079, freq range=[0.088, 0.181]
+  layer_1: gini=0.135, entropy=2.051/2.079, freq range=[0.080, 0.166]
+  layer_2: gini=0.084, entropy=2.068/2.079, freq range=[0.091, 0.159]
+  layer_3: gini=0.205, entropy=2.011/2.079, freq range=[0.062, 0.192]
+  layer_0 redundancy: mean_cos=0.0012, max_cos=0.0063
+  layer_1 redundancy: mean_cos=0.0008, max_cos=0.0037
+  layer_2 redundancy: mean_cos=0.0016, max_cos=0.0040
+  layer_3 redundancy: mean_cos=0.0024, max_cos=0.0058
+
+Results saved to /root/t6b-mogae/results/tiny_moe_random_hash_none.json
+
+======================================================================
+  SUMMARY
+  Val PPL:  290.15
+  Test PPL: 296.71
+  Time:     145.6s
+======================================================================

@@ -1,0 +1,112 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.88it/s]Loading weights:   8%|▊         | 30/399 [00:00<00:02, 125.08it/s]Loading weights:  21%|██▏       | 85/399 [00:00<00:01, 255.09it/s]Loading weights:  32%|███▏      | 127/399 [00:00<00:00, 275.25it/s]Loading weights:  51%|█████     | 202/399 [00:00<00:00, 353.44it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 378.28it/s]Loading weights:  81%|████████▏ | 325/399 [00:00<00:00, 437.93it/s]Loading weights:  93%|█████████▎| 371/399 [00:01<00:00, 385.97it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 356.62it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loaded in 3s
+GROWTH v3: 2 experts rank-4, per-expert bimodality splits
+Trainable: 4,866,048
+Loading C4...
+Training 20000 steps...
+Step 0/20000 | loss=2.6406 | tau=1.000 | exp=2 r=4
+  LT: E0=2.49 E1=2.48 | LR: E0=1.0e-04 E1=1.0e-04
+Step 500/20000 | loss=2.5000 | tau=0.969 | exp=2 r=4 k0=3.44 k1=4.54
+  LT: E0=2.25 E1=1.76 | LR: E0=9.3e-05 E1=3.2e-05
+Step 1000/20000 | loss=1.8750 | tau=0.938 | exp=2 r=4 k0=4.74 k1=4.02
+  LT: E0=2.24 E1=1.76 | LR: E0=9.2e-05 E1=3.3e-05
+Step 1500/20000 | loss=3.2812 | tau=0.906 | exp=2 r=4 k0=1.55 k1=2.92
+  LT: E0=2.36 E1=1.88 | LR: E0=8.9e-05 E1=3.4e-05
+Step 2000/20000 | loss=3.2031 | tau=0.875 | exp=2 r=4 k0=2.33 k1=3.99
+  LT: E0=2.27 E1=1.92 | LR: E0=7.8e-05 E1=3.9e-05
+Step 2500/20000 | loss=2.9531 | tau=0.844 | exp=2 r=4 k0=1.20 k1=3.07
+  LT: E0=2.42 E1=1.90 | LR: E0=9.1e-05 E1=3.3e-05
+Step 3000/20000 | loss=2.5625 | tau=0.812 | exp=2 r=4 k0=2.23 k1=3.60
+  LT: E0=2.30 E1=1.94 | LR: E0=7.9e-05 E1=3.8e-05
+Step 3500/20000 | loss=3.7969 | tau=0.781 | exp=2 r=4 k0=1.78 k1=3.62
+  LT: E0=2.45 E1=2.13 | LR: E0=7.4e-05 E1=4.1e-05
+Step 4000/20000 | loss=2.4844 | tau=0.750 | exp=2 r=4 k0=1.96 k1=3.00
+  LT: E0=2.27 E1=1.86 | LR: E0=8.4e-05 E1=3.6e-05
+Step 4500/20000 | loss=3.3281 | tau=0.719 | exp=2 r=4 k0=1.88 k1=3.77
+  LT: E0=2.32 E1=2.03 | LR: E0=7.2e-05 E1=4.1e-05
+Step 5000/20000 | loss=3.0000 | tau=0.688 | exp=2 r=4 k0=2.38 k1=3.32
+  LT: E0=2.41 E1=2.08 | LR: E0=7.5e-05 E1=4.0e-05
+  Eval PPL=13.81
+Step 5500/20000 | loss=2.5156 | tau=0.656 | exp=2 r=4 k0=3.06 k1=3.27
+  LT: E0=2.25 E1=1.77 | LR: E0=9.2e-05 E1=3.3e-05
+Step 6000/20000 | loss=3.0625 | tau=0.625 | exp=2 r=4 k0=1.58 k1=3.87
+  LT: E0=2.27 E1=2.05 | LR: E0=6.8e-05 E1=4.4e-05
+Step 6500/20000 | loss=3.2969 | tau=0.594 | exp=2 r=4 k0=2.33 k1=2.72
+  LT: E0=2.25 E1=1.97 | LR: E0=7.3e-05 E1=4.1e-05
+Step 7000/20000 | loss=2.3594 | tau=0.562 | exp=2 r=4 k0=3.38 k1=3.86
+  LT: E0=2.24 E1=2.13 | LR: E0=6.1e-05 E1=4.9e-05
+Step 7500/20000 | loss=2.7969 | tau=0.531 | exp=2 r=4 k0=3.00 k1=2.92
+  LT: E0=2.23 E1=1.72 | LR: E0=9.4e-05 E1=3.2e-05
+Step 8000/20000 | loss=3.1406 | tau=0.500 | exp=2 r=4 k0=3.12 k1=3.06
+  LT: E0=2.10 E1=1.91 | LR: E0=6.7e-05 E1=4.4e-05
+Step 8500/20000 | loss=2.0625 | tau=0.469 | exp=2 r=4 k0=2.49 k1=3.06
+  LT: E0=2.26 E1=1.93 | LR: E0=7.7e-05 E1=3.9e-05
+Step 9000/20000 | loss=2.5000 | tau=0.438 | exp=2 r=4 k0=2.57 k1=3.53
+  LT: E0=2.24 E1=1.65 | LR: E0=1.0e-04 E1=2.9e-05
+Step 9500/20000 | loss=2.2969 | tau=0.406 | exp=2 r=4 k0=3.03 k1=3.57
+  LT: E0=2.20 E1=1.71 | LR: E0=9.3e-05 E1=3.2e-05
+Step 10000/20000 | loss=4.9062 | tau=0.375 | exp=2 r=4 k0=2.58 k1=4.08
+  LT: E0=2.23 E1=2.02 | LR: E0=6.8e-05 E1=4.4e-05
+  Eval PPL=6.84
+Step 10500/20000 | loss=2.4844 | tau=0.344 | exp=2 r=4 k0=2.12 k1=4.13
+  LT: E0=2.24 E1=1.58 | LR: E0=1.1e-04 E1=2.6e-05
+Step 11000/20000 | loss=2.1094 | tau=0.312 | exp=2 r=4 k0=3.58 k1=2.85
+  LT: E0=2.21 E1=1.74 | LR: E0=9.1e-05 E1=3.3e-05
+Step 11500/20000 | loss=2.7188 | tau=0.281 | exp=2 r=4 k0=2.75 k1=4.24
+  LT: E0=2.20 E1=1.99 | LR: E0=6.7e-05 E1=4.5e-05
+Step 12000/20000 | loss=3.0781 | tau=0.250 | exp=2 r=4 k0=1.70 k1=3.47
+  LT: E0=2.25 E1=1.99 | LR: E0=7.1e-05 E1=4.2e-05
+Step 12500/20000 | loss=2.6406 | tau=0.219 | exp=2 r=4 k0=1.86 k1=3.47
+  LT: E0=2.28 E1=1.87 | LR: E0=8.3e-05 E1=3.6e-05
+Step 13000/20000 | loss=2.9062 | tau=0.188 | exp=2 r=4 k0=3.08 k1=3.93
+  LT: E0=2.15 E1=1.91 | LR: E0=7.0e-05 E1=4.3e-05
+Step 13500/20000 | loss=2.9688 | tau=0.156 | exp=2 r=4 k0=2.21 k1=4.89
+  LT: E0=2.26 E1=1.58 | LR: E0=1.2e-04 E1=2.6e-05
+
+*** RANK UP: E0: 4 → 8 (step 14000) ***
+Step 14000/20000 | loss=2.8281 | tau=0.125 | exp=2 r=8 k0=1.05 k1=3.75
+  LT: E0=2.29 E1=1.68 | LR: E0=1.0e-04 E1=1.0e-04
+Step 14500/20000 | loss=2.6094 | tau=0.100 | exp=2 r=8 k0=3.43 k1=3.42
+  LT: E0=2.24 E1=1.99 | LR: E0=7.0e-05 E1=4.3e-05
+Step 15000/20000 | loss=2.7812 | tau=0.100 | exp=2 r=8 k0=3.25 k1=3.27
+  LT: E0=2.19 E1=2.32 | LR: E0=4.9e-05 E1=6.2e-05
+  Eval PPL=77.00
+Step 15500/20000 | loss=3.0312 | tau=0.100 | exp=2 r=8 k0=2.50 k1=4.25
+  LT: E0=2.19 E1=2.48 | LR: E0=4.2e-05 E1=7.2e-05
+Step 16000/20000 | loss=2.7500 | tau=0.100 | exp=2 r=8 k0=2.47 k1=3.23
+  LT: E0=2.24 E1=2.13 | LR: E0=6.1e-05 E1=4.9e-05
+Step 16500/20000 | loss=2.9219 | tau=0.100 | exp=2 r=8 k0=2.70 k1=4.64
+  LT: E0=2.22 E1=2.07 | LR: E0=6.4e-05 E1=4.7e-05
+Step 17000/20000 | loss=3.0000 | tau=0.100 | exp=2 r=8 k0=2.18 k1=3.91
+  LT: E0=2.26 E1=1.85 | LR: E0=8.4e-05 E1=3.6e-05
+Step 17500/20000 | loss=2.2031 | tau=0.100 | exp=2 r=8 k0=2.91 k1=4.19
+  LT: E0=2.29 E1=2.28 | LR: E0=5.5e-05 E1=5.5e-05
+Step 18000/20000 | loss=2.0312 | tau=0.100 | exp=2 r=8 k0=2.74 k1=3.51
+  LT: E0=2.09 E1=1.74 | LR: E0=8.0e-05 E1=3.7e-05
+Step 18500/20000 | loss=2.6250 | tau=0.100 | exp=2 r=8 k0=3.54 k1=4.51
+  LT: E0=2.38 E1=2.32 | LR: E0=5.8e-05 E1=5.2e-05
+Step 19000/20000 | loss=2.2500 | tau=0.100 | exp=2 r=8 k0=2.27 k1=3.89
+  LT: E0=2.25 E1=1.96 | LR: E0=7.3e-05 E1=4.1e-05
+Step 19500/20000 | loss=2.7656 | tau=0.100 | exp=2 r=8 k0=2.72 k1=3.95
+  LT: E0=2.24 E1=1.71 | LR: E0=9.6e-05 E1=3.1e-05
+
+Saved. Final: 2 experts, rank=8
+Events: [
+  {
+    "step": 14000,
+    "event": "rank_up",
+    "expert": 0,
+    "new_rank": 8,
+    "n_experts": 2
+  }
+]
+
+=== M_ij ABLATION (2 experts) ===
+Baseline: {'medical': '14.2', 'code': '18.7', 'legal': '16.3', 'news': '12.3', 'conversational': '32.3'}
+No E0: medical=+20660811.77 code=+57224899.83 legal=+33710935.89 news=+17820011.83 conversational=+183000569.64 | CV=0.9898
+No E1: medical=+0.60 code=+0.61 legal=+0.77 news=+0.56 conversational=+1.74 | CV=0.5242
+
+Overall M_ij CV: 1.7203, Active: 2/2
+Done.

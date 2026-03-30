@@ -1,0 +1,32 @@
+Loading Qwen/Qwen3-1.7B on cuda:1 in BF16...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<00:31,  9.78it/s]Loading weights:  24%|██▍       | 74/311 [00:00<00:00, 425.27it/s]Loading weights:  51%|█████     | 158/311 [00:00<00:00, 611.87it/s]Loading weights:  76%|███████▌  | 235/311 [00:00<00:00, 661.67it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 614.48it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Model loaded.
+Streaming C4 data...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'allenai/c4' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  100/2000 chunks | 7473 tok/s | 6.9s
+  200/2000 chunks | 8235 tok/s | 12.4s
+  300/2000 chunks | 8528 tok/s | 18.0s
+  400/2000 chunks | 9083 tok/s | 22.5s
+  500/2000 chunks | 9749 tok/s | 26.3s
+  600/2000 chunks | 10244 tok/s | 30.0s
+  700/2000 chunks | 10636 tok/s | 33.7s
+  800/2000 chunks | 10952 tok/s | 37.4s
+  900/2000 chunks | 11206 tok/s | 41.1s
+  1000/2000 chunks | 11418 tok/s | 44.8s
+  1100/2000 chunks | 11600 tok/s | 48.6s
+  1200/2000 chunks | 11756 tok/s | 52.3s
+  1300/2000 chunks | 11891 tok/s | 56.0s
+  1400/2000 chunks | 12010 tok/s | 59.7s
+  1500/2000 chunks | 12114 tok/s | 63.4s
+  1600/2000 chunks | 12208 tok/s | 67.1s
+  1700/2000 chunks | 12288 tok/s | 70.8s
+  1800/2000 chunks | 12359 tok/s | 74.6s
+  1900/2000 chunks | 12423 tok/s | 78.3s
+  2000/2000 chunks | 12481 tok/s | 82.0s
+Done: 2000 chunks, 1024000 tokens in 82.0s (12481 tok/s)
+Saved to /root/t6b-mogae/results/student_token_scores_2000.json

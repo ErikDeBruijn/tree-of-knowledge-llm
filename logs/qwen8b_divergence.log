@@ -1,0 +1,37 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 5 files:   0%|          | 0/5 [00:00<?, ?it/s]Fetching 5 files:  20%|██        | 1/5 [03:45<15:00, 225.11s/it]Fetching 5 files:  40%|████      | 2/5 [03:47<04:41, 93.89s/it] Fetching 5 files:  60%|██████    | 3/5 [03:47<01:42, 51.38s/it]Fetching 5 files: 100%|██████████| 5/5 [03:47<00:00, 45.59s/it]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<00:55,  7.15it/s]Loading weights:   1%|          | 2/399 [00:00<02:41,  2.45it/s]Loading weights:  10%|█         | 41/399 [00:00<00:05, 66.28it/s]Loading weights:  19%|█▊        | 74/399 [00:00<00:02, 115.42it/s]Loading weights:  29%|██▉       | 115/399 [00:01<00:01, 175.62it/s]Loading weights:  36%|███▌      | 143/399 [00:01<00:01, 141.90it/s]Loading weights:  48%|████▊     | 193/399 [00:01<00:01, 197.11it/s]Loading weights:  56%|█████▌    | 224/399 [00:01<00:00, 210.80it/s]Loading weights:  63%|██████▎   | 251/399 [00:01<00:00, 223.05it/s]Loading weights:  75%|███████▍  | 299/399 [00:01<00:00, 277.22it/s]Loading weights:  83%|████████▎ | 331/399 [00:01<00:00, 283.72it/s]Loading weights:  96%|█████████▌| 383/399 [00:02<00:00, 343.35it/s]Loading weights: 100%|██████████| 399/399 [00:02<00:00, 194.90it/s]
+Loaded in 233s, 16.4GB
+Collecting samples...
+  medical: 100 samples
+  code: 100 samples
+  legal: 100 samples
+  news: 100 samples
+  conversational: 100 samples
+Computing divergence at layers [0, 4, 8, 12, 16, 20, 24, 28, 32, 35]...
+  Layer  0: between=0.000034 within=0.0005 fisher=0.062588
+  Layer  4: between=0.000452 within=0.0070 fisher=0.064493
+  Layer  8: between=0.009445 within=0.3183 fisher=0.029670
+  Layer 12: between=0.014245 within=0.3821 fisher=0.037286
+  Layer 16: between=0.016125 within=0.4871 fisher=0.033104
+  Layer 20: between=0.026307 within=0.6252 fisher=0.042079
+  Layer 24: between=0.113081 within=1.7750 fisher=0.063708
+  Layer 28: between=0.349692 within=5.2371 fisher=0.066773
+  Layer 32: between=1.061715 within=16.3840 fisher=0.064802
+  Layer 35: between=3.111485 within=38.2430 fisher=0.081361
+
+=== COMPARISON ===
+1.7B fisher at layer 14: 0.0085, layer 18: 0.0143
+8B layer  0: fisher=0.062588
+8B layer  4: fisher=0.064493
+8B layer  8: fisher=0.029670
+8B layer 12: fisher=0.037286
+8B layer 16: fisher=0.033104
+8B layer 20: fisher=0.042079
+8B layer 24: fisher=0.063708
+8B layer 28: fisher=0.066773
+8B layer 32: fisher=0.064802
+8B layer 35: fisher=0.081361
+
+Done. Saved to results/qwen8b_divergence.json

@@ -1,0 +1,36 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:36, 11.00it/s]Loading weights:   8%|▊         | 32/399 [00:00<00:03, 118.81it/s]Loading weights:  23%|██▎       | 93/399 [00:00<00:01, 284.13it/s]Loading weights:  32%|███▏      | 127/399 [00:00<00:00, 297.16it/s]Loading weights:  42%|████▏     | 169/399 [00:00<00:00, 323.83it/s]Loading weights:  53%|█████▎    | 210/399 [00:00<00:00, 341.91it/s]Loading weights:  64%|██████▍   | 257/399 [00:00<00:00, 375.48it/s]Loading weights:  74%|███████▍  | 296/399 [00:01<00:00, 321.99it/s]Loading weights:  86%|████████▋ | 345/399 [00:01<00:00, 363.08it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 328.06it/s]
+Loaded in 3s
+SCHEDULED GROWTH: split every 3000 steps, rank-8, L12
+Trainable: 12,779,520 (12.8M)
+Training 50000 steps...
+Step 0/50000|loss=2.6406|tau=1.000|exp=2|LT:E0=2.48 E1=2.48|LR:E0=1.0e-04 E1=1.0e-04
+Step 500/50000|loss=2.4844|tau=0.988|exp=2|LT:E0=2.26 E1=1.87|LR:E0=8.2e-05 E1=3.7e-05
+Step 1000/50000|loss=1.8906|tau=0.975|exp=2|LT:E0=2.26 E1=1.86|LR:E0=8.3e-05 E1=3.6e-05
+Step 1500/50000|loss=3.2656|tau=0.963|exp=2|LT:E0=2.39 E1=1.91|LR:E0=8.9e-05 E1=3.4e-05
+Step 2000/50000|loss=3.2031|tau=0.950|exp=2|LT:E0=2.30 E1=1.81|LR:E0=9.2e-05 E1=3.3e-05
+Step 2500/50000|loss=2.9219|tau=0.938|exp=2|LT:E0=2.46 E1=1.85|LR:E0=1.0e-04 E1=3.0e-05
+
+*** SCHEDULED SPLIT: E0 → E0 + E2 (LT=2.32) ***
+  Now 3 experts
+Step 3000/50000|loss=2.5469|tau=0.925|exp=3|LT:E0=2.32 E1=1.90 E2=2.32|LR:E0=1.0e-04 E1=1.0e-04 E2=1.0e-04
+Step 3500/50000|loss=3.7500|tau=0.912|exp=3|LT:E0=2.26 E1=1.65 E2=2.54|LR:E0=6.8e-05 E1=2.0e-05 E2=1.2e-04
+Step 4000/50000|loss=2.4531|tau=0.900|exp=3|LT:E0=2.11 E1=1.49 E2=2.36|LR:E0=7.2e-05 E1=1.9e-05 E2=1.2e-04
+Step 4500/50000|loss=3.3438|tau=0.887|exp=3|LT:E0=2.20 E1=1.65 E2=2.40|LR:E0=7.0e-05 E1=2.3e-05 E2=1.0e-04
+Step 5000/50000|loss=3.0000|tau=0.875|exp=3|LT:E0=2.30 E1=1.47 E2=2.48|LR:E0=8.5e-05 E1=1.6e-05 E2=1.2e-04
+  Eval PPL=13.56
+Step 5500/50000|loss=2.5156|tau=0.863|exp=3|LT:E0=2.11 E1=1.40 E2=2.34|LR:E0=7.7e-05 E1=1.6e-05 E2=1.3e-04
+
+*** SCHEDULED SPLIT: E2 → E2 + E3 (LT=2.36) ***
+  Now 4 experts
+Step 6000/50000|loss=3.0469|tau=0.850|exp=4|LT:E0=2.10 E1=1.45 E2=2.36 E3=2.36|LR:E0=1.0e-04 E1=1.0e-04 E2=1.0e-04 E3=1.0e-04
+Step 6500/50000|loss=3.2969|tau=0.838|exp=4|LT:E0=2.15 E1=1.61 E2=2.32 E3=2.27|LR:E0=6.2e-05 E1=2.1e-05 E2=8.8e-05 E3=8.0e-05
+Step 7000/50000|loss=2.2188|tau=0.825|exp=4|LT:E0=2.06 E1=1.59 E2=2.26 E3=2.34|LR:E0=5.5e-05 E1=2.1e-05 E2=8.2e-05 E3=9.7e-05
+Step 7500/50000|loss=2.7812|tau=0.812|exp=4|LT:E0=2.02 E1=1.32 E2=2.24 E3=2.35|LR:E0=6.0e-05 E1=1.3e-05 E2=9.4e-05 E3=1.2e-04
+Step 8000/50000|loss=3.1094|tau=0.800|exp=4|LT:E0=1.90 E1=1.28 E2=2.13 E3=2.19|LR:E0=5.8e-05 E1=1.4e-05 E2=9.7e-05 E3=1.1e-04
+Step 8500/50000|loss=2.0469|tau=0.787|exp=4|LT:E0=2.19 E1=1.43 E2=2.26 E3=2.32|LR:E0=7.4e-05 E1=1.5e-05 E2=8.5e-05 E3=9.6e-05
+
+*** SCHEDULED SPLIT: E3 → E3 + E4 (LT=2.35) ***
+  Now 5 experts
+Step 9000/50000|loss=2.4844|tau=0.775|exp=5|LT:E0=2.04 E1=1.21 E2=2.24 E3=2.35 E4=2.35|LR:E0=1.0e-04 E1=1.0e-04 E2=1.0e-04 E3=1.0e-04 E4=1.0e-04

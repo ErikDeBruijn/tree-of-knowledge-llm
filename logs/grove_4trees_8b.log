@@ -1,0 +1,44 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:10,  5.64it/s]Loading weights:  10%|█         | 41/399 [00:00<00:02, 162.50it/s]Loading weights:  23%|██▎       | 92/399 [00:00<00:01, 233.49it/s]Loading weights:  37%|███▋      | 147/399 [00:00<00:00, 309.76it/s]Loading weights:  49%|████▉     | 197/399 [00:00<00:00, 363.46it/s]Loading weights:  59%|█████▉    | 237/399 [00:00<00:00, 358.66it/s]Loading weights:  69%|██████▉   | 275/399 [00:00<00:00, 350.80it/s]Loading weights:  79%|███████▉  | 316/399 [00:01<00:00, 355.38it/s]Loading weights:  89%|████████▉ | 357/399 [00:01<00:00, 357.32it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 331.50it/s]
+Loaded in 3s
+GROVE: 4 trees from L0, all 36 layers, rank-8
+Trainable: 19,169,280 (19.2M)
+Training 20000 steps (growing grove from 2 to 4 trees)...
+Step 0/20000|loss=2.6406|tau=1.000|trees=2|LT:T0=2.49 T1=2.48
+Step 500/20000|loss=2.4844|tau=0.969|trees=2|LT:T0=2.20 T1=2.16
+Step 1000/20000|loss=1.8359|tau=0.938|trees=2|LT:T0=2.17 T1=2.20
+Step 1500/20000|loss=3.2031|tau=0.906|trees=2|LT:T0=2.29 T1=2.35
+Step 2000/20000|loss=3.1875|tau=0.875|trees=2|LT:T0=2.21 T1=2.24
+Step 2500/20000|loss=2.9062|tau=0.844|trees=2|LT:T0=2.36 T1=2.37
+Step 3000/20000|loss=2.5312|tau=0.812|trees=2|LT:T0=2.24 T1=2.27
+Step 3500/20000|loss=3.7656|tau=0.781|trees=2|LT:T0=2.41 T1=2.38
+Step 4000/20000|loss=2.4375|tau=0.750|trees=2|LT:T0=2.24 T1=2.23
+Step 4500/20000|loss=3.2812|tau=0.719|trees=2|LT:T0=2.28 T1=2.29
+
+*** GROVE SPLIT: E1 → E1+E2 (LT=2.38) ***
+  Now 3 trees in the grove
+Step 5000/20000|loss=3.0156|tau=0.688|trees=3|LT:T0=2.37 T1=2.38 T2=2.38
+  Eval PPL=13.38
+Step 5500/20000|loss=2.5000|tau=0.656|trees=3|LT:T0=2.27 T1=2.29 T2=2.08
+Step 6000/20000|loss=3.0469|tau=0.625|trees=3|LT:T0=2.28 T1=2.30 T2=2.12
+Step 6500/20000|loss=3.3125|tau=0.594|trees=3|LT:T0=2.24 T1=2.33 T2=2.11
+Step 7000/20000|loss=2.0625|tau=0.562|trees=3|LT:T0=2.25 T1=2.25 T2=2.09
+Step 7500/20000|loss=2.7656|tau=0.531|trees=3|LT:T0=2.27 T1=2.23 T2=2.04
+Step 8000/20000|loss=3.0625|tau=0.500|trees=3|LT:T0=2.13 T1=2.12 T2=1.93
+Step 8500/20000|loss=2.0156|tau=0.469|trees=3|LT:T0=2.29 T1=2.28 T2=2.10
+Step 9000/20000|loss=2.4531|tau=0.438|trees=3|LT:T0=2.24 T1=2.30 T2=2.04
+Step 9500/20000|loss=2.2656|tau=0.406|trees=3|LT:T0=2.24 T1=2.24 T2=2.01
+
+*** GROVE SPLIT: E0 → E0+E3 (LT=2.27) ***
+  Now 4 trees in the grove
+Step 10000/20000|loss=4.8125|tau=0.375|trees=4|LT:T0=2.27 T1=2.24 T2=2.07 T3=2.27
+  Eval PPL=6.78
+Step 10500/20000|loss=2.4531|tau=0.344|trees=4|LT:T0=2.26 T1=2.27 T2=2.08 T3=2.17
+Step 11000/20000|loss=2.0781|tau=0.312|trees=4|LT:T0=2.26 T1=2.23 T2=1.99 T3=2.20
+Step 11500/20000|loss=2.6719|tau=0.281|trees=4|LT:T0=2.24 T1=2.24 T2=2.00 T3=2.17
+Step 12000/20000|loss=3.0000|tau=0.250|trees=4|LT:T0=2.28 T1=2.29 T2=2.01 T3=2.25
+Step 12500/20000|loss=2.5938|tau=0.219|trees=4|LT:T0=2.39 T1=2.33 T2=2.01 T3=2.24
+Step 13000/20000|loss=2.8906|tau=0.188|trees=4|LT:T0=2.19 T1=2.28 T2=1.87 T3=2.16
+Step 13500/20000|loss=2.9375|tau=0.156|trees=4|LT:T0=2.28 T1=2.30 T2=2.07 T3=2.24
+Step 14000/20000|loss=2.8125|tau=0.125|trees=4|LT:T0=2.36 T1=2.33 T2=2.05 T3=2.27

@@ -1,0 +1,241 @@
+Loading Qwen/Qwen3-8B...
+Domain: Dutch cuisine (second domain generalization)
+Hyperparameters: RANK=16, P1=2000, P2=1500, L1=0.05, START=12
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:35, 11.18it/s]Loading weights:   9%|▉         | 35/399 [00:00<00:02, 150.54it/s]Loading weights:  16%|█▋        | 65/399 [00:00<00:01, 175.07it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 279.05it/s]Loading weights:  44%|████▎     | 174/399 [00:00<00:00, 335.68it/s]Loading weights:  53%|█████▎    | 210/399 [00:00<00:00, 342.48it/s]Loading weights:  63%|██████▎   | 250/399 [00:00<00:00, 356.85it/s]Loading weights:  72%|███████▏  | 288/399 [00:00<00:00, 363.31it/s]Loading weights:  85%|████████▌ | 341/399 [00:01<00:00, 400.26it/s]Loading weights:  98%|█████████▊| 391/399 [00:01<00:00, 424.30it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 334.27it/s]
+Loaded 873 cuisine texts
+Loaded 900 BBC texts for cross-eval
+Generic (C4): 873
+
+=== PHASE 1: Adapter training (2000 steps, cuisine domain) ===
+  Step 0/2000 | loss=1.8438
+  Step 200/2000 | loss=2.1094
+  Step 400/2000 | loss=2.3750
+  Step 600/2000 | loss=2.0156
+  Step 800/2000 | loss=2.2500
+  Step 1000/2000 | loss=1.2266
+  Step 1200/2000 | loss=2.2969
+  Step 1400/2000 | loss=1.9609
+  Step 1600/2000 | loss=2.0000
+  Step 1800/2000 | loss=2.0312
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, mixed data, L1=0.05) ===
+  Step 0/1500 | lm=1.6328 | domain_gate=0.119 generic_gate=0.000 sel=+0.119 | layer_range=[0.119-0.119]
+  Step 100/1500 | lm=1.3750 | domain_gate=0.886 generic_gate=0.505 sel=+0.381 | layer_range=[0.296-0.998]
+  Step 200/1500 | lm=1.3359 | domain_gate=0.878 generic_gate=0.581 sel=+0.297 | layer_range=[0.280-0.996]
+  Step 300/1500 | lm=1.6875 | domain_gate=0.836 generic_gate=0.604 sel=+0.232 | layer_range=[0.174-0.997]
+  Step 400/1500 | lm=1.0547 | domain_gate=0.945 generic_gate=0.549 sel=+0.396 | layer_range=[0.453-0.998]
+  Step 500/1500 | lm=1.4766 | domain_gate=0.978 generic_gate=0.681 sel=+0.298 | layer_range=[0.651-0.998]
+  Step 600/1500 | lm=1.2812 | domain_gate=0.938 generic_gate=0.561 sel=+0.378 | layer_range=[0.448-0.995]
+  Step 700/1500 | lm=2.2656 | domain_gate=0.885 generic_gate=0.464 sel=+0.420 | layer_range=[0.152-0.993]
+  Step 800/1500 | lm=2.0781 | domain_gate=0.835 generic_gate=0.435 sel=+0.400 | layer_range=[0.079-0.995]
+  Step 900/1500 | lm=2.2344 | domain_gate=0.832 generic_gate=0.457 sel=+0.376 | layer_range=[0.178-0.991]
+  Step 1000/1500 | lm=1.6719 | domain_gate=0.882 generic_gate=0.487 sel=+0.395 | layer_range=[0.214-0.995]
+  Step 1100/1500 | lm=1.6172 | domain_gate=0.865 generic_gate=0.462 sel=+0.403 | layer_range=[0.225-0.991]
+  Step 1200/1500 | lm=1.6250 | domain_gate=0.878 generic_gate=0.495 sel=+0.383 | layer_range=[0.163-0.982]
+  Step 1300/1500 | lm=1.6562 | domain_gate=0.874 generic_gate=0.460 sel=+0.414 | layer_range=[0.258-0.994]
+  Step 1400/1500 | lm=1.8203 | domain_gate=0.884 generic_gate=0.480 sel=+0.404 | layer_range=[0.314-0.997]
+
+=== TRAINING RESULTS ===
+Domain gate: 0.885
+Generic gate: 0.449
+Selectivity: +0.436
+
+Per-layer gate activation (last 100 steps):
+  L12: 0.647 #########################
+  L13: 0.686 ###########################
+  L14: 0.940 #####################################
+  L15: 0.754 ##############################
+  L16: 0.784 ###############################
+  L17: 0.566 ######################
+  L18: 0.591 #######################
+  L19: 0.468 ##################
+  L20: 0.490 ###################
+  L21: 0.737 #############################
+  L22: 0.595 #######################
+  L23: 0.665 ##########################
+  L24: 0.584 #######################
+  L25: 0.466 ##################
+  L26: 0.472 ##################
+  L27: 0.259 ##########
+  L28: 0.520 ####################
+  L29: 0.590 #######################
+  L30: 0.757 ##############################
+  L31: 0.749 #############################
+  L32: 0.734 #############################
+  L33: 0.950 #####################################
+  L34: 0.923 ####################################
+  L35: 0.998 #######################################
+
+Saved adapter to /root/t6b-mogae/adapters/dutch_cuisine_delta_gated
+
+=== EVAL: PPL measurement ===
+  Measuring gated PPL on all domains...
+  Gated cuisine PPL: 5.988 +/- 2.477
+  Gated generic PPL: 20.456 +/- 14.978
+  Gated BBC PPL: 12.283 +/- 3.724
+  Measuring per-layer selectivity on eval sets...
+
+  Per-layer selectivity (cuisine vs generic):
+  L12: cuisine=0.598 generic=0.474 bbc=0.519 sel=+0.124
+  L13: cuisine=0.914 generic=0.437 bbc=0.464 sel=+0.477
+  L14: cuisine=0.992 generic=0.897 bbc=0.882 sel=+0.094
+  L15: cuisine=0.971 generic=0.537 bbc=0.552 sel=+0.433
+  L16: cuisine=0.967 generic=0.609 bbc=0.596 sel=+0.358
+  L17: cuisine=0.926 generic=0.230 bbc=0.336 sel=+0.696
+  L18: cuisine=0.946 generic=0.255 bbc=0.264 sel=+0.691
+  L19: cuisine=0.831 generic=0.241 bbc=0.301 sel=+0.590
+  L20: cuisine=0.507 generic=0.286 bbc=0.305 sel=+0.221
+  L21: cuisine=0.978 generic=0.479 bbc=0.551 sel=+0.500
+  L22: cuisine=0.962 generic=0.241 bbc=0.248 sel=+0.721
+  L23: cuisine=0.941 generic=0.407 bbc=0.498 sel=+0.533
+  L24: cuisine=0.977 generic=0.173 bbc=0.214 sel=+0.804
+  L25: cuisine=0.671 generic=0.215 bbc=0.337 sel=+0.456
+  L26: cuisine=0.926 generic=0.188 bbc=0.182 sel=+0.738
+  L27: cuisine=0.206 generic=0.154 bbc=0.121 sel=+0.052
+  L28: cuisine=0.887 generic=0.274 bbc=0.335 sel=+0.614
+  L29: cuisine=0.861 generic=0.254 bbc=0.306 sel=+0.606
+  L30: cuisine=0.990 generic=0.502 bbc=0.474 sel=+0.489
+  L31: cuisine=0.931 generic=0.672 bbc=0.741 sel=+0.258
+  L32: cuisine=0.993 generic=0.572 bbc=0.626 sel=+0.421
+  L33: cuisine=0.999 generic=0.908 bbc=0.911 sel=+0.091
+  L34: cuisine=0.998 generic=0.882 bbc=0.961 sel=+0.116
+  L35: cuisine=0.999 generic=0.996 bbc=0.999 sel=+0.003
+
+  Mean selectivity: +0.420
+
+  Measuring base PPL (no adapter)...
+  Base cuisine PPL: 16.705 +/- 7.840
+  Base generic PPL: 23.692 +/- 18.353
+  Base BBC PPL: 14.233 +/- 4.121
+
+  Cuisine PPL change: -64.2%
+  Generic PPL change: -13.7%
+  BBC PPL change: -13.7%
+
+=== CROSS-EVAL: 2x2 M_ij matrix ===
+  Loading BBC adapter for cross-evaluation...
+  BBC adapter on BBC text...
+    BBC adapter -> BBC: 3.772
+  BBC adapter on cuisine text...
+    BBC adapter -> cuisine: 15.945
+  BBC adapter on generic text...
+    BBC adapter -> generic: 20.828
+  Cuisine adapter on BBC text...
+    Cuisine adapter -> BBC: 12.283
+  Cuisine adapter on cuisine text...
+    Cuisine adapter -> cuisine: 5.988
+  Cuisine adapter on generic text...
+    Cuisine adapter -> generic: 20.456
+
+=== M_ij MATRIX (PPL) ===
+               BBC_eval  Cuisine_eval  Generic_eval
+  BBC adapter:    3.772        15.945        20.828
+  Cui adapter:   12.283         5.988        20.456
+  Base model:    14.233        16.705        23.692
+
+=== M_ij MATRIX (% change from base) ===
+               BBC_eval  Cuisine_eval  Generic_eval
+Traceback (most recent call last):
+  File "/root/t6b-mogae/scripts/train_delta_gated_cuisine.py", line 444, in <module>
+    print(f"  BBC adapter: {mij_delta[bbc_adapter][bbc_eval]:+7.1f}%  {mij_delta[bbc_adapter][cuisine_eval]:+11.1f}%  {mij_delta[bbc_adapter][generic_eval]:+11.1f}%")
+                            ~~~~~~~~~^^^^^^^^^^^^^
+KeyError: ModuleDict(
+  (12): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (13): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (14): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (15): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (16): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (17): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (18): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (19): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (20): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (21): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (22): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (23): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (24): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (25): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (26): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (27): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (28): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (29): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (30): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (31): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (32): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (33): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (34): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+  (35): Expert(
+    (gate_lora): LoRA()
+    (up_lora): LoRA()
+  )
+)

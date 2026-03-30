@@ -1,0 +1,59 @@
+=== Composing grove from 3 adapters ===
+  bbc_alice (alice) — BBC news 2025 — rank 16
+  cuisine_bob (bob) — Dutch cuisine — rank 16
+  wingchun_carol (carol) — Wing Chun martial arts — rank 8
+
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:31, 12.80it/s]Loading weights:  10%|█         | 41/399 [00:00<00:01, 191.73it/s]Loading weights:  21%|██        | 82/399 [00:00<00:01, 277.31it/s]Loading weights:  31%|███       | 123/399 [00:00<00:00, 320.74it/s]Loading weights:  41%|████      | 164/399 [00:00<00:00, 337.67it/s]Loading weights:  54%|█████▎    | 214/399 [00:00<00:00, 385.86it/s]Loading weights:  64%|██████▎   | 254/399 [00:00<00:00, 371.40it/s]Loading weights:  76%|███████▌  | 303/399 [00:00<00:00, 405.97it/s]Loading weights:  86%|████████▋ | 345/399 [00:01<00:00, 330.77it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 358.88it/s]
+Loading bbc_alice...
+Loading cuisine_bob...
+Loading wingchun_carol...
+  bbc_alice: 900 domain texts from /tmp/bbc_2025_clean.jsonl
+  cuisine_bob: 873 domain texts from /tmp/dutch_cuisine_clean.jsonl
+  wingchun_carol: 27 domain texts from /root/t6b-mogae/data/wing-chun-data.jsonl
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+=== JOINT GATE TRAINING (1500 steps, 3 adapters) ===
+  Step 0/1500 | lm=1.7812 | bbc_alice | bbc_alice=0.647 | cuisine_bob=0.247 | wingchun_carol=0.020
+  Step 200/1500 | lm=1.5078 | bbc_alice | bbc_alice=0.956 | cuisine_bob=0.017 | wingchun_carol=0.010
+  Step 400/1500 | lm=1.8203 | bbc_alice | bbc_alice=0.825 | cuisine_bob=0.100 | wingchun_carol=0.022
+  Step 600/1500 | lm=1.1719 | bbc_alice | bbc_alice=0.927 | cuisine_bob=0.027 | wingchun_carol=0.013
+  Step 800/1500 | lm=0.3594 | bbc_alice | bbc_alice=0.903 | cuisine_bob=0.040 | wingchun_carol=0.013
+  Step 1000/1500 | lm=0.5352 | bbc_alice | bbc_alice=0.948 | cuisine_bob=0.012 | wingchun_carol=0.013
+  Step 1200/1500 | lm=0.9766 | bbc_alice | bbc_alice=0.943 | cuisine_bob=0.028 | wingchun_carol=0.008
+  Step 1400/1500 | lm=1.0469 | bbc_alice | bbc_alice=0.985 | cuisine_bob=0.005 | wingchun_carol=0.002
+
+=== EVALUATION ===
+  bbc_alice domain: PPL=11.72 | bbc_alice=0.966 | cuisine_bob=0.017 | wingchun_carol=0.005
+  cuisine_bob domain: PPL=10.85 | bbc_alice=0.008 | cuisine_bob=0.980 | wingchun_carol=0.002
+  wingchun_carol domain: PPL=1.37 | bbc_alice=0.099 | cuisine_bob=0.073 | wingchun_carol=0.799
+  Generic: PPL=15.69 | bbc_alice=0.238 | cuisine_bob=0.482 | wingchun_carol=0.043
+  Base bbc_alice: PPL=12.74
+  Base cuisine_bob: PPL=11.86
+  Base wingchun_carol: PPL=14.32
+  Base generic: PPL=18.47
+
+=== M_ij MATRIX (diagonal dominance check) ===
+
+Domain               Base PPL   Grove PPL  Delta      bbc_alic  cuisine_  wingchun
+------------------------------------------------------------------------------
+bbc_alice            12.74      11.72         -8.0%     0.966     0.017     0.005
+cuisine_bob          11.86      10.85         -8.5%     0.008     0.980     0.002
+wingchun_carol       14.32      1.37         -90.4%     0.099     0.073     0.799
+generic              18.47      15.69        -15.0%     0.238     0.482     0.043
+
+=== SUCCESS CRITERIA ===
+  [PASS] bbc_alice diagonal dominant: 0.966 (threshold: 0.23834967295328774)
+  [PASS] cuisine_bob diagonal dominant: 0.980 (threshold: 0.4823023478190104)
+  [PASS] wingchun_carol diagonal dominant: 0.799 (threshold: 0.04314748287200928)
+  [PASS] bbc_alice leak on cuisine_bob: 0.008 (threshold: 0.1)
+  [PASS] bbc_alice leak on wingchun_carol: 0.099 (threshold: 0.1)
+  [PASS] cuisine_bob leak on bbc_alice: 0.017 (threshold: 0.1)
+  [PASS] cuisine_bob leak on wingchun_carol: 0.073 (threshold: 0.1)
+  [PASS] wingchun_carol leak on bbc_alice: 0.005 (threshold: 0.1)
+  [PASS] wingchun_carol leak on cuisine_bob: 0.002 (threshold: 0.1)
+  [PASS] generic PPL < +5%: -15.036 (threshold: 5.0)
+
+10/10 passed. VERDICT: SUCCESS
+
+Results saved to /root/t6b-mogae/grove_registry/composition_result.json

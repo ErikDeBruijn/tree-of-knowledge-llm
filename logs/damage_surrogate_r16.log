@@ -1,0 +1,392 @@
+[2026-03-27 21:04:05] ======================================================================
+[2026-03-27 21:04:05] DAMAGE-PREDICTION SURROGATE EXPERIMENT
+[2026-03-27 21:04:05] ======================================================================
+[2026-03-27 21:04:05] Insight: 'be different' losses produce orthogonality but NOT
+[2026-03-27 21:04:05] causal locality. The correct signal: expert removal should
+[2026-03-27 21:04:05] cause SELECTIVE damage.
+[2026-03-27 21:04:05] 
+[2026-03-27 21:04:05] L_locality = lambda * (overlap - 0.1 * exclusivity)
+[2026-03-27 21:04:05]   overlap = damage_e0 * damage_e1  (penalize redundancy)
+[2026-03-27 21:04:05]   exclusivity = |damage_e0 - damage_e1|  (reward selectivity)
+[2026-03-27 21:04:05] ======================================================================
+[2026-03-27 21:04:05] Config: {'device': 'cuda:0', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': '', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 18, 'expert_layer_start': 18, 'num_experts': 2, 'total_tokens': 50000000, 'batch_size': 4, 'seq_len': 512, 'lr': 0.0001, 'tau_start': 1.0, 'tau_end': 0.1, 'tau_anneal_steps': 24000, 'lambda_loc': 0.05, 'damage_every_n_steps': 5, 'damage_token_stride': 4, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results_damage_surrogate', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/fork_trunk18', 'save_checkpoint_dir': '/root/t6b-mogae/checkpoints/damage_surrogate', 'log_file': '/root/t6b-mogae/logs/damage_surrogate.log'}
+[2026-03-27 21:04:05] Loading Qwen/Qwen3-1.7B...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 18004.29it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-27 21:08:08] Base model loaded: 2,031,739,904 params
+[2026-03-27 21:08:08] Verified: hidden=2048, intermediate=6144
+[2026-03-27 21:08:08] Trainable params: 2,621,440
+[2026-03-27 21:08:08] Expert tree: {18: {'num_experts': 1, 'ranks': [16]}, 19: {'num_experts': 1, 'ranks': [16]}, 20: {'num_experts': 1, 'ranks': [16]}, 21: {'num_experts': 1, 'ranks': [16]}, 22: {'num_experts': 1, 'ranks': [16]}, 23: {'num_experts': 1, 'ranks': [16]}, 24: {'num_experts': 1, 'ranks': [16]}, 25: {'num_experts': 1, 'ranks': [16]}, 26: {'num_experts': 1, 'ranks': [16]}, 27: {'num_experts': 1, 'ranks': [16]}}
+[2026-03-27 21:08:08] Training: 24414 steps, LR=0.0001, batch=4x512
+[2026-03-27 21:08:08] Gumbel-softmax: tau 1.0 -> 0.1 over 24000 steps
+[2026-03-27 21:08:08] Damage surrogate: lambda_loc=0.05, every 5 steps, stride=4
+[2026-03-27 21:08:08] NO contrastive loss, NO load-balancing loss
+[2026-03-27 21:08:08] Trainable params: 2,621,440
+[2026-03-27 21:08:08] Expert tree: {18: {'num_experts': 1, 'ranks': [16]}, 19: {'num_experts': 1, 'ranks': [16]}, 20: {'num_experts': 1, 'ranks': [16]}, 21: {'num_experts': 1, 'ranks': [16]}, 22: {'num_experts': 1, 'ranks': [16]}, 23: {'num_experts': 1, 'ranks': [16]}, 24: {'num_experts': 1, 'ranks': [16]}, 25: {'num_experts': 1, 'ranks': [16]}, 26: {'num_experts': 1, 'ranks': [16]}, 27: {'num_experts': 1, 'ranks': [16]}}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[2026-03-27 21:08:23]   step 100/24414 | lm=3.5469 loc=0.000000 tau=0.996 | lr=1.00e-04 | 13792 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:08:34]   step 200/24414 | lm=2.9688 loc=0.000000 tau=0.993 | lr=1.00e-04 | 16222 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:08:44]   step 300/24414 | lm=2.8750 loc=0.000000 tau=0.989 | lr=1.00e-04 | 17200 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:08:55]   step 400/24414 | lm=1.9062 loc=0.000000 tau=0.985 | lr=9.99e-05 | 17740 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:09:05]   step 500/24414 | lm=2.8594 loc=0.000000 tau=0.981 | lr=9.99e-05 | 18059 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:09:16]   step 600/24414 | lm=2.5000 loc=0.000000 tau=0.978 | lr=9.99e-05 | 18258 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:09:26]   step 700/24414 | lm=3.3906 loc=0.000000 tau=0.974 | lr=9.98e-05 | 18395 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:09:37]   step 800/24414 | lm=3.2812 loc=0.000000 tau=0.970 | lr=9.97e-05 | 18488 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:09:48]   step 900/24414 | lm=2.5000 loc=0.000000 tau=0.966 | lr=9.97e-05 | 18547 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:09:59]   step 1000/24414 | lm=3.3750 loc=0.000000 tau=0.963 | lr=9.96e-05 | 18591 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:09:59] --- Eval at step 1000 (tau=0.963) ---
+[2026-03-27 21:10:24]   PPL=20.50 | mean_cossim=None
+[2026-03-27 21:10:24]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:10:24] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step1000.pt
+[2026-03-27 21:10:35]   step 1100/24414 | lm=3.0312 loc=0.000000 tau=0.959 | lr=9.95e-05 | 15328 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:10:46]   step 1200/24414 | lm=2.6875 loc=0.000000 tau=0.955 | lr=9.94e-05 | 15576 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:10:57]   step 1300/24414 | lm=3.1250 loc=0.000000 tau=0.951 | lr=9.93e-05 | 15789 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:11:08]   step 1400/24414 | lm=3.2031 loc=0.000000 tau=0.948 | lr=9.92e-05 | 15973 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:11:19]   step 1500/24414 | lm=2.9531 loc=0.000000 tau=0.944 | lr=9.91e-05 | 16137 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:11:30]   step 1600/24414 | lm=3.0938 loc=0.000000 tau=0.940 | lr=9.89e-05 | 16281 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:11:41]   step 1700/24414 | lm=3.1562 loc=0.000000 tau=0.936 | lr=9.88e-05 | 16410 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:11:52]   step 1800/24414 | lm=3.7031 loc=0.000000 tau=0.933 | lr=9.87e-05 | 16524 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:12:02]   step 1900/24414 | lm=3.6562 loc=0.000000 tau=0.929 | lr=9.85e-05 | 16627 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:12:13]   step 2000/24414 | lm=3.3125 loc=0.000000 tau=0.925 | lr=9.84e-05 | 16720 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:12:13] --- Eval at step 2000 (tau=0.925) ---
+[2026-03-27 21:12:29]   PPL=20.40 | mean_cossim=None
+[2026-03-27 21:12:29]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:12:29] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step2000.pt
+[2026-03-27 21:12:40]   step 2100/24414 | lm=2.8750 loc=0.000000 tau=0.921 | lr=9.82e-05 | 15821 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:12:51]   step 2200/24414 | lm=3.2188 loc=0.000000 tau=0.918 | lr=9.80e-05 | 15935 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:13:02]   step 2300/24414 | lm=2.8750 loc=0.000000 tau=0.914 | lr=9.78e-05 | 16040 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:13:13]   step 2400/24414 | lm=2.7031 loc=0.000000 tau=0.910 | lr=9.76e-05 | 16136 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:13:24]   step 2500/24414 | lm=3.1250 loc=0.000000 tau=0.906 | lr=9.74e-05 | 16227 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:13:35]   step 2600/24414 | lm=3.5938 loc=0.000000 tau=0.903 | lr=9.72e-05 | 16312 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:13:46]   step 2700/24414 | lm=3.2344 loc=0.000000 tau=0.899 | lr=9.70e-05 | 16392 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:13:57]   step 2800/24414 | lm=3.3281 loc=0.000000 tau=0.895 | lr=9.68e-05 | 16467 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:14:08]   step 2900/24414 | lm=3.0000 loc=0.000000 tau=0.891 | lr=9.66e-05 | 16537 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:14:18]   step 3000/24414 | lm=3.3750 loc=0.000000 tau=0.888 | lr=9.63e-05 | 16604 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:14:18] --- Eval at step 3000 (tau=0.888) ---
+[2026-03-27 21:14:34]   PPL=20.36 | mean_cossim=None
+[2026-03-27 21:14:34]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:14:34] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step3000.pt
+[2026-03-27 21:14:45]   step 3100/24414 | lm=2.6562 loc=0.000000 tau=0.884 | lr=9.61e-05 | 16014 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+'The read operation timed out' thrown while requesting GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00000-of-01024.json.gz
+Retrying in 1s [Retry 1/5].
+[2026-03-27 21:15:07]   step 3200/24414 | lm=3.2656 loc=0.000000 tau=0.880 | lr=9.58e-05 | 15656 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:15:18]   step 3300/24414 | lm=2.7656 loc=0.000000 tau=0.876 | lr=9.56e-05 | 15739 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:15:29]   step 3400/24414 | lm=4.0312 loc=0.000000 tau=0.873 | lr=9.53e-05 | 15818 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:15:40]   step 3500/24414 | lm=3.1719 loc=0.000000 tau=0.869 | lr=9.50e-05 | 15891 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:15:50]   step 3600/24414 | lm=3.3906 loc=0.000000 tau=0.865 | lr=9.47e-05 | 15960 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:16:01]   step 3700/24414 | lm=2.9688 loc=0.000000 tau=0.861 | lr=9.44e-05 | 16025 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:16:12]   step 3800/24414 | lm=2.9062 loc=0.000000 tau=0.858 | lr=9.41e-05 | 16086 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:16:23]   step 3900/24414 | lm=3.1250 loc=0.000000 tau=0.854 | lr=9.38e-05 | 16144 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:16:34]   step 4000/24414 | lm=3.1562 loc=0.000000 tau=0.850 | lr=9.35e-05 | 16200 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:16:34] --- Eval at step 4000 (tau=0.850) ---
+[2026-03-27 21:16:50]   PPL=20.32 | mean_cossim=None
+[2026-03-27 21:16:50]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:16:50] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step4000.pt
+[2026-03-27 21:17:01]   step 4100/24414 | lm=1.6484 loc=0.000000 tau=0.846 | lr=9.32e-05 | 15777 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:17:12]   step 4200/24414 | lm=2.9531 loc=0.000000 tau=0.843 | lr=9.29e-05 | 15836 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:17:23]   step 4300/24414 | lm=2.9375 loc=0.000000 tau=0.839 | lr=9.25e-05 | 15894 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:17:33]   step 4400/24414 | lm=2.9062 loc=0.000000 tau=0.835 | lr=9.22e-05 | 15950 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:17:44]   step 4500/24414 | lm=3.3594 loc=0.000000 tau=0.831 | lr=9.18e-05 | 16004 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:17:55]   step 4600/24414 | lm=3.0000 loc=0.000000 tau=0.828 | lr=9.15e-05 | 16056 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:18:06]   step 4700/24414 | lm=3.2500 loc=0.000000 tau=0.824 | lr=9.11e-05 | 16105 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:18:17]   step 4800/24414 | lm=3.1875 loc=0.000000 tau=0.820 | lr=9.08e-05 | 16154 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:18:28]   step 4900/24414 | lm=3.0938 loc=0.000000 tau=0.816 | lr=9.04e-05 | 16200 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:18:39]   step 5000/24414 | lm=2.8438 loc=0.000000 tau=0.813 | lr=9.00e-05 | 16246 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:18:39] --- Eval at step 5000 (tau=0.813) ---
+[2026-03-27 21:19:04]   PPL=20.29 | mean_cossim=None
+[2026-03-27 21:19:04]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:19:04] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step5000.pt
+[2026-03-27 21:19:15]   step 5100/24414 | lm=3.1406 loc=0.000000 tau=0.809 | lr=8.96e-05 | 15671 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:19:26]   step 5200/24414 | lm=3.1406 loc=0.000000 tau=0.805 | lr=8.92e-05 | 15722 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+'The read operation timed out' thrown while requesting GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00000-of-01024.json.gz
+Retrying in 1s [Retry 1/5].
+[2026-03-27 21:19:48]   step 5300/24414 | lm=2.9375 loc=0.000000 tau=0.801 | lr=8.88e-05 | 15517 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:19:59]   step 5400/24414 | lm=3.0312 loc=0.000000 tau=0.798 | lr=8.84e-05 | 15569 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:20:10]   step 5500/24414 | lm=3.0938 loc=0.000000 tau=0.794 | lr=8.80e-05 | 15618 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:20:21]   step 5600/24414 | lm=3.0781 loc=0.000000 tau=0.790 | lr=8.76e-05 | 15665 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:20:31]   step 5700/24414 | lm=3.1094 loc=0.000000 tau=0.786 | lr=8.71e-05 | 15711 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:20:42]   step 5800/24414 | lm=2.1406 loc=0.000000 tau=0.783 | lr=8.67e-05 | 15755 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:20:53]   step 5900/24414 | lm=3.3594 loc=0.000000 tau=0.779 | lr=8.63e-05 | 15797 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:21:04]   step 6000/24414 | lm=3.2500 loc=0.000000 tau=0.775 | lr=8.58e-05 | 15838 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:21:04] --- Eval at step 6000 (tau=0.775) ---
+[2026-03-27 21:21:20]   PPL=20.28 | mean_cossim=None
+[2026-03-27 21:21:20]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:21:20] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step6000.pt
+[2026-03-27 21:21:31]   step 6100/24414 | lm=2.9219 loc=0.000000 tau=0.771 | lr=8.54e-05 | 15572 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:21:42]   step 6200/24414 | lm=3.3125 loc=0.000000 tau=0.768 | lr=8.49e-05 | 15615 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:21:53]   step 6300/24414 | lm=3.1250 loc=0.000000 tau=0.764 | lr=8.45e-05 | 15651 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:22:04]   step 6400/24414 | lm=3.3125 loc=0.000000 tau=0.760 | lr=8.40e-05 | 15691 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:22:15]   step 6500/24414 | lm=3.7969 loc=0.000000 tau=0.756 | lr=8.35e-05 | 15731 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:22:26]   step 6600/24414 | lm=2.6094 loc=0.000000 tau=0.753 | lr=8.30e-05 | 15770 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:22:36]   step 6700/24414 | lm=2.6406 loc=0.000000 tau=0.749 | lr=8.25e-05 | 15808 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:22:47]   step 6800/24414 | lm=3.3594 loc=0.000000 tau=0.745 | lr=8.20e-05 | 15845 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:22:58]   step 6900/24414 | lm=2.3750 loc=0.000000 tau=0.741 | lr=8.16e-05 | 15881 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:23:09]   step 7000/24414 | lm=3.1406 loc=0.000000 tau=0.738 | lr=8.11e-05 | 15916 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:23:09] --- Eval at step 7000 (tau=0.738) ---
+[2026-03-27 21:23:25]   PPL=20.26 | mean_cossim=None
+[2026-03-27 21:23:25]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:23:25] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step7000.pt
+[2026-03-27 21:23:36]   step 7100/24414 | lm=3.1250 loc=0.000000 tau=0.734 | lr=8.05e-05 | 15684 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:23:46]   step 7200/24414 | lm=3.4375 loc=0.000000 tau=0.730 | lr=8.00e-05 | 15720 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:23:58]   step 7300/24414 | lm=2.9375 loc=0.000000 tau=0.726 | lr=7.95e-05 | 15750 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:24:09]   step 7400/24414 | lm=2.3594 loc=0.000000 tau=0.723 | lr=7.90e-05 | 15784 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:24:19]   step 7500/24414 | lm=3.2031 loc=0.000000 tau=0.719 | lr=7.85e-05 | 15818 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:24:30]   step 7600/24414 | lm=2.7969 loc=0.000000 tau=0.715 | lr=7.79e-05 | 15851 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:24:41]   step 7700/24414 | lm=2.5938 loc=0.000000 tau=0.711 | lr=7.74e-05 | 15883 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:24:52]   step 7800/24414 | lm=2.8906 loc=0.000000 tau=0.708 | lr=7.69e-05 | 15915 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:25:03]   step 7900/24414 | lm=3.3906 loc=0.000000 tau=0.704 | lr=7.63e-05 | 15946 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:25:14]   step 8000/24414 | lm=2.8125 loc=0.000000 tau=0.700 | lr=7.58e-05 | 15976 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:25:14] --- Eval at step 8000 (tau=0.700) ---
+[2026-03-27 21:25:29]   PPL=20.25 | mean_cossim=None
+[2026-03-27 21:25:29]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:25:29] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step8000.pt
+[2026-03-27 21:25:40]   step 8100/24414 | lm=3.3125 loc=0.000000 tau=0.696 | lr=7.52e-05 | 15770 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:25:51]   step 8200/24414 | lm=3.6250 loc=0.000000 tau=0.693 | lr=7.47e-05 | 15802 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:26:02]   step 8300/24414 | lm=2.8906 loc=0.000000 tau=0.689 | lr=7.41e-05 | 15832 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:26:13]   step 8400/24414 | lm=2.8906 loc=0.000000 tau=0.685 | lr=7.35e-05 | 15861 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:26:24]   step 8500/24414 | lm=3.1719 loc=0.000000 tau=0.681 | lr=7.30e-05 | 15890 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:26:35]   step 8600/24414 | lm=2.8438 loc=0.000000 tau=0.678 | lr=7.24e-05 | 15918 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:26:46]   step 8700/24414 | lm=3.2969 loc=0.000000 tau=0.674 | lr=7.18e-05 | 15946 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:26:57]   step 8800/24414 | lm=2.7969 loc=0.000000 tau=0.670 | lr=7.12e-05 | 15974 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:27:08]   step 8900/24414 | lm=3.2031 loc=0.000000 tau=0.666 | lr=7.06e-05 | 16000 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:27:19]   step 9000/24414 | lm=3.2188 loc=0.000000 tau=0.663 | lr=7.01e-05 | 16027 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:27:19] --- Eval at step 9000 (tau=0.663) ---
+[2026-03-27 21:27:44]   PPL=20.24 | mean_cossim=None
+[2026-03-27 21:27:44]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:27:44] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step9000.pt
+[2026-03-27 21:27:55]   step 9100/24414 | lm=3.2500 loc=0.000000 tau=0.659 | lr=6.95e-05 | 15710 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:28:06]   step 9200/24414 | lm=2.5000 loc=0.000000 tau=0.655 | lr=6.89e-05 | 15738 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:28:17]   step 9300/24414 | lm=2.8125 loc=0.000000 tau=0.651 | lr=6.83e-05 | 15766 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:28:28]   step 9400/24414 | lm=3.1250 loc=0.000000 tau=0.648 | lr=6.77e-05 | 15789 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:28:39]   step 9500/24414 | lm=2.7656 loc=0.000000 tau=0.644 | lr=6.71e-05 | 15815 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:28:50]   step 9600/24414 | lm=3.0156 loc=0.000000 tau=0.640 | lr=6.65e-05 | 15841 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:29:01]   step 9700/24414 | lm=3.1406 loc=0.000000 tau=0.636 | lr=6.59e-05 | 15865 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:29:12]   step 9800/24414 | lm=3.0312 loc=0.000000 tau=0.633 | lr=6.52e-05 | 15889 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:29:23]   step 9900/24414 | lm=2.6406 loc=0.000000 tau=0.629 | lr=6.46e-05 | 15914 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:29:33]   step 10000/24414 | lm=3.1094 loc=0.000000 tau=0.625 | lr=6.40e-05 | 15938 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:29:33] --- Eval at step 10000 (tau=0.625) ---
+[2026-03-27 21:29:59]   PPL=20.23 | mean_cossim=None
+[2026-03-27 21:29:59]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:29:59] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step10000.pt
+[2026-03-27 21:30:10]   step 10100/24414 | lm=2.9844 loc=0.000000 tau=0.621 | lr=6.34e-05 | 15655 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:30:21]   step 10200/24414 | lm=3.2656 loc=0.000000 tau=0.618 | lr=6.28e-05 | 15681 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:30:31]   step 10300/24414 | lm=3.0781 loc=0.000000 tau=0.614 | lr=6.21e-05 | 15707 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:30:43]   step 10400/24414 | lm=3.3438 loc=0.000000 tau=0.610 | lr=6.15e-05 | 15727 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:30:54]   step 10500/24414 | lm=3.5312 loc=0.000000 tau=0.606 | lr=6.09e-05 | 15751 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:31:05]   step 10600/24414 | lm=2.9688 loc=0.000000 tau=0.603 | lr=6.03e-05 | 15774 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:31:16]   step 10700/24414 | lm=2.7500 loc=0.000000 tau=0.599 | lr=5.96e-05 | 15797 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:31:27]   step 10800/24414 | lm=2.8438 loc=0.000000 tau=0.595 | lr=5.90e-05 | 15820 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:31:38]   step 10900/24414 | lm=2.5938 loc=0.000000 tau=0.591 | lr=5.84e-05 | 15843 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:31:48]   step 11000/24414 | lm=3.2969 loc=0.000000 tau=0.588 | lr=5.77e-05 | 15865 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:31:48] --- Eval at step 11000 (tau=0.588) ---
+[2026-03-27 21:32:04]   PPL=20.23 | mean_cossim=None
+[2026-03-27 21:32:04]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:32:04] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step11000.pt
+[2026-03-27 21:32:15]   step 11100/24414 | lm=3.1875 loc=0.000000 tau=0.584 | lr=5.71e-05 | 15715 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:32:26]   step 11200/24414 | lm=3.1875 loc=0.000000 tau=0.580 | lr=5.65e-05 | 15738 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:32:37]   step 11300/24414 | lm=3.0156 loc=0.000000 tau=0.576 | lr=5.58e-05 | 15761 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:32:48]   step 11400/24414 | lm=2.9844 loc=0.000000 tau=0.573 | lr=5.52e-05 | 15783 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:32:59]   step 11500/24414 | lm=3.0469 loc=0.000000 tau=0.569 | lr=5.45e-05 | 15802 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:33:10]   step 11600/24414 | lm=3.0000 loc=0.000000 tau=0.565 | lr=5.39e-05 | 15824 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:33:21]   step 11700/24414 | lm=2.9531 loc=0.000000 tau=0.561 | lr=5.33e-05 | 15845 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:33:32]   step 11800/24414 | lm=3.2812 loc=0.000000 tau=0.558 | lr=5.26e-05 | 15866 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:33:42]   step 11900/24414 | lm=3.1250 loc=0.000000 tau=0.554 | lr=5.20e-05 | 15887 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:33:53]   step 12000/24414 | lm=2.8281 loc=0.000000 tau=0.550 | lr=5.13e-05 | 15908 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:33:53] --- Eval at step 12000 (tau=0.550) ---
+'The read operation timed out' thrown while requesting GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-validation.00000-of-00008.json.gz
+Retrying in 1s [Retry 1/5].
+[2026-03-27 21:34:20]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:34:20]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:34:20] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step12000.pt
+[2026-03-27 21:34:31]   step 12100/24414 | lm=2.8281 loc=0.000000 tau=0.546 | lr=5.07e-05 | 15663 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:34:41]   step 12200/24414 | lm=3.2812 loc=0.000000 tau=0.543 | lr=5.00e-05 | 15685 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:34:52]   step 12300/24414 | lm=2.9531 loc=0.000000 tau=0.539 | lr=4.94e-05 | 15707 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:35:03]   step 12400/24414 | lm=3.1562 loc=0.000000 tau=0.535 | lr=4.88e-05 | 15727 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:35:14]   step 12500/24414 | lm=2.9844 loc=0.000000 tau=0.531 | lr=4.81e-05 | 15747 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:35:25]   step 12600/24414 | lm=2.9219 loc=0.000000 tau=0.528 | lr=4.75e-05 | 15767 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:35:36]   step 12700/24414 | lm=3.1719 loc=0.000000 tau=0.524 | lr=4.68e-05 | 15786 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:35:47]   step 12800/24414 | lm=3.2344 loc=0.000000 tau=0.520 | lr=4.62e-05 | 15806 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:35:58]   step 12900/24414 | lm=3.2500 loc=0.000000 tau=0.516 | lr=4.55e-05 | 15825 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:36:09]   step 13000/24414 | lm=3.0781 loc=0.000000 tau=0.513 | lr=4.49e-05 | 15843 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:36:09] --- Eval at step 13000 (tau=0.513) ---
+[2026-03-27 21:36:24]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:36:24]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:36:24] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step13000.pt
+[2026-03-27 21:36:35]   step 13100/24414 | lm=2.6875 loc=0.000000 tau=0.509 | lr=4.43e-05 | 15719 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:36:46]   step 13200/24414 | lm=5.4375 loc=0.000000 tau=0.505 | lr=4.36e-05 | 15739 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:36:57]   step 13300/24414 | lm=3.3594 loc=0.000000 tau=0.501 | lr=4.30e-05 | 15758 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:37:08]   step 13400/24414 | lm=3.2031 loc=0.000000 tau=0.498 | lr=4.24e-05 | 15777 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:37:19]   step 13500/24414 | lm=3.2812 loc=0.000000 tau=0.494 | lr=4.17e-05 | 15796 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:37:30]   step 13600/24414 | lm=2.9844 loc=0.000000 tau=0.490 | lr=4.11e-05 | 15811 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:37:41]   step 13700/24414 | lm=2.9844 loc=0.000000 tau=0.486 | lr=4.05e-05 | 15830 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:37:52]   step 13800/24414 | lm=3.6094 loc=0.000000 tau=0.483 | lr=3.98e-05 | 15848 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:38:03]   step 13900/24414 | lm=3.0781 loc=0.000000 tau=0.479 | lr=3.92e-05 | 15866 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:38:14]   step 14000/24414 | lm=3.2969 loc=0.000000 tau=0.475 | lr=3.86e-05 | 15884 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:38:14] --- Eval at step 14000 (tau=0.475) ---
+[2026-03-27 21:38:39]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:38:39]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:38:39] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step14000.pt
+[2026-03-27 21:38:50]   step 14100/24414 | lm=2.5312 loc=0.000000 tau=0.471 | lr=3.79e-05 | 15684 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:39:00]   step 14200/24414 | lm=2.8125 loc=0.000000 tau=0.468 | lr=3.73e-05 | 15703 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:39:11]   step 14300/24414 | lm=2.9219 loc=0.000000 tau=0.464 | lr=3.67e-05 | 15721 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:39:22]   step 14400/24414 | lm=2.9375 loc=0.000000 tau=0.460 | lr=3.61e-05 | 15739 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:39:33]   step 14500/24414 | lm=3.2812 loc=0.000000 tau=0.456 | lr=3.55e-05 | 15756 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:39:44]   step 14600/24414 | lm=2.7812 loc=0.000000 tau=0.453 | lr=3.48e-05 | 15771 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:39:55]   step 14700/24414 | lm=2.8906 loc=0.000000 tau=0.449 | lr=3.42e-05 | 15788 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:40:06]   step 14800/24414 | lm=2.6719 loc=0.000000 tau=0.445 | lr=3.36e-05 | 15804 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:40:17]   step 14900/24414 | lm=2.9844 loc=0.000000 tau=0.441 | lr=3.30e-05 | 15821 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:40:28]   step 15000/24414 | lm=2.9531 loc=0.000000 tau=0.438 | lr=3.24e-05 | 15837 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:40:28] --- Eval at step 15000 (tau=0.438) ---
+[2026-03-27 21:40:44]   PPL=20.21 | mean_cossim=None
+[2026-03-27 21:40:44]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:40:44] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step15000.pt
+[2026-03-27 21:40:54]   step 15100/24414 | lm=2.9531 loc=0.000000 tau=0.434 | lr=3.18e-05 | 15730 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:41:05]   step 15200/24414 | lm=3.5469 loc=0.000000 tau=0.430 | lr=3.12e-05 | 15746 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:41:16]   step 15300/24414 | lm=2.9375 loc=0.000000 tau=0.426 | lr=3.06e-05 | 15763 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:41:27]   step 15400/24414 | lm=2.9688 loc=0.000000 tau=0.423 | lr=3.00e-05 | 15780 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:41:38]   step 15500/24414 | lm=3.1406 loc=0.000000 tau=0.419 | lr=2.94e-05 | 15796 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:41:49]   step 15600/24414 | lm=2.7656 loc=0.000000 tau=0.415 | lr=2.89e-05 | 15810 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:42:00]   step 15700/24414 | lm=2.9062 loc=0.000000 tau=0.411 | lr=2.83e-05 | 15826 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:42:11]   step 15800/24414 | lm=3.1719 loc=0.000000 tau=0.408 | lr=2.77e-05 | 15842 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:42:22]   step 15900/24414 | lm=3.2344 loc=0.000000 tau=0.404 | lr=2.71e-05 | 15858 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:42:33]   step 16000/24414 | lm=3.2500 loc=0.000000 tau=0.400 | lr=2.66e-05 | 15874 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:42:33] --- Eval at step 16000 (tau=0.400) ---
+[2026-03-27 21:42:48]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:42:48]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:42:48] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step16000.pt
+[2026-03-27 21:42:59]   step 16100/24414 | lm=3.3750 loc=0.000000 tau=0.396 | lr=2.60e-05 | 15770 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:43:10]   step 16200/24414 | lm=4.3750 loc=0.000000 tau=0.393 | lr=2.54e-05 | 15786 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:43:21]   step 16300/24414 | lm=2.9844 loc=0.000000 tau=0.389 | lr=2.49e-05 | 15802 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:43:32]   step 16400/24414 | lm=3.1406 loc=0.000000 tau=0.385 | lr=2.43e-05 | 15818 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:43:43]   step 16500/24414 | lm=3.2969 loc=0.000000 tau=0.381 | lr=2.38e-05 | 15833 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:43:54]   step 16600/24414 | lm=2.8125 loc=0.000000 tau=0.378 | lr=2.32e-05 | 15848 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:44:05]   step 16700/24414 | lm=1.6484 loc=0.000000 tau=0.374 | lr=2.27e-05 | 15863 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:44:15]   step 16800/24414 | lm=2.7500 loc=0.000000 tau=0.370 | lr=2.21e-05 | 15877 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:44:26]   step 16900/24414 | lm=3.3125 loc=0.000000 tau=0.366 | lr=2.16e-05 | 15892 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:44:37]   step 17000/24414 | lm=3.0938 loc=0.000000 tau=0.363 | lr=2.11e-05 | 15906 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:44:37] --- Eval at step 17000 (tau=0.363) ---
+[2026-03-27 21:44:53]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:44:53]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:44:53] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step17000.pt
+[2026-03-27 21:45:04]   step 17100/24414 | lm=3.0469 loc=0.000000 tau=0.359 | lr=2.06e-05 | 15810 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:45:14]   step 17200/24414 | lm=2.8594 loc=0.000000 tau=0.355 | lr=2.00e-05 | 15825 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:45:25]   step 17300/24414 | lm=3.4531 loc=0.000000 tau=0.351 | lr=1.95e-05 | 15839 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:45:36]   step 17400/24414 | lm=3.4375 loc=0.000000 tau=0.348 | lr=1.90e-05 | 15854 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:45:47]   step 17500/24414 | lm=2.4688 loc=0.000000 tau=0.344 | lr=1.85e-05 | 15868 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:45:58]   step 17600/24414 | lm=3.2969 loc=0.000000 tau=0.340 | lr=1.80e-05 | 15882 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:46:09]   step 17700/24414 | lm=5.4062 loc=0.000000 tau=0.336 | lr=1.75e-05 | 15896 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:46:20]   step 17800/24414 | lm=3.1250 loc=0.000000 tau=0.333 | lr=1.70e-05 | 15907 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:46:31]   step 17900/24414 | lm=3.2656 loc=0.000000 tau=0.329 | lr=1.66e-05 | 15920 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:46:42]   step 18000/24414 | lm=3.1250 loc=0.000000 tau=0.325 | lr=1.61e-05 | 15933 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:46:42] --- Eval at step 18000 (tau=0.325) ---
+[2026-03-27 21:47:08]   PPL=20.21 | mean_cossim=None
+[2026-03-27 21:47:08]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:47:08] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step18000.pt
+[2026-03-27 21:47:18]   step 18100/24414 | lm=2.9688 loc=0.000000 tau=0.321 | lr=1.56e-05 | 15774 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:47:29]   step 18200/24414 | lm=2.9688 loc=0.000000 tau=0.318 | lr=1.52e-05 | 15788 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:47:40]   step 18300/24414 | lm=3.4375 loc=0.000000 tau=0.314 | lr=1.47e-05 | 15802 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:47:51]   step 18400/24414 | lm=2.8125 loc=0.000000 tau=0.310 | lr=1.42e-05 | 15815 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:48:02]   step 18500/24414 | lm=3.5156 loc=0.000000 tau=0.306 | lr=1.38e-05 | 15828 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:48:13]   step 18600/24414 | lm=2.6250 loc=0.000000 tau=0.303 | lr=1.34e-05 | 15841 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:48:24]   step 18700/24414 | lm=2.9375 loc=0.000000 tau=0.299 | lr=1.29e-05 | 15854 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:48:36]   step 18800/24414 | lm=2.5781 loc=0.000000 tau=0.295 | lr=1.25e-05 | 15864 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:48:46]   step 18900/24414 | lm=2.6719 loc=0.000000 tau=0.291 | lr=1.21e-05 | 15877 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:48:57]   step 19000/24414 | lm=2.9062 loc=0.000000 tau=0.288 | lr=1.17e-05 | 15889 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:48:57] --- Eval at step 19000 (tau=0.288) ---
+[2026-03-27 21:49:13]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:49:13]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:49:13] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step19000.pt
+[2026-03-27 21:49:24]   step 19100/24414 | lm=2.8438 loc=0.000000 tau=0.284 | lr=1.12e-05 | 15802 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:49:35]   step 19200/24414 | lm=3.4219 loc=0.000000 tau=0.280 | lr=1.08e-05 | 15815 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:49:46]   step 19300/24414 | lm=2.9219 loc=0.000000 tau=0.276 | lr=1.04e-05 | 15828 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:49:57]   step 19400/24414 | lm=3.1875 loc=0.000000 tau=0.273 | lr=1.01e-05 | 15840 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:50:08]   step 19500/24414 | lm=3.1562 loc=0.000000 tau=0.269 | lr=9.67e-06 | 15853 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:50:19]   step 19600/24414 | lm=2.5938 loc=0.000000 tau=0.265 | lr=9.29e-06 | 15865 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:50:29]   step 19700/24414 | lm=3.1562 loc=0.000000 tau=0.261 | lr=8.92e-06 | 15878 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:50:41]   step 19800/24414 | lm=2.8594 loc=0.000000 tau=0.258 | lr=8.56e-06 | 15888 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:50:52]   step 19900/24414 | lm=3.1562 loc=0.000000 tau=0.254 | lr=8.20e-06 | 15900 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:51:03]   step 20000/24414 | lm=2.9375 loc=0.000000 tau=0.250 | lr=7.85e-06 | 15912 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:51:03] --- Eval at step 20000 (tau=0.250) ---
+[2026-03-27 21:51:18]   PPL=20.21 | mean_cossim=None
+[2026-03-27 21:51:18]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:51:18] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step20000.pt
+[2026-03-27 21:51:29]   step 20100/24414 | lm=3.1875 loc=0.000000 tau=0.246 | lr=7.51e-06 | 15829 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:51:40]   step 20200/24414 | lm=3.0000 loc=0.000000 tau=0.243 | lr=7.17e-06 | 15841 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:51:51]   step 20300/24414 | lm=2.9375 loc=0.000000 tau=0.239 | lr=6.84e-06 | 15853 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:52:02]   step 20400/24414 | lm=2.3438 loc=0.000000 tau=0.235 | lr=6.52e-06 | 15865 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:52:13]   step 20500/24414 | lm=2.6875 loc=0.000000 tau=0.231 | lr=6.21e-06 | 15877 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:52:24]   step 20600/24414 | lm=3.1250 loc=0.000000 tau=0.228 | lr=5.90e-06 | 15889 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:52:35]   step 20700/24414 | lm=2.7812 loc=0.000000 tau=0.224 | lr=5.60e-06 | 15900 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:52:46]   step 20800/24414 | lm=2.9531 loc=0.000000 tau=0.220 | lr=5.31e-06 | 15912 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:52:57]   step 20900/24414 | lm=2.8438 loc=0.000000 tau=0.216 | lr=5.03e-06 | 15923 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:53:07]   step 21000/24414 | lm=3.2344 loc=0.000000 tau=0.213 | lr=4.75e-06 | 15935 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:53:07] --- Eval at step 21000 (tau=0.213) ---
+[2026-03-27 21:53:23]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:53:23]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:53:23] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step21000.pt
+[2026-03-27 21:53:34]   step 21100/24414 | lm=3.3750 loc=0.000000 tau=0.209 | lr=4.48e-06 | 15855 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:53:45]   step 21200/24414 | lm=3.1875 loc=0.000000 tau=0.205 | lr=4.22e-06 | 15867 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:53:56]   step 21300/24414 | lm=2.4688 loc=0.000000 tau=0.201 | lr=3.96e-06 | 15878 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:54:07]   step 21400/24414 | lm=3.1719 loc=0.000000 tau=0.198 | lr=3.71e-06 | 15889 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:54:18]   step 21500/24414 | lm=2.5625 loc=0.000000 tau=0.194 | lr=3.47e-06 | 15901 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:54:29]   step 21600/24414 | lm=2.9219 loc=0.000000 tau=0.190 | lr=3.24e-06 | 15912 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:54:39]   step 21700/24414 | lm=3.0312 loc=0.000000 tau=0.186 | lr=3.02e-06 | 15923 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:54:50]   step 21800/24414 | lm=2.8906 loc=0.000000 tau=0.183 | lr=2.80e-06 | 15934 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:55:02]   step 21900/24414 | lm=1.9609 loc=0.000000 tau=0.179 | lr=2.59e-06 | 15943 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:55:13]   step 22000/24414 | lm=2.8438 loc=0.000000 tau=0.175 | lr=2.39e-06 | 15954 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:55:13] --- Eval at step 22000 (tau=0.175) ---
+[2026-03-27 21:55:28]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:55:28]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:55:28] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step22000.pt
+[2026-03-27 21:55:39]   step 22100/24414 | lm=3.2031 loc=0.000000 tau=0.171 | lr=2.20e-06 | 15878 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:55:50]   step 22200/24414 | lm=3.0938 loc=0.000000 tau=0.168 | lr=2.02e-06 | 15889 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:56:01]   step 22300/24414 | lm=2.8750 loc=0.000000 tau=0.164 | lr=1.84e-06 | 15900 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:56:12]   step 22400/24414 | lm=2.0781 loc=0.000000 tau=0.160 | lr=1.67e-06 | 15911 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:56:23]   step 22500/24414 | lm=2.5000 loc=0.000000 tau=0.156 | lr=1.51e-06 | 15922 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:56:34]   step 22600/24414 | lm=3.2969 loc=0.000000 tau=0.153 | lr=1.36e-06 | 15932 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:56:45]   step 22700/24414 | lm=3.0625 loc=0.000000 tau=0.149 | lr=1.21e-06 | 15942 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:56:55]   step 22800/24414 | lm=2.6562 loc=0.000000 tau=0.145 | lr=1.07e-06 | 15953 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:57:06]   step 22900/24414 | lm=3.0312 loc=0.000000 tau=0.141 | lr=9.46e-07 | 15963 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:57:18]   step 23000/24414 | lm=2.9688 loc=0.000000 tau=0.138 | lr=8.25e-07 | 15972 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:57:18] --- Eval at step 23000 (tau=0.138) ---
+[2026-03-27 21:57:33]   PPL=20.22 | mean_cossim=None
+[2026-03-27 21:57:33]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:57:33] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step23000.pt
+[2026-03-27 21:57:44]   step 23100/24414 | lm=3.3438 loc=0.000000 tau=0.134 | lr=7.13e-07 | 15899 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:57:55]   step 23200/24414 | lm=2.9062 loc=0.000000 tau=0.130 | lr=6.09e-07 | 15909 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:58:06]   step 23300/24414 | lm=3.1094 loc=0.000000 tau=0.126 | lr=5.13e-07 | 15920 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:58:17]   step 23400/24414 | lm=2.8281 loc=0.000000 tau=0.123 | lr=4.25e-07 | 15930 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:58:28]   step 23500/24414 | lm=2.9062 loc=0.000000 tau=0.119 | lr=3.45e-07 | 15940 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:58:39]   step 23600/24414 | lm=2.9062 loc=0.000000 tau=0.115 | lr=2.74e-07 | 15950 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:58:50]   step 23700/24414 | lm=3.1406 loc=0.000000 tau=0.111 | lr=2.11e-07 | 15960 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:59:01]   step 23800/24414 | lm=3.1250 loc=0.000000 tau=0.108 | lr=1.56e-07 | 15970 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:59:11]   step 23900/24414 | lm=3.0469 loc=0.000000 tau=0.104 | lr=1.09e-07 | 15980 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:59:23]   step 24000/24414 | lm=3.7344 loc=0.000000 tau=0.100 | lr=7.09e-08 | 15988 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 21:59:23] --- Eval at step 24000 (tau=0.100) ---
+[2026-03-27 21:59:38]   PPL=20.21 | mean_cossim=None
+[2026-03-27 21:59:38]   DAMAGE: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 21:59:38] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step24000.pt
+[2026-03-27 21:59:49]   step 24100/24414 | lm=3.5000 loc=0.000000 tau=0.100 | lr=4.08e-08 | 15918 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 22:00:00]   step 24200/24414 | lm=2.9219 loc=0.000000 tau=0.100 | lr=1.90e-08 | 15928 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 22:00:11]   step 24300/24414 | lm=3.0156 loc=0.000000 tau=0.100 | lr=5.38e-09 | 15938 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 22:00:22]   step 24400/24414 | lm=2.8125 loc=0.000000 tau=0.100 | lr=8.11e-11 | 15948 tok/s | dmg_e0=0.0000 dmg_e1=0.0000 overlap=0.000000 excl=0.0000
+[2026-03-27 22:00:23] --- Final eval ---
+[2026-03-27 22:00:39]   Final PPL=20.22 | mean_cossim=None
+[2026-03-27 22:00:39]   DAMAGE FINAL: e0=0.0000 e1=0.0000 overlap=0.000000 excl=0.0000 excl_ratio=0.00 cv_e0=0.000 cv_e1=0.000
+[2026-03-27 22:00:39] Checkpoint saved: /root/t6b-mogae/checkpoints/damage_surrogate/damage_step24414.pt
+[2026-03-27 22:00:39] Results saved to /root/t6b-mogae/results_damage_surrogate/damage_surrogate_metrics.json
+[2026-03-27 22:00:39] 
+[2026-03-27 22:00:39] ======================================================================
+[2026-03-27 22:00:39] Experiment Summary
+[2026-03-27 22:00:39] ======================================================================
+[2026-03-27 22:00:39] PPL: 20.50 -> 20.22
+[2026-03-27 22:00:39] Overlap: 0.000000 -> 0.000000
+[2026-03-27 22:00:39] Exclusivity: 0.0000 -> 0.0000
+[2026-03-27 22:00:39] Excl ratio: 0.00 -> 0.00
+[2026-03-27 22:00:39] Damage CV e0: 0.000 -> 0.000
+[2026-03-27 22:00:39] Damage CV e1: 0.000 -> 0.000
+[2026-03-27 22:00:39] Average damage CV: 0.000
+[2026-03-27 22:00:39] Below CV threshold 0.3
+[2026-03-27 22:00:39] PPL change: -1.4%
+[2026-03-27 22:00:39] Done.

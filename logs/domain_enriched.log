@@ -1,0 +1,281 @@
+[2026-03-27 19:58:12] ======================================================================
+[2026-03-27 19:58:12] DOMAIN-ENRICHED TRAINING EXPERIMENT
+[2026-03-27 19:58:12] ======================================================================
+[2026-03-27 19:58:12] INSIGHT: Previous experiments used generic C4 where >80% of tokens
+[2026-03-27 19:58:12] are general text. Experts can't specialize on homogeneous data.
+[2026-03-27 19:58:12] 
+[2026-03-27 19:58:12] SOLUTION: Hard-filter C4 for domain purity. Each batch is 100%
+[2026-03-27 19:58:12] one domain. Domain-conditional gradient masking ensures each
+[2026-03-27 19:58:12] specialist expert only learns from its domain.
+[2026-03-27 19:58:12] 
+[2026-03-27 19:58:12] ARCHITECTURE: DeepSeek shared+routed design:
+[2026-03-27 19:58:12]   Expert 0 (code): learns from code batches only
+[2026-03-27 19:58:12]   Expert 1 (medical): learns from medical batches only
+[2026-03-27 19:58:12]   Expert 2 (shared): learns from ALL batches
+[2026-03-27 19:58:12]   Router picks between code/medical; shared always active.
+[2026-03-27 19:58:12] 
+[2026-03-27 19:58:12] SUCCESS: M_ij diagonal dominance > 0.3
+[2026-03-27 19:58:12] FAILURE: One expert absorbs everything (capacity issue at rank-4)
+[2026-03-27 19:58:12] ======================================================================
+[2026-03-27 19:58:12] Config: {'device': 'cuda:0', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': 'fork_trunk18_phase1_final', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 18, 'expert_layer_start': 18, 'initial_rank': 4, 'num_experts': 3, 'total_tokens': 30720000, 'batch_size': 4, 'seq_len': 512, 'lr': 0.0001, 'tau_start': 1.0, 'tau_end': 0.1, 'tau_anneal_steps': 15000, 'lambda_loc': 0.03, 'damage_every_n_steps': 10, 'damage_token_stride': 4, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'domain_buffer_size': 64, 'results_dir': '/root/t6b-mogae/results_domain_enriched', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/fork_trunk18', 'save_checkpoint_dir': '/root/t6b-mogae/checkpoints/domain_enriched', 'log_file': '/root/t6b-mogae/logs/domain_enriched.log'}
+[2026-03-27 19:58:12] Loading Qwen/Qwen3-1.7B...
+[2026-03-27 19:58:15] Base model loaded: 2,031,739,904 params
+[2026-03-27 19:58:15] Verified: hidden=2048, intermediate=6144
+[2026-03-27 19:58:15] Initializing 3 fresh experts per layer (no Phase 1 fork)...
+[2026-03-27 19:58:15]   Expert 0 (code): random init, rank-4
+[2026-03-27 19:58:15]   Expert 1 (medical): random init, rank-4
+[2026-03-27 19:58:15]   Expert 2 (shared): random init, rank-4
+[2026-03-27 19:58:15] Expert tree: {18: {'num_experts': 3, 'ranks': [4, 4, 4]}, 19: {'num_experts': 3, 'ranks': [4, 4, 4]}, 20: {'num_experts': 3, 'ranks': [4, 4, 4]}, 21: {'num_experts': 3, 'ranks': [4, 4, 4]}, 22: {'num_experts': 3, 'ranks': [4, 4, 4]}, 23: {'num_experts': 3, 'ranks': [4, 4, 4]}, 24: {'num_experts': 3, 'ranks': [4, 4, 4]}, 25: {'num_experts': 3, 'ranks': [4, 4, 4]}, 26: {'num_experts': 3, 'ranks': [4, 4, 4]}, 27: {'num_experts': 3, 'ranks': [4, 4, 4]}}
+[2026-03-27 19:58:15] Trainable params: 2,007,040
+[2026-03-27 19:58:15] Training: 15000 steps, LR=0.0001, batch=4x512
+[2026-03-27 19:58:15] Gumbel-softmax: tau 1.0 -> 0.1 over 15000 steps
+[2026-03-27 19:58:15] Damage surrogate (shared expert): lambda_loc=0.03, every 10 steps
+[2026-03-27 19:58:15] Domain-conditional gradient masking: code->E0, medical->E1, all->E2(shared)
+[2026-03-27 19:58:15] NO contrastive loss, NO load-balancing loss
+[2026-03-27 19:58:15] Trainable params: 2,007,040
+[2026-03-27 19:58:15] Expert tree: {18: {'num_experts': 3, 'ranks': [4, 4, 4]}, 19: {'num_experts': 3, 'ranks': [4, 4, 4]}, 20: {'num_experts': 3, 'ranks': [4, 4, 4]}, 21: {'num_experts': 3, 'ranks': [4, 4, 4]}, 22: {'num_experts': 3, 'ranks': [4, 4, 4]}, 23: {'num_experts': 3, 'ranks': [4, 4, 4]}, 24: {'num_experts': 3, 'ranks': [4, 4, 4]}, 25: {'num_experts': 3, 'ranks': [4, 4, 4]}, 26: {'num_experts': 3, 'ranks': [4, 4, 4]}, 27: {'num_experts': 3, 'ranks': [4, 4, 4]}}
+[2026-03-27 19:58:32]   step 100/15000 | lm=2.6250 loc=0.000000 tau=0.994 | lr=1.00e-04 | 12472 tok/s route_L18=[code=1.00,med=0.01] | shared_dmg=0.0195 dom=tech batches=[c=38,m=2,g=60]
+[2026-03-27 19:58:45]   step 200/15000 | lm=3.0000 loc=0.000000 tau=0.988 | lr=1.00e-04 | 13867 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0219 dom=general batches=[c=82,m=3,g=115]
+[2026-03-27 19:58:58]   step 300/15000 | lm=3.7500 loc=0.000000 tau=0.982 | lr=9.99e-05 | 14384 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0234 dom=tech batches=[c=128,m=8,g=164]
+[2026-03-27 19:59:11]   step 400/15000 | lm=2.7031 loc=0.000000 tau=0.976 | lr=9.98e-05 | 14618 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0239 dom=tech batches=[c=165,m=14,g=221]
+[2026-03-27 19:59:25]   step 500/15000 | lm=2.9062 loc=0.000000 tau=0.970 | lr=9.97e-05 | 14778 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0244 dom=tech batches=[c=216,m=17,g=267]
+[2026-03-27 19:59:38]   step 600/15000 | lm=2.8125 loc=0.000000 tau=0.964 | lr=9.96e-05 | 14885 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0246 dom=general batches=[c=247,m=23,g=330]
+[2026-03-27 19:59:51]   step 700/15000 | lm=2.8594 loc=0.000000 tau=0.958 | lr=9.95e-05 | 14962 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0250 dom=general batches=[c=293,m=33,g=374]
+[2026-03-27 20:00:04]   step 800/15000 | lm=2.6875 loc=0.000000 tau=0.952 | lr=9.93e-05 | 15020 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0253 dom=medical batches=[c=325,m=35,g=440]
+[2026-03-27 20:00:18]   step 900/15000 | lm=2.3281 loc=0.000000 tau=0.946 | lr=9.91e-05 | 15068 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0253 dom=general batches=[c=357,m=42,g=501]
+[2026-03-27 20:00:31]   step 1000/15000 | lm=3.1250 loc=0.000000 tau=0.940 | lr=9.89e-05 | 15105 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0254 dom=general batches=[c=391,m=43,g=566]
+[2026-03-27 20:00:31] --- Eval at step 1000 (tau=0.940) ---
+[2026-03-27 20:00:51]   PPL=20.67 | mean_cossim=0.06468528111775716
+[2026-03-27 20:00:51]   L18: code_prob=1.000 medical_prob=0.002 selectivity=0.500
+[2026-03-27 20:00:51] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step1000.pt
+[2026-03-27 20:01:04]   step 1100/15000 | lm=2.6562 loc=0.000000 tau=0.934 | lr=9.87e-05 | 13325 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0257 dom=tech batches=[c=417,m=60,g=623]
+[2026-03-27 20:01:18]   step 1200/15000 | lm=2.5469 loc=0.000000 tau=0.928 | lr=9.84e-05 | 13482 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0255 dom=general batches=[c=448,m=68,g=684]
+[2026-03-27 20:01:31]   step 1300/15000 | lm=2.8906 loc=0.000000 tau=0.922 | lr=9.82e-05 | 13619 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0258 dom=general batches=[c=495,m=78,g=727]
+[2026-03-27 20:01:44]   step 1400/15000 | lm=3.0625 loc=0.000000 tau=0.916 | lr=9.79e-05 | 13732 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0258 dom=tech batches=[c=540,m=79,g=781]
+[2026-03-27 20:01:57]   step 1500/15000 | lm=3.1719 loc=0.000000 tau=0.910 | lr=9.76e-05 | 13839 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0261 dom=general batches=[c=571,m=88,g=841]
+[2026-03-27 20:02:11]   step 1600/15000 | lm=3.3125 loc=0.000000 tau=0.904 | lr=9.72e-05 | 13933 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0261 dom=general batches=[c=606,m=90,g=904]
+[2026-03-27 20:02:24]   step 1700/15000 | lm=3.2656 loc=0.000000 tau=0.898 | lr=9.69e-05 | 14016 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0264 dom=general batches=[c=650,m=94,g=956]
+[2026-03-27 20:02:37]   step 1800/15000 | lm=3.5781 loc=0.000000 tau=0.892 | lr=9.65e-05 | 14091 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0263 dom=tech batches=[c=687,m=98,g=1015]
+[2026-03-27 20:02:50]   step 1900/15000 | lm=3.2969 loc=0.000000 tau=0.886 | lr=9.61e-05 | 14157 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0265 dom=general batches=[c=738,m=99,g=1063]
+[2026-03-27 20:03:03]   step 2000/15000 | lm=3.5312 loc=0.000000 tau=0.880 | lr=9.57e-05 | 14219 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0265 dom=tech batches=[c=771,m=106,g=1123]
+[2026-03-27 20:03:03] --- Eval at step 2000 (tau=0.880) ---
+[2026-03-27 20:03:23]   PPL=20.54 | mean_cossim=0.06738230387369791
+[2026-03-27 20:03:23]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:03:23] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step2000.pt
+[2026-03-27 20:03:37]   step 2100/15000 | lm=2.9375 loc=0.000000 tau=0.874 | lr=9.52e-05 | 13369 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0290 dom=tech batches=[c=821,m=106,g=1173]
+[2026-03-27 20:03:50]   step 2200/15000 | lm=2.9688 loc=0.000000 tau=0.868 | lr=9.48e-05 | 13452 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0286 dom=tech batches=[c=868,m=108,g=1224]
+[2026-03-27 20:04:03]   step 2300/15000 | lm=2.7500 loc=0.000000 tau=0.862 | lr=9.43e-05 | 13530 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0285 dom=general batches=[c=909,m=112,g=1279]
+[2026-03-27 20:04:17]   step 2400/15000 | lm=2.4375 loc=0.000000 tau=0.856 | lr=9.38e-05 | 13601 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0282 dom=general batches=[c=941,m=114,g=1345]
+[2026-03-27 20:04:30]   step 2500/15000 | lm=3.0781 loc=0.000000 tau=0.850 | lr=9.33e-05 | 13665 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0282 dom=general batches=[c=982,m=117,g=1401]
+[2026-03-27 20:04:43]   step 2600/15000 | lm=3.5938 loc=0.000000 tau=0.844 | lr=9.28e-05 | 13726 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0285 dom=tech batches=[c=1026,m=120,g=1454]
+[2026-03-27 20:04:56]   step 2700/15000 | lm=2.5469 loc=0.000000 tau=0.838 | lr=9.22e-05 | 13784 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0283 dom=general batches=[c=1050,m=123,g=1527]
+[2026-03-27 20:05:10]   step 2800/15000 | lm=3.2344 loc=0.000000 tau=0.832 | lr=9.16e-05 | 13838 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0284 dom=general batches=[c=1099,m=131,g=1570]
+[2026-03-27 20:05:23]   step 2900/15000 | lm=2.9844 loc=0.000000 tau=0.826 | lr=9.11e-05 | 13888 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0285 dom=general batches=[c=1143,m=136,g=1621]
+[2026-03-27 20:05:36]   step 3000/15000 | lm=3.5156 loc=0.000000 tau=0.820 | lr=9.05e-05 | 13936 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0285 dom=medical batches=[c=1174,m=142,g=1684]
+[2026-03-27 20:05:36] --- Eval at step 3000 (tau=0.820) ---
+[2026-03-27 20:05:56]   PPL=20.50 | mean_cossim=0.06781272888183594
+[2026-03-27 20:05:56]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:05:56] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step3000.pt
+[2026-03-27 20:06:09]   step 3100/15000 | lm=2.7188 loc=0.000000 tau=0.814 | lr=8.98e-05 | 13392 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0291 dom=tech batches=[c=1230,m=142,g=1728]
+[2026-03-27 20:06:23]   step 3200/15000 | lm=3.3125 loc=0.000000 tau=0.808 | lr=8.92e-05 | 13441 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0298 dom=general batches=[c=1250,m=151,g=1799]
+[2026-03-27 20:06:36]   step 3300/15000 | lm=2.8750 loc=0.000000 tau=0.802 | lr=8.85e-05 | 13495 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0293 dom=general batches=[c=1278,m=153,g=1869]
+[2026-03-27 20:06:49]   step 3400/15000 | lm=3.6250 loc=0.000000 tau=0.796 | lr=8.78e-05 | 13546 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0293 dom=tech batches=[c=1315,m=159,g=1926]
+[2026-03-27 20:07:03]   step 3500/15000 | lm=3.0312 loc=0.000000 tau=0.790 | lr=8.72e-05 | 13594 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0296 dom=general batches=[c=1353,m=163,g=1984]
+[2026-03-27 20:07:16]   step 3600/15000 | lm=3.1562 loc=0.000000 tau=0.784 | lr=8.64e-05 | 13640 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0296 dom=general batches=[c=1393,m=167,g=2040]
+[2026-03-27 20:07:29]   step 3700/15000 | lm=2.9531 loc=0.000000 tau=0.778 | lr=8.57e-05 | 13685 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0296 dom=tech batches=[c=1428,m=177,g=2095]
+[2026-03-27 20:07:42]   step 3800/15000 | lm=3.0469 loc=0.000000 tau=0.772 | lr=8.50e-05 | 13727 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0295 dom=tech batches=[c=1466,m=180,g=2154]
+[2026-03-27 20:07:56]   step 3900/15000 | lm=3.3125 loc=0.000000 tau=0.766 | lr=8.42e-05 | 13766 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0296 dom=general batches=[c=1498,m=189,g=2213]
+[2026-03-27 20:08:09]   step 4000/15000 | lm=2.9062 loc=0.000000 tau=0.760 | lr=8.35e-05 | 13805 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0296 dom=medical batches=[c=1534,m=195,g=2271]
+[2026-03-27 20:08:09] --- Eval at step 4000 (tau=0.760) ---
+[2026-03-27 20:08:29]   PPL=20.46 | mean_cossim=0.06828539768854777
+[2026-03-27 20:08:29]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:08:29] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step4000.pt
+[2026-03-27 20:08:42]   step 4100/15000 | lm=2.2031 loc=0.000000 tau=0.754 | lr=8.27e-05 | 13400 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0308 dom=general batches=[c=1561,m=199,g=2340]
+[2026-03-27 20:08:55]   step 4200/15000 | lm=3.0156 loc=0.000000 tau=0.748 | lr=8.19e-05 | 13444 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0299 dom=general batches=[c=1598,m=206,g=2396]
+[2026-03-27 20:09:08]   step 4300/15000 | lm=3.0312 loc=0.000000 tau=0.742 | lr=8.11e-05 | 13485 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0304 dom=general batches=[c=1639,m=217,g=2444]
+[2026-03-27 20:09:22]   step 4400/15000 | lm=2.6719 loc=0.000000 tau=0.736 | lr=8.02e-05 | 13525 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0304 dom=general batches=[c=1679,m=222,g=2499]
+[2026-03-27 20:09:35]   step 4500/15000 | lm=3.2500 loc=0.000000 tau=0.730 | lr=7.94e-05 | 13563 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0308 dom=general batches=[c=1727,m=226,g=2547]
+[2026-03-27 20:09:48]   step 4600/15000 | lm=3.1094 loc=0.000000 tau=0.724 | lr=7.85e-05 | 13600 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0308 dom=tech batches=[c=1764,m=229,g=2607]
+[2026-03-27 20:10:01]   step 4700/15000 | lm=3.1875 loc=0.000000 tau=0.718 | lr=7.77e-05 | 13635 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0308 dom=tech batches=[c=1794,m=237,g=2669]
+[2026-03-27 20:10:15]   step 4800/15000 | lm=3.2500 loc=0.000000 tau=0.712 | lr=7.68e-05 | 13669 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0308 dom=general batches=[c=1838,m=239,g=2723]
+[2026-03-27 20:10:28]   step 4900/15000 | lm=3.1562 loc=0.000000 tau=0.706 | lr=7.59e-05 | 13702 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0309 dom=general batches=[c=1868,m=249,g=2783]
+[2026-03-27 20:10:41]   step 5000/15000 | lm=3.0938 loc=0.000000 tau=0.700 | lr=7.50e-05 | 13732 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0310 dom=tech batches=[c=1905,m=251,g=2844]
+[2026-03-27 20:10:41] --- Eval at step 5000 (tau=0.700) ---
+[2026-03-27 20:11:01]   PPL=20.45 | mean_cossim=0.0677472432454427
+[2026-03-27 20:11:01]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:11:01] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step5000.pt
+[2026-03-27 20:11:14]   step 5100/15000 | lm=3.1406 loc=0.000000 tau=0.694 | lr=7.41e-05 | 13411 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0310 dom=general batches=[c=1945,m=254,g=2901]
+[2026-03-27 20:11:28]   step 5200/15000 | lm=3.0312 loc=0.000000 tau=0.688 | lr=7.32e-05 | 13440 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0314 dom=tech batches=[c=1979,m=255,g=2966]
+[2026-03-27 20:11:41]   step 5300/15000 | lm=2.9219 loc=0.000000 tau=0.682 | lr=7.22e-05 | 13474 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0306 dom=tech batches=[c=2007,m=262,g=3031]
+[2026-03-27 20:11:54]   step 5400/15000 | lm=3.0469 loc=0.000000 tau=0.676 | lr=7.13e-05 | 13506 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0302 dom=general batches=[c=2055,m=263,g=3082]
+[2026-03-27 20:12:07]   step 5500/15000 | lm=3.1562 loc=0.000000 tau=0.670 | lr=7.03e-05 | 13538 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0306 dom=tech batches=[c=2098,m=271,g=3131]
+[2026-03-27 20:12:21]   step 5600/15000 | lm=3.1250 loc=0.000000 tau=0.664 | lr=6.94e-05 | 13568 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0304 dom=tech batches=[c=2134,m=275,g=3191]
+[2026-03-27 20:12:34]   step 5700/15000 | lm=3.1875 loc=0.000000 tau=0.658 | lr=6.84e-05 | 13598 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0305 dom=tech batches=[c=2178,m=278,g=3244]
+[2026-03-27 20:12:47]   step 5800/15000 | lm=2.2812 loc=0.000000 tau=0.652 | lr=6.74e-05 | 13626 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0307 dom=general batches=[c=2222,m=280,g=3298]
+[2026-03-27 20:13:00]   step 5900/15000 | lm=2.9688 loc=0.000000 tau=0.646 | lr=6.64e-05 | 13653 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0309 dom=general batches=[c=2254,m=286,g=3360]
+[2026-03-27 20:13:14]   step 6000/15000 | lm=3.0312 loc=0.000000 tau=0.640 | lr=6.55e-05 | 13680 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0308 dom=general batches=[c=2297,m=292,g=3411]
+[2026-03-27 20:13:14] --- Eval at step 6000 (tau=0.640) ---
+[2026-03-27 20:13:33]   PPL=20.44 | mean_cossim=0.067645263671875
+[2026-03-27 20:13:33]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:13:33] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step6000.pt
+[2026-03-27 20:13:47]   step 6100/15000 | lm=2.9219 loc=0.000000 tau=0.634 | lr=6.45e-05 | 13414 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0321 dom=tech batches=[c=2333,m=301,g=3466]
+[2026-03-27 20:14:00]   step 6200/15000 | lm=3.2812 loc=0.000000 tau=0.628 | lr=6.34e-05 | 13443 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0316 dom=general batches=[c=2364,m=306,g=3530]
+[2026-03-27 20:14:13]   step 6300/15000 | lm=3.0156 loc=0.000000 tau=0.622 | lr=6.24e-05 | 13466 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0314 dom=general batches=[c=2403,m=315,g=3582]
+[2026-03-27 20:14:27]   step 6400/15000 | lm=3.2969 loc=0.000000 tau=0.616 | lr=6.14e-05 | 13495 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0312 dom=tech batches=[c=2438,m=324,g=3638]
+[2026-03-27 20:14:40]   step 6500/15000 | lm=3.6719 loc=0.000000 tau=0.610 | lr=6.04e-05 | 13521 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0314 dom=general batches=[c=2470,m=326,g=3704]
+[2026-03-27 20:14:53]   step 6600/15000 | lm=2.7031 loc=0.000000 tau=0.604 | lr=5.94e-05 | 13548 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0317 dom=tech batches=[c=2510,m=334,g=3756]
+[2026-03-27 20:15:06]   step 6700/15000 | lm=2.4844 loc=0.000000 tau=0.598 | lr=5.83e-05 | 13573 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0317 dom=medical batches=[c=2550,m=342,g=3808]
+[2026-03-27 20:15:20]   step 6800/15000 | lm=3.3281 loc=0.000000 tau=0.592 | lr=5.73e-05 | 13598 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0316 dom=general batches=[c=2579,m=346,g=3875]
+[2026-03-27 20:15:33]   step 6900/15000 | lm=2.7031 loc=0.000000 tau=0.586 | lr=5.63e-05 | 13622 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0318 dom=general batches=[c=2620,m=349,g=3931]
+[2026-03-27 20:15:46]   step 7000/15000 | lm=3.0938 loc=0.000000 tau=0.580 | lr=5.52e-05 | 13645 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0321 dom=general batches=[c=2669,m=356,g=3975]
+[2026-03-27 20:15:46] --- Eval at step 7000 (tau=0.580) ---
+[2026-03-27 20:16:06]   PPL=20.43 | mean_cossim=0.06763712565104167
+[2026-03-27 20:16:06]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:16:06] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step7000.pt
+[2026-03-27 20:16:19]   step 7100/15000 | lm=3.1406 loc=0.000000 tau=0.574 | lr=5.42e-05 | 13416 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0316 dom=general batches=[c=2715,m=363,g=4022]
+[2026-03-27 20:16:32]   step 7200/15000 | lm=3.2812 loc=0.000000 tau=0.568 | lr=5.31e-05 | 13442 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0318 dom=tech batches=[c=2752,m=368,g=4080]
+[2026-03-27 20:16:46]   step 7300/15000 | lm=3.3125 loc=0.000000 tau=0.562 | lr=5.21e-05 | 13462 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0319 dom=general batches=[c=2797,m=371,g=4132]
+[2026-03-27 20:16:59]   step 7400/15000 | lm=2.1562 loc=0.000000 tau=0.556 | lr=5.10e-05 | 13486 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0321 dom=medical batches=[c=2827,m=376,g=4197]
+[2026-03-27 20:17:12]   step 7500/15000 | lm=3.2188 loc=0.000000 tau=0.550 | lr=5.00e-05 | 13509 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0320 dom=general batches=[c=2873,m=378,g=4249]
+[2026-03-27 20:17:26]   step 7600/15000 | lm=2.8906 loc=0.000000 tau=0.544 | lr=4.90e-05 | 13532 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0322 dom=tech batches=[c=2922,m=385,g=4293]
+[2026-03-27 20:17:39]   step 7700/15000 | lm=2.9688 loc=0.000000 tau=0.538 | lr=4.79e-05 | 13554 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0325 dom=tech batches=[c=2961,m=391,g=4348]
+[2026-03-27 20:17:52]   step 7800/15000 | lm=3.3906 loc=0.000000 tau=0.532 | lr=4.69e-05 | 13576 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0325 dom=general batches=[c=3013,m=396,g=4391]
+[2026-03-27 20:18:05]   step 7900/15000 | lm=3.1562 loc=0.000000 tau=0.526 | lr=4.58e-05 | 13596 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0326 dom=general batches=[c=3049,m=402,g=4449]
+[2026-03-27 20:18:19]   step 8000/15000 | lm=3.3281 loc=0.000000 tau=0.520 | lr=4.48e-05 | 13617 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0326 dom=tech batches=[c=3086,m=404,g=4510]
+[2026-03-27 20:18:19] --- Eval at step 8000 (tau=0.520) ---
+[2026-03-27 20:18:38]   PPL=20.43 | mean_cossim=0.06749064127604167
+[2026-03-27 20:18:38]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:18:38] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step8000.pt
+[2026-03-27 20:18:52]   step 8100/15000 | lm=3.1875 loc=0.000000 tau=0.514 | lr=4.37e-05 | 13419 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0333 dom=tech batches=[c=3122,m=410,g=4568]
+[2026-03-27 20:19:05]   step 8200/15000 | lm=3.6250 loc=0.000000 tau=0.508 | lr=4.27e-05 | 13441 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0331 dom=general batches=[c=3168,m=415,g=4617]
+[2026-03-27 20:19:18]   step 8300/15000 | lm=3.6250 loc=0.000000 tau=0.502 | lr=4.17e-05 | 13462 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0326 dom=general batches=[c=3211,m=424,g=4665]
+[2026-03-27 20:19:31]   step 8400/15000 | lm=2.9531 loc=0.000000 tau=0.496 | lr=4.06e-05 | 13483 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0329 dom=general batches=[c=3249,m=430,g=4721]
+[2026-03-27 20:19:44]   step 8500/15000 | lm=2.8281 loc=0.000000 tau=0.490 | lr=3.96e-05 | 13504 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0333 dom=medical batches=[c=3293,m=432,g=4775]
+[2026-03-27 20:19:58]   step 8600/15000 | lm=3.1406 loc=0.000000 tau=0.484 | lr=3.86e-05 | 13524 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0333 dom=general batches=[c=3346,m=434,g=4820]
+[2026-03-27 20:20:11]   step 8700/15000 | lm=3.2969 loc=0.000000 tau=0.478 | lr=3.76e-05 | 13543 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0331 dom=general batches=[c=3373,m=439,g=4888]
+[2026-03-27 20:20:24]   step 8800/15000 | lm=2.7188 loc=0.000000 tau=0.472 | lr=3.66e-05 | 13563 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=3415,m=448,g=4937]
+[2026-03-27 20:20:37]   step 8900/15000 | lm=3.1094 loc=0.000000 tau=0.466 | lr=3.55e-05 | 13582 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=3455,m=454,g=4991]
+[2026-03-27 20:20:51]   step 9000/15000 | lm=3.4062 loc=0.000000 tau=0.460 | lr=3.45e-05 | 13600 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=3499,m=458,g=5043]
+[2026-03-27 20:20:51] --- Eval at step 9000 (tau=0.460) ---
+[2026-03-27 20:21:10]   PPL=20.43 | mean_cossim=0.06753590901692709
+[2026-03-27 20:21:10]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:21:11] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step9000.pt
+[2026-03-27 20:21:24]   step 9100/15000 | lm=3.1875 loc=0.000000 tau=0.454 | lr=3.36e-05 | 13423 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0325 dom=tech batches=[c=3540,m=461,g=5099]
+[2026-03-27 20:21:37]   step 9200/15000 | lm=2.6094 loc=0.000000 tau=0.448 | lr=3.26e-05 | 13443 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0331 dom=tech batches=[c=3578,m=465,g=5157]
+[2026-03-27 20:21:50]   step 9300/15000 | lm=3.2344 loc=0.000000 tau=0.442 | lr=3.16e-05 | 13462 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0323 dom=general batches=[c=3624,m=466,g=5210]
+[2026-03-27 20:22:04]   step 9400/15000 | lm=3.2812 loc=0.000000 tau=0.436 | lr=3.06e-05 | 13477 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=general batches=[c=3668,m=478,g=5254]
+[2026-03-27 20:22:17]   step 9500/15000 | lm=2.9844 loc=0.000000 tau=0.430 | lr=2.97e-05 | 13496 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=general batches=[c=3703,m=481,g=5316]
+[2026-03-27 20:22:30]   step 9600/15000 | lm=3.0312 loc=0.000000 tau=0.424 | lr=2.87e-05 | 13514 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0326 dom=tech batches=[c=3744,m=490,g=5366]
+[2026-03-27 20:22:43]   step 9700/15000 | lm=2.8281 loc=0.000000 tau=0.418 | lr=2.78e-05 | 13532 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0327 dom=general batches=[c=3787,m=496,g=5417]
+[2026-03-27 20:22:57]   step 9800/15000 | lm=3.0625 loc=0.000000 tau=0.412 | lr=2.68e-05 | 13549 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0326 dom=general batches=[c=3821,m=504,g=5475]
+[2026-03-27 20:23:10]   step 9900/15000 | lm=2.9062 loc=0.000000 tau=0.406 | lr=2.59e-05 | 13566 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0325 dom=general batches=[c=3869,m=506,g=5525]
+[2026-03-27 20:23:23]   step 10000/15000 | lm=3.4844 loc=0.000000 tau=0.400 | lr=2.50e-05 | 13582 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0323 dom=tech batches=[c=3922,m=507,g=5571]
+[2026-03-27 20:23:23] --- Eval at step 10000 (tau=0.400) ---
+[2026-03-27 20:23:43]   PPL=20.42 | mean_cossim=0.06763203938802083
+[2026-03-27 20:23:43]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:23:43] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step10000.pt
+[2026-03-27 20:23:56]   step 10100/15000 | lm=2.8750 loc=0.000000 tau=0.394 | lr=2.41e-05 | 13423 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0335 dom=medical batches=[c=3950,m=519,g=5631]
+[2026-03-27 20:24:10]   step 10200/15000 | lm=2.8281 loc=0.000000 tau=0.388 | lr=2.32e-05 | 13440 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0337 dom=tech batches=[c=3995,m=522,g=5683]
+[2026-03-27 20:24:23]   step 10300/15000 | lm=3.7969 loc=0.000000 tau=0.382 | lr=2.23e-05 | 13456 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0337 dom=tech batches=[c=4047,m=523,g=5730]
+[2026-03-27 20:24:37]   step 10400/15000 | lm=3.2969 loc=0.000000 tau=0.376 | lr=2.15e-05 | 13470 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0335 dom=general batches=[c=4080,m=527,g=5793]
+[2026-03-27 20:24:50]   step 10500/15000 | lm=1.8281 loc=0.000000 tau=0.370 | lr=2.06e-05 | 13487 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0338 dom=general batches=[c=4119,m=533,g=5848]
+[2026-03-27 20:25:03]   step 10600/15000 | lm=2.9531 loc=0.000000 tau=0.364 | lr=1.98e-05 | 13504 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0335 dom=general batches=[c=4160,m=540,g=5900]
+[2026-03-27 20:25:16]   step 10700/15000 | lm=2.8438 loc=0.000000 tau=0.358 | lr=1.89e-05 | 13520 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=4190,m=546,g=5964]
+[2026-03-27 20:25:29]   step 10800/15000 | lm=3.1719 loc=0.000000 tau=0.352 | lr=1.81e-05 | 13535 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0330 dom=general batches=[c=4225,m=555,g=6020]
+[2026-03-27 20:25:43]   step 10900/15000 | lm=3.0625 loc=0.000000 tau=0.346 | lr=1.73e-05 | 13551 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0331 dom=tech batches=[c=4254,m=567,g=6079]
+[2026-03-27 20:25:56]   step 11000/15000 | lm=3.2344 loc=0.000000 tau=0.340 | lr=1.65e-05 | 13566 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=4310,m=568,g=6122]
+[2026-03-27 20:25:56] --- Eval at step 11000 (tau=0.340) ---
+[2026-03-27 20:26:16]   PPL=20.43 | mean_cossim=0.067596435546875
+[2026-03-27 20:26:16]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:26:16] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step11000.pt
+[2026-03-27 20:26:29]   step 11100/15000 | lm=2.9062 loc=0.000000 tau=0.334 | lr=1.58e-05 | 13421 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0327 dom=general batches=[c=4346,m=576,g=6178]
+[2026-03-27 20:26:42]   step 11200/15000 | lm=3.1250 loc=0.000000 tau=0.328 | lr=1.50e-05 | 13437 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=4371,m=585,g=6244]
+[2026-03-27 20:26:56]   step 11300/15000 | lm=2.9844 loc=0.000000 tau=0.322 | lr=1.43e-05 | 13453 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=medical batches=[c=4408,m=590,g=6302]
+[2026-03-27 20:27:09]   step 11400/15000 | lm=2.8125 loc=0.000000 tau=0.316 | lr=1.36e-05 | 13468 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0331 dom=medical batches=[c=4458,m=596,g=6346]
+[2026-03-27 20:27:22]   step 11500/15000 | lm=3.1562 loc=0.000000 tau=0.310 | lr=1.28e-05 | 13481 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=4498,m=606,g=6396]
+[2026-03-27 20:27:36]   step 11600/15000 | lm=3.0156 loc=0.000000 tau=0.304 | lr=1.22e-05 | 13496 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0327 dom=tech batches=[c=4528,m=610,g=6462]
+[2026-03-27 20:27:49]   step 11700/15000 | lm=2.3750 loc=0.000000 tau=0.298 | lr=1.15e-05 | 13511 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=general batches=[c=4563,m=614,g=6523]
+[2026-03-27 20:28:02]   step 11800/15000 | lm=3.1250 loc=0.000000 tau=0.292 | lr=1.08e-05 | 13525 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0330 dom=general batches=[c=4603,m=619,g=6578]
+[2026-03-27 20:28:15]   step 11900/15000 | lm=2.9375 loc=0.000000 tau=0.286 | lr=1.02e-05 | 13540 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0330 dom=general batches=[c=4651,m=622,g=6627]
+[2026-03-27 20:28:29]   step 12000/15000 | lm=2.7500 loc=0.000000 tau=0.280 | lr=9.55e-06 | 13553 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0331 dom=general batches=[c=4698,m=629,g=6673]
+[2026-03-27 20:28:29] --- Eval at step 12000 (tau=0.280) ---
+[2026-03-27 20:28:49]   PPL=20.43 | mean_cossim=0.06759541829427083
+[2026-03-27 20:28:49]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:28:49] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step12000.pt
+[2026-03-27 20:29:02]   step 12100/15000 | lm=3.2031 loc=0.000000 tau=0.274 | lr=8.94e-06 | 13421 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0322 dom=general batches=[c=4745,m=636,g=6719]
+[2026-03-27 20:29:15]   step 12200/15000 | lm=3.2656 loc=0.000000 tau=0.268 | lr=8.35e-06 | 13436 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0325 dom=tech batches=[c=4792,m=640,g=6768]
+[2026-03-27 20:29:28]   step 12300/15000 | lm=2.8438 loc=0.000000 tau=0.262 | lr=7.78e-06 | 13450 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0325 dom=tech batches=[c=4827,m=644,g=6829]
+[2026-03-27 20:29:41]   step 12400/15000 | lm=3.0312 loc=0.000000 tau=0.256 | lr=7.23e-06 | 13464 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=tech batches=[c=4877,m=651,g=6872]
+[2026-03-27 20:29:55]   step 12500/15000 | lm=3.0312 loc=0.000000 tau=0.250 | lr=6.70e-06 | 13478 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=general batches=[c=4906,m=659,g=6935]
+[2026-03-27 20:30:08]   step 12600/15000 | lm=2.7969 loc=0.000000 tau=0.244 | lr=6.18e-06 | 13492 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0330 dom=medical batches=[c=4952,m=666,g=6982]
+[2026-03-27 20:30:21]   step 12700/15000 | lm=3.5625 loc=0.000000 tau=0.238 | lr=5.69e-06 | 13505 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=tech batches=[c=4989,m=672,g=7039]
+[2026-03-27 20:30:34]   step 12800/15000 | lm=3.1719 loc=0.000000 tau=0.232 | lr=5.21e-06 | 13519 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0327 dom=general batches=[c=5037,m=682,g=7081]
+[2026-03-27 20:30:48]   step 12900/15000 | lm=3.9062 loc=0.000000 tau=0.226 | lr=4.76e-06 | 13532 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=general batches=[c=5083,m=687,g=7130]
+[2026-03-27 20:31:01]   step 13000/15000 | lm=3.0000 loc=0.000000 tau=0.220 | lr=4.32e-06 | 13545 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0329 dom=tech batches=[c=5135,m=687,g=7178]
+[2026-03-27 20:31:01] --- Eval at step 13000 (tau=0.220) ---
+[2026-03-27 20:31:21]   PPL=20.42 | mean_cossim=0.06759490966796874
+[2026-03-27 20:31:21]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:31:21] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step13000.pt
+[2026-03-27 20:31:34]   step 13100/15000 | lm=2.6562 loc=0.000000 tau=0.214 | lr=3.91e-06 | 13423 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0316 dom=general batches=[c=5169,m=693,g=7238]
+[2026-03-27 20:31:47]   step 13200/15000 | lm=5.5000 loc=0.000000 tau=0.208 | lr=3.51e-06 | 13437 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0319 dom=tech batches=[c=5213,m=709,g=7278]
+[2026-03-27 20:32:00]   step 13300/15000 | lm=3.1250 loc=0.000000 tau=0.202 | lr=3.14e-06 | 13450 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0322 dom=general batches=[c=5250,m=713,g=7337]
+[2026-03-27 20:32:14]   step 13400/15000 | lm=3.6406 loc=0.000000 tau=0.196 | lr=2.78e-06 | 13463 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0320 dom=general batches=[c=5293,m=718,g=7389]
+[2026-03-27 20:32:27]   step 13500/15000 | lm=3.0781 loc=0.000000 tau=0.190 | lr=2.45e-06 | 13476 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0329 dom=tech batches=[c=5335,m=719,g=7446]
+[2026-03-27 20:32:40]   step 13600/15000 | lm=3.0781 loc=0.000000 tau=0.184 | lr=2.13e-06 | 13487 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=general batches=[c=5386,m=726,g=7488]
+[2026-03-27 20:32:54]   step 13700/15000 | lm=3.3125 loc=0.000000 tau=0.178 | lr=1.84e-06 | 13500 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0329 dom=tech batches=[c=5431,m=734,g=7535]
+[2026-03-27 20:33:07]   step 13800/15000 | lm=3.6094 loc=0.000000 tau=0.172 | lr=1.57e-06 | 13512 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=general batches=[c=5480,m=740,g=7580]
+[2026-03-27 20:33:20]   step 13900/15000 | lm=3.7188 loc=0.000000 tau=0.166 | lr=1.32e-06 | 13524 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=tech batches=[c=5531,m=741,g=7628]
+[2026-03-27 20:33:33]   step 14000/15000 | lm=3.0156 loc=0.000000 tau=0.160 | lr=1.09e-06 | 13537 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0328 dom=tech batches=[c=5563,m=743,g=7694]
+[2026-03-27 20:33:33] --- Eval at step 14000 (tau=0.160) ---
+[2026-03-27 20:33:53]   PPL=20.42 | mean_cossim=0.06759541829427083
+[2026-03-27 20:33:53]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:33:53] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step14000.pt
+[2026-03-27 20:34:07]   step 14100/15000 | lm=2.9062 loc=0.000000 tau=0.154 | lr=8.86e-07 | 13423 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0324 dom=general batches=[c=5611,m=744,g=7745]
+[2026-03-27 20:34:20]   step 14200/15000 | lm=2.8281 loc=0.000000 tau=0.148 | lr=7.00e-07 | 13436 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0326 dom=tech batches=[c=5653,m=754,g=7793]
+[2026-03-27 20:34:33]   step 14300/15000 | lm=2.9062 loc=0.000000 tau=0.142 | lr=5.36e-07 | 13449 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=general batches=[c=5701,m=757,g=7842]
+[2026-03-27 20:34:46]   step 14400/15000 | lm=2.8750 loc=0.000000 tau=0.136 | lr=3.94e-07 | 13461 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0330 dom=general batches=[c=5732,m=767,g=7901]
+[2026-03-27 20:34:59]   step 14500/15000 | lm=2.9375 loc=0.000000 tau=0.130 | lr=2.74e-07 | 13474 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=tech batches=[c=5777,m=769,g=7954]
+[2026-03-27 20:35:13]   step 14600/15000 | lm=3.0625 loc=0.000000 tau=0.124 | lr=1.75e-07 | 13483 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0335 dom=general batches=[c=5821,m=769,g=8010]
+[2026-03-27 20:35:26]   step 14700/15000 | lm=3.2344 loc=0.000000 tau=0.118 | lr=9.87e-08 | 13495 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0333 dom=tech batches=[c=5876,m=772,g=8052]
+[2026-03-27 20:35:39]   step 14800/15000 | lm=3.0781 loc=0.000000 tau=0.112 | lr=4.39e-08 | 13507 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0333 dom=tech batches=[c=5918,m=781,g=8101]
+[2026-03-27 20:35:53]   step 14900/15000 | lm=3.2344 loc=0.000000 tau=0.106 | lr=1.10e-08 | 13519 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0332 dom=tech batches=[c=5966,m=794,g=8140]
+[2026-03-27 20:36:06]   step 15000/15000 | lm=2.9062 loc=0.000000 tau=0.100 | lr=0.00e+00 | 13530 tok/s route_L18=[code=1.00,med=0.00] | shared_dmg=0.0333 dom=tech batches=[c=6000,m=800,g=8200]
+[2026-03-27 20:36:06] --- Eval at step 15000 (tau=0.100) ---
+[2026-03-27 20:36:26]   PPL=20.42 | mean_cossim=0.06759541829427083
+[2026-03-27 20:36:26]   L18: code_prob=0.996 medical_prob=0.002 selectivity=0.496
+[2026-03-27 20:36:26] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step15000.pt
+[2026-03-27 20:36:26] --- Final eval ---
+[2026-03-27 20:36:46]   Final PPL=20.42 | mean_cossim=0.06759541829427083
+[2026-03-27 20:36:46] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_enriched/domain_enriched_step15000.pt
+[2026-03-27 20:36:46] 
+[2026-03-27 20:36:46] ======================================================================
+[2026-03-27 20:36:46] Computing M_ij Ablation Matrix
+[2026-03-27 20:36:46] ======================================================================
+[2026-03-27 20:36:48] Ablation matrix: tokens per domain: ['tech=44032', 'medical=44032', 'general=44032']
+[2026-03-27 20:36:54] Baseline PPL: ['tech=22.98', 'medical=17.66', 'general=20.45']
+[2026-03-27 20:37:01] Expert 0 (tech) ablated: M[i,0] = ['1.000', '0.999', '1.002']
+[2026-03-27 20:37:07] Expert 1 (medical) ablated: M[i,1] = ['1.000', '1.001', '1.002']
+[2026-03-27 20:37:14] Expert 2 (general) ablated: M[i,2] = ['1.004', '1.004', '1.003']
+[2026-03-27 20:37:14] M_ij matrix:
+[2026-03-27 20:37:14]             E0(tech)  E1(medi)  E2(gene)
+[2026-03-27 20:37:14]       tech:      1.000       1.000       1.004
+[2026-03-27 20:37:14]    medical:      0.999       1.001       1.004
+[2026-03-27 20:37:14]    general:      1.002       1.002       1.003
+[2026-03-27 20:37:14] Diagonal dominance (code, medical): [0.0016345805318994655, 0.0007271404278559324]
+[2026-03-27 20:37:14] Mean diagonal dominance: 0.0012
+[2026-03-27 20:37:14] Shared expert impact: ['1.004', '1.004', '1.003']
+[2026-03-27 20:37:14] Ablation matrix saved to /root/t6b-mogae/results_domain_enriched/ablation_matrix.json
+[2026-03-27 20:37:14] 
+[2026-03-27 20:37:14] ======================================================================
+[2026-03-27 20:37:14] Experiment Summary
+[2026-03-27 20:37:14] ======================================================================
+[2026-03-27 20:37:14] PPL: 20.67 -> 20.42
+[2026-03-27 20:37:14] Mean diagonal dominance: 0.0012
+[2026-03-27 20:37:14]   Code diagonal dominance: 0.0016
+[2026-03-27 20:37:14]   Medical diagonal dominance: 0.0007
+[2026-03-27 20:37:14]   Shared expert impact: [1.003549161317169, 1.0037315087612602, 1.0031845658038987]
+[2026-03-27 20:37:14] FAILURE: No diagonal dominance even with enriched data.
+[2026-03-27 20:37:14] This indicates a capacity issue at rank-4 with 3 experts.
+[2026-03-27 20:37:14] PPL change: -1.2%
+[2026-03-27 20:37:14] Domain batch distribution: {0: 6000, 1: 800, 2: 8200}
+[2026-03-27 20:37:14] Done.

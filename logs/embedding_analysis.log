@@ -1,0 +1,1353 @@
+Loaded HF token from /root/.hf_token
+Device: cuda:0
+Model: Qwen/Qwen3-1.7B
+Tokens: 10000
+Expert counts: [8, 16, 32, 64]
+Output: /root/t6b-mogae/results
+
+Loading tokenizer...
+Loading model in BF16...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 37/311 [00:00<00:00, 359.31it/s]Loading weights:  49%|████▊     | 151/311 [00:00<00:00, 795.74it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 1042.37it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+Hidden dim: 2048, Layers: 28
+Loading C4 dataset for 10000 tokens...
+  Collected 10000 tokens from C4
+
+Running 20 batches of 512 tokens through model...
+  Batch 5/20 done (0.6s)
+  Batch 10/20 done (0.9s)
+  Batch 15/20 done (1.3s)
+  Batch 20/20 done (1.6s)
+
+Concatenating hidden states...
+  Layer 0: (10000, 2048)
+  Layer 1: (10000, 2048)
+  Layer 2: (10000, 2048)
+  Layer 3: (10000, 2048)
+  Layer 4: (10000, 2048)
+  Layer 5: (10000, 2048)
+  Layer 6: (10000, 2048)
+  Layer 7: (10000, 2048)
+  Layer 8: (10000, 2048)
+  Layer 9: (10000, 2048)
+  Layer 10: (10000, 2048)
+  Layer 11: (10000, 2048)
+  Layer 12: (10000, 2048)
+  Layer 13: (10000, 2048)
+  Layer 14: (10000, 2048)
+  Layer 15: (10000, 2048)
+  Layer 16: (10000, 2048)
+  Layer 17: (10000, 2048)
+  Layer 18: (10000, 2048)
+  Layer 19: (10000, 2048)
+  Layer 20: (10000, 2048)
+  Layer 21: (10000, 2048)
+  Layer 22: (10000, 2048)
+  Layer 23: (10000, 2048)
+  Layer 24: (10000, 2048)
+  Layer 25: (10000, 2048)
+  Layer 26: (10000, 2048)
+  Layer 27: (10000, 2048)
+  Layer 28: (10000, 2048)
+
+============================================================
+Layer 0: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 27.5
+  PCA took 6.6s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1202, max=1296, mean=1250, CV=0.019, Gini=0.009
+    Avg within-leaf variance: 0.0009 (89.7% of total)
+    Inter-leaf centroid distance: mean=0.6292, std=0.2907
+    Separation score (silhouette-like): 0.0532
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_0_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=486, max=810, mean=625, CV=0.097, Gini=0.043
+    Avg within-leaf variance: 0.0009 (85.6% of total)
+    Inter-leaf centroid distance: mean=0.7228, std=0.3336
+    Separation score (silhouette-like): 0.0905
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_0_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=126, max=411, mean=312, CV=0.153, Gini=0.071
+    Avg within-leaf variance: 0.0008 (81.1% of total)
+    Inter-leaf centroid distance: mean=0.8348, std=0.3681
+    Separation score (silhouette-like): 0.1765
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_0_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 60
+    Population: min=1, max=398, mean=167, CV=0.415, Gini=0.177
+    Avg within-leaf variance: 0.0008 (78.6% of total)
+    Inter-leaf centroid distance: mean=0.9396, std=0.4159
+    Separation score (silhouette-like): 0.2373
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_0_k64.png
+
+============================================================
+Layer 1: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 81.0
+  PCA took 5.2s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1237, max=1256, mean=1250, CV=0.005, Gini=0.003
+    Avg within-leaf variance: 0.0879 (92.7% of total)
+    Inter-leaf centroid distance: mean=5.4945, std=1.4628
+    Separation score (silhouette-like): 0.0509
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_1_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=618, max=630, mean=625, CV=0.005, Gini=0.003
+    Avg within-leaf variance: 0.0855 (90.1% of total)
+    Inter-leaf centroid distance: mean=6.1737, std=1.6566
+    Separation score (silhouette-like): 0.0506
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_1_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=302, max=324, mean=312, CV=0.012, Gini=0.006
+    Avg within-leaf variance: 0.0829 (87.3% of total)
+    Inter-leaf centroid distance: mean=6.8894, std=1.7909
+    Separation score (silhouette-like): 0.0451
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_1_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=139, max=173, mean=156, CV=0.028, Gini=0.013
+    Avg within-leaf variance: 0.0795 (83.8% of total)
+    Inter-leaf centroid distance: mean=7.7687, std=1.8406
+    Separation score (silhouette-like): 0.0354
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_1_k64.png
+
+============================================================
+Layer 2: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 47.7
+  PCA took 5.6s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1227, max=1269, mean=1250, CV=0.011, Gini=0.006
+    Avg within-leaf variance: 0.1766 (95.2% of total)
+    Inter-leaf centroid distance: mean=6.0271, std=1.6184
+    Separation score (silhouette-like): 0.0069
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_2_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=612, max=640, mean=625, CV=0.014, Gini=0.008
+    Avg within-leaf variance: 0.1736 (93.6% of total)
+    Inter-leaf centroid distance: mean=6.7930, std=1.7243
+    Separation score (silhouette-like): -0.0000
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_2_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=301, max=325, mean=312, CV=0.019, Gini=0.010
+    Avg within-leaf variance: 0.1689 (91.1% of total)
+    Inter-leaf centroid distance: mean=7.8963, std=1.9477
+    Separation score (silhouette-like): -0.0065
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_2_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=144, max=173, mean=156, CV=0.027, Gini=0.014
+    Avg within-leaf variance: 0.1626 (87.7% of total)
+    Inter-leaf centroid distance: mean=9.0392, std=2.3312
+    Separation score (silhouette-like): -0.0105
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_2_k64.png
+
+============================================================
+Layer 3: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 4.9s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1232, max=1262, mean=1250, CV=0.007, Gini=0.004
+    Avg within-leaf variance: 221.7636 (100.0% of total)
+    Inter-leaf centroid distance: mean=66.6024, std=103.5708
+    Separation score (silhouette-like): -0.1072
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_3_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=613, max=637, mean=625, CV=0.010, Gini=0.006
+    Avg within-leaf variance: 219.1317 (98.8% of total)
+    Inter-leaf centroid distance: mean=68.6503, std=160.4162
+    Separation score (silhouette-like): -0.0520
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_3_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=306, max=320, mean=312, CV=0.012, Gini=0.007
+    Avg within-leaf variance: 212.0794 (95.6% of total)
+    Inter-leaf centroid distance: mean=70.3417, std=236.4139
+    Separation score (silhouette-like): -0.0251
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_3_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=151, max=160, mean=156, CV=0.014, Gini=0.008
+    Avg within-leaf variance: 198.4008 (89.5% of total)
+    Inter-leaf centroid distance: mean=72.3103, std=343.1344
+    Separation score (silhouette-like): -0.0156
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_3_k64.png
+
+============================================================
+Layer 4: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 6.7s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1173, max=1289, mean=1250, CV=0.034, Gini=0.018
+    Avg within-leaf variance: 232.8325 (104.9% of total)
+    Inter-leaf centroid distance: mean=70.6740, std=108.5820
+    Separation score (silhouette-like): -0.0926
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_4_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=579, max=645, mean=625, CV=0.035, Gini=0.018
+    Avg within-leaf variance: 231.6536 (104.4% of total)
+    Inter-leaf centroid distance: mean=73.6816, std=169.4662
+    Separation score (silhouette-like): -0.0405
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_4_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=288, max=323, mean=312, CV=0.035, Gini=0.018
+    Avg within-leaf variance: 224.4792 (101.2% of total)
+    Inter-leaf centroid distance: mean=76.1301, std=250.6771
+    Separation score (silhouette-like): -0.0115
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_4_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=143, max=165, mean=156, CV=0.036, Gini=0.020
+    Avg within-leaf variance: 207.8091 (93.6% of total)
+    Inter-leaf centroid distance: mean=77.8676, std=361.7273
+    Separation score (silhouette-like): -0.0043
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_4_k64.png
+
+============================================================
+Layer 5: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 5.7s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1195, max=1305, mean=1250, CV=0.031, Gini=0.018
+    Avg within-leaf variance: 228.7709 (103.0% of total)
+    Inter-leaf centroid distance: mean=70.4362, std=106.0214
+    Separation score (silhouette-like): -0.0921
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_5_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=586, max=654, mean=625, CV=0.032, Gini=0.018
+    Avg within-leaf variance: 229.1391 (103.2% of total)
+    Inter-leaf centroid distance: mean=74.1542, std=166.8532
+    Separation score (silhouette-like): -0.0437
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_5_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=293, max=330, mean=312, CV=0.033, Gini=0.019
+    Avg within-leaf variance: 221.0879 (99.6% of total)
+    Inter-leaf centroid distance: mean=76.7463, std=245.7877
+    Separation score (silhouette-like): -0.0157
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_5_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=146, max=167, mean=156, CV=0.035, Gini=0.020
+    Avg within-leaf variance: 205.5691 (92.6% of total)
+    Inter-leaf centroid distance: mean=79.0716, std=356.2719
+    Separation score (silhouette-like): -0.0088
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_5_k64.png
+
+============================================================
+Layer 6: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 5.4s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1224, max=1266, mean=1250, CV=0.009, Gini=0.004
+    Avg within-leaf variance: 223.6934 (100.6% of total)
+    Inter-leaf centroid distance: mean=70.2720, std=102.5169
+    Separation score (silhouette-like): -0.0947
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_6_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=609, max=645, mean=625, CV=0.014, Gini=0.008
+    Avg within-leaf variance: 221.0344 (99.4% of total)
+    Inter-leaf centroid distance: mean=73.3113, std=159.7405
+    Separation score (silhouette-like): -0.0481
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_6_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=303, max=323, mean=312, CV=0.017, Gini=0.010
+    Avg within-leaf variance: 213.8975 (96.2% of total)
+    Inter-leaf centroid distance: mean=76.3303, std=236.2608
+    Separation score (silhouette-like): -0.0196
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_6_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=145, max=166, mean=156, CV=0.023, Gini=0.013
+    Avg within-leaf variance: 201.1578 (90.5% of total)
+    Inter-leaf centroid distance: mean=79.6594, std=346.3208
+    Separation score (silhouette-like): -0.0114
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_6_k64.png
+
+============================================================
+Layer 7: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 5.4s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1220, max=1274, mean=1250, CV=0.012, Gini=0.007
+    Avg within-leaf variance: 224.5796 (100.9% of total)
+    Inter-leaf centroid distance: mean=71.5003, std=102.4773
+    Separation score (silhouette-like): -0.0948
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_7_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=600, max=640, mean=625, CV=0.014, Gini=0.008
+    Avg within-leaf variance: 224.3935 (100.9% of total)
+    Inter-leaf centroid distance: mean=75.5539, std=161.7749
+    Separation score (silhouette-like): -0.0481
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_7_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=298, max=320, mean=312, CV=0.015, Gini=0.008
+    Avg within-leaf variance: 218.0411 (98.0% of total)
+    Inter-leaf centroid distance: mean=79.1500, std=240.7883
+    Separation score (silhouette-like): -0.0248
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_7_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=146, max=162, mean=156, CV=0.017, Gini=0.009
+    Avg within-leaf variance: 205.9346 (92.6% of total)
+    Inter-leaf centroid distance: mean=83.1322, std=355.6768
+    Separation score (silhouette-like): -0.0125
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_7_k64.png
+
+============================================================
+Layer 8: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 5.7s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1219, max=1272, mean=1250, CV=0.016, Gini=0.009
+    Avg within-leaf variance: 224.9262 (101.0% of total)
+    Inter-leaf centroid distance: mean=72.6083, std=102.3009
+    Separation score (silhouette-like): -0.0949
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_8_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=599, max=653, mean=625, CV=0.022, Gini=0.012
+    Avg within-leaf variance: 224.9083 (101.0% of total)
+    Inter-leaf centroid distance: mean=76.6528, std=162.0145
+    Separation score (silhouette-like): -0.0542
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_8_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=295, max=328, mean=312, CV=0.023, Gini=0.013
+    Avg within-leaf variance: 220.2429 (98.9% of total)
+    Inter-leaf centroid distance: mean=80.8314, std=243.2164
+    Separation score (silhouette-like): -0.0252
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_8_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=146, max=166, mean=156, CV=0.026, Gini=0.014
+    Avg within-leaf variance: 206.0977 (92.6% of total)
+    Inter-leaf centroid distance: mean=84.2803, std=355.5378
+    Separation score (silhouette-like): -0.0139
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_8_k64.png
+
+============================================================
+Layer 9: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 6.2s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1218, max=1264, mean=1250, CV=0.011, Gini=0.005
+    Avg within-leaf variance: 225.3691 (101.1% of total)
+    Inter-leaf centroid distance: mean=74.4945, std=101.7663
+    Separation score (silhouette-like): -0.0904
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_9_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=593, max=644, mean=625, CV=0.019, Gini=0.009
+    Avg within-leaf variance: 227.3381 (102.0% of total)
+    Inter-leaf centroid distance: mean=79.6461, std=163.2137
+    Separation score (silhouette-like): -0.0478
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_9_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=292, max=330, mean=312, CV=0.025, Gini=0.013
+    Avg within-leaf variance: 222.5542 (99.8% of total)
+    Inter-leaf centroid distance: mean=83.7885, std=245.5616
+    Separation score (silhouette-like): -0.0242
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_9_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=144, max=167, mean=156, CV=0.026, Gini=0.014
+    Avg within-leaf variance: 208.6962 (93.6% of total)
+    Inter-leaf centroid distance: mean=87.9039, std=360.3562
+    Separation score (silhouette-like): -0.0135
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_9_k64.png
+
+============================================================
+Layer 10: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 1 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 4.4s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1171, max=1283, mean=1250, CV=0.027, Gini=0.014
+    Avg within-leaf variance: 234.6902 (105.0% of total)
+    Inter-leaf centroid distance: mean=78.3065, std=105.6621
+    Separation score (silhouette-like): -0.0859
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_10_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=571, max=647, mean=625, CV=0.028, Gini=0.014
+    Avg within-leaf variance: 236.2095 (105.7% of total)
+    Inter-leaf centroid distance: mean=83.9883, std=169.1622
+    Separation score (silhouette-like): -0.0468
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_10_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=276, max=324, mean=312, CV=0.030, Gini=0.014
+    Avg within-leaf variance: 234.8613 (105.1% of total)
+    Inter-leaf centroid distance: mean=89.9091, std=259.4674
+    Separation score (silhouette-like): -0.0260
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_10_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=133, max=164, mean=156, CV=0.031, Gini=0.015
+    Avg within-leaf variance: 223.3439 (99.9% of total)
+    Inter-leaf centroid distance: mean=96.2839, std=389.8428
+    Separation score (silhouette-like): -0.0158
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_10_k64.png
+
+============================================================
+Layer 11: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 34 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 5.4s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1173, max=1293, mean=1250, CV=0.032, Gini=0.018
+    Avg within-leaf variance: 235.3063 (104.8% of total)
+    Inter-leaf centroid distance: mean=80.5201, std=104.1995
+    Separation score (silhouette-like): -0.0811
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_11_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=560, max=647, mean=625, CV=0.036, Gini=0.018
+    Avg within-leaf variance: 241.6546 (107.6% of total)
+    Inter-leaf centroid distance: mean=88.2161, std=171.2110
+    Separation score (silhouette-like): -0.0486
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_11_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=279, max=325, mean=312, CV=0.037, Gini=0.019
+    Avg within-leaf variance: 233.5637 (104.0% of total)
+    Inter-leaf centroid distance: mean=93.3823, std=255.1775
+    Separation score (silhouette-like): -0.0279
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_11_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=139, max=164, mean=156, CV=0.037, Gini=0.019
+    Avg within-leaf variance: 216.4195 (96.4% of total)
+    Inter-leaf centroid distance: mean=98.7894, std=371.4052
+    Separation score (silhouette-like): -0.0175
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_11_k64.png
+
+============================================================
+Layer 12: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 113 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 4.9s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1172, max=1275, mean=1250, CV=0.024, Gini=0.010
+    Avg within-leaf variance: 237.2171 (104.8% of total)
+    Inter-leaf centroid distance: mean=84.8694, std=102.6279
+    Separation score (silhouette-like): -0.0691
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_12_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=583, max=639, mean=625, CV=0.024, Gini=0.011
+    Avg within-leaf variance: 234.2545 (103.5% of total)
+    Inter-leaf centroid distance: mean=91.4952, std=162.5448
+    Separation score (silhouette-like): -0.0448
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_12_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=287, max=333, mean=312, CV=0.031, Gini=0.016
+    Avg within-leaf variance: 229.2805 (101.3% of total)
+    Inter-leaf centroid distance: mean=98.0647, std=246.5179
+    Separation score (silhouette-like): -0.0277
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_12_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=140, max=171, mean=156, CV=0.038, Gini=0.021
+    Avg within-leaf variance: 216.8271 (95.8% of total)
+    Inter-leaf centroid distance: mean=105.1822, std=367.4458
+    Separation score (silhouette-like): -0.0166
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_12_k64.png
+
+============================================================
+Layer 13: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 166 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 4.9s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1197, max=1262, mean=1250, CV=0.017, Gini=0.007
+    Avg within-leaf variance: 233.3006 (102.7% of total)
+    Inter-leaf centroid distance: mean=85.1146, std=99.9056
+    Separation score (silhouette-like): -0.0679
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_13_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=580, max=639, mean=625, CV=0.020, Gini=0.009
+    Avg within-leaf variance: 236.2691 (104.0% of total)
+    Inter-leaf centroid distance: mean=93.3207, std=162.8406
+    Separation score (silhouette-like): -0.0468
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_13_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=288, max=327, mean=312, CV=0.026, Gini=0.013
+    Avg within-leaf variance: 229.4228 (101.0% of total)
+    Inter-leaf centroid distance: mean=100.7523, std=244.6576
+    Separation score (silhouette-like): -0.0279
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_13_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=143, max=164, mean=156, CV=0.028, Gini=0.015
+    Avg within-leaf variance: 213.9355 (94.2% of total)
+    Inter-leaf centroid distance: mean=108.0903, std=358.6303
+    Separation score (silhouette-like): -0.0156
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_13_k64.png
+
+============================================================
+Layer 14: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 1.0
+  PCA took 7.6s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1224, max=1271, mean=1250, CV=0.009, Gini=0.004
+    Avg within-leaf variance: 229.5527 (100.5% of total)
+    Inter-leaf centroid distance: mean=86.3876, std=96.8259
+    Separation score (silhouette-like): -0.0645
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_14_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=606, max=636, mean=625, CV=0.011, Gini=0.006
+    Avg within-leaf variance: 227.8485 (99.7% of total)
+    Inter-leaf centroid distance: mean=94.6526, std=154.7840
+    Separation score (silhouette-like): -0.0464
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_14_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=293, max=325, mean=312, CV=0.021, Gini=0.011
+    Avg within-leaf variance: 227.0064 (99.4% of total)
+    Inter-leaf centroid distance: mean=103.5873, std=239.8050
+    Separation score (silhouette-like): -0.0321
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_14_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=146, max=165, mean=156, CV=0.025, Gini=0.014
+    Avg within-leaf variance: 211.4406 (92.5% of total)
+    Inter-leaf centroid distance: mean=111.1128, std=350.5987
+    Separation score (silhouette-like): -0.0189
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_14_k64.png
+
+============================================================
+Layer 15: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 1 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 1.1
+  PCA took 5.6s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1219, max=1268, mean=1250, CV=0.012, Gini=0.006
+    Avg within-leaf variance: 232.0273 (100.8% of total)
+    Inter-leaf centroid distance: mean=90.7777, std=96.7297
+    Separation score (silhouette-like): -0.0645
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_15_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=595, max=635, mean=625, CV=0.015, Gini=0.007
+    Avg within-leaf variance: 233.2713 (101.3% of total)
+    Inter-leaf centroid distance: mean=100.8947, std=157.7280
+    Separation score (silhouette-like): -0.0453
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_15_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=295, max=333, mean=312, CV=0.025, Gini=0.013
+    Avg within-leaf variance: 226.9848 (98.6% of total)
+    Inter-leaf centroid distance: mean=108.5360, std=238.7684
+    Separation score (silhouette-like): -0.0289
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_15_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=144, max=167, mean=156, CV=0.027, Gini=0.014
+    Avg within-leaf variance: 215.0232 (93.4% of total)
+    Inter-leaf centroid distance: mean=118.0958, std=356.5486
+    Separation score (silhouette-like): -0.0178
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_15_k64.png
+
+============================================================
+Layer 16: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 1 components for 90% variance
+  PCA: 8 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 1.1
+  PCA took 6.0s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1209, max=1272, mean=1250, CV=0.014, Gini=0.007
+    Avg within-leaf variance: 237.4172 (101.5% of total)
+    Inter-leaf centroid distance: mean=94.5308, std=96.7131
+    Separation score (silhouette-like): -0.0569
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_16_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=596, max=640, mean=625, CV=0.016, Gini=0.009
+    Avg within-leaf variance: 236.4421 (101.1% of total)
+    Inter-leaf centroid distance: mean=105.7285, std=155.9913
+    Separation score (silhouette-like): -0.0455
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_16_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=296, max=323, mean=312, CV=0.018, Gini=0.010
+    Avg within-leaf variance: 229.7829 (98.3% of total)
+    Inter-leaf centroid distance: mean=114.9929, std=236.3933
+    Separation score (silhouette-like): -0.0292
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_16_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=145, max=162, mean=156, CV=0.021, Gini=0.011
+    Avg within-leaf variance: 217.3146 (92.9% of total)
+    Inter-leaf centroid distance: mean=125.2354, std=352.4108
+    Separation score (silhouette-like): -0.0177
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_16_k64.png
+
+============================================================
+Layer 17: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 9 components for 90% variance
+  PCA: 116 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 1.2
+  PCA took 4.1s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1215, max=1288, mean=1250, CV=0.024, Gini=0.013
+    Avg within-leaf variance: 244.7145 (98.6% of total)
+    Inter-leaf centroid distance: mean=104.8789, std=87.8559
+    Separation score (silhouette-like): -0.0380
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_17_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=607, max=651, mean=625, CV=0.025, Gini=0.014
+    Avg within-leaf variance: 241.5575 (97.3% of total)
+    Inter-leaf centroid distance: mean=120.0477, std=143.9058
+    Separation score (silhouette-like): -0.0324
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_17_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=298, max=326, mean=312, CV=0.026, Gini=0.015
+    Avg within-leaf variance: 235.5045 (94.9% of total)
+    Inter-leaf centroid distance: mean=133.4235, std=222.1956
+    Separation score (silhouette-like): -0.0243
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_17_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=147, max=163, mean=156, CV=0.028, Gini=0.016
+    Avg within-leaf variance: 221.6589 (89.3% of total)
+    Inter-leaf centroid distance: mean=145.2150, std=329.6580
+    Separation score (silhouette-like): -0.0168
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_17_k64.png
+
+============================================================
+Layer 18: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 82 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 1.3
+  PCA took 5.0s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1222, max=1276, mean=1250, CV=0.014, Gini=0.008
+    Avg within-leaf variance: 265.5576 (99.7% of total)
+    Inter-leaf centroid distance: mean=119.0930, std=86.6372
+    Separation score (silhouette-like): -0.0267
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_18_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=611, max=641, mean=625, CV=0.014, Gini=0.008
+    Avg within-leaf variance: 261.1776 (98.1% of total)
+    Inter-leaf centroid distance: mean=138.5967, std=141.9746
+    Separation score (silhouette-like): -0.0294
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_18_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=298, max=326, mean=312, CV=0.018, Gini=0.010
+    Avg within-leaf variance: 254.4779 (95.6% of total)
+    Inter-leaf centroid distance: mean=155.6827, std=219.7064
+    Separation score (silhouette-like): -0.0249
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_18_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=148, max=163, mean=156, CV=0.021, Gini=0.012
+    Avg within-leaf variance: 239.3706 (89.9% of total)
+    Inter-leaf centroid distance: mean=173.5844, std=327.3118
+    Separation score (silhouette-like): -0.0169
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_18_k64.png
+
+============================================================
+Layer 19: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 189 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 1.5
+  PCA took 4.7s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1220, max=1270, mean=1250, CV=0.011, Gini=0.006
+    Avg within-leaf variance: 292.0556 (99.6% of total)
+    Inter-leaf centroid distance: mean=144.0658, std=95.1143
+    Separation score (silhouette-like): -0.0190
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_19_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=598, max=640, mean=625, CV=0.014, Gini=0.007
+    Avg within-leaf variance: 291.2539 (99.4% of total)
+    Inter-leaf centroid distance: mean=167.4015, std=150.6693
+    Separation score (silhouette-like): -0.0251
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_19_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=297, max=320, mean=312, CV=0.016, Gini=0.008
+    Avg within-leaf variance: 283.7406 (96.8% of total)
+    Inter-leaf centroid distance: mean=187.4473, std=228.2360
+    Separation score (silhouette-like): -0.0231
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_19_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=143, max=174, mean=156, CV=0.024, Gini=0.011
+    Avg within-leaf variance: 273.0996 (93.2% of total)
+    Inter-leaf centroid distance: mean=212.6768, std=348.2553
+    Separation score (silhouette-like): -0.0164
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_19_k64.png
+
+============================================================
+Layer 20: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 2.0
+  PCA took 4.4s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1208, max=1273, mean=1250, CV=0.020, Gini=0.011
+    Avg within-leaf variance: 351.4968 (98.6% of total)
+    Inter-leaf centroid distance: mean=195.6324, std=108.3350
+    Separation score (silhouette-like): -0.0077
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_20_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=599, max=649, mean=625, CV=0.024, Gini=0.013
+    Avg within-leaf variance: 348.0265 (97.7% of total)
+    Inter-leaf centroid distance: mean=217.4078, std=159.5245
+    Separation score (silhouette-like): -0.0169
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_20_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=296, max=337, mean=312, CV=0.028, Gini=0.015
+    Avg within-leaf variance: 341.0005 (95.7% of total)
+    Inter-leaf centroid distance: mean=245.6912, std=232.2318
+    Separation score (silhouette-like): -0.0178
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_20_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=147, max=169, mean=156, CV=0.028, Gini=0.016
+    Avg within-leaf variance: 323.7809 (90.9% of total)
+    Inter-leaf centroid distance: mean=275.4598, std=338.5788
+    Separation score (silhouette-like): -0.0135
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_20_k64.png
+
+============================================================
+Layer 21: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 2.9
+  PCA took 5.4s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1144, max=1307, mean=1250, CV=0.038, Gini=0.020
+    Avg within-leaf variance: 451.5881 (100.4% of total)
+    Inter-leaf centroid distance: mean=248.4751, std=124.9367
+    Separation score (silhouette-like): -0.0036
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_21_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=563, max=668, mean=625, CV=0.040, Gini=0.021
+    Avg within-leaf variance: 447.6482 (99.5% of total)
+    Inter-leaf centroid distance: mean=273.9709, std=173.0454
+    Separation score (silhouette-like): -0.0125
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_21_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=254, max=334, mean=312, CV=0.047, Gini=0.022
+    Avg within-leaf variance: 455.7760 (101.4% of total)
+    Inter-leaf centroid distance: mean=318.2796, std=269.4254
+    Separation score (silhouette-like): -0.0137
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_21_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=116, max=167, mean=156, CV=0.051, Gini=0.023
+    Avg within-leaf variance: 446.1679 (99.2% of total)
+    Inter-leaf centroid distance: mean=363.2785, std=425.4426
+    Separation score (silhouette-like): -0.0110
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_21_k64.png
+
+============================================================
+Layer 22: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 4.2
+  PCA took 7.6s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1213, max=1298, mean=1250, CV=0.022, Gini=0.011
+    Avg within-leaf variance: 550.9658 (96.9% of total)
+    Inter-leaf centroid distance: mean=293.4060, std=141.7973
+    Separation score (silhouette-like): -0.0007
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_22_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=596, max=654, mean=625, CV=0.023, Gini=0.011
+    Avg within-leaf variance: 545.5058 (95.9% of total)
+    Inter-leaf centroid distance: mean=328.2513, std=176.5971
+    Separation score (silhouette-like): -0.0103
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_22_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=272, max=327, mean=312, CV=0.031, Gini=0.014
+    Avg within-leaf variance: 549.1289 (96.6% of total)
+    Inter-leaf centroid distance: mean=373.0618, std=258.4535
+    Separation score (silhouette-like): -0.0137
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_22_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=135, max=164, mean=156, CV=0.032, Gini=0.015
+    Avg within-leaf variance: 524.8987 (92.3% of total)
+    Inter-leaf centroid distance: mean=421.3543, std=365.0594
+    Separation score (silhouette-like): -0.0104
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_22_k64.png
+
+============================================================
+Layer 23: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 6.0
+  PCA took 4.9s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1099, max=1312, mean=1250, CV=0.051, Gini=0.025
+    Avg within-leaf variance: 702.7045 (98.5% of total)
+    Inter-leaf centroid distance: mean=367.5547, std=183.6604
+    Separation score (silhouette-like): 0.0023
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_23_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=515, max=656, mean=625, CV=0.055, Gini=0.026
+    Avg within-leaf variance: 703.8883 (98.7% of total)
+    Inter-leaf centroid distance: mean=409.0357, std=224.4860
+    Separation score (silhouette-like): -0.0057
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_23_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=252, max=332, mean=312, CV=0.055, Gini=0.026
+    Avg within-leaf variance: 689.4198 (96.6% of total)
+    Inter-leaf centroid distance: mean=459.1928, std=288.2185
+    Separation score (silhouette-like): -0.0093
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_23_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=117, max=168, mean=156, CV=0.056, Gini=0.027
+    Avg within-leaf variance: 670.8858 (94.0% of total)
+    Inter-leaf centroid distance: mean=516.8824, std=421.4855
+    Separation score (silhouette-like): -0.0081
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_23_k64.png
+
+============================================================
+Layer 24: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 8.5
+  PCA took 5.3s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1150, max=1293, mean=1250, CV=0.033, Gini=0.016
+    Avg within-leaf variance: 853.2501 (96.1% of total)
+    Inter-leaf centroid distance: mean=435.3819, std=202.7353
+    Separation score (silhouette-like): 0.0057
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_24_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=573, max=661, mean=625, CV=0.034, Gini=0.017
+    Avg within-leaf variance: 838.8240 (94.5% of total)
+    Inter-leaf centroid distance: mean=478.1020, std=226.4083
+    Separation score (silhouette-like): -0.0045
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_24_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=279, max=333, mean=312, CV=0.035, Gini=0.017
+    Avg within-leaf variance: 824.9827 (92.9% of total)
+    Inter-leaf centroid distance: mean=523.8551, std=280.1747
+    Separation score (silhouette-like): -0.0098
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_24_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=124, max=167, mean=156, CV=0.040, Gini=0.018
+    Avg within-leaf variance: 814.2042 (91.7% of total)
+    Inter-leaf centroid distance: mean=584.7615, std=404.3956
+    Separation score (silhouette-like): -0.0095
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_24_k64.png
+
+============================================================
+Layer 25: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 11.9
+  PCA took 4.7s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1026, max=1310, mean=1250, CV=0.069, Gini=0.029
+    Avg within-leaf variance: 1053.4938 (97.0% of total)
+    Inter-leaf centroid distance: mean=511.4936, std=238.6316
+    Separation score (silhouette-like): 0.0072
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_25_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=446, max=663, mean=625, CV=0.079, Gini=0.031
+    Avg within-leaf variance: 1062.7761 (97.9% of total)
+    Inter-leaf centroid distance: mean=567.2253, std=284.3501
+    Separation score (silhouette-like): -0.0034
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_25_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=216, max=337, mean=312, CV=0.080, Gini=0.032
+    Avg within-leaf variance: 1041.6990 (95.9% of total)
+    Inter-leaf centroid distance: mean=623.9405, std=352.1769
+    Separation score (silhouette-like): -0.0092
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_25_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=98, max=170, mean=156, CV=0.081, Gini=0.032
+    Avg within-leaf variance: 1014.4176 (93.4% of total)
+    Inter-leaf centroid distance: mean=695.3159, std=499.5090
+    Separation score (silhouette-like): -0.0100
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_25_k64.png
+
+============================================================
+Layer 26: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 15.5
+  PCA took 4.5s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1111, max=1338, mean=1250, CV=0.048, Gini=0.024
+    Avg within-leaf variance: 1220.4603 (95.2% of total)
+    Inter-leaf centroid distance: mean=553.1029, std=236.4243
+    Separation score (silhouette-like): 0.0057
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_26_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=516, max=677, mean=625, CV=0.054, Gini=0.025
+    Avg within-leaf variance: 1211.7162 (94.5% of total)
+    Inter-leaf centroid distance: mean=605.7600, std=269.6506
+    Separation score (silhouette-like): -0.0019
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_26_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=234, max=339, mean=312, CV=0.057, Gini=0.025
+    Avg within-leaf variance: 1200.1851 (93.6% of total)
+    Inter-leaf centroid distance: mean=676.4603, std=332.3865
+    Separation score (silhouette-like): -0.0069
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_26_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=115, max=171, mean=156, CV=0.057, Gini=0.026
+    Avg within-leaf variance: 1160.6712 (90.5% of total)
+    Inter-leaf centroid distance: mean=745.3667, std=429.9309
+    Separation score (silhouette-like): -0.0108
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_26_k64.png
+
+============================================================
+Layer 27: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 18.8
+  PCA took 5.8s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=986, max=1373, mean=1250, CV=0.094, Gini=0.050
+    Avg within-leaf variance: 1359.9091 (96.3% of total)
+    Inter-leaf centroid distance: mean=574.6476, std=291.6188
+    Separation score (silhouette-like): 0.0052
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_27_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=443, max=689, mean=625, CV=0.099, Gini=0.051
+    Avg within-leaf variance: 1351.4719 (95.7% of total)
+    Inter-leaf centroid distance: mean=635.2322, std=345.1662
+    Separation score (silhouette-like): -0.0026
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_27_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=197, max=352, mean=312, CV=0.101, Gini=0.051
+    Avg within-leaf variance: 1337.6044 (94.7% of total)
+    Inter-leaf centroid distance: mean=720.1141, std=403.5183
+    Separation score (silhouette-like): -0.0082
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_27_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=94, max=176, mean=156, CV=0.101, Gini=0.052
+    Avg within-leaf variance: 1293.6824 (91.6% of total)
+    Inter-leaf centroid distance: mean=798.1290, std=517.0876
+    Separation score (silhouette-like): -0.0125
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_27_k64.png
+
+============================================================
+Layer 28: 10000 tokens x 2048 hidden dim
+============================================================
+  PCA: 257 components for 90% variance
+  PCA: 257 components for 95% variance
+  PCA: 257 components for 99% variance
+  Effective dimensionality (participation ratio): 14.8
+  PCA took 4.4s
+
+  KD-tree with 8 leaves:
+    Actual leaves: 8
+    Population: min=1238, max=1257, mean=1250, CV=0.005, Gini=0.002
+    Avg within-leaf variance: 1.7944 (80.3% of total)
+    Inter-leaf centroid distance: mean=43.7669, std=12.5342
+    Separation score (silhouette-like): 0.0525
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_28_k8.png
+
+  KD-tree with 16 leaves:
+    Actual leaves: 16
+    Population: min=608, max=642, mean=625, CV=0.011, Gini=0.006
+    Avg within-leaf variance: 1.6454 (73.6% of total)
+    Inter-leaf centroid distance: mean=47.6911, std=17.6565
+    Separation score (silhouette-like): 0.0378
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_28_k16.png
+
+  KD-tree with 32 leaves:
+    Actual leaves: 32
+    Population: min=293, max=329, mean=312, CV=0.019, Gini=0.010
+    Avg within-leaf variance: 1.5397 (68.9% of total)
+    Inter-leaf centroid distance: mean=50.1093, std=21.0242
+    Separation score (silhouette-like): 0.0262
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_28_k32.png
+
+  KD-tree with 64 leaves:
+    Actual leaves: 64
+    Population: min=145, max=166, mean=156, CV=0.023, Gini=0.012
+    Avg within-leaf variance: 1.4639 (65.5% of total)
+    Inter-leaf centroid distance: mean=52.5763, std=21.3456
+    Separation score (silhouette-like): 0.0079
+    Saved /root/t6b-mogae/results/qwen3_pca_layer_28_k64.png
+
+============================================================
+Cross-layer routing consistency (k=8)
+============================================================
+  0->1: ARI = 0.1261
+  1->2: ARI = 0.1741
+  2->3: ARI = 0.0862
+  3->4: ARI = 0.1925
+  4->5: ARI = 0.4553
+  5->6: ARI = 0.4315
+  6->7: ARI = 0.4969
+  7->8: ARI = 0.3622
+  8->9: ARI = 0.4381
+  9->10: ARI = 0.4458
+  10->11: ARI = 0.4482
+  11->12: ARI = 0.5006
+  12->13: ARI = 0.5761
+  13->14: ARI = 0.5008
+  14->15: ARI = 0.4567
+  15->16: ARI = 0.3310
+  16->17: ARI = 0.3097
+  17->18: ARI = 0.3282
+  18->19: ARI = 0.2481
+  19->20: ARI = 0.2449
+  20->21: ARI = 0.3369
+  21->22: ARI = 0.4532
+  22->23: ARI = 0.4075
+  23->24: ARI = 0.3610
+  24->25: ARI = 0.3935
+  25->26: ARI = 0.2339
+  26->27: ARI = 0.2183
+  27->28: ARI = 0.0739
+  first->last: ARI = 0.0221
+
+============================================================
+Token-type analysis (sample from middle layer)
+============================================================
+
+  KD-tree k=8, layer 14:
+    Leaf 0: [' to', ' on', ' and', ' your', ' take', ';s', ' the', ' a', ' for', ' by']
+    Leaf 1: [' were', ' was', ',', ',', ' was', ' was', ' have', ' will', ' were', ' posted']
+    Leaf 2: [' a', ' ', ',', ' fell', ' from', ' the', ' on', ' morning', ' of', ' ']
+    Leaf 3: [' from', 'utes', ' the', ' social', ' media', ':', ' the', ' kind', ' kind', ' you']
+    Leaf 4: [' as', ' who', ' originally', ' confirmed', ' an', ' to', ' on', ',', ' "', 'I']
+    Leaf 5: [' identified', ',', '7', ' Lane', ' bridge', ' February', 'Police', ' car', 'eway', '.']
+    Leaf 6: [' falling', ' from', ' bridge', ' a', '9', '.\n', ' around', '1', ' the', ' road']
+    Leaf 7: ['The', ' woman', ' who', ' died', ' after', ' over', ' the', ' A', '2', '1']
+
+  KD-tree k=16, layer 14:
+    Leaf 0: [' to', ' and', ' your', ' take', ';s', ' by', ' prevent', ' of', ' another', ' after']
+    Leaf 1: [' on', ' the', ' a', ' for', ' the', ' to', ' of', ' a', ' make', ' which']
+    Leaf 2: [' were', ' was', ' was', ' was', ' will', ' was', ' also', ' was', ' do', ' is']
+    Leaf 3: [',', ',', ' have', ' will', ' were', ' posted', ' will', ' prompted', ' people', ' and']
+    Leaf 4: [' a', ' ', ',', ' from', ' the', ' on', ' morning', ' of', ' ', ' called']
+    Leaf 5: [' fell', 'ings', ' along', ' the', ' Lane', ' bridge', ' falling', ' falling', 's', 'ilation']
+    Leaf 6: [' from', ' the', ' social', ' the', ' kind', ' kind', ' place', ' at', ' in', ' examine']
+    Leaf 7: ['utes', ' media', ':', ' you', ' petition', ' GUI', ' application', ' environment', 'nome', ' GUI']
+
+  KD-tree k=32, layer 14:
+    Leaf 0: [' to', ' your', ' take', ' by', ' two', ' spent', ' and', ' re', "'s", ' G']
+    Leaf 1: [' and', ';s', ' prevent', ' of', ' another', ' after', ' a', ' with', ' this', ' a']
+    Leaf 2: [' the', ' to', ' of', ' make', ' which', ' suits', ' an', ' using', ' of', ' a']
+    Leaf 3: [' on', ' the', ' a', ' for', ' a', ' to', ' a', ' use', ' for', ' write']
+    Leaf 4: [' were', ' was', ' was', ' was', ' was', ' also', ' was', ' do', ' is', ' is']
+    Leaf 5: [' will', ' they', ' want', ' to', ' be', ' to', ' and', ' it', ' can', ' can']
+    Leaf 6: [',', ',', ' will', ' will', ' people', ' and', ' today', ' had', ' when', ',']
+    Leaf 7: [' have', ' were', ' posted', ' prompted', ' uses', ' develop', ' decision', ' me', ' best', ' stuff']
+
+  KD-tree k=64, layer 14:
+    Leaf 0: [' to', ' your', ' take', ' by', ' two', ' spent', ' and', ' re', "'s", ' G']
+    Leaf 1: [' major', ' in', ' and', ' as', ' as', ' without', ' re', ' a', ' a', ' a']
+    Leaf 2: [' and', ';s', ' prevent', ' of', ' another', ' after', ' a', ' with', ' a', ' in']
+    Leaf 3: [' this', ' about', ' a', ' as', ' a', ' with', ' the', ' and', ' with', ' no']
+    Leaf 4: [' to', ' make', ' which', ' suits', ' an', ' a', ' the', ' make', ' swapping', ' a']
+    Leaf 5: [' the', ' of', ' using', ' of', ' a', ' from', ' the', ' a', ' a', ' generate']
+    Leaf 6: [' to', ' use', ' at', ' of', ' a', ' about', ' to', ' and', ' a', ' your']
+    Leaf 7: [' on', ' the', ' a', ' for', ' a', ' a', ' use', ' for', ' write', ' at']
+
+============================================================
+SUMMARY
+============================================================
+
+Model: Qwen/Qwen3-1.7B
+Hidden dim: 2048, Layers: 28, Tokens: 10000
+
+Effective dimensionality by layer:
+  Layer  0: eff_dim=27.5, PCA90=257, PCA95=257, PCA99=257
+  Layer  4: eff_dim=1.0, PCA90=1, PCA95=1, PCA99=1
+  Layer  8: eff_dim=1.0, PCA90=1, PCA95=1, PCA99=1
+  Layer 12: eff_dim=1.0, PCA90=1, PCA95=1, PCA99=113
+  Layer 16: eff_dim=1.1, PCA90=1, PCA95=8, PCA99=257
+  Layer 20: eff_dim=2.0, PCA90=257, PCA95=257, PCA99=257
+  Layer 24: eff_dim=8.5, PCA90=257, PCA95=257, PCA99=257
+  Layer 28: eff_dim=14.8, PCA90=257, PCA95=257, PCA99=257
+
+KD-tree partitioning quality (middle layer):
+  k=  8: sep=-0.0645, var_ratio=1.0048, pop_cv=0.009, gini=0.004
+  k= 16: sep=-0.0464, var_ratio=0.9973, pop_cv=0.011, gini=0.006
+  k= 32: sep=-0.0321, var_ratio=0.9936, pop_cv=0.021, gini=0.011
+  k= 64: sep=-0.0189, var_ratio=0.9255, pop_cv=0.025, gini=0.014
+
+Cross-layer consistency (ARI, k=8):
+  Mean adjacent ARI: 0.3440
+  Min adjacent ARI:  0.0739
+  Max adjacent ARI:  0.5761
+  First->Last ARI:   0.0221
+
+VERDICT (based on layer 14, k=16):
+  NO clear structure — KD-tree partitioning unlikely to work well
+
+Results saved to /root/t6b-mogae/results/qwen3_embedding_analysis.json
+PNGs saved to /root/t6b-mogae/results/qwen3_pca_layer_*.png

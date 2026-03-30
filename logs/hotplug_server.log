@@ -1,0 +1,63 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:35, 11.31it/s]Loading weights:   7%|▋         | 27/399 [00:00<00:03, 115.40it/s]Loading weights:  21%|██        | 82/399 [00:00<00:01, 281.39it/s]Loading weights:  29%|██▉       | 115/399 [00:00<00:00, 291.21it/s]Loading weights:  43%|████▎     | 170/399 [00:00<00:00, 374.90it/s]Loading weights:  53%|█████▎    | 211/399 [00:00<00:00, 360.13it/s]Loading weights:  65%|██████▍   | 258/399 [00:00<00:00, 388.34it/s]Loading weights:  75%|███████▍  | 299/399 [00:00<00:00, 368.96it/s]Loading weights:  87%|████████▋ | 346/399 [00:01<00:00, 397.04it/s]Loading weights:  97%|█████████▋| 389/399 [00:01<00:00, 393.07it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 343.98it/s]
+Loaded in 4s
+Available adapters: ['wingchun_r4', 'wingchun']
+Ready on port 8000
+INFO:     Started server process [301636]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     10.1.1.162:58873 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.1.1.162:58875 - "GET /adapters HTTP/1.1" 200 OK
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+INFO:     10.1.1.162:58888 - "POST /v1/completions HTTP/1.1" 200 OK
+Loaded adapter 'wingchun_r4' (rank-4, 6175KB) in 39ms
+INFO:     10.1.1.162:58890 - "POST /adapters/load HTTP/1.1" 200 OK
+INFO:     10.1.1.162:58892 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:58894 - "POST /adapters/unload HTTP/1.1" 200 OK
+INFO:     10.1.1.162:58896 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:60168 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42036 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42052 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42060 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42066 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52784 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52786 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52792 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52802 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52818 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52832 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34388 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34392 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34404 - "POST /v1/completions HTTP/1.1" 200 OK
+Loaded adapter 'dutch_cuisine' (rank-16, 24604KB) in 94ms
+INFO:     10.1.1.162:62165 - "POST /adapters/load HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62167 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62173 - "GET /adapters HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62217 - "POST /adapters/unload HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62219 - "POST /v1/completions HTTP/1.1" 200 OK
+Loaded adapter 'wingchun_r4' (rank-4, 6175KB) in 18ms
+INFO:     10.1.1.162:62222 - "POST /adapters/load HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62224 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62226 - "POST /adapters/unload HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62228 - "POST /v1/completions HTTP/1.1" 200 OK
+Loaded adapter 'dutch_cuisine' (rank-16, 24604KB) in 76ms
+INFO:     10.1.1.162:62230 - "POST /adapters/load HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62232 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62238 - "POST /v1/completions HTTP/1.1" 200 OK
+Loaded adapter 'dutch_cuisine' (rank-16, 24604KB) in 55ms
+INFO:     10.1.1.162:62274 - "POST /adapters/load HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62300 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62479 - "POST /adapters/unload HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62481 - "POST /v1/completions HTTP/1.1" 200 OK
+Loaded adapter 'dutch_cuisine' (rank-16, 24604KB) in 138ms
+INFO:     10.1.1.162:62483 - "POST /adapters/load HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62485 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62494 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:62541 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [301636]

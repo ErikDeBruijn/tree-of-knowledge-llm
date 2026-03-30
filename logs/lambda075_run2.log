@@ -1,0 +1,143 @@
+============================================================
+Lambda=0.75 Pipeline: P1+P2 only (5K steps). No P3 — P2b is optimal.
+  Phase 1 (2a): 2000 steps, tier-0 only, λ_tc=0.75
+  Phase 2 (2b): 3000 steps, tier-0+1, λ_tc=0.375
+  Phase 3 (2c): 0 steps, ALL tiers, λ_tc=0.05
+  Total: 5000 steps, 200M tokens
+============================================================
+
+Loading model...
+Loading weights:   0%|          | 0/179 [00:00<?, ?it/s]Loading weights:   2%|▏         | 4/179 [00:00<00:17, 10.18it/s]Loading weights:   3%|▎         | 6/179 [00:01<00:36,  4.75it/s]Loading weights:   8%|▊         | 15/179 [00:01<00:13, 11.88it/s]Loading weights:   9%|▉         | 17/179 [00:02<00:23,  6.95it/s]Loading weights:  15%|█▍        | 26/179 [00:02<00:13, 11.74it/s]Loading weights:  16%|█▌        | 28/179 [00:03<00:20,  7.47it/s]Loading weights:  21%|██        | 37/179 [00:03<00:12, 11.17it/s]Loading weights:  22%|██▏       | 39/179 [00:04<00:18,  7.48it/s]Loading weights:  27%|██▋       | 48/179 [00:05<00:12, 10.91it/s]Loading weights:  28%|██▊       | 50/179 [00:05<00:17,  7.46it/s]Loading weights:  33%|███▎      | 59/179 [00:06<00:11, 10.82it/s]Loading weights:  34%|███▍      | 61/179 [00:07<00:15,  7.79it/s]Loading weights:  39%|███▉      | 70/179 [00:07<00:09, 11.54it/s]Loading weights:  40%|████      | 72/179 [00:08<00:13,  8.00it/s]Loading weights:  45%|████▌     | 81/179 [00:08<00:08, 11.88it/s]Loading weights:  46%|████▋     | 83/179 [00:09<00:11,  8.30it/s]Loading weights:  51%|█████▏    | 92/179 [00:09<00:07, 11.84it/s]Loading weights:  53%|█████▎    | 94/179 [00:10<00:09,  8.63it/s]Loading weights:  58%|█████▊    | 103/179 [00:10<00:06, 12.00it/s]Loading weights:  59%|█████▊    | 105/179 [00:11<00:09,  8.16it/s]Loading weights:  64%|██████▎   | 114/179 [00:11<00:05, 11.49it/s]Loading weights:  65%|██████▍   | 116/179 [00:12<00:07,  7.95it/s]Loading weights:  70%|██████▉   | 125/179 [00:12<00:04, 12.06it/s]Loading weights:  71%|███████   | 127/179 [00:13<00:05,  9.44it/s]Loading weights:  76%|███████▌  | 136/179 [00:13<00:03, 14.31it/s]Loading weights:  78%|███████▊  | 139/179 [00:14<00:04,  9.83it/s]Loading weights:  82%|████████▏ | 147/179 [00:14<00:02, 13.26it/s]Loading weights:  84%|████████▍ | 150/179 [00:15<00:03,  9.59it/s]Loading weights:  88%|████████▊ | 158/179 [00:15<00:01, 12.44it/s]Loading weights:  89%|████████▉ | 160/179 [00:16<00:02,  8.61it/s]Loading weights:  94%|█████████▍| 169/179 [00:16<00:00, 12.51it/s]Loading weights:  96%|█████████▌| 171/179 [00:17<00:00,  9.14it/s]Loading weights: 100%|██████████| 179/179 [00:17<00:00, 10.29it/s]
+Model loaded in 20.5s
+
+Patching routers with learnable biases...
+Patched 16 routers
+Phase 1: 32 gradient hooks (tier-0 only)
+
+Streaming C4 dataset (200M tokens)...
+  Tokenized 80M tokens...
+  Tokenized 160M tokens...
+Got 195313 chunks (200M tok) in 273s
+Train: 185547 chunks, Eval: 9766 chunks
+
+Setting up optimizer...
+
+Starting training (5000 total steps)...
+
+--- Epoch 1 (step 0/5000) ---
+[P1] Step 100/5000 | task=2.6559 slot=-0.4962 ratio=0.2225 tcost=0.5422 total=3.0400 | bias: t0=+0.435 t1=+0.122 t2=-0.379 | ETA: 0.9h
+[P1] Step 200/5000 | task=2.6780 slot=-0.4994 ratio=0.2390 tcost=0.4772 total=3.0132 | bias: t0=+0.562 t1=+0.202 t2=-0.647 | ETA: 0.9h
+[P1] Step 300/5000 | task=2.7423 slot=-0.5008 ratio=0.2229 tcost=0.4515 total=3.0581 | bias: t0=+0.618 t1=+0.282 t2=-0.851 | ETA: 0.9h
+[P1] Step 400/5000 | task=2.7262 slot=-0.5020 ratio=0.3002 tcost=0.4380 total=3.0325 | bias: t0=+0.688 t1=+0.321 t2=-1.014 | ETA: 0.8h
+[P1] Step 500/5000 | task=2.7538 slot=-0.5025 ratio=0.2271 tcost=0.4238 total=3.0488 | bias: t0=+0.752 t1=+0.351 t2=-1.160 | ETA: 0.8h
+
+--- [P1] Eval at step 500 ---
+  ppl=15.59 gini=0.3383 t0=0.4358 t1=0.2878 t2=0.2764 miss=0.2949 wall=6min
+[P1] Step 600/5000 | task=2.7697 slot=-0.5028 ratio=0.2058 tcost=0.4134 total=3.0567 | bias: t0=+0.789 t1=+0.387 t2=-1.277 | ETA: 0.8h
+[P1] Step 700/5000 | task=2.7535 slot=-0.5031 ratio=0.1645 tcost=0.4065 total=3.0349 | bias: t0=+0.820 t1=+0.404 t2=-1.384 | ETA: 0.8h
+[P1] Step 800/5000 | task=2.7425 slot=-0.5026 ratio=0.1739 tcost=0.4018 total=3.0204 | bias: t0=+0.876 t1=+0.415 t2=-1.477 | ETA: 0.8h
+[P1] Step 900/5000 | task=2.7634 slot=-0.5040 ratio=0.3253 tcost=0.4007 total=3.0420 | bias: t0=+0.868 t1=+0.449 t2=-1.530 | ETA: 0.7h
+[P1] Step 1000/5000 | task=2.7652 slot=-0.5033 ratio=0.1168 tcost=0.3932 total=3.0361 | bias: t0=+0.898 t1=+0.444 t2=-1.592 | ETA: 0.7h
+
+--- [P1] Eval at step 1000 ---
+  ppl=15.66 gini=0.3650 t0=0.4627 t1=0.2875 t2=0.2497 miss=0.2791 wall=11min
+[P1] Step 1100/5000 | task=2.7613 slot=-0.5044 ratio=0.1558 tcost=0.3909 total=3.0308 | bias: t0=+0.918 t1=+0.453 t2=-1.650 | ETA: 0.7h
+[P1] Step 1200/5000 | task=2.7445 slot=-0.5041 ratio=0.1349 tcost=0.3913 total=3.0141 | bias: t0=+0.922 t1=+0.447 t2=-1.685 | ETA: 0.7h
+[P1] Step 1300/5000 | task=2.7302 slot=-0.5033 ratio=0.1298 tcost=0.3917 total=3.0001 | bias: t0=+0.909 t1=+0.460 t2=-1.701 | ETA: 0.7h
+[P1] Step 1400/5000 | task=2.7634 slot=-0.5034 ratio=0.1194 tcost=0.3899 total=3.0318 | bias: t0=+0.922 t1=+0.467 t2=-1.728 | ETA: 0.7h
+[P1] Step 1500/5000 | task=2.7766 slot=-0.5036 ratio=0.1327 tcost=0.3903 total=3.0454 | bias: t0=+0.918 t1=+0.473 t2=-1.742 | ETA: 0.6h
+
+--- [P1] Eval at step 1500 ---
+  ppl=15.50 gini=0.3632 t0=0.4625 t1=0.2917 t2=0.2458 miss=0.2836 wall=17min
+[P1] Step 1600/5000 | task=2.7365 slot=-0.5037 ratio=0.1079 tcost=0.3896 total=3.0046 | bias: t0=+0.920 t1=+0.468 t2=-1.750 | ETA: 0.6h
+[P1] Step 1700/5000 | task=2.7578 slot=-0.5040 ratio=0.0941 tcost=0.3897 total=3.0258 | bias: t0=+0.927 t1=+0.465 t2=-1.762 | ETA: 0.6h
+[P1] Step 1800/5000 | task=2.7310 slot=-0.5041 ratio=0.1373 tcost=0.3882 total=2.9983 | bias: t0=+0.928 t1=+0.465 t2=-1.766 | ETA: 0.6h
+[P1] Step 1900/5000 | task=2.7509 slot=-0.5040 ratio=0.1440 tcost=0.3895 total=3.0193 | bias: t0=+0.925 t1=+0.466 t2=-1.765 | ETA: 0.6h
+[P1] Step 2000/5000 | task=2.7531 slot=-0.5038 ratio=0.1120 tcost=0.3896 total=3.0212 | bias: t0=+0.926 t1=+0.467 t2=-1.766 | ETA: 0.5h
+
+--- [P1] Eval at step 2000 ---
+  ppl=15.48 gini=0.3636 t0=0.4656 t1=0.2891 t2=0.2453 miss=0.2820 wall=22min
+
+============================================================
+PHASE 2a→2b at step 2000: Unfreezing tier-1
+============================================================
+  ppl=15.48 gini=0.3636 t0=0.4656
+  Checkpoint saved: /root/t6b-mogae/checkpoints/lambda075_pipeline/phase_2a_end
+[P2] Step 2100/5000 | task=2.7523 slot=-0.5037 ratio=4.4306 tcost=0.4120 total=2.9259 | bias: t0=+0.817 t1=+0.446 t2=-1.674 | ETA: 0.5h
+[P2] Step 2200/5000 | task=2.7220 slot=-0.5032 ratio=0.0696 tcost=0.4340 total=2.8603 | bias: t0=+0.816 t1=+0.448 t2=-1.690 | ETA: 0.5h
+[P2] Step 2300/5000 | task=2.7238 slot=-0.5030 ratio=0.1029 tcost=0.4312 total=2.8613 | bias: t0=+0.814 t1=+0.460 t2=-1.713 | ETA: 0.5h
+[P2] Step 2400/5000 | task=2.6944 slot=-0.5038 ratio=0.1089 tcost=0.4318 total=2.8322 | bias: t0=+0.814 t1=+0.472 t2=-1.731 | ETA: 0.5h
+[P2] Step 2500/5000 | task=2.7102 slot=-0.5029 ratio=0.0818 tcost=0.4325 total=2.8481 | bias: t0=+0.816 t1=+0.475 t2=-1.747 | ETA: 0.5h
+
+--- [P2] Eval at step 2500 ---
+  ppl=15.00 gini=0.3246 t0=0.4226 t1=0.2947 t2=0.2827 miss=0.3109 wall=28min
+[P2] Step 2600/5000 | task=2.7378 slot=-0.5043 ratio=0.1165 tcost=0.4319 total=2.8757 | bias: t0=+0.809 t1=+0.477 t2=-1.759 | ETA: 0.4h
+[P2] Step 2700/5000 | task=2.6945 slot=-0.5038 ratio=0.1218 tcost=0.4305 total=2.8319 | bias: t0=+0.813 t1=+0.480 t2=-1.774 | ETA: 0.4h
+[P2] Step 2800/5000 | task=2.7247 slot=-0.5038 ratio=0.1375 tcost=0.4317 total=2.8628 | bias: t0=+0.809 t1=+0.476 t2=-1.783 | ETA: 0.4h
+[P2] Step 2900/5000 | task=2.6883 slot=-0.5038 ratio=0.1076 tcost=0.4316 total=2.8260 | bias: t0=+0.813 t1=+0.488 t2=-1.801 | ETA: 0.4h
+[P2] Step 3000/5000 | task=2.7057 slot=-0.5045 ratio=0.0818 tcost=0.4293 total=2.8423 | bias: t0=+0.818 t1=+0.481 t2=-1.814 | ETA: 0.4h
+
+--- [P2] Eval at step 3000 ---
+  ppl=14.84 gini=0.3218 t0=0.4228 t1=0.2949 t2=0.2823 miss=0.3098 wall=33min
+[P2] Step 3100/5000 | task=2.6653 slot=-0.5042 ratio=0.0764 tcost=0.4291 total=2.8018 | bias: t0=+0.817 t1=+0.482 t2=-1.829 | ETA: 0.4h
+[P2] Step 3200/5000 | task=2.7107 slot=-0.5049 ratio=0.0649 tcost=0.4268 total=2.8462 | bias: t0=+0.816 t1=+0.487 t2=-1.843 | ETA: 0.3h
+[P2] Step 3300/5000 | task=2.6908 slot=-0.5054 ratio=0.0748 tcost=0.4273 total=2.8266 | bias: t0=+0.834 t1=+0.481 t2=-1.861 | ETA: 0.3h
+[P2] Step 3400/5000 | task=2.7165 slot=-0.5054 ratio=0.1172 tcost=0.4247 total=2.8516 | bias: t0=+0.830 t1=+0.484 t2=-1.871 | ETA: 0.3h
+[P2] Step 3500/5000 | task=2.6794 slot=-0.5047 ratio=0.0632 tcost=0.4268 total=2.8149 | bias: t0=+0.823 t1=+0.487 t2=-1.877 | ETA: 0.3h
+
+--- [P2] Eval at step 3500 ---
+  ppl=14.76 gini=0.3232 t0=0.4244 t1=0.2950 t2=0.2806 miss=0.3091 wall=39min
+[P2] Step 3600/5000 | task=2.7000 slot=-0.5057 ratio=0.0774 tcost=0.4262 total=2.8354 | bias: t0=+0.827 t1=+0.489 t2=-1.888 | ETA: 0.3h
+[P2] Step 3700/5000 | task=2.7021 slot=-0.5050 ratio=0.0526 tcost=0.4266 total=2.8373 | bias: t0=+0.828 t1=+0.491 t2=-1.897 | ETA: 0.2h
+[P2] Step 3800/5000 | task=2.6811 slot=-0.5047 ratio=0.0713 tcost=0.4267 total=2.8165 | bias: t0=+0.823 t1=+0.494 t2=-1.903 | ETA: 0.2h
+[P2] Step 3900/5000 | task=2.7184 slot=-0.5048 ratio=0.0520 tcost=0.4257 total=2.8533 | bias: t0=+0.829 t1=+0.492 t2=-1.914 | ETA: 0.2h
+[P2] Step 4000/5000 | task=2.6944 slot=-0.5048 ratio=0.0941 tcost=0.4257 total=2.8298 | bias: t0=+0.828 t1=+0.495 t2=-1.920 | ETA: 0.2h
+
+--- [P2] Eval at step 4000 ---
+  ppl=14.73 gini=0.3235 t0=0.4255 t1=0.2967 t2=0.2778 miss=0.3085 wall=44min
+[P2] Step 4100/5000 | task=2.6800 slot=-0.5053 ratio=0.1010 tcost=0.4269 total=2.8158 | bias: t0=+0.823 t1=+0.497 t2=-1.922 | ETA: 0.2h
+[P2] Step 4200/5000 | task=2.6644 slot=-0.5051 ratio=0.0989 tcost=0.4270 total=2.8003 | bias: t0=+0.828 t1=+0.495 t2=-1.928 | ETA: 0.1h
+[P2] Step 4300/5000 | task=2.7106 slot=-0.5052 ratio=0.0604 tcost=0.4254 total=2.8455 | bias: t0=+0.832 t1=+0.495 t2=-1.935 | ETA: 0.1h
+[P2] Step 4400/5000 | task=2.6940 slot=-0.5051 ratio=0.0721 tcost=0.4252 total=2.8289 | bias: t0=+0.830 t1=+0.495 t2=-1.937 | ETA: 0.1h
+[P2] Step 4500/5000 | task=2.7329 slot=-0.5050 ratio=0.0783 tcost=0.4261 total=2.8683 | bias: t0=+0.828 t1=+0.495 t2=-1.938 | ETA: 0.1h
+
+--- [P2] Eval at step 4500 ---
+  ppl=14.70 gini=0.3223 t0=0.4251 t1=0.2964 t2=0.2785 miss=0.3108 wall=50min
+[P2] Step 4600/5000 | task=2.6676 slot=-0.5045 ratio=0.0636 tcost=0.4272 total=2.8032 | bias: t0=+0.827 t1=+0.495 t2=-1.938 | ETA: 0.1h
+[P2] Step 4700/5000 | task=2.7092 slot=-0.5046 ratio=0.0647 tcost=0.4272 total=2.8448 | bias: t0=+0.827 t1=+0.495 t2=-1.940 | ETA: 0.1h
+[P2] Step 4800/5000 | task=2.7053 slot=-0.5051 ratio=0.1312 tcost=0.4264 total=2.8413 | bias: t0=+0.827 t1=+0.496 t2=-1.941 | ETA: 0.0h
+[P2] Step 4900/5000 | task=2.6867 slot=-0.5043 ratio=0.0422 tcost=0.4267 total=2.8220 | bias: t0=+0.827 t1=+0.496 t2=-1.941 | ETA: 0.0h
+[P2] Step 5000/5000 | task=2.7055 slot=-0.5048 ratio=0.0754 tcost=0.4265 total=2.8409 | bias: t0=+0.827 t1=+0.496 t2=-1.941 | ETA: 0.0h
+
+--- [P2] Eval at step 5000 ---
+  ppl=14.70 gini=0.3218 t0=0.4249 t1=0.2964 t2=0.2787 miss=0.3107 wall=56min
+
+Training done in 55.6 min (0.9h)
+
+Saving final checkpoint (full model)...
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:11<00:00, 11.62s/it]Writing model shards: 100%|██████████| 1/1 [00:11<00:00, 11.62s/it]
+  Checkpoint saved: /root/t6b-mogae/checkpoints/lambda075_pipeline/final
+
+Final C4 eval (200 batches)...
+
+Final analysis on wikitext-2...
+
+Saved to /root/t6b-mogae/results/lambda075_pipeline.json
+
+============================================================
+LAMBDA=0.75 PIPELINE (P1+P2 ONLY) SUMMARY
+============================================================
+Mean Gini:         0.3580
+Tier-0 traffic:    0.4167
+Tier-1 traffic:    0.2986
+Tier-2 traffic:    0.2847
+Miss rate:         0.3177
+Eval PPL (C4):     14.67
+B1 PPL (C4):       14.00
+Quality ratio:     1.05x
+PREV quality ratio: 1.72x (50M tokens, 7K steps)
+PPL at 2a end:     15.48
+Train time:        55.6 min (0.9h)
+Peak VRAM:         72.0 GB
+Bias: t0=+0.8275 t1=+0.4956 t2=-1.9409
+============================================================

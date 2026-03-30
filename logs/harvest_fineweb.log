@@ -1,0 +1,41 @@
+=== HARVESTING FINEWEB-EDU FOR SCIENCE DOMAINS ===
+Harvesting 6 domains from FineWeb-Edu...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  Checked 80000: physics=128, biology=499, chemistry=157, mathematics=32, computer_science=21, medicine=500
+  Checked 190000: physics=287, biology=500, chemistry=379, mathematics=86, computer_science=57, medicine=500
+  Checked 350000: physics=500, biology=500, chemistry=500, mathematics=171, computer_science=103, medicine=500
+  Checked 400000: physics=500, biology=500, chemistry=500, mathematics=203, computer_science=114, medicine=500
+  Checked 460000: physics=500, biology=500, chemistry=500, mathematics=238, computer_science=128, medicine=500
+  Checked 540000: physics=500, biology=500, chemistry=500, mathematics=286, computer_science=151, medicine=500
+  Checked 610000: physics=500, biology=500, chemistry=500, mathematics=331, computer_science=166, medicine=500
+  Checked 720000: physics=500, biology=500, chemistry=500, mathematics=391, computer_science=199, medicine=500
+  Checked 760000: physics=500, biology=500, chemistry=500, mathematics=418, computer_science=203, medicine=500
+  Checked 820000: physics=500, biology=500, chemistry=500, mathematics=439, computer_science=220, medicine=500
+  Checked 840000: physics=500, biology=500, chemistry=500, mathematics=446, computer_science=221, medicine=500
+  Checked 980000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=243, medicine=500
+  Checked 1040000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=260, medicine=500
+  Checked 1050000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=265, medicine=500
+  Checked 1160000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=294, medicine=500
+  Checked 1270000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=325, medicine=500
+  Checked 1350000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=341, medicine=500
+  Checked 1370000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=345, medicine=500
+  Checked 1570000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=418, medicine=500
+  Checked 1610000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=432, medicine=500
+  Checked 1640000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=441, medicine=500
+  Checked 1770000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=480, medicine=500
+  Checked 1840000: physics=500, biology=500, chemistry=500, mathematics=500, computer_science=497, medicine=500
+
+Checked 1840634 texts total
+  physics: 500 texts
+  biology: 500 texts
+  chemistry: 500 texts
+  mathematics: 500 texts
+  computer_science: 500 texts
+  medicine: 500 texts
+Fatal Python error: PyGILState_Release: thread state 0x79f53be21ec0 must be current when releasing
+Python runtime state: finalizing (tstate=0x0000000000ba5748)
+
+Thread 0x000079f902dd6080 (most recent call first):
+  <no Python frame>
+
+Extension modules: zstandard.backend_c, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, pyarrow.lib, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._generator, numpy.random._mt19937, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, _cyutility, pandas._libs._cyutility, pandas._libs.tslibs.ccalendar, pandas._libs.tslibs.np_datetime, pandas._libs.tslibs.dtypes, pandas._libs.tslibs.base, pandas._libs.tslibs.nattype, pandas._libs.tslibs.timezones, pandas._libs.properties, pandas._libs.tslibs.fields, pandas._libs.tslibs.timedeltas, pandas._libs.tslibs.tzconversion, pandas._libs.tslibs.timestamps, pandas._libs.tslibs.offsets, pandas._libs.tslibs.strptime, pandas._libs.tslibs.parsing, pandas._libs.tslibs.conversion, pandas._libs.tslibs.period, pandas._libs.tslibs.vectorized, pandas._libs.ops_dispatch, pandas._libs.missing, pandas._libs.hashtable, pandas._libs.algos, pandas._libs.interval, pandas._libs.lib, pyarrow._compute, pandas._libs.ops, pandas._libs.hashing, pandas._libs.arrays, pandas._libs.tslib, pandas._libs.sparse, pandas._libs.internals, pandas._libs.indexing, pandas._libs.index, pandas._libs.writers, pandas._libs.join, pandas._libs.window.aggregations, pandas._libs.window.indexers, pandas._libs.reshape, pandas._libs.groupby, pandas._libs.json, pandas._libs.parsers, pandas._libs.testing, pyarrow._acero, pyarrow._fs, pyarrow._csv, pyarrow._json, pyarrow._substrait, pyarrow._dataset, pyarrow._dataset_orc, pyarrow._parquet, pyarrow._azurefs, pyarrow._hdfs, pyarrow._gcsfs, pyarrow._s3fs, pyarrow._parquet_encryption, pyarrow._dataset_parquet_encryption, pyarrow._dataset_parquet, yaml._yaml, charset_normalizer.md, charset_normalizer.cd, multidict._multidict, yarl._quoting_c, propcache._helpers_c, aiohttp._http_writer, aiohttp._http_parser, aiohttp._websocket.mask, aiohttp._websocket.reader_c, frozenlist._frozenlist, xxhash._xxhash, scipy._cyutility, scipy._lib._ccallback_c, scipy.sparse._sparsetools, _csparsetools, scipy.sparse._csparsetools, scipy.io.matlab._mio_utils, scipy.io.matlab._streams, scipy.io.matlab._mio5_utils, torch._C, torch._C._dynamo.autograd_compiler, torch._C._dynamo.eval_frame, torch._C._dynamo.guards, torch._C._dynamo.utils, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special (total: 102)

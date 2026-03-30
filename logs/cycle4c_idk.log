@@ -1,0 +1,21 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:36, 10.80it/s]Loading weights:  11%|█         | 42/399 [00:00<00:02, 170.28it/s]Loading weights:  23%|██▎       | 92/399 [00:00<00:01, 272.84it/s]Loading weights:  35%|███▌      | 140/399 [00:00<00:00, 314.29it/s]Loading weights:  44%|████▎     | 174/399 [00:00<00:00, 316.26it/s]Loading weights:  59%|█████▉    | 235/399 [00:00<00:00, 395.11it/s]Loading weights:  69%|██████▉   | 277/399 [00:00<00:00, 396.58it/s]Loading weights:  80%|███████▉  | 318/399 [00:01<00:00, 340.68it/s]Loading weights:  98%|█████████▊| 391/399 [00:01<00:00, 439.01it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 352.41it/s]
+'The read operation timed out' thrown while requesting GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-validation.00000-of-00008.json.gz
+Retrying in 1s [Retry 1/5].
+
+=== Gate activation by domain ===
+  Known (BBC news): gate=0.783 ± 0.031 (n=50)
+  Unknown (physics/code/medical/sports): gate=0.348 ± 0.072 (n=25)
+  Generic (C4): gate=0.302 ± 0.092 (n=50)
+
+=== Analysis ===
+Known/Unknown ratio: 2.25x
+Known/Generic ratio: 2.59x
+Unknown/Generic ratio: 1.15x
+Unknown gate: 0.348 (threshold < 0.40 for IDK)
+Known gate: 0.783 (threshold > 0.70 for domain)
+
+VERDICT: SUCCESS — gate is an effective IDK detector. PLAUSIBLE.
+
+Saved to /root/t6b-mogae/results/cycle4c_idk_detection.json
+on

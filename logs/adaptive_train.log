@@ -1,0 +1,1996 @@
+============================================================
+ARM C: PPL-Driven Adaptive Expert Introduction
+  Initial experts: 16
+  Max experts: 48
+  Convergence: PPL change < 2.0% over 5 evals
+  Hard token threshold: 1.5× mean PPL
+  Dataset: 200M tokens C4
+============================================================
+
+Loading model...
+Model loaded in 4.2s
+
+Patching routers with learnable biases...
+Patched 16 routers
+
+Streaming C4 dataset (200M tokens)...
+  Tokenized 80M tokens...
+  Tokenized 160M tokens...
+Got 195313 chunks (200M tok) in 263s
+Train: 185547 chunks, Eval: 9766 chunks
+
+============================================================
+Starting adaptive training loop
+============================================================
+
+PHASE 1: Training 16 initial generalists
+  Gradient hooks: 32 params masked, active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], frozen=48
+[R0 E16] Step 50 (expert_step 50) | task=2.6288 tcost=0.6829 total=3.2783 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=0.2M | wall=1min
+[R0 E16] Step 100 (expert_step 100) | task=2.7555 tcost=0.5774 total=3.2986 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=0.4M | wall=1min
+[R0 E16] Step 150 (expert_step 150) | task=2.8389 tcost=0.5430 total=3.3471 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=0.6M | wall=2min
+[R0 E16] Step 200 (expert_step 200) | task=2.8165 tcost=0.5159 total=3.2980 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=0.8M | wall=2min
+
+--- Eval at step 200 (round 0, expert_step 200) ---
+  ppl=17.27 gini=0.3881 t0=0.5045 miss=0.2382 experts=16 wall=2min
+[R0 E16] Step 250 (expert_step 250) | task=2.9021 tcost=0.4789 total=3.3458 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=1.0M | wall=3min
+[R0 E16] Step 300 (expert_step 300) | task=2.9216 tcost=0.4570 total=3.3435 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=1.2M | wall=3min
+[R0 E16] Step 350 (expert_step 350) | task=2.9193 tcost=0.4367 total=3.3208 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=1.4M | wall=4min
+[R0 E16] Step 400 (expert_step 400) | task=2.9645 tcost=0.4173 total=3.3463 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=1.6M | wall=4min
+
+--- Eval at step 400 (round 0, expert_step 400) ---
+  ppl=18.94 gini=0.4842 t0=0.5917 miss=0.1914 experts=16 wall=4min
+[R0 E16] Step 450 (expert_step 450) | task=2.9517 tcost=0.3986 total=3.3154 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=1.8M | wall=5min
+[R0 E16] Step 500 (expert_step 500) | task=2.9497 tcost=0.3800 total=3.2937 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=2.0M | wall=5min
+[R0 E16] Step 550 (expert_step 550) | task=3.0250 tcost=0.3582 total=3.3467 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=2.3M | wall=6min
+[R0 E16] Step 600 (expert_step 600) | task=3.0168 tcost=0.3433 total=3.3237 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=2.5M | wall=6min
+
+--- Eval at step 600 (round 0, expert_step 600) ---
+  ppl=20.45 gini=0.5384 t0=0.6622 miss=0.1588 experts=16 wall=6min
+[R0 E16] Step 650 (expert_step 650) | task=2.9890 tcost=0.3354 total=3.2882 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=2.7M | wall=7min
+[R0 E16] Step 700 (expert_step 700) | task=3.0060 tcost=0.3328 total=3.3024 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=2.9M | wall=7min
+[R0 E16] Step 750 (expert_step 750) | task=3.0704 tcost=0.3174 total=3.3510 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=3.1M | wall=8min
+[R0 E16] Step 800 (expert_step 800) | task=3.0621 tcost=0.3149 total=3.3403 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=3.3M | wall=8min
+
+--- Eval at step 800 (round 0, expert_step 800) ---
+  ppl=20.36 gini=0.5542 t0=0.6841 miss=0.1541 experts=16 wall=9min
+[R0 E16] Step 850 (expert_step 850) | task=3.0703 tcost=0.3055 total=3.3389 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=3.5M | wall=9min
+[R0 E16] Step 900 (expert_step 900) | task=3.0367 tcost=0.2999 total=3.2997 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=3.7M | wall=10min
+[R0 E16] Step 950 (expert_step 950) | task=3.1169 tcost=0.2915 total=3.3725 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=3.9M | wall=10min
+[R0 E16] Step 1000 (expert_step 1000) | task=3.1010 tcost=0.2869 total=3.3507 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=4.1M | wall=11min
+
+--- Eval at step 1000 (round 0, expert_step 1000) ---
+  ppl=21.01 gini=0.5744 t0=0.7136 miss=0.1421 experts=16 wall=11min
+[R0 E16] Step 1050 (expert_step 1050) | task=3.0769 tcost=0.2866 total=3.3262 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=4.3M | wall=11min
+[R0 E16] Step 1100 (expert_step 1100) | task=3.0884 tcost=0.2794 total=3.3310 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=4.5M | wall=12min
+[R0 E16] Step 1150 (expert_step 1150) | task=3.0093 tcost=0.2776 total=3.2497 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=4.7M | wall=12min
+[R0 E16] Step 1200 (expert_step 1200) | task=3.1268 tcost=0.2744 total=3.3639 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=4.9M | wall=13min
+
+--- Eval at step 1200 (round 0, expert_step 1200) ---
+  ppl=21.06 gini=0.5848 t0=0.7273 miss=0.1380 experts=16 wall=13min
+[R0 E16] Step 1250 (expert_step 1250) | task=3.0724 tcost=0.2751 total=3.3102 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=5.1M | wall=13min
+[R0 E16] Step 1300 (expert_step 1300) | task=3.0782 tcost=0.2686 total=3.3098 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=5.3M | wall=14min
+[R0 E16] Step 1350 (expert_step 1350) | task=3.0342 tcost=0.2658 total=3.2624 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=5.5M | wall=14min
+[R0 E16] Step 1400 (expert_step 1400) | task=3.0445 tcost=0.2637 total=3.2709 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=5.7M | wall=15min
+
+--- Eval at step 1400 (round 0, expert_step 1400) ---
+  ppl=21.24 gini=0.5893 t0=0.7358 miss=0.1350 experts=16 wall=15min
+[R0 E16] Step 1450 (expert_step 1450) | task=3.0743 tcost=0.2644 total=3.3014 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=5.9M | wall=15min
+[R0 E16] Step 1500 (expert_step 1500) | task=3.0716 tcost=0.2614 total=3.2955 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=6.1M | wall=16min
+[R0 E16] Step 1550 (expert_step 1550) | task=3.0906 tcost=0.2538 total=3.3069 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=6.3M | wall=16min
+[R0 E16] Step 1600 (expert_step 1600) | task=3.0498 tcost=0.2564 total=3.2688 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=6.6M | wall=17min
+
+--- Eval at step 1600 (round 0, expert_step 1600) ---
+  ppl=21.20 gini=0.5937 t0=0.7403 miss=0.1313 experts=16 wall=17min
+[R0 E16] Step 1650 (expert_step 1650) | task=3.0940 tcost=0.2551 total=3.3115 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=6.8M | wall=17min
+[R0 E16] Step 1700 (expert_step 1700) | task=3.0707 tcost=0.2571 total=3.2903 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=7.0M | wall=18min
+[R0 E16] Step 1750 (expert_step 1750) | task=3.0398 tcost=0.2548 total=3.2567 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=7.2M | wall=18min
+[R0 E16] Step 1800 (expert_step 1800) | task=3.0539 tcost=0.2517 total=3.2682 | active=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] frozen=0 | tokens=7.4M | wall=19min
+
+--- Eval at step 1800 (round 0, expert_step 1800) ---
+  ppl=21.43 gini=0.6019 t0=0.7518 miss=0.1267 experts=16 wall=19min
+
+============================================================
+EXPERT ROUND 0 CONVERGED at step 1800
+  Expert step: 1800, PPL: 21.43
+============================================================
+  Hard tokens: 25.4% (PPL 1096.6 vs easy 5.0)
+
+============================================================
+INTRODUCING EXPERT 16 (round 1)
+  Frozen: 16 experts, Active: [16]
+  Triggered by: 25.4% hard tokens (PPL 1096.6)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[16], frozen=63
+[R1 E17] Step 1850 (expert_step 50) | task=3.0867 tcost=0.2439 total=82165.6844 | active=[16] frozen=16 | tokens=7.6M | wall=20min
+[R1 E17] Step 1900 (expert_step 100) | task=5.6799 tcost=0.2471 total=1354.6974 | active=[16] frozen=16 | tokens=7.8M | wall=20min
+[R1 E17] Step 1950 (expert_step 150) | task=3.5948 tcost=0.2531 total=3.8784 | active=[16] frozen=16 | tokens=8.0M | wall=21min
+[R1 E17] Step 2000 (expert_step 200) | task=3.2559 tcost=0.2364 total=3.4696 | active=[16] frozen=16 | tokens=8.2M | wall=21min
+
+--- Eval at step 2000 (round 1, expert_step 200) ---
+  ppl=24.76 gini=0.6266 t0=0.7603 miss=0.1069 experts=17 wall=21min
+[R1 E17] Step 2050 (expert_step 250) | task=3.2067 tcost=0.2305 total=3.4049 | active=[16] frozen=16 | tokens=8.4M | wall=22min
+[R1 E17] Step 2100 (expert_step 300) | task=3.1267 tcost=0.2260 total=3.3240 | active=[16] frozen=16 | tokens=8.6M | wall=22min
+[R1 E17] Step 2150 (expert_step 350) | task=3.1825 tcost=0.2220 total=3.3706 | active=[16] frozen=16 | tokens=8.8M | wall=23min
+[R1 E17] Step 2200 (expert_step 400) | task=3.1793 tcost=0.2214 total=3.3660 | active=[16] frozen=16 | tokens=9.0M | wall=23min
+
+--- Eval at step 2200 (round 1, expert_step 400) ---
+  ppl=23.63 gini=0.6319 t0=0.7679 miss=0.1034 experts=17 wall=23min
+[R1 E17] Step 2250 (expert_step 450) | task=3.1217 tcost=0.2181 total=3.3055 | active=[16] frozen=16 | tokens=9.2M | wall=24min
+[R1 E17] Step 2300 (expert_step 500) | task=3.1513 tcost=0.2192 total=3.3354 | active=[16] frozen=16 | tokens=9.4M | wall=24min
+[R1 E17] Step 2350 (expert_step 550) | task=3.1427 tcost=0.2162 total=3.3227 | active=[16] frozen=16 | tokens=9.6M | wall=25min
+[R1 E17] Step 2400 (expert_step 600) | task=3.1906 tcost=0.2152 total=3.3702 | active=[16] frozen=16 | tokens=9.8M | wall=25min
+
+--- Eval at step 2400 (round 1, expert_step 600) ---
+  ppl=23.32 gini=0.6358 t0=0.7727 miss=0.1006 experts=17 wall=25min
+[R1 E17] Step 2450 (expert_step 650) | task=3.1672 tcost=0.2176 total=3.3494 | active=[16] frozen=16 | tokens=10.0M | wall=26min
+[R1 E17] Step 2500 (expert_step 700) | task=3.1355 tcost=0.2157 total=3.3157 | active=[16] frozen=16 | tokens=10.2M | wall=26min
+[R1 E17] Step 2550 (expert_step 750) | task=3.1465 tcost=0.2138 total=3.3246 | active=[16] frozen=16 | tokens=10.4M | wall=27min
+[R1 E17] Step 2600 (expert_step 800) | task=3.1283 tcost=0.2127 total=3.3062 | active=[16] frozen=16 | tokens=10.6M | wall=27min
+
+--- Eval at step 2600 (round 1, expert_step 800) ---
+  ppl=23.11 gini=0.6373 t0=0.7756 miss=0.0998 experts=17 wall=27min
+[R1 E17] Step 2650 (expert_step 850) | task=3.1828 tcost=0.2118 total=3.3583 | active=[16] frozen=16 | tokens=10.9M | wall=28min
+[R1 E17] Step 2700 (expert_step 900) | task=3.1594 tcost=0.2113 total=3.3349 | active=[16] frozen=16 | tokens=11.1M | wall=28min
+[R1 E17] Step 2750 (expert_step 950) | task=3.1915 tcost=0.2103 total=3.3656 | active=[16] frozen=16 | tokens=11.3M | wall=29min
+[R1 E17] Step 2800 (expert_step 1000) | task=3.1511 tcost=0.2127 total=3.3277 | active=[16] frozen=16 | tokens=11.5M | wall=29min
+
+--- Eval at step 2800 (round 1, expert_step 1000) ---
+  ppl=22.95 gini=0.6366 t0=0.7774 miss=0.1005 experts=17 wall=29min
+[R1 E17] Step 2850 (expert_step 1050) | task=3.0957 tcost=0.2120 total=3.2719 | active=[16] frozen=16 | tokens=11.7M | wall=30min
+[R1 E17] Step 2900 (expert_step 1100) | task=3.1577 tcost=0.2087 total=3.3304 | active=[16] frozen=16 | tokens=11.9M | wall=30min
+[R1 E17] Step 2950 (expert_step 1150) | task=3.1523 tcost=0.2110 total=3.3268 | active=[16] frozen=16 | tokens=12.1M | wall=31min
+[R1 E17] Step 3000 (expert_step 1200) | task=3.1522 tcost=0.2075 total=3.3227 | active=[16] frozen=16 | tokens=12.3M | wall=31min
+
+--- Eval at step 3000 (round 1, expert_step 1200) ---
+  ppl=22.94 gini=0.6399 t0=0.7796 miss=0.0978 experts=17 wall=32min
+[R1 E17] Step 3050 (expert_step 1250) | task=3.1339 tcost=0.2068 total=3.3042 | active=[16] frozen=16 | tokens=12.5M | wall=32min
+[R1 E17] Step 3100 (expert_step 1300) | task=3.1351 tcost=0.2095 total=3.3082 | active=[16] frozen=16 | tokens=12.7M | wall=32min
+[R1 E17] Step 3150 (expert_step 1350) | task=3.1694 tcost=0.2063 total=3.3393 | active=[16] frozen=16 | tokens=12.9M | wall=33min
+[R1 E17] Step 3200 (expert_step 1400) | task=3.1354 tcost=0.2082 total=3.3071 | active=[16] frozen=16 | tokens=13.1M | wall=33min
+
+--- Eval at step 3200 (round 1, expert_step 1400) ---
+  ppl=22.79 gini=0.6379 t0=0.7785 miss=0.0997 experts=17 wall=34min
+[R1 E17] Step 3250 (expert_step 1450) | task=3.1179 tcost=0.2071 total=3.2881 | active=[16] frozen=16 | tokens=13.3M | wall=34min
+[R1 E17] Step 3300 (expert_step 1500) | task=3.1320 tcost=0.2075 total=3.3031 | active=[16] frozen=16 | tokens=13.5M | wall=35min
+[R1 E17] Step 3350 (expert_step 1550) | task=3.1518 tcost=0.2066 total=3.3217 | active=[16] frozen=16 | tokens=13.7M | wall=35min
+[R1 E17] Step 3400 (expert_step 1600) | task=3.1478 tcost=0.2048 total=3.3165 | active=[16] frozen=16 | tokens=13.9M | wall=35min
+
+--- Eval at step 3400 (round 1, expert_step 1600) ---
+  ppl=22.82 gini=0.6400 t0=0.7816 miss=0.0982 experts=17 wall=36min
+
+============================================================
+EXPERT ROUND 1 CONVERGED at step 3400
+  Expert step: 1600, PPL: 22.82
+============================================================
+  Hard tokens: 25.6% (PPL 1204.4 vs easy 5.2)
+
+============================================================
+INTRODUCING EXPERT 17 (round 2)
+  Frozen: 17 experts, Active: [17]
+  Triggered by: 25.6% hard tokens (PPL 1204.4)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[17], frozen=63
+[R2 E18] Step 3450 (expert_step 50) | task=3.1952 tcost=0.2051 total=1146111537.9200 | active=[17] frozen=17 | tokens=14.1M | wall=36min
+[R2 E18] Step 3500 (expert_step 100) | task=7.0968 tcost=0.2121 total=42983708.7416 | active=[17] frozen=17 | tokens=14.3M | wall=37min
+[R2 E18] Step 3550 (expert_step 150) | task=8.1368 tcost=0.2634 total=67.2760 | active=[17] frozen=17 | tokens=14.5M | wall=37min
+[R2 E18] Step 3600 (expert_step 200) | task=4.8659 tcost=0.2204 total=5.2738 | active=[17] frozen=17 | tokens=14.7M | wall=38min
+
+--- Eval at step 3600 (round 2, expert_step 200) ---
+  ppl=63.99 gini=0.6329 t0=0.7465 miss=0.0902 experts=18 wall=38min
+[R2 E18] Step 3650 (expert_step 250) | task=3.8006 tcost=0.2379 total=4.2085 | active=[17] frozen=17 | tokens=15.0M | wall=38min
+[R2 E18] Step 3700 (expert_step 300) | task=3.4956 tcost=0.2347 total=3.8378 | active=[17] frozen=17 | tokens=15.2M | wall=39min
+[R2 E18] Step 3750 (expert_step 350) | task=3.3832 tcost=0.2274 total=3.6306 | active=[17] frozen=17 | tokens=15.4M | wall=39min
+[R2 E18] Step 3800 (expert_step 400) | task=3.2769 tcost=0.2228 total=3.4949 | active=[17] frozen=17 | tokens=15.6M | wall=40min
+
+--- Eval at step 3800 (round 2, expert_step 400) ---
+  ppl=25.35 gini=0.6300 t0=0.7588 miss=0.1016 experts=18 wall=40min
+[R2 E18] Step 3850 (expert_step 450) | task=3.1877 tcost=0.2163 total=3.3884 | active=[17] frozen=17 | tokens=15.8M | wall=40min
+[R2 E18] Step 3900 (expert_step 500) | task=3.1861 tcost=0.2115 total=3.3765 | active=[17] frozen=17 | tokens=16.0M | wall=41min
+[R2 E18] Step 3950 (expert_step 550) | task=3.2547 tcost=0.2079 total=3.4363 | active=[17] frozen=17 | tokens=16.2M | wall=41min
+[R2 E18] Step 4000 (expert_step 600) | task=3.1545 tcost=0.2081 total=3.3366 | active=[17] frozen=17 | tokens=16.4M | wall=42min
+
+--- Eval at step 4000 (round 2, expert_step 600) ---
+  ppl=24.16 gini=0.6376 t0=0.7730 miss=0.0946 experts=18 wall=42min
+[R2 E18] Step 4050 (expert_step 650) | task=3.2342 tcost=0.2071 total=3.4180 | active=[17] frozen=17 | tokens=16.6M | wall=42min
+[R2 E18] Step 4100 (expert_step 700) | task=3.2078 tcost=0.2014 total=3.3779 | active=[17] frozen=17 | tokens=16.8M | wall=43min
+[R2 E18] Step 4150 (expert_step 750) | task=3.1738 tcost=0.2022 total=3.3479 | active=[17] frozen=17 | tokens=17.0M | wall=43min
+[R2 E18] Step 4200 (expert_step 800) | task=3.2858 tcost=0.2042 total=3.4618 | active=[17] frozen=17 | tokens=17.2M | wall=44min
+
+--- Eval at step 4200 (round 2, expert_step 800) ---
+  ppl=23.79 gini=0.6395 t0=0.7746 miss=0.0924 experts=18 wall=44min
+[R2 E18] Step 4250 (expert_step 850) | task=3.1741 tcost=0.2017 total=3.3446 | active=[17] frozen=17 | tokens=17.4M | wall=44min
+[R2 E18] Step 4300 (expert_step 900) | task=3.1672 tcost=0.2021 total=3.3378 | active=[17] frozen=17 | tokens=17.6M | wall=45min
+[R2 E18] Step 4350 (expert_step 950) | task=3.1232 tcost=0.2032 total=3.2967 | active=[17] frozen=17 | tokens=17.8M | wall=45min
+[R2 E18] Step 4400 (expert_step 1000) | task=3.1631 tcost=0.2007 total=3.3337 | active=[17] frozen=17 | tokens=18.0M | wall=46min
+
+--- Eval at step 4400 (round 2, expert_step 1000) ---
+  ppl=23.54 gini=0.6407 t0=0.7768 miss=0.0935 experts=18 wall=46min
+[R2 E18] Step 4450 (expert_step 1050) | task=3.1772 tcost=0.2002 total=3.3444 | active=[17] frozen=17 | tokens=18.2M | wall=46min
+[R2 E18] Step 4500 (expert_step 1100) | task=3.1896 tcost=0.1997 total=3.3575 | active=[17] frozen=17 | tokens=18.4M | wall=47min
+[R2 E18] Step 4550 (expert_step 1150) | task=3.0911 tcost=0.1973 total=3.2613 | active=[17] frozen=17 | tokens=18.6M | wall=47min
+[R2 E18] Step 4600 (expert_step 1200) | task=3.1690 tcost=0.1989 total=3.3352 | active=[17] frozen=17 | tokens=18.8M | wall=48min
+
+--- Eval at step 4600 (round 2, expert_step 1200) ---
+  ppl=23.47 gini=0.6408 t0=0.7773 miss=0.0928 experts=18 wall=48min
+[R2 E18] Step 4650 (expert_step 1250) | task=3.1562 tcost=0.1976 total=3.3195 | active=[17] frozen=17 | tokens=19.0M | wall=49min
+[R2 E18] Step 4700 (expert_step 1300) | task=3.1685 tcost=0.1941 total=3.3325 | active=[17] frozen=17 | tokens=19.3M | wall=49min
+[R2 E18] Step 4750 (expert_step 1350) | task=3.1668 tcost=0.1970 total=3.3309 | active=[17] frozen=17 | tokens=19.5M | wall=50min
+[R2 E18] Step 4800 (expert_step 1400) | task=3.2001 tcost=0.1976 total=3.3671 | active=[17] frozen=17 | tokens=19.7M | wall=50min
+
+--- Eval at step 4800 (round 2, expert_step 1400) ---
+  ppl=23.51 gini=0.6428 t0=0.7791 miss=0.0913 experts=18 wall=50min
+[R2 E18] Step 4850 (expert_step 1450) | task=3.2106 tcost=0.1968 total=3.3785 | active=[17] frozen=17 | tokens=19.9M | wall=51min
+[R2 E18] Step 4900 (expert_step 1500) | task=3.1222 tcost=0.1955 total=3.2870 | active=[17] frozen=17 | tokens=20.1M | wall=51min
+[R2 E18] Step 4950 (expert_step 1550) | task=3.1640 tcost=0.1958 total=3.3271 | active=[17] frozen=17 | tokens=20.3M | wall=52min
+[R2 E18] Step 5000 (expert_step 1600) | task=3.1644 tcost=0.1968 total=3.3291 | active=[17] frozen=17 | tokens=20.5M | wall=52min
+
+--- Eval at step 5000 (round 2, expert_step 1600) ---
+  ppl=23.41 gini=0.6423 t0=0.7796 miss=0.0917 experts=18 wall=52min
+
+============================================================
+EXPERT ROUND 2 CONVERGED at step 5000
+  Expert step: 1600, PPL: 23.41
+============================================================
+  Hard tokens: 25.5% (PPL 1282.1 vs easy 5.3)
+
+============================================================
+INTRODUCING EXPERT 18 (round 3)
+  Frozen: 18 experts, Active: [18]
+  Triggered by: 25.5% hard tokens (PPL 1282.1)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[18], frozen=63
+[R3 E19] Step 5050 (expert_step 50) | task=3.1709 tcost=0.1967 total=7051245043.2000 | active=[18] frozen=18 | tokens=20.7M | wall=53min
+[R3 E19] Step 5100 (expert_step 100) | task=6.1677 tcost=0.2052 total=170150619.1976 | active=[18] frozen=18 | tokens=20.9M | wall=53min
+[R3 E19] Step 5150 (expert_step 150) | task=8.1946 tcost=0.2478 total=443.9390 | active=[18] frozen=18 | tokens=21.1M | wall=54min
+[R3 E19] Step 5200 (expert_step 200) | task=5.3917 tcost=0.2112 total=5.7497 | active=[18] frozen=18 | tokens=21.3M | wall=54min
+
+--- Eval at step 5200 (round 3, expert_step 200) ---
+  ppl=85.70 gini=0.6428 t0=0.7358 miss=0.0914 experts=19 wall=54min
+[R3 E19] Step 5250 (expert_step 250) | task=4.0484 tcost=0.2248 total=4.6342 | active=[18] frozen=18 | tokens=21.5M | wall=55min
+[R3 E19] Step 5300 (expert_step 300) | task=3.6017 tcost=0.2140 total=3.8346 | active=[18] frozen=18 | tokens=21.7M | wall=55min
+[R3 E19] Step 5350 (expert_step 350) | task=3.4314 tcost=0.2017 total=3.6258 | active=[18] frozen=18 | tokens=21.9M | wall=56min
+[R3 E19] Step 5400 (expert_step 400) | task=3.4048 tcost=0.1923 total=3.5747 | active=[18] frozen=18 | tokens=22.1M | wall=56min
+
+--- Eval at step 5400 (round 3, expert_step 400) ---
+  ppl=27.62 gini=0.6523 t0=0.7757 miss=0.0833 experts=19 wall=56min
+[R3 E19] Step 5450 (expert_step 450) | task=3.2882 tcost=0.1866 total=3.4479 | active=[18] frozen=18 | tokens=22.3M | wall=57min
+[R3 E19] Step 5500 (expert_step 500) | task=3.2860 tcost=0.1828 total=3.4385 | active=[18] frozen=18 | tokens=22.5M | wall=57min
+[R3 E19] Step 5550 (expert_step 550) | task=3.2954 tcost=0.1846 total=3.4512 | active=[18] frozen=18 | tokens=22.7M | wall=58min
+[R3 E19] Step 5600 (expert_step 600) | task=3.2741 tcost=0.1828 total=3.4254 | active=[18] frozen=18 | tokens=22.9M | wall=58min
+
+--- Eval at step 5600 (round 3, expert_step 600) ---
+  ppl=26.27 gini=0.6564 t0=0.7850 miss=0.0787 experts=19 wall=58min
+[R3 E19] Step 5650 (expert_step 650) | task=3.2617 tcost=0.1801 total=3.4121 | active=[18] frozen=18 | tokens=23.1M | wall=59min
+[R3 E19] Step 5700 (expert_step 700) | task=3.3066 tcost=0.1783 total=3.4528 | active=[18] frozen=18 | tokens=23.3M | wall=59min
+[R3 E19] Step 5750 (expert_step 750) | task=3.2886 tcost=0.1761 total=3.4328 | active=[18] frozen=18 | tokens=23.6M | wall=60min
+[R3 E19] Step 5800 (expert_step 800) | task=3.2173 tcost=0.1767 total=3.3611 | active=[18] frozen=18 | tokens=23.8M | wall=60min
+
+--- Eval at step 5800 (round 3, expert_step 800) ---
+  ppl=26.01 gini=0.6610 t0=0.7913 miss=0.0745 experts=19 wall=60min
+[R3 E19] Step 5850 (expert_step 850) | task=3.2151 tcost=0.1733 total=3.3539 | active=[18] frozen=18 | tokens=24.0M | wall=61min
+[R3 E19] Step 5900 (expert_step 900) | task=3.2847 tcost=0.1729 total=3.4235 | active=[18] frozen=18 | tokens=24.2M | wall=61min
+[R3 E19] Step 5950 (expert_step 950) | task=3.2617 tcost=0.1733 total=3.4033 | active=[18] frozen=18 | tokens=24.4M | wall=62min
+[R3 E19] Step 6000 (expert_step 1000) | task=3.2508 tcost=0.1771 total=3.3937 | active=[18] frozen=18 | tokens=24.6M | wall=62min
+
+--- Eval at step 6000 (round 3, expert_step 1000) ---
+  ppl=25.75 gini=0.6609 t0=0.7916 miss=0.0732 experts=19 wall=62min
+[R3 E19] Step 6050 (expert_step 1050) | task=3.1957 tcost=0.1738 total=3.3373 | active=[18] frozen=18 | tokens=24.8M | wall=63min
+[R3 E19] Step 6100 (expert_step 1100) | task=3.2515 tcost=0.1736 total=3.3914 | active=[18] frozen=18 | tokens=25.0M | wall=63min
+[R3 E19] Step 6150 (expert_step 1150) | task=3.2567 tcost=0.1742 total=3.3968 | active=[18] frozen=18 | tokens=25.2M | wall=64min
+[R3 E19] Step 6200 (expert_step 1200) | task=3.2495 tcost=0.1723 total=3.3892 | active=[18] frozen=18 | tokens=25.4M | wall=64min
+
+--- Eval at step 6200 (round 3, expert_step 1200) ---
+  ppl=25.63 gini=0.6628 t0=0.7949 miss=0.0722 experts=19 wall=64min
+[R3 E19] Step 6250 (expert_step 1250) | task=3.2478 tcost=0.1728 total=3.3865 | active=[18] frozen=18 | tokens=25.6M | wall=65min
+[R3 E19] Step 6300 (expert_step 1300) | task=3.2602 tcost=0.1709 total=3.3963 | active=[18] frozen=18 | tokens=25.8M | wall=66min
+[R3 E19] Step 6350 (expert_step 1350) | task=3.2909 tcost=0.1710 total=3.4260 | active=[18] frozen=18 | tokens=26.0M | wall=66min
+[R3 E19] Step 6400 (expert_step 1400) | task=3.2261 tcost=0.1732 total=3.3644 | active=[18] frozen=18 | tokens=26.2M | wall=66min
+
+--- Eval at step 6400 (round 3, expert_step 1400) ---
+  ppl=25.46 gini=0.6619 t0=0.7936 miss=0.0729 experts=19 wall=67min
+[R3 E19] Step 6450 (expert_step 1450) | task=3.2944 tcost=0.1744 total=3.4341 | active=[18] frozen=18 | tokens=26.4M | wall=67min
+[R3 E19] Step 6500 (expert_step 1500) | task=3.2510 tcost=0.1718 total=3.3872 | active=[18] frozen=18 | tokens=26.6M | wall=68min
+[R3 E19] Step 6550 (expert_step 1550) | task=3.2359 tcost=0.1721 total=3.3725 | active=[18] frozen=18 | tokens=26.8M | wall=68min
+[R3 E19] Step 6600 (expert_step 1600) | task=3.2837 tcost=0.1719 total=3.4207 | active=[18] frozen=18 | tokens=27.0M | wall=69min
+
+--- Eval at step 6600 (round 3, expert_step 1600) ---
+  ppl=25.43 gini=0.6630 t0=0.7962 miss=0.0717 experts=19 wall=69min
+[R3 E19] Step 6650 (expert_step 1650) | task=3.2634 tcost=0.1702 total=3.3988 | active=[18] frozen=18 | tokens=27.2M | wall=69min
+[R3 E19] Step 6700 (expert_step 1700) | task=3.2139 tcost=0.1719 total=3.3499 | active=[18] frozen=18 | tokens=27.4M | wall=70min
+[R3 E19] Step 6750 (expert_step 1750) | task=3.2649 tcost=0.1711 total=3.3999 | active=[18] frozen=18 | tokens=27.6M | wall=70min
+[R3 E19] Step 6800 (expert_step 1800) | task=3.2358 tcost=0.1717 total=3.3723 | active=[18] frozen=18 | tokens=27.9M | wall=71min
+
+--- Eval at step 6800 (round 3, expert_step 1800) ---
+  ppl=25.32 gini=0.6621 t0=0.7944 miss=0.0725 experts=19 wall=71min
+
+============================================================
+EXPERT ROUND 3 CONVERGED at step 6800
+  Expert step: 1800, PPL: 25.32
+============================================================
+  Hard tokens: 25.5% (PPL 1452.8 vs easy 5.7)
+
+============================================================
+INTRODUCING EXPERT 19 (round 4)
+  Frozen: 19 experts, Active: [19]
+  Triggered by: 25.5% hard tokens (PPL 1452.8)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[19], frozen=63
+[R4 E20] Step 6850 (expert_step 50) | task=3.2282 tcost=0.1736 total=54281046835.2000 | active=[19] frozen=19 | tokens=28.1M | wall=71min
+[R4 E20] Step 6900 (expert_step 100) | task=6.3806 tcost=0.2011 total=1603127020.1433 | active=[19] frozen=19 | tokens=28.3M | wall=72min
+[R4 E20] Step 6950 (expert_step 150) | task=8.7233 tcost=0.2707 total=656.9816 | active=[19] frozen=19 | tokens=28.5M | wall=72min
+[R4 E20] Step 7000 (expert_step 200) | task=5.8462 tcost=0.2419 total=6.3077 | active=[19] frozen=19 | tokens=28.7M | wall=73min
+
+--- Eval at step 7000 (round 4, expert_step 200) ---
+  ppl=143.42 gini=0.6354 t0=0.7050 miss=0.0805 experts=20 wall=73min
+[R4 E20] Step 7050 (expert_step 250) | task=4.3399 tcost=0.2378 total=5.4859 | active=[19] frozen=19 | tokens=28.9M | wall=73min
+[R4 E20] Step 7100 (expert_step 300) | task=3.8796 tcost=0.2325 total=4.3079 | active=[19] frozen=19 | tokens=29.1M | wall=74min
+[R4 E20] Step 7150 (expert_step 350) | task=3.5598 tcost=0.2128 total=3.8112 | active=[19] frozen=19 | tokens=29.3M | wall=74min
+[R4 E20] Step 7200 (expert_step 400) | task=3.3864 tcost=0.1955 total=3.5744 | active=[19] frozen=19 | tokens=29.5M | wall=75min
+
+--- Eval at step 7200 (round 4, expert_step 400) ---
+  ppl=28.78 gini=0.6465 t0=0.7658 miss=0.0891 experts=20 wall=75min
+[R4 E20] Step 7250 (expert_step 450) | task=3.3932 tcost=0.1880 total=3.5649 | active=[19] frozen=19 | tokens=29.7M | wall=75min
+[R4 E20] Step 7300 (expert_step 500) | task=3.3229 tcost=0.1842 total=3.4840 | active=[19] frozen=19 | tokens=29.9M | wall=76min
+[R4 E20] Step 7350 (expert_step 550) | task=3.3129 tcost=0.1823 total=3.4714 | active=[19] frozen=19 | tokens=30.1M | wall=76min
+[R4 E20] Step 7400 (expert_step 600) | task=3.3350 tcost=0.1768 total=3.4868 | active=[19] frozen=19 | tokens=30.3M | wall=77min
+
+--- Eval at step 7400 (round 4, expert_step 600) ---
+  ppl=26.84 gini=0.6522 t0=0.7798 miss=0.0802 experts=20 wall=77min
+[R4 E20] Step 7450 (expert_step 650) | task=3.3274 tcost=0.1801 total=3.4808 | active=[19] frozen=19 | tokens=30.5M | wall=77min
+[R4 E20] Step 7500 (expert_step 700) | task=3.3069 tcost=0.1768 total=3.4586 | active=[19] frozen=19 | tokens=30.7M | wall=78min
+[R4 E20] Step 7550 (expert_step 750) | task=3.3150 tcost=0.1774 total=3.4652 | active=[19] frozen=19 | tokens=30.9M | wall=78min
+[R4 E20] Step 7600 (expert_step 800) | task=3.2856 tcost=0.1772 total=3.4453 | active=[19] frozen=19 | tokens=31.1M | wall=79min
+
+--- Eval at step 7600 (round 4, expert_step 800) ---
+  ppl=26.30 gini=0.6543 t0=0.7829 miss=0.0777 experts=20 wall=79min
+[R4 E20] Step 7650 (expert_step 850) | task=3.3027 tcost=0.1730 total=3.4447 | active=[19] frozen=19 | tokens=31.3M | wall=79min
+[R4 E20] Step 7700 (expert_step 900) | task=3.2656 tcost=0.1732 total=3.4075 | active=[19] frozen=19 | tokens=31.5M | wall=80min
+[R4 E20] Step 7750 (expert_step 950) | task=3.2717 tcost=0.1736 total=3.4149 | active=[19] frozen=19 | tokens=31.7M | wall=80min
+[R4 E20] Step 7800 (expert_step 1000) | task=3.2846 tcost=0.1732 total=3.4287 | active=[19] frozen=19 | tokens=31.9M | wall=81min
+
+--- Eval at step 7800 (round 4, expert_step 1000) ---
+  ppl=25.97 gini=0.6572 t0=0.7864 miss=0.0767 experts=20 wall=81min
+[R4 E20] Step 7850 (expert_step 1050) | task=3.2258 tcost=0.1720 total=3.3674 | active=[19] frozen=19 | tokens=32.2M | wall=81min
+[R4 E20] Step 7900 (expert_step 1100) | task=3.2132 tcost=0.1736 total=3.3542 | active=[19] frozen=19 | tokens=32.4M | wall=82min
+[R4 E20] Step 7950 (expert_step 1150) | task=3.2705 tcost=0.1737 total=3.4124 | active=[19] frozen=19 | tokens=32.6M | wall=82min
+[R4 E20] Step 8000 (expert_step 1200) | task=3.2662 tcost=0.1729 total=3.4076 | active=[19] frozen=19 | tokens=32.8M | wall=83min
+
+--- Eval at step 8000 (round 4, expert_step 1200) ---
+  ppl=25.81 gini=0.6579 t0=0.7876 miss=0.0764 experts=20 wall=83min
+[R4 E20] Step 8050 (expert_step 1250) | task=3.2787 tcost=0.1711 total=3.4185 | active=[19] frozen=19 | tokens=33.0M | wall=83min
+[R4 E20] Step 8100 (expert_step 1300) | task=3.2486 tcost=0.1706 total=3.3872 | active=[19] frozen=19 | tokens=33.2M | wall=84min
+[R4 E20] Step 8150 (expert_step 1350) | task=3.2588 tcost=0.1702 total=3.3966 | active=[19] frozen=19 | tokens=33.4M | wall=84min
+[R4 E20] Step 8200 (expert_step 1400) | task=3.2728 tcost=0.1718 total=3.4118 | active=[19] frozen=19 | tokens=33.6M | wall=85min
+
+--- Eval at step 8200 (round 4, expert_step 1400) ---
+  ppl=25.75 gini=0.6581 t0=0.7872 miss=0.0753 experts=20 wall=85min
+[R4 E20] Step 8250 (expert_step 1450) | task=3.2477 tcost=0.1686 total=3.3841 | active=[19] frozen=19 | tokens=33.8M | wall=86min
+[R4 E20] Step 8300 (expert_step 1500) | task=3.2949 tcost=0.1702 total=3.4350 | active=[19] frozen=19 | tokens=34.0M | wall=86min
+[R4 E20] Step 8350 (expert_step 1550) | task=3.2596 tcost=0.1706 total=3.3985 | active=[19] frozen=19 | tokens=34.2M | wall=87min
+[R4 E20] Step 8400 (expert_step 1600) | task=3.2792 tcost=0.1716 total=3.4183 | active=[19] frozen=19 | tokens=34.4M | wall=87min
+
+--- Eval at step 8400 (round 4, expert_step 1600) ---
+  ppl=25.60 gini=0.6562 t0=0.7850 miss=0.0759 experts=20 wall=87min
+[R4 E20] Step 8450 (expert_step 1650) | task=3.2629 tcost=0.1730 total=3.4034 | active=[19] frozen=19 | tokens=34.6M | wall=88min
+[R4 E20] Step 8500 (expert_step 1700) | task=3.2216 tcost=0.1704 total=3.3595 | active=[19] frozen=19 | tokens=34.8M | wall=88min
+[R4 E20] Step 8550 (expert_step 1750) | task=3.2577 tcost=0.1708 total=3.3967 | active=[19] frozen=19 | tokens=35.0M | wall=89min
+[R4 E20] Step 8600 (expert_step 1800) | task=3.1882 tcost=0.1704 total=3.3273 | active=[19] frozen=19 | tokens=35.2M | wall=89min
+
+--- Eval at step 8600 (round 4, expert_step 1800) ---
+  ppl=25.58 gini=0.6576 t0=0.7883 miss=0.0757 experts=20 wall=89min
+
+============================================================
+EXPERT ROUND 4 CONVERGED at step 8600
+  Expert step: 1800, PPL: 25.58
+============================================================
+  Hard tokens: 25.8% (PPL 1452.8 vs easy 5.6)
+
+============================================================
+INTRODUCING EXPERT 20 (round 5)
+  Frozen: 20 experts, Active: [20]
+  Triggered by: 25.8% hard tokens (PPL 1452.8)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[20], frozen=63
+[R5 E21] Step 8650 (expert_step 50) | task=3.2642 tcost=0.1694 total=21880664135.6800 | active=[20] frozen=20 | tokens=35.4M | wall=90min
+[R5 E21] Step 8700 (expert_step 100) | task=7.5686 tcost=0.2255 total=229460814.4930 | active=[20] frozen=20 | tokens=35.6M | wall=90min
+[R5 E21] Step 8750 (expert_step 150) | task=8.1305 tcost=0.2867 total=132.2661 | active=[20] frozen=20 | tokens=35.8M | wall=91min
+[R5 E21] Step 8800 (expert_step 200) | task=5.7380 tcost=0.2136 total=6.6959 | active=[20] frozen=20 | tokens=36.0M | wall=91min
+
+--- Eval at step 8800 (round 5, expert_step 200) ---
+  ppl=89.35 gini=0.6460 t0=0.7249 miss=0.0773 experts=21 wall=91min
+[R5 E21] Step 8850 (expert_step 250) | task=4.2054 tcost=0.2165 total=5.0155 | active=[20] frozen=20 | tokens=36.2M | wall=92min
+[R5 E21] Step 8900 (expert_step 300) | task=3.7236 tcost=0.2090 total=4.1787 | active=[20] frozen=20 | tokens=36.5M | wall=92min
+[R5 E21] Step 8950 (expert_step 350) | task=3.5370 tcost=0.1961 total=3.7693 | active=[20] frozen=20 | tokens=36.7M | wall=93min
+[R5 E21] Step 9000 (expert_step 400) | task=3.4050 tcost=0.1816 total=3.5859 | active=[20] frozen=20 | tokens=36.9M | wall=93min
+
+--- Eval at step 9000 (round 5, expert_step 400) ---
+  ppl=28.57 gini=0.6513 t0=0.7693 miss=0.0883 experts=21 wall=93min
+[R5 E21] Step 9050 (expert_step 450) | task=3.4036 tcost=0.1789 total=3.5606 | active=[20] frozen=20 | tokens=37.1M | wall=94min
+[R5 E21] Step 9100 (expert_step 500) | task=3.3652 tcost=0.1723 total=3.5143 | active=[20] frozen=20 | tokens=37.3M | wall=94min
+[R5 E21] Step 9150 (expert_step 550) | task=3.3478 tcost=0.1699 total=3.4912 | active=[20] frozen=20 | tokens=37.5M | wall=95min
+[R5 E21] Step 9200 (expert_step 600) | task=3.3279 tcost=0.1687 total=3.4734 | active=[20] frozen=20 | tokens=37.7M | wall=95min
+
+--- Eval at step 9200 (round 5, expert_step 600) ---
+  ppl=27.28 gini=0.6588 t0=0.7831 miss=0.0757 experts=21 wall=95min
+[R5 E21] Step 9250 (expert_step 650) | task=3.3726 tcost=0.1665 total=3.5113 | active=[20] frozen=20 | tokens=37.9M | wall=96min
+[R5 E21] Step 9300 (expert_step 700) | task=3.2636 tcost=0.1690 total=3.4088 | active=[20] frozen=20 | tokens=38.1M | wall=96min
+[R5 E21] Step 9350 (expert_step 750) | task=3.2959 tcost=0.1691 total=3.4351 | active=[20] frozen=20 | tokens=38.3M | wall=97min
+[R5 E21] Step 9400 (expert_step 800) | task=3.3031 tcost=0.1652 total=3.4378 | active=[20] frozen=20 | tokens=38.5M | wall=97min
+
+--- Eval at step 9400 (round 5, expert_step 800) ---
+  ppl=26.92 gini=0.6585 t0=0.7828 miss=0.0752 experts=21 wall=97min
+[R5 E21] Step 9450 (expert_step 850) | task=3.3119 tcost=0.1635 total=3.4459 | active=[20] frozen=20 | tokens=38.7M | wall=98min
+[R5 E21] Step 9500 (expert_step 900) | task=3.3394 tcost=0.1650 total=3.4735 | active=[20] frozen=20 | tokens=38.9M | wall=98min
+[R5 E21] Step 9550 (expert_step 950) | task=3.2612 tcost=0.1645 total=3.3960 | active=[20] frozen=20 | tokens=39.1M | wall=99min
+[R5 E21] Step 9600 (expert_step 1000) | task=3.3307 tcost=0.1631 total=3.4642 | active=[20] frozen=20 | tokens=39.3M | wall=99min
+
+--- Eval at step 9600 (round 5, expert_step 1000) ---
+  ppl=26.60 gini=0.6590 t0=0.7829 miss=0.0752 experts=21 wall=100min
+[R5 E21] Step 9650 (expert_step 1050) | task=3.3041 tcost=0.1642 total=3.4365 | active=[20] frozen=20 | tokens=39.5M | wall=100min
+[R5 E21] Step 9700 (expert_step 1100) | task=3.2878 tcost=0.1640 total=3.4222 | active=[20] frozen=20 | tokens=39.7M | wall=100min
+[R5 E21] Step 9750 (expert_step 1150) | task=3.3026 tcost=0.1636 total=3.4348 | active=[20] frozen=20 | tokens=39.9M | wall=101min
+[R5 E21] Step 9800 (expert_step 1200) | task=3.3000 tcost=0.1631 total=3.4334 | active=[20] frozen=20 | tokens=40.1M | wall=101min
+
+--- Eval at step 9800 (round 5, expert_step 1200) ---
+  ppl=26.32 gini=0.6608 t0=0.7856 miss=0.0745 experts=21 wall=102min
+[R5 E21] Step 9850 (expert_step 1250) | task=3.3082 tcost=0.1643 total=3.4431 | active=[20] frozen=20 | tokens=40.3M | wall=102min
+[R5 E21] Step 9900 (expert_step 1300) | task=3.3165 tcost=0.1612 total=3.4476 | active=[20] frozen=20 | tokens=40.6M | wall=102min
+[R5 E21] Step 9950 (expert_step 1350) | task=3.2704 tcost=0.1635 total=3.4045 | active=[20] frozen=20 | tokens=40.8M | wall=103min
+[R5 E21] Step 10000 (expert_step 1400) | task=3.2636 tcost=0.1616 total=3.3941 | active=[20] frozen=20 | tokens=41.0M | wall=103min
+
+--- Eval at step 10000 (round 5, expert_step 1400) ---
+  ppl=26.29 gini=0.6601 t0=0.7856 miss=0.0739 experts=21 wall=104min
+[R5 E21] Step 10050 (expert_step 1450) | task=3.2994 tcost=0.1613 total=3.4289 | active=[20] frozen=20 | tokens=41.2M | wall=104min
+[R5 E21] Step 10100 (expert_step 1500) | task=3.2379 tcost=0.1592 total=3.3667 | active=[20] frozen=20 | tokens=41.4M | wall=105min
+[R5 E21] Step 10150 (expert_step 1550) | task=3.2784 tcost=0.1604 total=3.4080 | active=[20] frozen=20 | tokens=41.6M | wall=105min
+[R5 E21] Step 10200 (expert_step 1600) | task=3.2439 tcost=0.1612 total=3.3747 | active=[20] frozen=20 | tokens=41.8M | wall=105min
+
+--- Eval at step 10200 (round 5, expert_step 1600) ---
+  ppl=26.20 gini=0.6607 t0=0.7863 miss=0.0739 experts=21 wall=106min
+[R5 E21] Step 10250 (expert_step 1650) | task=3.2607 tcost=0.1623 total=3.3909 | active=[20] frozen=20 | tokens=42.0M | wall=106min
+[R5 E21] Step 10300 (expert_step 1700) | task=3.2938 tcost=0.1624 total=3.4254 | active=[20] frozen=20 | tokens=42.2M | wall=107min
+[R5 E21] Step 10350 (expert_step 1750) | task=3.3329 tcost=0.1621 total=3.4636 | active=[20] frozen=20 | tokens=42.4M | wall=107min
+[R5 E21] Step 10400 (expert_step 1800) | task=3.2803 tcost=0.1642 total=3.4149 | active=[20] frozen=20 | tokens=42.6M | wall=108min
+
+--- Eval at step 10400 (round 5, expert_step 1800) ---
+  ppl=26.16 gini=0.6595 t0=0.7845 miss=0.0735 experts=21 wall=108min
+
+============================================================
+EXPERT ROUND 5 CONVERGED at step 10400
+  Expert step: 1800, PPL: 26.16
+============================================================
+  Hard tokens: 25.9% (PPL 1498.9 vs easy 5.7)
+
+============================================================
+INTRODUCING EXPERT 21 (round 6)
+  Frozen: 21 experts, Active: [21]
+  Triggered by: 25.9% hard tokens (PPL 1498.9)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[21], frozen=63
+[R6 E22] Step 10450 (expert_step 50) | task=3.3299 tcost=0.1656 total=42112663889.9200 | active=[21] frozen=21 | tokens=42.8M | wall=108min
+[R6 E22] Step 10500 (expert_step 100) | task=7.2561 tcost=0.2171 total=633026267.3916 | active=[21] frozen=21 | tokens=43.0M | wall=109min
+[R6 E22] Step 10550 (expert_step 150) | task=9.3768 tcost=0.2853 total=8202.7343 | active=[21] frozen=21 | tokens=43.2M | wall=109min
+[R6 E22] Step 10600 (expert_step 200) | task=7.6077 tcost=0.3186 total=9.3220 | active=[21] frozen=21 | tokens=43.4M | wall=110min
+
+--- Eval at step 10600 (round 6, expert_step 200) ---
+  ppl=492.82 gini=0.6470 t0=0.6533 miss=0.0741 experts=22 wall=110min
+[R6 E22] Step 10650 (expert_step 250) | task=5.0495 tcost=0.2595 total=5.9496 | active=[21] frozen=21 | tokens=43.6M | wall=110min
+[R6 E22] Step 10700 (expert_step 300) | task=3.9636 tcost=0.2350 total=4.3260 | active=[21] frozen=21 | tokens=43.8M | wall=111min
+[R6 E22] Step 10750 (expert_step 350) | task=3.6243 tcost=0.2107 total=3.8804 | active=[21] frozen=21 | tokens=44.0M | wall=111min
+[R6 E22] Step 10800 (expert_step 400) | task=3.4750 tcost=0.1940 total=3.6922 | active=[21] frozen=21 | tokens=44.2M | wall=112min
+
+--- Eval at step 10800 (round 6, expert_step 400) ---
+  ppl=31.19 gini=0.6439 t0=0.7494 miss=0.1067 experts=22 wall=112min
+[R6 E22] Step 10850 (expert_step 450) | task=3.4119 tcost=0.1840 total=3.6031 | active=[21] frozen=21 | tokens=44.4M | wall=112min
+[R6 E22] Step 10900 (expert_step 500) | task=3.3981 tcost=0.1788 total=3.5739 | active=[21] frozen=21 | tokens=44.6M | wall=113min
+[R6 E22] Step 10950 (expert_step 550) | task=3.3500 tcost=0.1762 total=3.5098 | active=[21] frozen=21 | tokens=44.9M | wall=113min
+[R6 E22] Step 11000 (expert_step 600) | task=3.3399 tcost=0.1757 total=3.5000 | active=[21] frozen=21 | tokens=45.1M | wall=114min
+
+--- Eval at step 11000 (round 6, expert_step 600) ---
+  ppl=28.11 gini=0.6509 t0=0.7666 miss=0.0943 experts=22 wall=114min
+[R6 E22] Step 11050 (expert_step 650) | task=3.3440 tcost=0.1745 total=3.4996 | active=[21] frozen=21 | tokens=45.3M | wall=114min
+[R6 E22] Step 11100 (expert_step 700) | task=3.3376 tcost=0.1694 total=3.4819 | active=[21] frozen=21 | tokens=45.5M | wall=115min
+[R6 E22] Step 11150 (expert_step 750) | task=3.2834 tcost=0.1692 total=3.4330 | active=[21] frozen=21 | tokens=45.7M | wall=115min
+[R6 E22] Step 11200 (expert_step 800) | task=3.3118 tcost=0.1694 total=3.4585 | active=[21] frozen=21 | tokens=45.9M | wall=116min
+
+--- Eval at step 11200 (round 6, expert_step 800) ---
+  ppl=27.21 gini=0.6540 t0=0.7721 miss=0.0898 experts=22 wall=116min
+[R6 E22] Step 11250 (expert_step 850) | task=3.3244 tcost=0.1692 total=3.4702 | active=[21] frozen=21 | tokens=46.1M | wall=116min
+[R6 E22] Step 11300 (expert_step 900) | task=3.2982 tcost=0.1684 total=3.4406 | active=[21] frozen=21 | tokens=46.3M | wall=117min
+[R6 E22] Step 11350 (expert_step 950) | task=3.2380 tcost=0.1677 total=3.3790 | active=[21] frozen=21 | tokens=46.5M | wall=117min
+[R6 E22] Step 11400 (expert_step 1000) | task=3.2949 tcost=0.1673 total=3.4352 | active=[21] frozen=21 | tokens=46.7M | wall=118min
+
+--- Eval at step 11400 (round 6, expert_step 1000) ---
+  ppl=26.74 gini=0.6521 t0=0.7689 miss=0.0910 experts=22 wall=118min
+[R6 E22] Step 11450 (expert_step 1050) | task=3.3226 tcost=0.1699 total=3.4692 | active=[21] frozen=21 | tokens=46.9M | wall=118min
+[R6 E22] Step 11500 (expert_step 1100) | task=3.2922 tcost=0.1667 total=3.4309 | active=[21] frozen=21 | tokens=47.1M | wall=119min
+[R6 E22] Step 11550 (expert_step 1150) | task=3.2971 tcost=0.1651 total=3.4326 | active=[21] frozen=21 | tokens=47.3M | wall=119min
+[R6 E22] Step 11600 (expert_step 1200) | task=3.3362 tcost=0.1657 total=3.4738 | active=[21] frozen=21 | tokens=47.5M | wall=120min
+
+--- Eval at step 11600 (round 6, expert_step 1200) ---
+  ppl=26.48 gini=0.6551 t0=0.7747 miss=0.0861 experts=22 wall=120min
+[R6 E22] Step 11650 (expert_step 1250) | task=3.3466 tcost=0.1693 total=3.4887 | active=[21] frozen=21 | tokens=47.7M | wall=121min
+[R6 E22] Step 11700 (expert_step 1300) | task=3.2996 tcost=0.1676 total=3.4425 | active=[21] frozen=21 | tokens=47.9M | wall=121min
+[R6 E22] Step 11750 (expert_step 1350) | task=3.2958 tcost=0.1658 total=3.4314 | active=[21] frozen=21 | tokens=48.1M | wall=121min
+[R6 E22] Step 11800 (expert_step 1400) | task=3.3024 tcost=0.1661 total=3.4381 | active=[21] frozen=21 | tokens=48.3M | wall=122min
+
+--- Eval at step 11800 (round 6, expert_step 1400) ---
+  ppl=26.35 gini=0.6553 t0=0.7746 miss=0.0847 experts=22 wall=122min
+[R6 E22] Step 11850 (expert_step 1450) | task=3.2546 tcost=0.1680 total=3.3929 | active=[21] frozen=21 | tokens=48.5M | wall=123min
+[R6 E22] Step 11900 (expert_step 1500) | task=3.2539 tcost=0.1659 total=3.3906 | active=[21] frozen=21 | tokens=48.7M | wall=123min
+[R6 E22] Step 11950 (expert_step 1550) | task=3.2966 tcost=0.1648 total=3.4338 | active=[21] frozen=21 | tokens=48.9M | wall=124min
+[R6 E22] Step 12000 (expert_step 1600) | task=3.3198 tcost=0.1649 total=3.4541 | active=[21] frozen=21 | tokens=49.2M | wall=124min
+
+--- Eval at step 12000 (round 6, expert_step 1600) ---
+  ppl=26.18 gini=0.6542 t0=0.7731 miss=0.0858 experts=22 wall=124min
+[R6 E22] Step 12050 (expert_step 1650) | task=3.2773 tcost=0.1650 total=3.4119 | active=[21] frozen=21 | tokens=49.4M | wall=125min
+[R6 E22] Step 12100 (expert_step 1700) | task=3.3325 tcost=0.1660 total=3.4684 | active=[21] frozen=21 | tokens=49.6M | wall=125min
+[R6 E22] Step 12150 (expert_step 1750) | task=3.2899 tcost=0.1665 total=3.4275 | active=[21] frozen=21 | tokens=49.8M | wall=126min
+[R6 E22] Step 12200 (expert_step 1800) | task=3.2506 tcost=0.1653 total=3.3870 | active=[21] frozen=21 | tokens=50.0M | wall=126min
+
+--- Eval at step 12200 (round 6, expert_step 1800) ---
+  ppl=26.21 gini=0.6543 t0=0.7747 miss=0.0853 experts=22 wall=126min
+[R6 E22] Step 12250 (expert_step 1850) | task=3.2171 tcost=0.1625 total=3.3497 | active=[21] frozen=21 | tokens=50.2M | wall=127min
+[R6 E22] Step 12300 (expert_step 1900) | task=3.2505 tcost=0.1652 total=3.3869 | active=[21] frozen=21 | tokens=50.4M | wall=127min
+[R6 E22] Step 12350 (expert_step 1950) | task=3.2536 tcost=0.1656 total=3.3872 | active=[21] frozen=21 | tokens=50.6M | wall=128min
+[R6 E22] Step 12400 (expert_step 2000) | task=3.2579 tcost=0.1655 total=3.3932 | active=[21] frozen=21 | tokens=50.8M | wall=128min
+
+--- Eval at step 12400 (round 6, expert_step 2000) ---
+  ppl=26.09 gini=0.6543 t0=0.7744 miss=0.0849 experts=22 wall=128min
+
+============================================================
+EXPERT ROUND 6 CONVERGED at step 12400
+  Expert step: 2000, PPL: 26.09
+============================================================
+  Hard tokens: 26.1% (PPL 1452.8 vs easy 5.6)
+
+============================================================
+INTRODUCING EXPERT 22 (round 7)
+  Frozen: 22 experts, Active: [22]
+  Triggered by: 26.1% hard tokens (PPL 1452.8)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[22], frozen=63
+[R7 E23] Step 12450 (expert_step 50) | task=3.3240 tcost=0.1680 total=31591235911.6800 | active=[22] frozen=22 | tokens=51.0M | wall=129min
+[R7 E23] Step 12500 (expert_step 100) | task=6.7894 tcost=0.2203 total=672484574.3979 | active=[22] frozen=22 | tokens=51.2M | wall=129min
+[R7 E23] Step 12550 (expert_step 150) | task=8.4829 tcost=0.2956 total=1768.9304 | active=[22] frozen=22 | tokens=51.4M | wall=130min
+[R7 E23] Step 12600 (expert_step 200) | task=6.4151 tcost=0.2762 total=6.8905 | active=[22] frozen=22 | tokens=51.6M | wall=130min
+
+--- Eval at step 12600 (round 7, expert_step 200) ---
+  ppl=121.24 gini=0.6389 t0=0.6597 miss=0.0927 experts=23 wall=130min
+[R7 E23] Step 12650 (expert_step 250) | task=4.2518 tcost=0.2565 total=4.7599 | active=[22] frozen=22 | tokens=51.8M | wall=131min
+[R7 E23] Step 12700 (expert_step 300) | task=3.5533 tcost=0.2345 total=3.8225 | active=[22] frozen=22 | tokens=52.0M | wall=131min
+[R7 E23] Step 12750 (expert_step 350) | task=3.3554 tcost=0.2049 total=3.5626 | active=[22] frozen=22 | tokens=52.2M | wall=132min
+[R7 E23] Step 12800 (expert_step 400) | task=3.3399 tcost=0.1888 total=3.5207 | active=[22] frozen=22 | tokens=52.4M | wall=132min
+
+--- Eval at step 12800 (round 7, expert_step 400) ---
+  ppl=27.53 gini=0.6372 t0=0.7428 miss=0.1136 experts=23 wall=132min
+[R7 E23] Step 12850 (expert_step 450) | task=3.2930 tcost=0.1816 total=3.4589 | active=[22] frozen=22 | tokens=52.6M | wall=133min
+[R7 E23] Step 12900 (expert_step 500) | task=3.2749 tcost=0.1781 total=3.4325 | active=[22] frozen=22 | tokens=52.8M | wall=133min
+[R7 E23] Step 12950 (expert_step 550) | task=3.2676 tcost=0.1757 total=3.4241 | active=[22] frozen=22 | tokens=53.0M | wall=134min
+[R7 E23] Step 13000 (expert_step 600) | task=3.3086 tcost=0.1750 total=3.4590 | active=[22] frozen=22 | tokens=53.2M | wall=134min
+
+--- Eval at step 13000 (round 7, expert_step 600) ---
+  ppl=26.33 gini=0.6432 t0=0.7588 miss=0.1022 experts=23 wall=134min
+[R7 E23] Step 13050 (expert_step 650) | task=3.2879 tcost=0.1732 total=3.4379 | active=[22] frozen=22 | tokens=53.5M | wall=135min
+[R7 E23] Step 13100 (expert_step 700) | task=3.3199 tcost=0.1746 total=3.4685 | active=[22] frozen=22 | tokens=53.7M | wall=135min
+[R7 E23] Step 13150 (expert_step 750) | task=3.3170 tcost=0.1735 total=3.4669 | active=[22] frozen=22 | tokens=53.9M | wall=136min
+[R7 E23] Step 13200 (expert_step 800) | task=3.3077 tcost=0.1747 total=3.4580 | active=[22] frozen=22 | tokens=54.1M | wall=136min
+
+--- Eval at step 13200 (round 7, expert_step 800) ---
+  ppl=26.08 gini=0.6433 t0=0.7566 miss=0.1020 experts=23 wall=136min
+[R7 E23] Step 13250 (expert_step 850) | task=3.2861 tcost=0.1746 total=3.4324 | active=[22] frozen=22 | tokens=54.3M | wall=137min
+[R7 E23] Step 13300 (expert_step 900) | task=3.2794 tcost=0.1716 total=3.4245 | active=[22] frozen=22 | tokens=54.5M | wall=137min
+[R7 E23] Step 13350 (expert_step 950) | task=3.2835 tcost=0.1717 total=3.4279 | active=[22] frozen=22 | tokens=54.7M | wall=138min
+[R7 E23] Step 13400 (expert_step 1000) | task=3.2473 tcost=0.1701 total=3.3891 | active=[22] frozen=22 | tokens=54.9M | wall=138min
+
+--- Eval at step 13400 (round 7, expert_step 1000) ---
+  ppl=25.85 gini=0.6460 t0=0.7625 miss=0.0970 experts=23 wall=139min
+[R7 E23] Step 13450 (expert_step 1050) | task=3.2428 tcost=0.1697 total=3.3847 | active=[22] frozen=22 | tokens=55.1M | wall=139min
+[R7 E23] Step 13500 (expert_step 1100) | task=3.2274 tcost=0.1711 total=3.3700 | active=[22] frozen=22 | tokens=55.3M | wall=140min
+[R7 E23] Step 13550 (expert_step 1150) | task=3.1933 tcost=0.1696 total=3.3343 | active=[22] frozen=22 | tokens=55.5M | wall=140min
+[R7 E23] Step 13600 (expert_step 1200) | task=3.2229 tcost=0.1692 total=3.3657 | active=[22] frozen=22 | tokens=55.7M | wall=141min
+
+--- Eval at step 13600 (round 7, expert_step 1200) ---
+  ppl=25.66 gini=0.6448 t0=0.7587 miss=0.0975 experts=23 wall=141min
+[R7 E23] Step 13650 (expert_step 1250) | task=3.2379 tcost=0.1694 total=3.3783 | active=[22] frozen=22 | tokens=55.9M | wall=141min
+[R7 E23] Step 13700 (expert_step 1300) | task=3.2081 tcost=0.1708 total=3.3498 | active=[22] frozen=22 | tokens=56.1M | wall=142min
+[R7 E23] Step 13750 (expert_step 1350) | task=3.2508 tcost=0.1709 total=3.3915 | active=[22] frozen=22 | tokens=56.3M | wall=142min
+[R7 E23] Step 13800 (expert_step 1400) | task=3.2402 tcost=0.1682 total=3.3793 | active=[22] frozen=22 | tokens=56.5M | wall=143min
+
+--- Eval at step 13800 (round 7, expert_step 1400) ---
+  ppl=25.42 gini=0.6455 t0=0.7608 miss=0.0954 experts=23 wall=143min
+[R7 E23] Step 13850 (expert_step 1450) | task=3.2676 tcost=0.1679 total=3.4045 | active=[22] frozen=22 | tokens=56.7M | wall=143min
+[R7 E23] Step 13900 (expert_step 1500) | task=3.2024 tcost=0.1683 total=3.3428 | active=[22] frozen=22 | tokens=56.9M | wall=144min
+[R7 E23] Step 13950 (expert_step 1550) | task=3.2153 tcost=0.1705 total=3.3549 | active=[22] frozen=22 | tokens=57.1M | wall=144min
+[R7 E23] Step 14000 (expert_step 1600) | task=3.2258 tcost=0.1695 total=3.3650 | active=[22] frozen=22 | tokens=57.3M | wall=145min
+
+--- Eval at step 14000 (round 7, expert_step 1600) ---
+  ppl=25.34 gini=0.6450 t0=0.7617 miss=0.0940 experts=23 wall=145min
+[R7 E23] Step 14050 (expert_step 1650) | task=3.2957 tcost=0.1687 total=3.4338 | active=[22] frozen=22 | tokens=57.5M | wall=145min
+[R7 E23] Step 14100 (expert_step 1700) | task=3.2283 tcost=0.1695 total=3.3683 | active=[22] frozen=22 | tokens=57.8M | wall=146min
+[R7 E23] Step 14150 (expert_step 1750) | task=3.2972 tcost=0.1676 total=3.4333 | active=[22] frozen=22 | tokens=58.0M | wall=146min
+[R7 E23] Step 14200 (expert_step 1800) | task=3.2550 tcost=0.1675 total=3.3926 | active=[22] frozen=22 | tokens=58.2M | wall=147min
+
+--- Eval at step 14200 (round 7, expert_step 1800) ---
+  ppl=25.26 gini=0.6458 t0=0.7628 miss=0.0929 experts=23 wall=147min
+[R7 E23] Step 14250 (expert_step 1850) | task=3.2222 tcost=0.1667 total=3.3579 | active=[22] frozen=22 | tokens=58.4M | wall=147min
+[R7 E23] Step 14300 (expert_step 1900) | task=3.1903 tcost=0.1683 total=3.3290 | active=[22] frozen=22 | tokens=58.6M | wall=148min
+[R7 E23] Step 14350 (expert_step 1950) | task=3.2415 tcost=0.1684 total=3.3792 | active=[22] frozen=22 | tokens=58.8M | wall=148min
+[R7 E23] Step 14400 (expert_step 2000) | task=3.1994 tcost=0.1685 total=3.3395 | active=[22] frozen=22 | tokens=59.0M | wall=149min
+
+--- Eval at step 14400 (round 7, expert_step 2000) ---
+  ppl=25.21 gini=0.6455 t0=0.7623 miss=0.0929 experts=23 wall=149min
+
+============================================================
+EXPERT ROUND 7 CONVERGED at step 14400
+  Expert step: 2000, PPL: 25.21
+============================================================
+  Hard tokens: 25.9% (PPL 1408.1 vs easy 5.5)
+
+============================================================
+INTRODUCING EXPERT 23 (round 8)
+  Frozen: 23 experts, Active: [23]
+  Triggered by: 25.9% hard tokens (PPL 1408.1)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[23], frozen=63
+[R8 E24] Step 14450 (expert_step 50) | task=3.2872 tcost=0.1717 total=84907543511.0400 | active=[23] frozen=23 | tokens=59.2M | wall=149min
+[R8 E24] Step 14500 (expert_step 100) | task=5.1018 tcost=0.2260 total=1005436669.0325 | active=[23] frozen=23 | tokens=59.4M | wall=150min
+[R8 E24] Step 14550 (expert_step 150) | task=8.0839 tcost=0.3139 total=3449.5598 | active=[23] frozen=23 | tokens=59.6M | wall=150min
+[R8 E24] Step 14600 (expert_step 200) | task=4.7272 tcost=0.2911 total=5.2591 | active=[23] frozen=23 | tokens=59.8M | wall=151min
+
+--- Eval at step 14600 (round 8, expert_step 200) ---
+  ppl=41.91 gini=0.6319 t0=0.6498 miss=0.1241 experts=24 wall=151min
+[R8 E24] Step 14650 (expert_step 250) | task=3.5755 tcost=0.2534 total=3.8519 | active=[23] frozen=23 | tokens=60.0M | wall=151min
+[R8 E24] Step 14700 (expert_step 300) | task=3.3651 tcost=0.2186 total=3.5756 | active=[23] frozen=23 | tokens=60.2M | wall=152min
+[R8 E24] Step 14750 (expert_step 350) | task=3.3113 tcost=0.1976 total=3.4977 | active=[23] frozen=23 | tokens=60.4M | wall=152min
+[R8 E24] Step 14800 (expert_step 400) | task=3.3287 tcost=0.1884 total=3.4977 | active=[23] frozen=23 | tokens=60.6M | wall=153min
+
+--- Eval at step 14800 (round 8, expert_step 400) ---
+  ppl=26.71 gini=0.6302 t0=0.7317 miss=0.1155 experts=24 wall=153min
+[R8 E24] Step 14850 (expert_step 450) | task=3.3683 tcost=0.1873 total=3.5357 | active=[23] frozen=23 | tokens=60.8M | wall=154min
+[R8 E24] Step 14900 (expert_step 500) | task=3.2748 tcost=0.1801 total=3.4313 | active=[23] frozen=23 | tokens=61.0M | wall=154min
+[R8 E24] Step 14950 (expert_step 550) | task=3.2620 tcost=0.1783 total=3.4166 | active=[23] frozen=23 | tokens=61.2M | wall=155min
+[R8 E24] Step 15000 (expert_step 600) | task=3.2729 tcost=0.1763 total=3.4244 | active=[23] frozen=23 | tokens=61.4M | wall=155min
+
+--- Eval at step 15000 (round 8, expert_step 600) ---
+  ppl=25.78 gini=0.6359 t0=0.7412 miss=0.1057 experts=24 wall=155min
+[R8 E24] Step 15050 (expert_step 650) | task=3.2165 tcost=0.1778 total=3.3679 | active=[23] frozen=23 | tokens=61.6M | wall=156min
+[R8 E24] Step 15100 (expert_step 700) | task=3.2173 tcost=0.1746 total=3.3652 | active=[23] frozen=23 | tokens=61.8M | wall=156min
+[R8 E24] Step 15150 (expert_step 750) | task=3.2427 tcost=0.1738 total=3.3879 | active=[23] frozen=23 | tokens=62.1M | wall=157min
+[R8 E24] Step 15200 (expert_step 800) | task=3.2657 tcost=0.1738 total=3.4126 | active=[23] frozen=23 | tokens=62.3M | wall=157min
+
+--- Eval at step 15200 (round 8, expert_step 800) ---
+  ppl=25.46 gini=0.6379 t0=0.7449 miss=0.1016 experts=24 wall=157min
+[R8 E24] Step 15250 (expert_step 850) | task=3.2333 tcost=0.1732 total=3.3782 | active=[23] frozen=23 | tokens=62.5M | wall=158min
+[R8 E24] Step 15300 (expert_step 900) | task=3.2691 tcost=0.1724 total=3.4142 | active=[23] frozen=23 | tokens=62.7M | wall=158min
+[R8 E24] Step 15350 (expert_step 950) | task=3.2445 tcost=0.1726 total=3.3882 | active=[23] frozen=23 | tokens=62.9M | wall=159min
+[R8 E24] Step 15400 (expert_step 1000) | task=3.2385 tcost=0.1715 total=3.3812 | active=[23] frozen=23 | tokens=63.1M | wall=159min
+
+--- Eval at step 15400 (round 8, expert_step 1000) ---
+  ppl=25.32 gini=0.6396 t0=0.7474 miss=0.0989 experts=24 wall=159min
+[R8 E24] Step 15450 (expert_step 1050) | task=3.2499 tcost=0.1728 total=3.3940 | active=[23] frozen=23 | tokens=63.3M | wall=160min
+[R8 E24] Step 15500 (expert_step 1100) | task=3.2728 tcost=0.1712 total=3.4152 | active=[23] frozen=23 | tokens=63.5M | wall=160min
+[R8 E24] Step 15550 (expert_step 1150) | task=3.2012 tcost=0.1717 total=3.3448 | active=[23] frozen=23 | tokens=63.7M | wall=161min
+[R8 E24] Step 15600 (expert_step 1200) | task=3.2339 tcost=0.1704 total=3.3735 | active=[23] frozen=23 | tokens=63.9M | wall=161min
+
+--- Eval at step 15600 (round 8, expert_step 1200) ---
+  ppl=25.15 gini=0.6394 t0=0.7461 miss=0.0983 experts=24 wall=161min
+[R8 E24] Step 15650 (expert_step 1250) | task=3.2617 tcost=0.1689 total=3.4007 | active=[23] frozen=23 | tokens=64.1M | wall=162min
+[R8 E24] Step 15700 (expert_step 1300) | task=3.2534 tcost=0.1685 total=3.3922 | active=[23] frozen=23 | tokens=64.3M | wall=162min
+[R8 E24] Step 15750 (expert_step 1350) | task=3.2343 tcost=0.1695 total=3.3734 | active=[23] frozen=23 | tokens=64.5M | wall=163min
+[R8 E24] Step 15800 (expert_step 1400) | task=3.2335 tcost=0.1691 total=3.3722 | active=[23] frozen=23 | tokens=64.7M | wall=163min
+
+--- Eval at step 15800 (round 8, expert_step 1400) ---
+  ppl=25.03 gini=0.6405 t0=0.7498 miss=0.0958 experts=24 wall=163min
+[R8 E24] Step 15850 (expert_step 1450) | task=3.1917 tcost=0.1692 total=3.3316 | active=[23] frozen=23 | tokens=64.9M | wall=164min
+[R8 E24] Step 15900 (expert_step 1500) | task=3.2574 tcost=0.1696 total=3.3961 | active=[23] frozen=23 | tokens=65.1M | wall=164min
+[R8 E24] Step 15950 (expert_step 1550) | task=3.2319 tcost=0.1704 total=3.3718 | active=[23] frozen=23 | tokens=65.3M | wall=165min
+[R8 E24] Step 16000 (expert_step 1600) | task=3.1888 tcost=0.1681 total=3.3274 | active=[23] frozen=23 | tokens=65.5M | wall=165min
+
+--- Eval at step 16000 (round 8, expert_step 1600) ---
+  ppl=24.99 gini=0.6408 t0=0.7509 miss=0.0948 experts=24 wall=165min
+
+============================================================
+EXPERT ROUND 8 CONVERGED at step 16000
+  Expert step: 1600, PPL: 24.99
+============================================================
+  Hard tokens: 25.8% (PPL 1452.8 vs easy 5.5)
+
+============================================================
+INTRODUCING EXPERT 24 (round 9)
+  Frozen: 24 experts, Active: [24]
+  Triggered by: 25.8% hard tokens (PPL 1452.8)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[24], frozen=63
+[R9 E25] Step 16050 (expert_step 50) | task=3.3113 tcost=0.1772 total=43278257853.4400 | active=[24] frozen=24 | tokens=65.7M | wall=166min
+[R9 E25] Step 16100 (expert_step 100) | task=8.7983 tcost=0.2405 total=532846825.4012 | active=[24] frozen=24 | tokens=65.9M | wall=166min
+[R9 E25] Step 16150 (expert_step 150) | task=10.1387 tcost=0.3126 total=816.8462 | active=[24] frozen=24 | tokens=66.2M | wall=167min
+[R9 E25] Step 16200 (expert_step 200) | task=6.0120 tcost=0.2703 total=6.6018 | active=[24] frozen=24 | tokens=66.4M | wall=167min
+
+--- Eval at step 16200 (round 9, expert_step 200) ---
+  ppl=76.95 gini=0.6012 t0=0.6289 miss=0.1488 experts=25 wall=168min
+[R9 E25] Step 16250 (expert_step 250) | task=3.8204 tcost=0.2441 total=4.3006 | active=[24] frozen=24 | tokens=66.6M | wall=168min
+[R9 E25] Step 16300 (expert_step 300) | task=3.3655 tcost=0.2112 total=3.6041 | active=[24] frozen=24 | tokens=66.8M | wall=169min
+[R9 E25] Step 16350 (expert_step 350) | task=3.3033 tcost=0.1923 total=3.4913 | active=[24] frozen=24 | tokens=67.0M | wall=169min
+[R9 E25] Step 16400 (expert_step 400) | task=3.3178 tcost=0.1837 total=3.4874 | active=[24] frozen=24 | tokens=67.2M | wall=170min
+
+--- Eval at step 16400 (round 9, expert_step 400) ---
+  ppl=26.31 gini=0.6287 t0=0.7301 miss=0.1197 experts=25 wall=170min
+[R9 E25] Step 16450 (expert_step 450) | task=3.2987 tcost=0.1772 total=3.4594 | active=[24] frozen=24 | tokens=67.4M | wall=170min
+[R9 E25] Step 16500 (expert_step 500) | task=3.2248 tcost=0.1784 total=3.3860 | active=[24] frozen=24 | tokens=67.6M | wall=171min
+[R9 E25] Step 16550 (expert_step 550) | task=3.2613 tcost=0.1767 total=3.4220 | active=[24] frozen=24 | tokens=67.8M | wall=171min
+[R9 E25] Step 16600 (expert_step 600) | task=3.2618 tcost=0.1762 total=3.4198 | active=[24] frozen=24 | tokens=68.0M | wall=172min
+
+--- Eval at step 16600 (round 9, expert_step 600) ---
+  ppl=25.74 gini=0.6317 t0=0.7360 miss=0.1139 experts=25 wall=172min
+[R9 E25] Step 16650 (expert_step 650) | task=3.2775 tcost=0.1750 total=3.4333 | active=[24] frozen=24 | tokens=68.2M | wall=172min
+[R9 E25] Step 16700 (expert_step 700) | task=3.2438 tcost=0.1750 total=3.3977 | active=[24] frozen=24 | tokens=68.4M | wall=173min
+[R9 E25] Step 16750 (expert_step 750) | task=3.2409 tcost=0.1762 total=3.3954 | active=[24] frozen=24 | tokens=68.6M | wall=173min
+[R9 E25] Step 16800 (expert_step 800) | task=3.2858 tcost=0.1757 total=3.4378 | active=[24] frozen=24 | tokens=68.8M | wall=174min
+
+--- Eval at step 16800 (round 9, expert_step 800) ---
+  ppl=25.46 gini=0.6332 t0=0.7390 miss=0.1123 experts=25 wall=174min
+[R9 E25] Step 16850 (expert_step 850) | task=3.2392 tcost=0.1734 total=3.3873 | active=[24] frozen=24 | tokens=69.0M | wall=174min
+[R9 E25] Step 16900 (expert_step 900) | task=3.2087 tcost=0.1738 total=3.3579 | active=[24] frozen=24 | tokens=69.2M | wall=175min
+[R9 E25] Step 16950 (expert_step 950) | task=3.2414 tcost=0.1755 total=3.3976 | active=[24] frozen=24 | tokens=69.4M | wall=175min
+[R9 E25] Step 17000 (expert_step 1000) | task=3.2635 tcost=0.1748 total=3.4134 | active=[24] frozen=24 | tokens=69.6M | wall=176min
+
+--- Eval at step 17000 (round 9, expert_step 1000) ---
+  ppl=25.27 gini=0.6352 t0=0.7432 miss=0.1071 experts=25 wall=176min
+[R9 E25] Step 17050 (expert_step 1050) | task=3.2512 tcost=0.1724 total=3.4043 | active=[24] frozen=24 | tokens=69.8M | wall=176min
+[R9 E25] Step 17100 (expert_step 1100) | task=3.2715 tcost=0.1749 total=3.4226 | active=[24] frozen=24 | tokens=70.0M | wall=177min
+[R9 E25] Step 17150 (expert_step 1150) | task=3.2270 tcost=0.1747 total=3.3762 | active=[24] frozen=24 | tokens=70.2M | wall=177min
+[R9 E25] Step 17200 (expert_step 1200) | task=3.2961 tcost=0.1730 total=3.4440 | active=[24] frozen=24 | tokens=70.5M | wall=178min
+
+--- Eval at step 17200 (round 9, expert_step 1200) ---
+  ppl=24.94 gini=0.6347 t0=0.7424 miss=0.1076 experts=25 wall=178min
+[R9 E25] Step 17250 (expert_step 1250) | task=3.2562 tcost=0.1739 total=3.4074 | active=[24] frozen=24 | tokens=70.7M | wall=178min
+[R9 E25] Step 17300 (expert_step 1300) | task=3.2251 tcost=0.1703 total=3.3686 | active=[24] frozen=24 | tokens=70.9M | wall=179min
+[R9 E25] Step 17350 (expert_step 1350) | task=3.1850 tcost=0.1745 total=3.3361 | active=[24] frozen=24 | tokens=71.1M | wall=179min
+[R9 E25] Step 17400 (expert_step 1400) | task=3.2190 tcost=0.1727 total=3.3658 | active=[24] frozen=24 | tokens=71.3M | wall=180min
+
+--- Eval at step 17400 (round 9, expert_step 1400) ---
+  ppl=24.89 gini=0.6334 t0=0.7402 miss=0.1095 experts=25 wall=180min
+[R9 E25] Step 17450 (expert_step 1450) | task=3.2356 tcost=0.1705 total=3.3796 | active=[24] frozen=24 | tokens=71.5M | wall=180min
+[R9 E25] Step 17500 (expert_step 1500) | task=3.2362 tcost=0.1705 total=3.3828 | active=[24] frozen=24 | tokens=71.7M | wall=181min
+[R9 E25] Step 17550 (expert_step 1550) | task=3.2572 tcost=0.1715 total=3.4028 | active=[24] frozen=24 | tokens=71.9M | wall=181min
+[R9 E25] Step 17600 (expert_step 1600) | task=3.2295 tcost=0.1715 total=3.3743 | active=[24] frozen=24 | tokens=72.1M | wall=182min
+
+--- Eval at step 17600 (round 9, expert_step 1600) ---
+  ppl=24.83 gini=0.6333 t0=0.7408 miss=0.1081 experts=25 wall=182min
+[R9 E25] Step 17650 (expert_step 1650) | task=3.2261 tcost=0.1706 total=3.3695 | active=[24] frozen=24 | tokens=72.3M | wall=183min
+[R9 E25] Step 17700 (expert_step 1700) | task=3.2293 tcost=0.1684 total=3.3715 | active=[24] frozen=24 | tokens=72.5M | wall=183min
+[R9 E25] Step 17750 (expert_step 1750) | task=3.2224 tcost=0.1717 total=3.3683 | active=[24] frozen=24 | tokens=72.7M | wall=183min
+[R9 E25] Step 17800 (expert_step 1800) | task=3.1932 tcost=0.1725 total=3.3413 | active=[24] frozen=24 | tokens=72.9M | wall=184min
+
+--- Eval at step 17800 (round 9, expert_step 1800) ---
+  ppl=24.74 gini=0.6334 t0=0.7408 miss=0.1074 experts=25 wall=184min
+[R9 E25] Step 17850 (expert_step 1850) | task=3.1680 tcost=0.1708 total=3.3132 | active=[24] frozen=24 | tokens=73.1M | wall=185min
+[R9 E25] Step 17900 (expert_step 1900) | task=3.2018 tcost=0.1707 total=3.3429 | active=[24] frozen=24 | tokens=73.3M | wall=185min
+[R9 E25] Step 17950 (expert_step 1950) | task=3.2318 tcost=0.1696 total=3.3770 | active=[24] frozen=24 | tokens=73.5M | wall=186min
+[R9 E25] Step 18000 (expert_step 2000) | task=3.2079 tcost=0.1695 total=3.3507 | active=[24] frozen=24 | tokens=73.7M | wall=186min
+
+--- Eval at step 18000 (round 9, expert_step 2000) ---
+  ppl=24.77 gini=0.6355 t0=0.7441 miss=0.1053 experts=25 wall=186min
+
+============================================================
+EXPERT ROUND 9 CONVERGED at step 18000
+  Expert step: 2000, PPL: 24.77
+============================================================
+  Hard tokens: 25.9% (PPL 1408.1 vs easy 5.4)
+
+============================================================
+INTRODUCING EXPERT 25 (round 10)
+  Frozen: 25 experts, Active: [25]
+  Triggered by: 25.9% hard tokens (PPL 1408.1)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[25], frozen=63
+[R10 E26] Step 18050 (expert_step 50) | task=3.2442 tcost=0.1714 total=144896891924.4800 | active=[25] frozen=25 | tokens=73.9M | wall=187min
+[R10 E26] Step 18100 (expert_step 100) | task=6.3321 tcost=0.2287 total=1688773860.7492 | active=[25] frozen=25 | tokens=74.1M | wall=187min
+[R10 E26] Step 18150 (expert_step 150) | task=8.7847 tcost=0.2880 total=1414.0390 | active=[25] frozen=25 | tokens=74.3M | wall=188min
+[R10 E26] Step 18200 (expert_step 200) | task=7.5132 tcost=0.2972 total=9.6437 | active=[25] frozen=25 | tokens=74.5M | wall=188min
+
+--- Eval at step 18200 (round 10, expert_step 200) ---
+  ppl=1141.80 gini=0.5970 t0=0.5881 miss=0.0929 experts=26 wall=188min
+[R10 E26] Step 18250 (expert_step 250) | task=5.7638 tcost=0.2742 total=6.6430 | active=[25] frozen=25 | tokens=74.8M | wall=189min
+[R10 E26] Step 18300 (expert_step 300) | task=4.1811 tcost=0.2608 total=4.9247 | active=[25] frozen=25 | tokens=75.0M | wall=189min
+[R10 E26] Step 18350 (expert_step 350) | task=3.6235 tcost=0.2320 total=3.9488 | active=[25] frozen=25 | tokens=75.2M | wall=190min
+[R10 E26] Step 18400 (expert_step 400) | task=3.3260 tcost=0.2052 total=3.5545 | active=[25] frozen=25 | tokens=75.4M | wall=190min
+
+--- Eval at step 18400 (round 10, expert_step 400) ---
+  ppl=27.78 gini=0.6178 t0=0.7046 miss=0.1440 experts=26 wall=190min
+[R10 E26] Step 18450 (expert_step 450) | task=3.3224 tcost=0.1924 total=3.5117 | active=[25] frozen=25 | tokens=75.6M | wall=191min
+[R10 E26] Step 18500 (expert_step 500) | task=3.2971 tcost=0.1882 total=3.4807 | active=[25] frozen=25 | tokens=75.8M | wall=191min
+[R10 E26] Step 18550 (expert_step 550) | task=3.3029 tcost=0.1854 total=3.4819 | active=[25] frozen=25 | tokens=76.0M | wall=192min
+[R10 E26] Step 18600 (expert_step 600) | task=3.2709 tcost=0.1840 total=3.4451 | active=[25] frozen=25 | tokens=76.2M | wall=192min
+
+--- Eval at step 18600 (round 10, expert_step 600) ---
+  ppl=25.65 gini=0.6231 t0=0.7234 miss=0.1255 experts=26 wall=192min
+[R10 E26] Step 18650 (expert_step 650) | task=3.3001 tcost=0.1797 total=3.4630 | active=[25] frozen=25 | tokens=76.4M | wall=193min
+[R10 E26] Step 18700 (expert_step 700) | task=3.2472 tcost=0.1806 total=3.4113 | active=[25] frozen=25 | tokens=76.6M | wall=193min
+[R10 E26] Step 18750 (expert_step 750) | task=3.2532 tcost=0.1786 total=3.4101 | active=[25] frozen=25 | tokens=76.8M | wall=194min
+[R10 E26] Step 18800 (expert_step 800) | task=3.2550 tcost=0.1802 total=3.4161 | active=[25] frozen=25 | tokens=77.0M | wall=194min
+
+--- Eval at step 18800 (round 10, expert_step 800) ---
+  ppl=25.16 gini=0.6238 t0=0.7258 miss=0.1209 experts=26 wall=194min
+[R10 E26] Step 18850 (expert_step 850) | task=3.2600 tcost=0.1770 total=3.4151 | active=[25] frozen=25 | tokens=77.2M | wall=195min
+[R10 E26] Step 18900 (expert_step 900) | task=3.2723 tcost=0.1755 total=3.4254 | active=[25] frozen=25 | tokens=77.4M | wall=195min
+[R10 E26] Step 18950 (expert_step 950) | task=3.2544 tcost=0.1750 total=3.4069 | active=[25] frozen=25 | tokens=77.6M | wall=196min
+[R10 E26] Step 19000 (expert_step 1000) | task=3.1950 tcost=0.1755 total=3.3466 | active=[25] frozen=25 | tokens=77.8M | wall=196min
+
+--- Eval at step 19000 (round 10, expert_step 1000) ---
+  ppl=24.92 gini=0.6270 t0=0.7316 miss=0.1154 experts=26 wall=197min
+[R10 E26] Step 19050 (expert_step 1050) | task=3.2336 tcost=0.1762 total=3.3865 | active=[25] frozen=25 | tokens=78.0M | wall=197min
+[R10 E26] Step 19100 (expert_step 1100) | task=3.1807 tcost=0.1773 total=3.3342 | active=[25] frozen=25 | tokens=78.2M | wall=198min
+[R10 E26] Step 19150 (expert_step 1150) | task=3.2151 tcost=0.1770 total=3.3672 | active=[25] frozen=25 | tokens=78.4M | wall=198min
+[R10 E26] Step 19200 (expert_step 1200) | task=3.2021 tcost=0.1758 total=3.3523 | active=[25] frozen=25 | tokens=78.6M | wall=199min
+
+--- Eval at step 19200 (round 10, expert_step 1200) ---
+  ppl=24.78 gini=0.6272 t0=0.7318 miss=0.1146 experts=26 wall=199min
+[R10 E26] Step 19250 (expert_step 1250) | task=3.2566 tcost=0.1742 total=3.4031 | active=[25] frozen=25 | tokens=78.8M | wall=199min
+[R10 E26] Step 19300 (expert_step 1300) | task=3.2081 tcost=0.1771 total=3.3595 | active=[25] frozen=25 | tokens=79.1M | wall=200min
+[R10 E26] Step 19350 (expert_step 1350) | task=3.1924 tcost=0.1778 total=3.3453 | active=[25] frozen=25 | tokens=79.3M | wall=200min
+[R10 E26] Step 19400 (expert_step 1400) | task=3.2354 tcost=0.1755 total=3.3836 | active=[25] frozen=25 | tokens=79.5M | wall=201min
+
+--- Eval at step 19400 (round 10, expert_step 1400) ---
+  ppl=24.62 gini=0.6251 t0=0.7276 miss=0.1160 experts=26 wall=201min
+[R10 E26] Step 19450 (expert_step 1450) | task=3.2388 tcost=0.1764 total=3.3912 | active=[25] frozen=25 | tokens=79.7M | wall=201min
+[R10 E26] Step 19500 (expert_step 1500) | task=3.2695 tcost=0.1789 total=3.4246 | active=[25] frozen=25 | tokens=79.9M | wall=202min
+[R10 E26] Step 19550 (expert_step 1550) | task=3.2571 tcost=0.1751 total=3.4059 | active=[25] frozen=25 | tokens=80.1M | wall=202min
+[R10 E26] Step 19600 (expert_step 1600) | task=3.2480 tcost=0.1749 total=3.3960 | active=[25] frozen=25 | tokens=80.3M | wall=203min
+
+--- Eval at step 19600 (round 10, expert_step 1600) ---
+  ppl=24.53 gini=0.6248 t0=0.7276 miss=0.1154 experts=26 wall=203min
+[R10 E26] Step 19650 (expert_step 1650) | task=3.1596 tcost=0.1748 total=3.3057 | active=[25] frozen=25 | tokens=80.5M | wall=203min
+[R10 E26] Step 19700 (expert_step 1700) | task=3.1953 tcost=0.1723 total=3.3409 | active=[25] frozen=25 | tokens=80.7M | wall=204min
+[R10 E26] Step 19750 (expert_step 1750) | task=3.2290 tcost=0.1743 total=3.3783 | active=[25] frozen=25 | tokens=80.9M | wall=204min
+[R10 E26] Step 19800 (expert_step 1800) | task=3.1947 tcost=0.1740 total=3.3409 | active=[25] frozen=25 | tokens=81.1M | wall=205min
+
+--- Eval at step 19800 (round 10, expert_step 1800) ---
+  ppl=24.53 gini=0.6261 t0=0.7303 miss=0.1138 experts=26 wall=205min
+
+============================================================
+EXPERT ROUND 10 CONVERGED at step 19800
+  Expert step: 1800, PPL: 24.53
+============================================================
+  Hard tokens: 25.9% (PPL 1408.1 vs easy 5.4)
+
+============================================================
+INTRODUCING EXPERT 26 (round 11)
+  Frozen: 26 experts, Active: [26]
+  Triggered by: 25.9% hard tokens (PPL 1408.1)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[26], frozen=63
+[R11 E27] Step 19850 (expert_step 50) | task=3.2472 tcost=0.1778 total=35826625858.5600 | active=[26] frozen=26 | tokens=81.3M | wall=205min
+[R11 E27] Step 19900 (expert_step 100) | task=5.8585 tcost=0.2374 total=507630881.4828 | active=[26] frozen=26 | tokens=81.5M | wall=206min
+[R11 E27] Step 19950 (expert_step 150) | task=7.8833 tcost=0.2893 total=4776.4210 | active=[26] frozen=26 | tokens=81.7M | wall=206min
+[R11 E27] Step 20000 (expert_step 200) | task=6.4009 tcost=0.2787 total=7.2830 | active=[26] frozen=26 | tokens=81.9M | wall=207min
+
+--- Eval at step 20000 (round 11, expert_step 200) ---
+  ppl=158.10 gini=0.5894 t0=0.5946 miss=0.1584 experts=27 wall=207min
+[R11 E27] Step 20050 (expert_step 250) | task=4.3703 tcost=0.2547 total=4.9143 | active=[26] frozen=26 | tokens=82.1M | wall=208min
+[R11 E27] Step 20100 (expert_step 300) | task=3.5453 tcost=0.2205 total=3.8197 | active=[26] frozen=26 | tokens=82.3M | wall=208min
+[R11 E27] Step 20150 (expert_step 350) | task=3.3474 tcost=0.1968 total=3.5467 | active=[26] frozen=26 | tokens=82.5M | wall=209min
+[R11 E27] Step 20200 (expert_step 400) | task=3.2886 tcost=0.1872 total=3.4706 | active=[26] frozen=26 | tokens=82.7M | wall=209min
+
+--- Eval at step 20200 (round 11, expert_step 400) ---
+  ppl=26.55 gini=0.6157 t0=0.7084 miss=0.1422 experts=27 wall=209min
+[R11 E27] Step 20250 (expert_step 450) | task=3.2879 tcost=0.1837 total=3.4573 | active=[26] frozen=26 | tokens=82.9M | wall=210min
+[R11 E27] Step 20300 (expert_step 500) | task=3.2362 tcost=0.1822 total=3.4038 | active=[26] frozen=26 | tokens=83.1M | wall=210min
+[R11 E27] Step 20350 (expert_step 550) | task=3.3126 tcost=0.1797 total=3.4716 | active=[26] frozen=26 | tokens=83.4M | wall=211min
+[R11 E27] Step 20400 (expert_step 600) | task=3.2643 tcost=0.1788 total=3.4215 | active=[26] frozen=26 | tokens=83.6M | wall=211min
+
+--- Eval at step 20400 (round 11, expert_step 600) ---
+  ppl=25.58 gini=0.6206 t0=0.7198 miss=0.1299 experts=27 wall=211min
+[R11 E27] Step 20450 (expert_step 650) | task=3.2544 tcost=0.1788 total=3.4118 | active=[26] frozen=26 | tokens=83.8M | wall=212min
+[R11 E27] Step 20500 (expert_step 700) | task=3.2677 tcost=0.1759 total=3.4204 | active=[26] frozen=26 | tokens=84.0M | wall=212min
+[R11 E27] Step 20550 (expert_step 750) | task=3.2284 tcost=0.1757 total=3.3805 | active=[26] frozen=26 | tokens=84.2M | wall=213min
+[R11 E27] Step 20600 (expert_step 800) | task=3.2310 tcost=0.1757 total=3.3834 | active=[26] frozen=26 | tokens=84.4M | wall=213min
+
+--- Eval at step 20600 (round 11, expert_step 800) ---
+  ppl=25.08 gini=0.6214 t0=0.7215 miss=0.1246 experts=27 wall=213min
+[R11 E27] Step 20650 (expert_step 850) | task=3.2177 tcost=0.1756 total=3.3706 | active=[26] frozen=26 | tokens=84.6M | wall=214min
+[R11 E27] Step 20700 (expert_step 900) | task=3.2457 tcost=0.1742 total=3.3945 | active=[26] frozen=26 | tokens=84.8M | wall=214min
+[R11 E27] Step 20750 (expert_step 950) | task=3.2678 tcost=0.1741 total=3.4176 | active=[26] frozen=26 | tokens=85.0M | wall=215min
+[R11 E27] Step 20800 (expert_step 1000) | task=3.2239 tcost=0.1755 total=3.3772 | active=[26] frozen=26 | tokens=85.2M | wall=215min
+
+--- Eval at step 20800 (round 11, expert_step 1000) ---
+  ppl=24.72 gini=0.6198 t0=0.7199 miss=0.1238 experts=27 wall=215min
+[R11 E27] Step 20850 (expert_step 1050) | task=3.2424 tcost=0.1750 total=3.3913 | active=[26] frozen=26 | tokens=85.4M | wall=216min
+[R11 E27] Step 20900 (expert_step 1100) | task=3.2214 tcost=0.1743 total=3.3709 | active=[26] frozen=26 | tokens=85.6M | wall=216min
+[R11 E27] Step 20950 (expert_step 1150) | task=3.2391 tcost=0.1749 total=3.3888 | active=[26] frozen=26 | tokens=85.8M | wall=217min
+[R11 E27] Step 21000 (expert_step 1200) | task=3.1668 tcost=0.1757 total=3.3154 | active=[26] frozen=26 | tokens=86.0M | wall=217min
+
+--- Eval at step 21000 (round 11, expert_step 1200) ---
+  ppl=24.50 gini=0.6215 t0=0.7217 miss=0.1204 experts=27 wall=217min
+[R11 E27] Step 21050 (expert_step 1250) | task=3.2319 tcost=0.1756 total=3.3817 | active=[26] frozen=26 | tokens=86.2M | wall=218min
+[R11 E27] Step 21100 (expert_step 1300) | task=3.2206 tcost=0.1752 total=3.3697 | active=[26] frozen=26 | tokens=86.4M | wall=218min
+[R11 E27] Step 21150 (expert_step 1350) | task=3.2279 tcost=0.1753 total=3.3784 | active=[26] frozen=26 | tokens=86.6M | wall=219min
+[R11 E27] Step 21200 (expert_step 1400) | task=3.2012 tcost=0.1748 total=3.3483 | active=[26] frozen=26 | tokens=86.8M | wall=219min
+
+--- Eval at step 21200 (round 11, expert_step 1400) ---
+  ppl=24.41 gini=0.6209 t0=0.7208 miss=0.1197 experts=27 wall=220min
+[R11 E27] Step 21250 (expert_step 1450) | task=3.2064 tcost=0.1745 total=3.3541 | active=[26] frozen=26 | tokens=87.0M | wall=220min
+[R11 E27] Step 21300 (expert_step 1500) | task=3.2068 tcost=0.1742 total=3.3537 | active=[26] frozen=26 | tokens=87.2M | wall=220min
+[R11 E27] Step 21350 (expert_step 1550) | task=3.2230 tcost=0.1733 total=3.3706 | active=[26] frozen=26 | tokens=87.4M | wall=221min
+[R11 E27] Step 21400 (expert_step 1600) | task=3.2146 tcost=0.1752 total=3.3630 | active=[26] frozen=26 | tokens=87.7M | wall=221min
+
+--- Eval at step 21400 (round 11, expert_step 1600) ---
+  ppl=24.30 gini=0.6214 t0=0.7226 miss=0.1180 experts=27 wall=222min
+[R11 E27] Step 21450 (expert_step 1650) | task=3.2251 tcost=0.1736 total=3.3708 | active=[26] frozen=26 | tokens=87.9M | wall=222min
+[R11 E27] Step 21500 (expert_step 1700) | task=3.1829 tcost=0.1719 total=3.3280 | active=[26] frozen=26 | tokens=88.1M | wall=223min
+[R11 E27] Step 21550 (expert_step 1750) | task=3.2426 tcost=0.1745 total=3.3888 | active=[26] frozen=26 | tokens=88.3M | wall=223min
+[R11 E27] Step 21600 (expert_step 1800) | task=3.1918 tcost=0.1741 total=3.3373 | active=[26] frozen=26 | tokens=88.5M | wall=224min
+
+--- Eval at step 21600 (round 11, expert_step 1800) ---
+  ppl=24.26 gini=0.6209 t0=0.7215 miss=0.1180 experts=27 wall=224min
+
+============================================================
+EXPERT ROUND 11 CONVERGED at step 21600
+  Expert step: 1800, PPL: 24.26
+============================================================
+  Hard tokens: 25.9% (PPL 1364.8 vs easy 5.3)
+
+============================================================
+INTRODUCING EXPERT 27 (round 12)
+  Frozen: 27 experts, Active: [27]
+  Triggered by: 25.9% hard tokens (PPL 1364.8)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[27], frozen=63
+[R12 E28] Step 21650 (expert_step 50) | task=3.2593 tcost=0.1800 total=79559698831.3600 | active=[27] frozen=27 | tokens=88.7M | wall=224min
+[R12 E28] Step 21700 (expert_step 100) | task=6.3024 tcost=0.2327 total=742591803.1722 | active=[27] frozen=27 | tokens=88.9M | wall=225min
+[R12 E28] Step 21750 (expert_step 150) | task=8.6439 tcost=0.2634 total=424.3320 | active=[27] frozen=27 | tokens=89.1M | wall=225min
+[R12 E28] Step 21800 (expert_step 200) | task=4.9352 tcost=0.2459 total=5.7564 | active=[27] frozen=27 | tokens=89.3M | wall=226min
+
+--- Eval at step 21800 (round 12, expert_step 200) ---
+  ppl=40.09 gini=0.5866 t0=0.6370 miss=0.1893 experts=28 wall=226min
+[R12 E28] Step 21850 (expert_step 250) | task=3.4627 tcost=0.2153 total=3.7259 | active=[27] frozen=27 | tokens=89.5M | wall=226min
+[R12 E28] Step 21900 (expert_step 300) | task=3.2903 tcost=0.1926 total=3.4806 | active=[27] frozen=27 | tokens=89.7M | wall=227min
+[R12 E28] Step 21950 (expert_step 350) | task=3.3047 tcost=0.1904 total=3.4851 | active=[27] frozen=27 | tokens=89.9M | wall=227min
+[R12 E28] Step 22000 (expert_step 400) | task=3.2672 tcost=0.1848 total=3.4327 | active=[27] frozen=27 | tokens=90.1M | wall=228min
+
+--- Eval at step 22000 (round 12, expert_step 400) ---
+  ppl=25.87 gini=0.6091 t0=0.7025 miss=0.1487 experts=28 wall=228min
+[R12 E28] Step 22050 (expert_step 450) | task=3.2782 tcost=0.1843 total=3.4440 | active=[27] frozen=27 | tokens=90.3M | wall=228min
+[R12 E28] Step 22100 (expert_step 500) | task=3.2749 tcost=0.1834 total=3.4395 | active=[27] frozen=27 | tokens=90.5M | wall=229min
+[R12 E28] Step 22150 (expert_step 550) | task=3.2225 tcost=0.1815 total=3.3818 | active=[27] frozen=27 | tokens=90.7M | wall=229min
+[R12 E28] Step 22200 (expert_step 600) | task=3.2383 tcost=0.1820 total=3.3980 | active=[27] frozen=27 | tokens=90.9M | wall=230min
+
+--- Eval at step 22200 (round 12, expert_step 600) ---
+  ppl=24.98 gini=0.6112 t0=0.7081 miss=0.1370 experts=28 wall=230min
+[R12 E28] Step 22250 (expert_step 650) | task=3.1442 tcost=0.1792 total=3.2993 | active=[27] frozen=27 | tokens=91.1M | wall=230min
+[R12 E28] Step 22300 (expert_step 700) | task=3.2125 tcost=0.1770 total=3.3661 | active=[27] frozen=27 | tokens=91.3M | wall=231min
+[R12 E28] Step 22350 (expert_step 750) | task=3.2083 tcost=0.1817 total=3.3670 | active=[27] frozen=27 | tokens=91.5M | wall=231min
+[R12 E28] Step 22400 (expert_step 800) | task=3.1861 tcost=0.1831 total=3.3669 | active=[27] frozen=27 | tokens=91.8M | wall=232min
+
+--- Eval at step 22400 (round 12, expert_step 800) ---
+  ppl=24.61 gini=0.6103 t0=0.7067 miss=0.1349 experts=28 wall=232min
+[R12 E28] Step 22450 (expert_step 850) | task=3.2458 tcost=0.1796 total=3.3994 | active=[27] frozen=27 | tokens=92.0M | wall=233min
+[R12 E28] Step 22500 (expert_step 900) | task=3.2322 tcost=0.1827 total=3.3896 | active=[27] frozen=27 | tokens=92.2M | wall=233min
+[R12 E28] Step 22550 (expert_step 950) | task=3.1826 tcost=0.1823 total=3.3393 | active=[27] frozen=27 | tokens=92.4M | wall=234min
+[R12 E28] Step 22600 (expert_step 1000) | task=3.2232 tcost=0.1808 total=3.3803 | active=[27] frozen=27 | tokens=92.6M | wall=234min
+
+--- Eval at step 22600 (round 12, expert_step 1000) ---
+  ppl=24.35 gini=0.6092 t0=0.7043 miss=0.1333 experts=28 wall=234min
+[R12 E28] Step 22650 (expert_step 1050) | task=3.1715 tcost=0.1819 total=3.3269 | active=[27] frozen=27 | tokens=92.8M | wall=235min
+[R12 E28] Step 22700 (expert_step 1100) | task=3.2040 tcost=0.1798 total=3.3580 | active=[27] frozen=27 | tokens=93.0M | wall=235min
+[R12 E28] Step 22750 (expert_step 1150) | task=3.1708 tcost=0.1814 total=3.3279 | active=[27] frozen=27 | tokens=93.2M | wall=236min
+[R12 E28] Step 22800 (expert_step 1200) | task=3.2401 tcost=0.1793 total=3.3934 | active=[27] frozen=27 | tokens=93.4M | wall=236min
+
+--- Eval at step 22800 (round 12, expert_step 1200) ---
+  ppl=24.00 gini=0.6110 t0=0.7082 miss=0.1283 experts=28 wall=236min
+[R12 E28] Step 22850 (expert_step 1250) | task=3.1735 tcost=0.1790 total=3.3286 | active=[27] frozen=27 | tokens=93.6M | wall=237min
+[R12 E28] Step 22900 (expert_step 1300) | task=3.2137 tcost=0.1825 total=3.3684 | active=[27] frozen=27 | tokens=93.8M | wall=237min
+[R12 E28] Step 22950 (expert_step 1350) | task=3.1703 tcost=0.1810 total=3.3249 | active=[27] frozen=27 | tokens=94.0M | wall=238min
+[R12 E28] Step 23000 (expert_step 1400) | task=3.2110 tcost=0.1792 total=3.3624 | active=[27] frozen=27 | tokens=94.2M | wall=238min
+
+--- Eval at step 23000 (round 12, expert_step 1400) ---
+  ppl=24.02 gini=0.6119 t0=0.7099 miss=0.1257 experts=28 wall=238min
+[R12 E28] Step 23050 (expert_step 1450) | task=3.1956 tcost=0.1782 total=3.3494 | active=[27] frozen=27 | tokens=94.4M | wall=239min
+[R12 E28] Step 23100 (expert_step 1500) | task=3.2012 tcost=0.1818 total=3.3561 | active=[27] frozen=27 | tokens=94.6M | wall=239min
+[R12 E28] Step 23150 (expert_step 1550) | task=3.1491 tcost=0.1801 total=3.3028 | active=[27] frozen=27 | tokens=94.8M | wall=240min
+[R12 E28] Step 23200 (expert_step 1600) | task=3.2156 tcost=0.1783 total=3.3684 | active=[27] frozen=27 | tokens=95.0M | wall=240min
+
+--- Eval at step 23200 (round 12, expert_step 1600) ---
+  ppl=23.95 gini=0.6118 t0=0.7102 miss=0.1249 experts=28 wall=240min
+[R12 E28] Step 23250 (expert_step 1650) | task=3.1864 tcost=0.1814 total=3.3424 | active=[27] frozen=27 | tokens=95.2M | wall=241min
+[R12 E28] Step 23300 (expert_step 1700) | task=3.1449 tcost=0.1801 total=3.2991 | active=[27] frozen=27 | tokens=95.4M | wall=241min
+[R12 E28] Step 23350 (expert_step 1750) | task=3.1826 tcost=0.1795 total=3.3364 | active=[27] frozen=27 | tokens=95.6M | wall=242min
+[R12 E28] Step 23400 (expert_step 1800) | task=3.1711 tcost=0.1790 total=3.3228 | active=[27] frozen=27 | tokens=95.8M | wall=242min
+
+--- Eval at step 23400 (round 12, expert_step 1800) ---
+  ppl=23.88 gini=0.6107 t0=0.7071 miss=0.1265 experts=28 wall=242min
+
+============================================================
+EXPERT ROUND 12 CONVERGED at step 23400
+  Expert step: 1800, PPL: 23.88
+============================================================
+  Hard tokens: 25.9% (PPL 1322.8 vs easy 5.2)
+
+============================================================
+INTRODUCING EXPERT 28 (round 13)
+  Frozen: 28 experts, Active: [28]
+  Triggered by: 25.9% hard tokens (PPL 1322.8)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[28], frozen=63
+[R13 E29] Step 23450 (expert_step 50) | task=3.2045 tcost=0.1821 total=33697928048.6400 | active=[28] frozen=28 | tokens=96.1M | wall=243min
+[R13 E29] Step 23500 (expert_step 100) | task=5.8797 tcost=0.2212 total=758144739.5787 | active=[28] frozen=28 | tokens=96.3M | wall=243min
+[R13 E29] Step 23550 (expert_step 150) | task=9.7927 tcost=0.2416 total=2318.1150 | active=[28] frozen=28 | tokens=96.5M | wall=244min
+[R13 E29] Step 23600 (expert_step 200) | task=6.6879 tcost=0.2437 total=7.5076 | active=[28] frozen=28 | tokens=96.7M | wall=244min
+
+--- Eval at step 23600 (round 13, expert_step 200) ---
+  ppl=232.11 gini=0.5723 t0=0.5944 miss=0.1570 experts=29 wall=245min
+[R13 E29] Step 23650 (expert_step 250) | task=4.6913 tcost=0.2428 total=16.2926 | active=[28] frozen=28 | tokens=96.9M | wall=245min
+[R13 E29] Step 23700 (expert_step 300) | task=4.0061 tcost=0.2406 total=4.5586 | active=[28] frozen=28 | tokens=97.1M | wall=246min
+[R13 E29] Step 23750 (expert_step 350) | task=3.5585 tcost=0.2300 total=3.8820 | active=[28] frozen=28 | tokens=97.3M | wall=246min
+[R13 E29] Step 23800 (expert_step 400) | task=3.4034 tcost=0.2144 total=3.6535 | active=[28] frozen=28 | tokens=97.5M | wall=247min
+
+--- Eval at step 23800 (round 13, expert_step 400) ---
+  ppl=27.34 gini=0.5920 t0=0.6669 miss=0.1607 experts=29 wall=247min
+[R13 E29] Step 23850 (expert_step 450) | task=3.2391 tcost=0.2017 total=3.4539 | active=[28] frozen=28 | tokens=97.7M | wall=247min
+[R13 E29] Step 23900 (expert_step 500) | task=3.3008 tcost=0.1958 total=3.5063 | active=[28] frozen=28 | tokens=97.9M | wall=248min
+[R13 E29] Step 23950 (expert_step 550) | task=3.2290 tcost=0.1950 total=3.4213 | active=[28] frozen=28 | tokens=98.1M | wall=248min
+[R13 E29] Step 24000 (expert_step 600) | task=3.2696 tcost=0.1907 total=3.4539 | active=[28] frozen=28 | tokens=98.3M | wall=249min
+
+--- Eval at step 24000 (round 13, expert_step 600) ---
+  ppl=25.10 gini=0.6003 t0=0.6887 miss=0.1411 experts=29 wall=249min
+[R13 E29] Step 24050 (expert_step 650) | task=3.2221 tcost=0.1893 total=3.3993 | active=[28] frozen=28 | tokens=98.5M | wall=249min
+[R13 E29] Step 24100 (expert_step 700) | task=3.2150 tcost=0.1879 total=3.3842 | active=[28] frozen=28 | tokens=98.7M | wall=250min
+[R13 E29] Step 24150 (expert_step 750) | task=3.2112 tcost=0.1863 total=3.3816 | active=[28] frozen=28 | tokens=98.9M | wall=250min
+[R13 E29] Step 24200 (expert_step 800) | task=3.1913 tcost=0.1870 total=3.3605 | active=[28] frozen=28 | tokens=99.1M | wall=251min
+
+--- Eval at step 24200 (round 13, expert_step 800) ---
+  ppl=24.52 gini=0.6009 t0=0.6915 miss=0.1363 experts=29 wall=251min
+[R13 E29] Step 24250 (expert_step 850) | task=3.1775 tcost=0.1857 total=3.3434 | active=[28] frozen=28 | tokens=99.3M | wall=251min
+[R13 E29] Step 24300 (expert_step 900) | task=3.2125 tcost=0.1860 total=3.3774 | active=[28] frozen=28 | tokens=99.5M | wall=252min
+[R13 E29] Step 24350 (expert_step 950) | task=3.1785 tcost=0.1853 total=3.3467 | active=[28] frozen=28 | tokens=99.7M | wall=252min
+[R13 E29] Step 24400 (expert_step 1000) | task=3.1992 tcost=0.1838 total=3.3630 | active=[28] frozen=28 | tokens=99.9M | wall=253min
+
+--- Eval at step 24400 (round 13, expert_step 1000) ---
+  ppl=24.12 gini=0.6030 t0=0.6954 miss=0.1290 experts=29 wall=253min
+[R13 E29] Step 24450 (expert_step 1050) | task=3.1922 tcost=0.1850 total=3.3551 | active=[28] frozen=28 | tokens=100.1M | wall=253min
+[R13 E29] Step 24500 (expert_step 1100) | task=3.1845 tcost=0.1857 total=3.3476 | active=[28] frozen=28 | tokens=100.4M | wall=254min
+[R13 E29] Step 24550 (expert_step 1150) | task=3.1319 tcost=0.1842 total=3.2981 | active=[28] frozen=28 | tokens=100.6M | wall=254min
+[R13 E29] Step 24600 (expert_step 1200) | task=3.2098 tcost=0.1838 total=3.3770 | active=[28] frozen=28 | tokens=100.8M | wall=255min
+
+--- Eval at step 24600 (round 13, expert_step 1200) ---
+  ppl=23.97 gini=0.6017 t0=0.6933 miss=0.1293 experts=29 wall=255min
+[R13 E29] Step 24650 (expert_step 1250) | task=3.1343 tcost=0.1873 total=3.3108 | active=[28] frozen=28 | tokens=101.0M | wall=256min
+[R13 E29] Step 24700 (expert_step 1300) | task=3.2432 tcost=0.1877 total=3.4122 | active=[28] frozen=28 | tokens=101.2M | wall=256min
+[R13 E29] Step 24750 (expert_step 1350) | task=3.2454 tcost=0.1846 total=3.4140 | active=[28] frozen=28 | tokens=101.4M | wall=256min
+[R13 E29] Step 24800 (expert_step 1400) | task=3.1811 tcost=0.1825 total=3.3443 | active=[28] frozen=28 | tokens=101.6M | wall=257min
+
+--- Eval at step 24800 (round 13, expert_step 1400) ---
+  ppl=23.86 gini=0.6026 t0=0.6972 miss=0.1269 experts=29 wall=257min
+[R13 E29] Step 24850 (expert_step 1450) | task=3.2269 tcost=0.1847 total=3.3984 | active=[28] frozen=28 | tokens=101.8M | wall=258min
+[R13 E29] Step 24900 (expert_step 1500) | task=3.2388 tcost=0.1839 total=3.4137 | active=[28] frozen=28 | tokens=102.0M | wall=258min
+[R13 E29] Step 24950 (expert_step 1550) | task=3.2288 tcost=0.1860 total=3.3947 | active=[28] frozen=28 | tokens=102.2M | wall=259min
+[R13 E29] Step 25000 (expert_step 1600) | task=3.1767 tcost=0.1837 total=3.3422 | active=[28] frozen=28 | tokens=102.4M | wall=259min
+
+--- Eval at step 25000 (round 13, expert_step 1600) ---
+  ppl=23.80 gini=0.6022 t0=0.6964 miss=0.1259 experts=29 wall=259min
+[R13 E29] Step 25050 (expert_step 1650) | task=3.1319 tcost=0.1836 total=3.2989 | active=[28] frozen=28 | tokens=102.6M | wall=260min
+[R13 E29] Step 25100 (expert_step 1700) | task=3.1933 tcost=0.1854 total=3.3659 | active=[28] frozen=28 | tokens=102.8M | wall=260min
+[R13 E29] Step 25150 (expert_step 1750) | task=3.1723 tcost=0.1861 total=3.3452 | active=[28] frozen=28 | tokens=103.0M | wall=261min
+[R13 E29] Step 25200 (expert_step 1800) | task=3.1167 tcost=0.1849 total=3.2797 | active=[28] frozen=28 | tokens=103.2M | wall=261min
+
+--- Eval at step 25200 (round 13, expert_step 1800) ---
+  ppl=23.69 gini=0.6013 t0=0.6947 miss=0.1268 experts=29 wall=261min
+
+============================================================
+EXPERT ROUND 13 CONVERGED at step 25200
+  Expert step: 1800, PPL: 23.69
+============================================================
+  Hard tokens: 25.9% (PPL 1322.8 vs easy 5.2)
+
+============================================================
+INTRODUCING EXPERT 29 (round 14)
+  Frozen: 29 experts, Active: [29]
+  Triggered by: 25.9% hard tokens (PPL 1322.8)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[29], frozen=63
+[R14 E30] Step 25250 (expert_step 50) | task=3.1577 tcost=0.1883 total=39306007490.5600 | active=[29] frozen=29 | tokens=103.4M | wall=262min
+[R14 E30] Step 25300 (expert_step 100) | task=5.9975 tcost=0.2579 total=328821967.6885 | active=[29] frozen=29 | tokens=103.6M | wall=262min
+[R14 E30] Step 25350 (expert_step 150) | task=7.0795 tcost=0.2791 total=21.1154 | active=[29] frozen=29 | tokens=103.8M | wall=263min
+[R14 E30] Step 25400 (expert_step 200) | task=4.1522 tcost=0.2509 total=4.9035 | active=[29] frozen=29 | tokens=104.0M | wall=263min
+
+--- Eval at step 25400 (round 14, expert_step 200) ---
+  ppl=33.07 gini=0.5701 t0=0.6088 miss=0.1947 experts=30 wall=264min
+[R14 E30] Step 25450 (expert_step 250) | task=3.3661 tcost=0.2301 total=3.6470 | active=[29] frozen=29 | tokens=104.2M | wall=264min
+[R14 E30] Step 25500 (expert_step 300) | task=3.2740 tcost=0.2067 total=3.4748 | active=[29] frozen=29 | tokens=104.4M | wall=264min
+[R14 E30] Step 25550 (expert_step 350) | task=3.2461 tcost=0.1981 total=3.4304 | active=[29] frozen=29 | tokens=104.7M | wall=265min
+[R14 E30] Step 25600 (expert_step 400) | task=3.1664 tcost=0.1939 total=3.3476 | active=[29] frozen=29 | tokens=104.9M | wall=265min
+
+--- Eval at step 25600 (round 14, expert_step 400) ---
+  ppl=24.68 gini=0.5900 t0=0.6743 miss=0.1533 experts=30 wall=266min
+[R14 E30] Step 25650 (expert_step 450) | task=3.2479 tcost=0.1947 total=3.4280 | active=[29] frozen=29 | tokens=105.1M | wall=266min
+[R14 E30] Step 25700 (expert_step 500) | task=3.1948 tcost=0.1922 total=3.3728 | active=[29] frozen=29 | tokens=105.3M | wall=267min
+[R14 E30] Step 25750 (expert_step 550) | task=3.1688 tcost=0.1901 total=3.3369 | active=[29] frozen=29 | tokens=105.5M | wall=267min
+[R14 E30] Step 25800 (expert_step 600) | task=3.1903 tcost=0.1893 total=3.3563 | active=[29] frozen=29 | tokens=105.7M | wall=268min
+
+--- Eval at step 25800 (round 14, expert_step 600) ---
+  ppl=23.92 gini=0.5937 t0=0.6839 miss=0.1448 experts=30 wall=268min
+[R14 E30] Step 25850 (expert_step 650) | task=3.2140 tcost=0.1896 total=3.3800 | active=[29] frozen=29 | tokens=105.9M | wall=268min
+[R14 E30] Step 25900 (expert_step 700) | task=3.1540 tcost=0.1877 total=3.3187 | active=[29] frozen=29 | tokens=106.1M | wall=269min
+[R14 E30] Step 25950 (expert_step 750) | task=3.1943 tcost=0.1885 total=3.3591 | active=[29] frozen=29 | tokens=106.3M | wall=269min
+[R14 E30] Step 26000 (expert_step 800) | task=3.1996 tcost=0.1882 total=3.3649 | active=[29] frozen=29 | tokens=106.5M | wall=270min
+
+--- Eval at step 26000 (round 14, expert_step 800) ---
+  ppl=23.54 gini=0.5927 t0=0.6824 miss=0.1436 experts=30 wall=270min
+[R14 E30] Step 26050 (expert_step 850) | task=3.1553 tcost=0.1905 total=3.3190 | active=[29] frozen=29 | tokens=106.7M | wall=270min
+[R14 E30] Step 26100 (expert_step 900) | task=3.2394 tcost=0.1876 total=3.4013 | active=[29] frozen=29 | tokens=106.9M | wall=271min
+[R14 E30] Step 26150 (expert_step 950) | task=3.1733 tcost=0.1864 total=3.3346 | active=[29] frozen=29 | tokens=107.1M | wall=271min
+[R14 E30] Step 26200 (expert_step 1000) | task=3.2025 tcost=0.1878 total=3.3660 | active=[29] frozen=29 | tokens=107.3M | wall=272min
+
+--- Eval at step 26200 (round 14, expert_step 1000) ---
+  ppl=23.38 gini=0.5929 t0=0.6827 miss=0.1413 experts=30 wall=272min
+[R14 E30] Step 26250 (expert_step 1050) | task=3.1711 tcost=0.1885 total=3.3336 | active=[29] frozen=29 | tokens=107.5M | wall=272min
+[R14 E30] Step 26300 (expert_step 1100) | task=3.1343 tcost=0.1865 total=3.2968 | active=[29] frozen=29 | tokens=107.7M | wall=273min
+[R14 E30] Step 26350 (expert_step 1150) | task=3.1758 tcost=0.1875 total=3.3381 | active=[29] frozen=29 | tokens=107.9M | wall=273min
+[R14 E30] Step 26400 (expert_step 1200) | task=3.1748 tcost=0.1868 total=3.3384 | active=[29] frozen=29 | tokens=108.1M | wall=274min
+
+--- Eval at step 26400 (round 14, expert_step 1200) ---
+  ppl=23.34 gini=0.5945 t0=0.6866 miss=0.1367 experts=30 wall=274min
+[R14 E30] Step 26450 (expert_step 1250) | task=3.1608 tcost=0.1866 total=3.3224 | active=[29] frozen=29 | tokens=108.3M | wall=274min
+[R14 E30] Step 26500 (expert_step 1300) | task=3.1768 tcost=0.1855 total=3.3353 | active=[29] frozen=29 | tokens=108.5M | wall=275min
+[R14 E30] Step 26550 (expert_step 1350) | task=3.1613 tcost=0.1874 total=3.3201 | active=[29] frozen=29 | tokens=108.7M | wall=275min
+[R14 E30] Step 26600 (expert_step 1400) | task=3.1377 tcost=0.1858 total=3.2954 | active=[29] frozen=29 | tokens=109.0M | wall=276min
+
+--- Eval at step 26600 (round 14, expert_step 1400) ---
+  ppl=23.20 gini=0.5951 t0=0.6878 miss=0.1347 experts=30 wall=276min
+[R14 E30] Step 26650 (expert_step 1450) | task=3.1535 tcost=0.1860 total=3.3123 | active=[29] frozen=29 | tokens=109.2M | wall=277min
+[R14 E30] Step 26700 (expert_step 1500) | task=3.1008 tcost=0.1840 total=3.2586 | active=[29] frozen=29 | tokens=109.4M | wall=277min
+[R14 E30] Step 26750 (expert_step 1550) | task=3.1812 tcost=0.1850 total=3.3382 | active=[29] frozen=29 | tokens=109.6M | wall=277min
+[R14 E30] Step 26800 (expert_step 1600) | task=3.1656 tcost=0.1850 total=3.3224 | active=[29] frozen=29 | tokens=109.8M | wall=278min
+
+--- Eval at step 26800 (round 14, expert_step 1600) ---
+  ppl=23.08 gini=0.5944 t0=0.6874 miss=0.1350 experts=30 wall=278min
+
+============================================================
+EXPERT ROUND 14 CONVERGED at step 26800
+  Expert step: 1600, PPL: 23.08
+============================================================
+  Hard tokens: 25.9% (PPL 1282.1 vs easy 5.1)
+
+============================================================
+INTRODUCING EXPERT 30 (round 15)
+  Frozen: 30 experts, Active: [30]
+  Triggered by: 25.9% hard tokens (PPL 1282.1)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[30], frozen=63
+[R15 E31] Step 26850 (expert_step 50) | task=3.1666 tcost=0.1921 total=37986454999.0400 | active=[30] frozen=30 | tokens=110.0M | wall=279min
+[R15 E31] Step 26900 (expert_step 100) | task=5.7438 tcost=0.2271 total=997283417.9881 | active=[30] frozen=30 | tokens=110.2M | wall=279min
+[R15 E31] Step 26950 (expert_step 150) | task=9.9147 tcost=0.2281 total=31839.1937 | active=[30] frozen=30 | tokens=110.4M | wall=280min
+[R15 E31] Step 27000 (expert_step 200) | task=7.8952 tcost=0.2425 total=15.8211 | active=[30] frozen=30 | tokens=110.6M | wall=280min
+
+--- Eval at step 27000 (round 15, expert_step 200) ---
+  ppl=1240.19 gini=0.5693 t0=0.5696 miss=0.1084 experts=31 wall=280min
+[R15 E31] Step 27050 (expert_step 250) | task=4.9211 tcost=0.2462 total=5.7551 | active=[30] frozen=30 | tokens=110.8M | wall=281min
+[R15 E31] Step 27100 (expert_step 300) | task=3.6002 tcost=0.2384 total=3.9923 | active=[30] frozen=30 | tokens=111.0M | wall=281min
+[R15 E31] Step 27150 (expert_step 350) | task=3.3077 tcost=0.2169 total=3.5522 | active=[30] frozen=30 | tokens=111.2M | wall=282min
+[R15 E31] Step 27200 (expert_step 400) | task=3.2489 tcost=0.2051 total=3.4509 | active=[30] frozen=30 | tokens=111.4M | wall=282min
+
+--- Eval at step 27200 (round 15, expert_step 400) ---
+  ppl=25.52 gini=0.5826 t0=0.6596 miss=0.1724 experts=31 wall=282min
+[R15 E31] Step 27250 (expert_step 450) | task=3.2184 tcost=0.2000 total=3.4059 | active=[30] frozen=30 | tokens=111.6M | wall=283min
+[R15 E31] Step 27300 (expert_step 500) | task=3.2252 tcost=0.1963 total=3.4058 | active=[30] frozen=30 | tokens=111.8M | wall=283min
+[R15 E31] Step 27350 (expert_step 550) | task=3.2179 tcost=0.1944 total=3.3943 | active=[30] frozen=30 | tokens=112.0M | wall=284min
+[R15 E31] Step 27400 (expert_step 600) | task=3.2073 tcost=0.1942 total=3.3831 | active=[30] frozen=30 | tokens=112.2M | wall=284min
+
+--- Eval at step 27400 (round 15, expert_step 600) ---
+  ppl=24.24 gini=0.5850 t0=0.6706 miss=0.1603 experts=31 wall=284min
+[R15 E31] Step 27450 (expert_step 650) | task=3.2221 tcost=0.1932 total=3.3932 | active=[30] frozen=30 | tokens=112.4M | wall=285min
+[R15 E31] Step 27500 (expert_step 700) | task=3.1840 tcost=0.1951 total=3.3569 | active=[30] frozen=30 | tokens=112.6M | wall=285min
+[R15 E31] Step 27550 (expert_step 750) | task=3.1919 tcost=0.1939 total=3.3613 | active=[30] frozen=30 | tokens=112.8M | wall=286min
+[R15 E31] Step 27600 (expert_step 800) | task=3.2374 tcost=0.1934 total=3.4086 | active=[30] frozen=30 | tokens=113.0M | wall=286min
+
+--- Eval at step 27600 (round 15, expert_step 800) ---
+  ppl=23.74 gini=0.5859 t0=0.6746 miss=0.1523 experts=31 wall=287min
+[R15 E31] Step 27650 (expert_step 850) | task=3.1671 tcost=0.1916 total=3.3353 | active=[30] frozen=30 | tokens=113.3M | wall=287min
+[R15 E31] Step 27700 (expert_step 900) | task=3.1886 tcost=0.1905 total=3.3596 | active=[30] frozen=30 | tokens=113.5M | wall=288min
+[R15 E31] Step 27750 (expert_step 950) | task=3.2207 tcost=0.1922 total=3.3904 | active=[30] frozen=30 | tokens=113.7M | wall=288min
+[R15 E31] Step 27800 (expert_step 1000) | task=3.1655 tcost=0.1917 total=3.3327 | active=[30] frozen=30 | tokens=113.9M | wall=289min
+
+--- Eval at step 27800 (round 15, expert_step 1000) ---
+  ppl=23.40 gini=0.5853 t0=0.6758 miss=0.1478 experts=31 wall=289min
+[R15 E31] Step 27850 (expert_step 1050) | task=3.1208 tcost=0.1898 total=3.2853 | active=[30] frozen=30 | tokens=114.1M | wall=289min
+[R15 E31] Step 27900 (expert_step 1100) | task=3.1799 tcost=0.1927 total=3.3457 | active=[30] frozen=30 | tokens=114.3M | wall=290min
+[R15 E31] Step 27950 (expert_step 1150) | task=3.1126 tcost=0.1900 total=3.2762 | active=[30] frozen=30 | tokens=114.5M | wall=290min
+[R15 E31] Step 28000 (expert_step 1200) | task=3.1754 tcost=0.1904 total=3.3401 | active=[30] frozen=30 | tokens=114.7M | wall=291min
+
+--- Eval at step 28000 (round 15, expert_step 1200) ---
+  ppl=23.19 gini=0.5870 t0=0.6777 miss=0.1457 experts=31 wall=291min
+[R15 E31] Step 28050 (expert_step 1250) | task=3.1238 tcost=0.1901 total=3.2864 | active=[30] frozen=30 | tokens=114.9M | wall=291min
+[R15 E31] Step 28100 (expert_step 1300) | task=3.1186 tcost=0.1901 total=3.2839 | active=[30] frozen=30 | tokens=115.1M | wall=292min
+[R15 E31] Step 28150 (expert_step 1350) | task=3.1737 tcost=0.1920 total=3.3421 | active=[30] frozen=30 | tokens=115.3M | wall=292min
+[R15 E31] Step 28200 (expert_step 1400) | task=3.1298 tcost=0.1909 total=3.2934 | active=[30] frozen=30 | tokens=115.5M | wall=293min
+
+--- Eval at step 28200 (round 15, expert_step 1400) ---
+  ppl=23.06 gini=0.5850 t0=0.6762 miss=0.1471 experts=31 wall=293min
+[R15 E31] Step 28250 (expert_step 1450) | task=3.0907 tcost=0.1908 total=3.2557 | active=[30] frozen=30 | tokens=115.7M | wall=293min
+[R15 E31] Step 28300 (expert_step 1500) | task=3.1172 tcost=0.1908 total=3.2805 | active=[30] frozen=30 | tokens=115.9M | wall=294min
+[R15 E31] Step 28350 (expert_step 1550) | task=3.1540 tcost=0.1910 total=3.3176 | active=[30] frozen=30 | tokens=116.1M | wall=294min
+[R15 E31] Step 28400 (expert_step 1600) | task=3.1729 tcost=0.1888 total=3.3363 | active=[30] frozen=30 | tokens=116.3M | wall=295min
+
+--- Eval at step 28400 (round 15, expert_step 1600) ---
+  ppl=22.99 gini=0.5857 t0=0.6773 miss=0.1453 experts=31 wall=295min
+[R15 E31] Step 28450 (expert_step 1650) | task=3.1067 tcost=0.1910 total=3.2706 | active=[30] frozen=30 | tokens=116.5M | wall=295min
+[R15 E31] Step 28500 (expert_step 1700) | task=3.1450 tcost=0.1906 total=3.3070 | active=[30] frozen=30 | tokens=116.7M | wall=296min
+[R15 E31] Step 28550 (expert_step 1750) | task=3.1164 tcost=0.1925 total=3.2810 | active=[30] frozen=30 | tokens=116.9M | wall=296min
+[R15 E31] Step 28600 (expert_step 1800) | task=3.1289 tcost=0.1905 total=3.2898 | active=[30] frozen=30 | tokens=117.1M | wall=297min
+
+--- Eval at step 28600 (round 15, expert_step 1800) ---
+  ppl=22.94 gini=0.5851 t0=0.6764 miss=0.1455 experts=31 wall=297min
+[R15 E31] Step 28650 (expert_step 1850) | task=3.1603 tcost=0.1904 total=3.3227 | active=[30] frozen=30 | tokens=117.4M | wall=298min
+[R15 E31] Step 28700 (expert_step 1900) | task=3.1346 tcost=0.1896 total=3.2958 | active=[30] frozen=30 | tokens=117.6M | wall=298min
+[R15 E31] Step 28750 (expert_step 1950) | task=3.1656 tcost=0.1900 total=3.3263 | active=[30] frozen=30 | tokens=117.8M | wall=299min
+[R15 E31] Step 28800 (expert_step 2000) | task=3.1137 tcost=0.1897 total=3.2813 | active=[30] frozen=30 | tokens=118.0M | wall=299min
+
+--- Eval at step 28800 (round 15, expert_step 2000) ---
+  ppl=22.87 gini=0.5849 t0=0.6774 miss=0.1454 experts=31 wall=299min
+
+============================================================
+EXPERT ROUND 15 CONVERGED at step 28800
+  Expert step: 2000, PPL: 22.87
+============================================================
+  Hard tokens: 25.9% (PPL 1242.7 vs easy 5.0)
+
+============================================================
+INTRODUCING EXPERT 31 (round 16)
+  Frozen: 31 experts, Active: [31]
+  Triggered by: 25.9% hard tokens (PPL 1242.7)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[31], frozen=63
+[R16 E32] Step 28850 (expert_step 50) | task=3.1506 tcost=0.1959 total=15600410096.6400 | active=[31] frozen=31 | tokens=118.2M | wall=300min
+[R16 E32] Step 28900 (expert_step 100) | task=5.9313 tcost=0.2459 total=439322827.8991 | active=[31] frozen=31 | tokens=118.4M | wall=300min
+[R16 E32] Step 28950 (expert_step 150) | task=8.8096 tcost=0.3005 total=14577.2239 | active=[31] frozen=31 | tokens=118.6M | wall=301min
+[R16 E32] Step 29000 (expert_step 200) | task=7.0347 tcost=0.2968 total=8.1422 | active=[31] frozen=31 | tokens=118.8M | wall=301min
+
+--- Eval at step 29000 (round 16, expert_step 200) ---
+  ppl=177.77 gini=0.5510 t0=0.5590 miss=0.1753 experts=32 wall=301min
+[R16 E32] Step 29050 (expert_step 250) | task=4.6791 tcost=0.2625 total=5.4644 | active=[31] frozen=31 | tokens=119.0M | wall=302min
+[R16 E32] Step 29100 (expert_step 300) | task=4.1416 tcost=0.2567 total=5.5237 | active=[31] frozen=31 | tokens=119.2M | wall=302min
+[R16 E32] Step 29150 (expert_step 350) | task=3.7858 tcost=0.2490 total=5.0265 | active=[31] frozen=31 | tokens=119.4M | wall=303min
+[R16 E32] Step 29200 (expert_step 400) | task=3.4946 tcost=0.2374 total=3.8350 | active=[31] frozen=31 | tokens=119.6M | wall=303min
+
+--- Eval at step 29200 (round 16, expert_step 400) ---
+  ppl=27.13 gini=0.5647 t0=0.6196 miss=0.1843 experts=32 wall=303min
+[R16 E32] Step 29250 (expert_step 450) | task=3.2346 tcost=0.2179 total=3.4828 | active=[31] frozen=31 | tokens=119.8M | wall=304min
+[R16 E32] Step 29300 (expert_step 500) | task=3.1850 tcost=0.2049 total=3.3945 | active=[31] frozen=31 | tokens=120.0M | wall=304min
+[R16 E32] Step 29350 (expert_step 550) | task=3.1589 tcost=0.1994 total=3.3531 | active=[31] frozen=31 | tokens=120.2M | wall=305min
+[R16 E32] Step 29400 (expert_step 600) | task=3.1999 tcost=0.1989 total=3.3897 | active=[31] frozen=31 | tokens=120.4M | wall=305min
+
+--- Eval at step 29400 (round 16, expert_step 600) ---
+  ppl=23.84 gini=0.5756 t0=0.6603 miss=0.1555 experts=32 wall=306min
+[R16 E32] Step 29450 (expert_step 650) | task=3.1617 tcost=0.1994 total=3.3474 | active=[31] frozen=31 | tokens=120.6M | wall=306min
+[R16 E32] Step 29500 (expert_step 700) | task=3.1283 tcost=0.1983 total=3.3127 | active=[31] frozen=31 | tokens=120.8M | wall=307min
+[R16 E32] Step 29550 (expert_step 750) | task=3.1863 tcost=0.1975 total=3.3610 | active=[31] frozen=31 | tokens=121.0M | wall=307min
+[R16 E32] Step 29600 (expert_step 800) | task=3.0957 tcost=0.1957 total=3.2742 | active=[31] frozen=31 | tokens=121.2M | wall=308min
+
+--- Eval at step 29600 (round 16, expert_step 800) ---
+  ppl=23.50 gini=0.5741 t0=0.6598 miss=0.1554 experts=32 wall=308min
+[R16 E32] Step 29650 (expert_step 850) | task=3.1598 tcost=0.1972 total=3.3348 | active=[31] frozen=31 | tokens=121.4M | wall=308min
+[R16 E32] Step 29700 (expert_step 900) | task=3.1561 tcost=0.1944 total=3.3293 | active=[31] frozen=31 | tokens=121.7M | wall=309min
+[R16 E32] Step 29750 (expert_step 950) | task=3.2239 tcost=0.1943 total=3.3960 | active=[31] frozen=31 | tokens=121.9M | wall=309min
+[R16 E32] Step 29800 (expert_step 1000) | task=3.1793 tcost=0.1957 total=3.3502 | active=[31] frozen=31 | tokens=122.1M | wall=310min
+
+--- Eval at step 29800 (round 16, expert_step 1000) ---
+  ppl=23.20 gini=0.5772 t0=0.6666 miss=0.1472 experts=32 wall=310min
+[R16 E32] Step 29850 (expert_step 1050) | task=3.1561 tcost=0.1934 total=3.3272 | active=[31] frozen=31 | tokens=122.3M | wall=310min
+[R16 E32] Step 29900 (expert_step 1100) | task=3.1833 tcost=0.1946 total=3.3562 | active=[31] frozen=31 | tokens=122.5M | wall=311min
+[R16 E32] Step 29950 (expert_step 1150) | task=3.1025 tcost=0.1939 total=3.2737 | active=[31] frozen=31 | tokens=122.7M | wall=311min
+[R16 E32] Step 30000 (expert_step 1200) | task=3.0884 tcost=0.1943 total=3.2581 | active=[31] frozen=31 | tokens=122.9M | wall=312min
+
+--- Eval at step 30000 (round 16, expert_step 1200) ---
+  ppl=22.95 gini=0.5776 t0=0.6678 miss=0.1465 experts=32 wall=312min
+[R16 E32] Step 30050 (expert_step 1250) | task=3.1236 tcost=0.1932 total=3.3005 | active=[31] frozen=31 | tokens=123.1M | wall=312min
+[R16 E32] Step 30100 (expert_step 1300) | task=3.1557 tcost=0.1916 total=3.3220 | active=[31] frozen=31 | tokens=123.3M | wall=313min
+[R16 E32] Step 30150 (expert_step 1350) | task=3.1765 tcost=0.1932 total=3.3444 | active=[31] frozen=31 | tokens=123.5M | wall=313min
+[R16 E32] Step 30200 (expert_step 1400) | task=3.0799 tcost=0.1923 total=3.2449 | active=[31] frozen=31 | tokens=123.7M | wall=314min
+
+--- Eval at step 30200 (round 16, expert_step 1400) ---
+  ppl=22.86 gini=0.5764 t0=0.6663 miss=0.1467 experts=32 wall=314min
+[R16 E32] Step 30250 (expert_step 1450) | task=3.1496 tcost=0.1938 total=3.3174 | active=[31] frozen=31 | tokens=123.9M | wall=314min
+[R16 E32] Step 30300 (expert_step 1500) | task=3.1438 tcost=0.1931 total=3.3121 | active=[31] frozen=31 | tokens=124.1M | wall=315min
+[R16 E32] Step 30350 (expert_step 1550) | task=3.1452 tcost=0.1938 total=3.3136 | active=[31] frozen=31 | tokens=124.3M | wall=315min
+[R16 E32] Step 30400 (expert_step 1600) | task=3.1366 tcost=0.1939 total=3.3037 | active=[31] frozen=31 | tokens=124.5M | wall=316min
+
+--- Eval at step 30400 (round 16, expert_step 1600) ---
+  ppl=22.76 gini=0.5773 t0=0.6680 miss=0.1430 experts=32 wall=316min
+[R16 E32] Step 30450 (expert_step 1650) | task=3.0627 tcost=0.1952 total=3.2320 | active=[31] frozen=31 | tokens=124.7M | wall=317min
+[R16 E32] Step 30500 (expert_step 1700) | task=3.1452 tcost=0.1937 total=3.3118 | active=[31] frozen=31 | tokens=124.9M | wall=317min
+[R16 E32] Step 30550 (expert_step 1750) | task=3.1565 tcost=0.1925 total=3.3207 | active=[31] frozen=31 | tokens=125.1M | wall=318min
+[R16 E32] Step 30600 (expert_step 1800) | task=3.1371 tcost=0.1931 total=3.3036 | active=[31] frozen=31 | tokens=125.3M | wall=318min
+
+--- Eval at step 30600 (round 16, expert_step 1800) ---
+  ppl=22.73 gini=0.5770 t0=0.6686 miss=0.1428 experts=32 wall=318min
+[R16 E32] Step 30650 (expert_step 1850) | task=3.1330 tcost=0.1920 total=3.2980 | active=[31] frozen=31 | tokens=125.5M | wall=319min
+[R16 E32] Step 30700 (expert_step 1900) | task=3.1672 tcost=0.1929 total=3.3317 | active=[31] frozen=31 | tokens=125.7M | wall=319min
+[R16 E32] Step 30750 (expert_step 1950) | task=3.1444 tcost=0.1941 total=3.3125 | active=[31] frozen=31 | tokens=126.0M | wall=320min
+[R16 E32] Step 30800 (expert_step 2000) | task=3.1941 tcost=0.1918 total=3.3570 | active=[31] frozen=31 | tokens=126.2M | wall=320min
+
+--- Eval at step 30800 (round 16, expert_step 2000) ---
+  ppl=22.74 gini=0.5776 t0=0.6692 miss=0.1415 experts=32 wall=320min
+
+============================================================
+EXPERT ROUND 16 CONVERGED at step 30800
+  Expert step: 2000, PPL: 22.74
+============================================================
+  Hard tokens: 25.9% (PPL 1242.7 vs easy 5.0)
+
+============================================================
+INTRODUCING EXPERT 32 (round 17)
+  Frozen: 32 experts, Active: [32]
+  Triggered by: 25.9% hard tokens (PPL 1242.7)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[32], frozen=63
+[R17 E33] Step 30850 (expert_step 50) | task=3.1575 tcost=0.1963 total=46970058895.3600 | active=[32] frozen=32 | tokens=126.4M | wall=321min
+[R17 E33] Step 30900 (expert_step 100) | task=5.5865 tcost=0.2472 total=946740758.3085 | active=[32] frozen=32 | tokens=126.6M | wall=321min
+[R17 E33] Step 30950 (expert_step 150) | task=8.6428 tcost=0.2693 total=3106.4120 | active=[32] frozen=32 | tokens=126.8M | wall=322min
+[R17 E33] Step 31000 (expert_step 200) | task=5.4127 tcost=0.2723 total=6.1121 | active=[32] frozen=32 | tokens=127.0M | wall=322min
+
+--- Eval at step 31000 (round 17, expert_step 200) ---
+  ppl=55.07 gini=0.5321 t0=0.5614 miss=0.2050 experts=33 wall=322min
+[R17 E33] Step 31050 (expert_step 250) | task=3.7865 tcost=0.2558 total=4.2278 | active=[32] frozen=32 | tokens=127.2M | wall=323min
+[R17 E33] Step 31100 (expert_step 300) | task=3.3236 tcost=0.2379 total=3.6245 | active=[32] frozen=32 | tokens=127.4M | wall=323min
+[R17 E33] Step 31150 (expert_step 350) | task=3.2780 tcost=0.2237 total=3.5176 | active=[32] frozen=32 | tokens=127.6M | wall=324min
+[R17 E33] Step 31200 (expert_step 400) | task=3.2352 tcost=0.2142 total=3.4454 | active=[32] frozen=32 | tokens=127.8M | wall=324min
+
+--- Eval at step 31200 (round 17, expert_step 400) ---
+  ppl=24.15 gini=0.5627 t0=0.6427 miss=0.1794 experts=33 wall=324min
+[R17 E33] Step 31250 (expert_step 450) | task=3.1761 tcost=0.2093 total=3.3779 | active=[32] frozen=32 | tokens=128.0M | wall=325min
+[R17 E33] Step 31300 (expert_step 500) | task=3.1798 tcost=0.2074 total=3.3714 | active=[32] frozen=32 | tokens=128.2M | wall=326min
+[R17 E33] Step 31350 (expert_step 550) | task=3.1870 tcost=0.2069 total=3.3766 | active=[32] frozen=32 | tokens=128.4M | wall=326min
+[R17 E33] Step 31400 (expert_step 600) | task=3.1430 tcost=0.2037 total=3.3243 | active=[32] frozen=32 | tokens=128.6M | wall=327min
+
+--- Eval at step 31400 (round 17, expert_step 600) ---
+  ppl=23.25 gini=0.5663 t0=0.6538 miss=0.1677 experts=33 wall=327min
+[R17 E33] Step 31450 (expert_step 650) | task=3.1565 tcost=0.2019 total=3.3365 | active=[32] frozen=32 | tokens=128.8M | wall=327min
+[R17 E33] Step 31500 (expert_step 700) | task=3.1668 tcost=0.2027 total=3.3469 | active=[32] frozen=32 | tokens=129.0M | wall=328min
+[R17 E33] Step 31550 (expert_step 750) | task=3.1813 tcost=0.2029 total=3.3594 | active=[32] frozen=32 | tokens=129.2M | wall=328min
+[R17 E33] Step 31600 (expert_step 800) | task=3.1208 tcost=0.2032 total=3.3019 | active=[32] frozen=32 | tokens=129.4M | wall=329min
+
+--- Eval at step 31600 (round 17, expert_step 800) ---
+  ppl=22.99 gini=0.5641 t0=0.6523 miss=0.1638 experts=33 wall=329min
+[R17 E33] Step 31650 (expert_step 850) | task=3.2005 tcost=0.2023 total=3.3780 | active=[32] frozen=32 | tokens=129.6M | wall=329min
+[R17 E33] Step 31700 (expert_step 900) | task=3.0898 tcost=0.2039 total=3.2681 | active=[32] frozen=32 | tokens=129.8M | wall=330min
+[R17 E33] Step 31750 (expert_step 950) | task=3.1970 tcost=0.2029 total=3.3767 | active=[32] frozen=32 | tokens=130.0M | wall=330min
+[R17 E33] Step 31800 (expert_step 1000) | task=3.1528 tcost=0.2027 total=3.3307 | active=[32] frozen=32 | tokens=130.3M | wall=331min
+
+--- Eval at step 31800 (round 17, expert_step 1000) ---
+  ppl=22.74 gini=0.5684 t0=0.6579 miss=0.1582 experts=33 wall=331min
+[R17 E33] Step 31850 (expert_step 1050) | task=3.1924 tcost=0.2013 total=3.3685 | active=[32] frozen=32 | tokens=130.5M | wall=331min
+[R17 E33] Step 31900 (expert_step 1100) | task=3.1335 tcost=0.2017 total=3.3102 | active=[32] frozen=32 | tokens=130.7M | wall=332min
+[R17 E33] Step 31950 (expert_step 1150) | task=3.1106 tcost=0.2023 total=3.2887 | active=[32] frozen=32 | tokens=130.9M | wall=332min
+[R17 E33] Step 32000 (expert_step 1200) | task=3.0832 tcost=0.2015 total=3.2580 | active=[32] frozen=32 | tokens=131.1M | wall=333min
+
+--- Eval at step 32000 (round 17, expert_step 1200) ---
+  ppl=22.58 gini=0.5680 t0=0.6591 miss=0.1556 experts=33 wall=333min
+[R17 E33] Step 32050 (expert_step 1250) | task=3.1271 tcost=0.2017 total=3.3026 | active=[32] frozen=32 | tokens=131.3M | wall=333min
+[R17 E33] Step 32100 (expert_step 1300) | task=3.0993 tcost=0.2016 total=3.2772 | active=[32] frozen=32 | tokens=131.5M | wall=334min
+[R17 E33] Step 32150 (expert_step 1350) | task=3.1182 tcost=0.1993 total=3.2921 | active=[32] frozen=32 | tokens=131.7M | wall=334min
+[R17 E33] Step 32200 (expert_step 1400) | task=3.0822 tcost=0.2023 total=3.2582 | active=[32] frozen=32 | tokens=131.9M | wall=335min
+
+--- Eval at step 32200 (round 17, expert_step 1400) ---
+  ppl=22.55 gini=0.5661 t0=0.6560 miss=0.1549 experts=33 wall=335min
+[R17 E33] Step 32250 (expert_step 1450) | task=3.1018 tcost=0.1993 total=3.2765 | active=[32] frozen=32 | tokens=132.1M | wall=336min
+[R17 E33] Step 32300 (expert_step 1500) | task=3.1294 tcost=0.1995 total=3.3009 | active=[32] frozen=32 | tokens=132.3M | wall=336min
+[R17 E33] Step 32350 (expert_step 1550) | task=3.1268 tcost=0.1997 total=3.2991 | active=[32] frozen=32 | tokens=132.5M | wall=337min
+[R17 E33] Step 32400 (expert_step 1600) | task=3.1546 tcost=0.2001 total=3.3268 | active=[32] frozen=32 | tokens=132.7M | wall=337min
+
+--- Eval at step 32400 (round 17, expert_step 1600) ---
+  ppl=22.46 gini=0.5663 t0=0.6567 miss=0.1542 experts=33 wall=337min
+[R17 E33] Step 32450 (expert_step 1650) | task=3.1704 tcost=0.2018 total=3.3452 | active=[32] frozen=32 | tokens=132.9M | wall=338min
+[R17 E33] Step 32500 (expert_step 1700) | task=3.1006 tcost=0.2004 total=3.2725 | active=[32] frozen=32 | tokens=133.1M | wall=338min
+[R17 E33] Step 32550 (expert_step 1750) | task=3.1144 tcost=0.2012 total=3.2867 | active=[32] frozen=32 | tokens=133.3M | wall=339min
+[R17 E33] Step 32600 (expert_step 1800) | task=3.1068 tcost=0.2009 total=3.2811 | active=[32] frozen=32 | tokens=133.5M | wall=339min
+
+--- Eval at step 32600 (round 17, expert_step 1800) ---
+  ppl=22.42 gini=0.5677 t0=0.6594 miss=0.1527 experts=33 wall=339min
+
+============================================================
+EXPERT ROUND 17 CONVERGED at step 32600
+  Expert step: 1800, PPL: 22.42
+============================================================
+  Hard tokens: 25.7% (PPL 1242.7 vs easy 5.0)
+
+============================================================
+INTRODUCING EXPERT 33 (round 18)
+  Frozen: 33 experts, Active: [33]
+  Triggered by: 25.7% hard tokens (PPL 1242.7)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[33], frozen=63
+[R18 E34] Step 32650 (expert_step 50) | task=3.1831 tcost=0.2019 total=1939032816168.9600 | active=[33] frozen=33 | tokens=133.7M | wall=340min
+[R18 E34] Step 32700 (expert_step 100) | task=4.4731 tcost=0.2494 total=1313848055.8937 | active=[33] frozen=33 | tokens=133.9M | wall=340min
+[R18 E34] Step 32750 (expert_step 150) | task=9.7642 tcost=0.2685 total=37494.9386 | active=[33] frozen=33 | tokens=134.1M | wall=341min
+[R18 E34] Step 32800 (expert_step 200) | task=7.1255 tcost=0.2960 total=13.1646 | active=[33] frozen=33 | tokens=134.3M | wall=341min
+
+--- Eval at step 32800 (round 18, expert_step 200) ---
+  ppl=162.67 gini=0.5205 t0=0.5091 miss=0.2150 experts=34 wall=342min
+[R18 E34] Step 32850 (expert_step 250) | task=4.3482 tcost=0.2861 total=5.9177 | active=[33] frozen=33 | tokens=134.6M | wall=342min
+[R18 E34] Step 32900 (expert_step 300) | task=3.8374 tcost=0.2767 total=4.3134 | active=[33] frozen=33 | tokens=134.8M | wall=342min
+[R18 E34] Step 32950 (expert_step 350) | task=3.5094 tcost=0.2615 total=9.0264 | active=[33] frozen=33 | tokens=135.0M | wall=343min
+[R18 E34] Step 33000 (expert_step 400) | task=3.3497 tcost=0.2426 total=3.6350 | active=[33] frozen=33 | tokens=135.2M | wall=343min
+
+--- Eval at step 33000 (round 18, expert_step 400) ---
+  ppl=25.87 gini=0.5441 t0=0.6059 miss=0.1975 experts=34 wall=344min
+[R18 E34] Step 33050 (expert_step 450) | task=3.2560 tcost=0.2297 total=3.5051 | active=[33] frozen=33 | tokens=135.4M | wall=344min
+[R18 E34] Step 33100 (expert_step 500) | task=3.1626 tcost=0.2205 total=3.3871 | active=[33] frozen=33 | tokens=135.6M | wall=345min
+[R18 E34] Step 33150 (expert_step 550) | task=3.2170 tcost=0.2188 total=3.4345 | active=[33] frozen=33 | tokens=135.8M | wall=345min
+[R18 E34] Step 33200 (expert_step 600) | task=3.1812 tcost=0.2145 total=3.3847 | active=[33] frozen=33 | tokens=136.0M | wall=346min
+
+--- Eval at step 33200 (round 18, expert_step 600) ---
+  ppl=23.72 gini=0.5541 t0=0.6380 miss=0.1770 experts=34 wall=346min
+[R18 E34] Step 33250 (expert_step 650) | task=3.2079 tcost=0.2126 total=3.4037 | active=[33] frozen=33 | tokens=136.2M | wall=346min
+[R18 E34] Step 33300 (expert_step 700) | task=3.1696 tcost=0.2147 total=3.3701 | active=[33] frozen=33 | tokens=136.4M | wall=347min
+[R18 E34] Step 33350 (expert_step 750) | task=3.1923 tcost=0.2158 total=3.3879 | active=[33] frozen=33 | tokens=136.6M | wall=347min
+[R18 E34] Step 33400 (expert_step 800) | task=3.1445 tcost=0.2131 total=3.3441 | active=[33] frozen=33 | tokens=136.8M | wall=348min
+
+--- Eval at step 33400 (round 18, expert_step 800) ---
+  ppl=22.99 gini=0.5582 t0=0.6441 miss=0.1699 experts=34 wall=348min
+[R18 E34] Step 33450 (expert_step 850) | task=3.1554 tcost=0.2121 total=3.3608 | active=[33] frozen=33 | tokens=137.0M | wall=348min
+[R18 E34] Step 33500 (expert_step 900) | task=3.1108 tcost=0.2120 total=3.3101 | active=[33] frozen=33 | tokens=137.2M | wall=349min
+[R18 E34] Step 33550 (expert_step 950) | task=3.1549 tcost=0.2147 total=3.3516 | active=[33] frozen=33 | tokens=137.4M | wall=349min
+[R18 E34] Step 33600 (expert_step 1000) | task=3.1760 tcost=0.2138 total=3.3683 | active=[33] frozen=33 | tokens=137.6M | wall=350min
+
+--- Eval at step 33600 (round 18, expert_step 1000) ---
+  ppl=23.33 gini=0.5539 t0=0.6393 miss=0.1751 experts=34 wall=350min
+[R18 E34] Step 33650 (expert_step 1050) | task=3.1379 tcost=0.2118 total=3.3277 | active=[33] frozen=33 | tokens=137.8M | wall=350min
+[R18 E34] Step 33700 (expert_step 1100) | task=3.1804 tcost=0.2116 total=3.3698 | active=[33] frozen=33 | tokens=138.0M | wall=351min
+[R18 E34] Step 33750 (expert_step 1150) | task=3.1769 tcost=0.2112 total=3.3650 | active=[33] frozen=33 | tokens=138.2M | wall=351min
+[R18 E34] Step 33800 (expert_step 1200) | task=3.1085 tcost=0.2125 total=3.2991 | active=[33] frozen=33 | tokens=138.4M | wall=352min
+
+--- Eval at step 33800 (round 18, expert_step 1200) ---
+  ppl=22.75 gini=0.5565 t0=0.6430 miss=0.1682 experts=34 wall=352min
+[R18 E34] Step 33850 (expert_step 1250) | task=3.0983 tcost=0.2130 total=3.2908 | active=[33] frozen=33 | tokens=138.6M | wall=353min
+[R18 E34] Step 33900 (expert_step 1300) | task=3.1037 tcost=0.2122 total=3.2947 | active=[33] frozen=33 | tokens=138.9M | wall=353min
+[R18 E34] Step 33950 (expert_step 1350) | task=3.1655 tcost=0.2103 total=3.3542 | active=[33] frozen=33 | tokens=139.1M | wall=354min
+[R18 E34] Step 34000 (expert_step 1400) | task=3.2048 tcost=0.2102 total=3.3918 | active=[33] frozen=33 | tokens=139.3M | wall=354min
+
+--- Eval at step 34000 (round 18, expert_step 1400) ---
+  ppl=22.75 gini=0.5573 t0=0.6467 miss=0.1658 experts=34 wall=354min
+[R18 E34] Step 34050 (expert_step 1450) | task=3.1110 tcost=0.2090 total=3.2989 | active=[33] frozen=33 | tokens=139.5M | wall=355min
+[R18 E34] Step 34100 (expert_step 1500) | task=3.1555 tcost=0.2109 total=3.3415 | active=[33] frozen=33 | tokens=139.7M | wall=355min
+[R18 E34] Step 34150 (expert_step 1550) | task=3.1277 tcost=0.2089 total=3.3120 | active=[33] frozen=33 | tokens=139.9M | wall=356min
+[R18 E34] Step 34200 (expert_step 1600) | task=3.1443 tcost=0.2095 total=3.3319 | active=[33] frozen=33 | tokens=140.1M | wall=356min
+
+--- Eval at step 34200 (round 18, expert_step 1600) ---
+  ppl=22.72 gini=0.5564 t0=0.6458 miss=0.1661 experts=34 wall=356min
+[R18 E34] Step 34250 (expert_step 1650) | task=3.1331 tcost=0.2100 total=3.3184 | active=[33] frozen=33 | tokens=140.3M | wall=357min
+[R18 E34] Step 34300 (expert_step 1700) | task=3.1098 tcost=0.2094 total=3.2926 | active=[33] frozen=33 | tokens=140.5M | wall=357min
+[R18 E34] Step 34350 (expert_step 1750) | task=3.0831 tcost=0.2084 total=3.2675 | active=[33] frozen=33 | tokens=140.7M | wall=358min
+[R18 E34] Step 34400 (expert_step 1800) | task=3.1648 tcost=0.2103 total=3.3498 | active=[33] frozen=33 | tokens=140.9M | wall=358min
+
+--- Eval at step 34400 (round 18, expert_step 1800) ---
+  ppl=22.68 gini=0.5570 t0=0.6462 miss=0.1660 experts=34 wall=358min
+[R18 E34] Step 34450 (expert_step 1850) | task=3.1803 tcost=0.2107 total=3.3688 | active=[33] frozen=33 | tokens=141.1M | wall=359min
+[R18 E34] Step 34500 (expert_step 1900) | task=3.0766 tcost=0.2098 total=3.2605 | active=[33] frozen=33 | tokens=141.3M | wall=359min
+[R18 E34] Step 34550 (expert_step 1950) | task=3.0750 tcost=0.2098 total=3.2621 | active=[33] frozen=33 | tokens=141.5M | wall=360min
+[R18 E34] Step 34600 (expert_step 2000) | task=3.1110 tcost=0.2086 total=3.2967 | active=[33] frozen=33 | tokens=141.7M | wall=360min
+
+--- Eval at step 34600 (round 18, expert_step 2000) ---
+  ppl=22.66 gini=0.5582 t0=0.6494 miss=0.1626 experts=34 wall=360min
+
+============================================================
+EXPERT ROUND 18 CONVERGED at step 34600
+  Expert step: 2000, PPL: 22.66
+============================================================
+  Hard tokens: 25.8% (PPL 1242.7 vs easy 5.0)
+
+============================================================
+INTRODUCING EXPERT 34 (round 19)
+  Frozen: 34 experts, Active: [34]
+  Triggered by: 25.8% hard tokens (PPL 1242.7)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[34], frozen=63
+[R19 E35] Step 34650 (expert_step 50) | task=3.1461 tcost=0.2152 total=25624366453.7600 | active=[34] frozen=34 | tokens=141.9M | wall=361min
+[R19 E35] Step 34700 (expert_step 100) | task=6.7027 tcost=0.2664 total=573622730.8055 | active=[34] frozen=34 | tokens=142.1M | wall=362min
+[R19 E35] Step 34750 (expert_step 150) | task=7.9797 tcost=0.2866 total=41.6984 | active=[34] frozen=34 | tokens=142.3M | wall=362min
+[R19 E35] Step 34800 (expert_step 200) | task=4.1570 tcost=0.2753 total=4.6688 | active=[34] frozen=34 | tokens=142.5M | wall=363min
+
+--- Eval at step 34800 (round 19, expert_step 200) ---
+  ppl=35.36 gini=0.5169 t0=0.5509 miss=0.2422 experts=35 wall=363min
+[R19 E35] Step 34850 (expert_step 250) | task=3.4011 tcost=0.2604 total=3.7311 | active=[34] frozen=34 | tokens=142.7M | wall=363min
+[R19 E35] Step 34900 (expert_step 300) | task=3.2454 tcost=0.2423 total=3.5138 | active=[34] frozen=34 | tokens=143.0M | wall=364min
+[R19 E35] Step 34950 (expert_step 350) | task=3.1817 tcost=0.2337 total=3.4189 | active=[34] frozen=34 | tokens=143.2M | wall=364min
+[R19 E35] Step 35000 (expert_step 400) | task=3.1326 tcost=0.2274 total=3.3560 | active=[34] frozen=34 | tokens=143.4M | wall=365min
+
+--- Eval at step 35000 (round 19, expert_step 400) ---
+  ppl=23.26 gini=0.5444 t0=0.6217 miss=0.1911 experts=35 wall=365min
+[R19 E35] Step 35050 (expert_step 450) | task=3.1551 tcost=0.2247 total=3.3681 | active=[34] frozen=34 | tokens=143.6M | wall=365min
+[R19 E35] Step 35100 (expert_step 500) | task=3.1129 tcost=0.2234 total=3.3259 | active=[34] frozen=34 | tokens=143.8M | wall=366min
+[R19 E35] Step 35150 (expert_step 550) | task=3.1565 tcost=0.2224 total=3.3611 | active=[34] frozen=34 | tokens=144.0M | wall=366min
+[R19 E35] Step 35200 (expert_step 600) | task=3.1528 tcost=0.2195 total=3.3549 | active=[34] frozen=34 | tokens=144.2M | wall=367min
+
+--- Eval at step 35200 (round 19, expert_step 600) ---
+  ppl=22.62 gini=0.5494 t0=0.6369 miss=0.1741 experts=35 wall=367min
+[R19 E35] Step 35250 (expert_step 650) | task=3.1401 tcost=0.2200 total=3.3380 | active=[34] frozen=34 | tokens=144.4M | wall=367min
+[R19 E35] Step 35300 (expert_step 700) | task=3.1147 tcost=0.2211 total=3.3140 | active=[34] frozen=34 | tokens=144.6M | wall=368min
+[R19 E35] Step 35350 (expert_step 750) | task=3.1051 tcost=0.2217 total=3.3034 | active=[34] frozen=34 | tokens=144.8M | wall=368min
+[R19 E35] Step 35400 (expert_step 800) | task=3.1171 tcost=0.2182 total=3.3112 | active=[34] frozen=34 | tokens=145.0M | wall=369min
+
+--- Eval at step 35400 (round 19, expert_step 800) ---
+  ppl=22.21 gini=0.5467 t0=0.6344 miss=0.1726 experts=35 wall=369min
+[R19 E35] Step 35450 (expert_step 850) | task=3.1074 tcost=0.2180 total=3.3015 | active=[34] frozen=34 | tokens=145.2M | wall=370min
+[R19 E35] Step 35500 (expert_step 900) | task=3.0945 tcost=0.2179 total=3.2874 | active=[34] frozen=34 | tokens=145.4M | wall=370min
+[R19 E35] Step 35550 (expert_step 950) | task=3.1276 tcost=0.2192 total=3.3229 | active=[34] frozen=34 | tokens=145.6M | wall=371min
+[R19 E35] Step 35600 (expert_step 1000) | task=3.1436 tcost=0.2181 total=3.3369 | active=[34] frozen=34 | tokens=145.8M | wall=371min
+
+--- Eval at step 35600 (round 19, expert_step 1000) ---
+  ppl=22.03 gini=0.5488 t0=0.6380 miss=0.1672 experts=35 wall=371min
+[R19 E35] Step 35650 (expert_step 1050) | task=3.1029 tcost=0.2183 total=3.2970 | active=[34] frozen=34 | tokens=146.0M | wall=372min
+[R19 E35] Step 35700 (expert_step 1100) | task=3.1862 tcost=0.2182 total=3.3794 | active=[34] frozen=34 | tokens=146.2M | wall=372min
+[R19 E35] Step 35750 (expert_step 1150) | task=3.1123 tcost=0.2186 total=3.3035 | active=[34] frozen=34 | tokens=146.4M | wall=373min
+[R19 E35] Step 35800 (expert_step 1200) | task=3.0574 tcost=0.2193 total=3.2519 | active=[34] frozen=34 | tokens=146.6M | wall=373min
+
+--- Eval at step 35800 (round 19, expert_step 1200) ---
+  ppl=21.91 gini=0.5453 t0=0.6339 miss=0.1706 experts=35 wall=373min
+[R19 E35] Step 35850 (expert_step 1250) | task=3.0769 tcost=0.2197 total=3.2716 | active=[34] frozen=34 | tokens=146.8M | wall=374min
+[R19 E35] Step 35900 (expert_step 1300) | task=3.1159 tcost=0.2173 total=3.3051 | active=[34] frozen=34 | tokens=147.0M | wall=374min
+[R19 E35] Step 35950 (expert_step 1350) | task=3.1453 tcost=0.2194 total=3.3387 | active=[34] frozen=34 | tokens=147.3M | wall=375min
+[R19 E35] Step 36000 (expert_step 1400) | task=3.0661 tcost=0.2159 total=3.2563 | active=[34] frozen=34 | tokens=147.5M | wall=375min
+
+--- Eval at step 36000 (round 19, expert_step 1400) ---
+  ppl=21.86 gini=0.5468 t0=0.6372 miss=0.1668 experts=35 wall=375min
+[R19 E35] Step 36050 (expert_step 1450) | task=3.0912 tcost=0.2178 total=3.2811 | active=[34] frozen=34 | tokens=147.7M | wall=376min
+[R19 E35] Step 36100 (expert_step 1500) | task=3.0454 tcost=0.2166 total=3.2343 | active=[34] frozen=34 | tokens=147.9M | wall=376min
+[R19 E35] Step 36150 (expert_step 1550) | task=3.1063 tcost=0.2174 total=3.2986 | active=[34] frozen=34 | tokens=148.1M | wall=377min
+[R19 E35] Step 36200 (expert_step 1600) | task=3.0588 tcost=0.2166 total=3.2483 | active=[34] frozen=34 | tokens=148.3M | wall=377min
+
+--- Eval at step 36200 (round 19, expert_step 1600) ---
+  ppl=21.81 gini=0.5476 t0=0.6383 miss=0.1663 experts=35 wall=378min
+
+============================================================
+EXPERT ROUND 19 CONVERGED at step 36200
+  Expert step: 1600, PPL: 21.81
+============================================================
+  Hard tokens: 25.8% (PPL 1167.4 vs easy 4.9)
+
+============================================================
+INTRODUCING EXPERT 35 (round 20)
+  Frozen: 35 experts, Active: [35]
+  Triggered by: 25.8% hard tokens (PPL 1167.4)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[35], frozen=63
+[R20 E36] Step 36250 (expert_step 50) | task=3.1122 tcost=0.2215 total=56385755361.2800 | active=[35] frozen=35 | tokens=148.5M | wall=378min
+[R20 E36] Step 36300 (expert_step 100) | task=5.5422 tcost=0.2817 total=1492551227.0136 | active=[35] frozen=35 | tokens=148.7M | wall=379min
+[R20 E36] Step 36350 (expert_step 150) | task=7.6382 tcost=0.3196 total=113.3664 | active=[35] frozen=35 | tokens=148.9M | wall=379min
+[R20 E36] Step 36400 (expert_step 200) | task=4.3897 tcost=0.2888 total=4.8923 | active=[35] frozen=35 | tokens=149.1M | wall=380min
+
+--- Eval at step 36400 (round 20, expert_step 200) ---
+  ppl=37.72 gini=0.5007 t0=0.5313 miss=0.2533 experts=36 wall=380min
+[R20 E36] Step 36450 (expert_step 250) | task=3.4496 tcost=0.2697 total=3.7541 | active=[35] frozen=35 | tokens=149.3M | wall=380min
+[R20 E36] Step 36500 (expert_step 300) | task=3.2390 tcost=0.2519 total=3.5002 | active=[35] frozen=35 | tokens=149.5M | wall=381min
+[R20 E36] Step 36550 (expert_step 350) | task=3.1762 tcost=0.2439 total=3.4188 | active=[35] frozen=35 | tokens=149.7M | wall=381min
+[R20 E36] Step 36600 (expert_step 400) | task=3.1232 tcost=0.2380 total=3.3493 | active=[35] frozen=35 | tokens=149.9M | wall=382min
+
+--- Eval at step 36600 (round 20, expert_step 400) ---
+  ppl=23.10 gini=0.5312 t0=0.6107 miss=0.1992 experts=36 wall=382min
+[R20 E36] Step 36650 (expert_step 450) | task=3.1195 tcost=0.2333 total=3.3357 | active=[35] frozen=35 | tokens=150.1M | wall=382min
+[R20 E36] Step 36700 (expert_step 500) | task=3.1417 tcost=0.2323 total=3.3578 | active=[35] frozen=35 | tokens=150.3M | wall=383min
+[R20 E36] Step 36750 (expert_step 550) | task=3.2031 tcost=0.2305 total=3.4154 | active=[35] frozen=35 | tokens=150.5M | wall=383min
+[R20 E36] Step 36800 (expert_step 600) | task=3.1383 tcost=0.2291 total=3.3474 | active=[35] frozen=35 | tokens=150.7M | wall=384min
+
+--- Eval at step 36800 (round 20, expert_step 600) ---
+  ppl=22.37 gini=0.5353 t0=0.6205 miss=0.1869 experts=36 wall=384min
+[R20 E36] Step 36850 (expert_step 650) | task=3.0572 tcost=0.2296 total=3.2708 | active=[35] frozen=35 | tokens=150.9M | wall=385min
+[R20 E36] Step 36900 (expert_step 700) | task=3.1471 tcost=0.2283 total=3.3530 | active=[35] frozen=35 | tokens=151.1M | wall=385min
+[R20 E36] Step 36950 (expert_step 750) | task=3.0927 tcost=0.2281 total=3.2975 | active=[35] frozen=35 | tokens=151.3M | wall=386min
+[R20 E36] Step 37000 (expert_step 800) | task=3.1408 tcost=0.2267 total=3.3432 | active=[35] frozen=35 | tokens=151.6M | wall=386min
+
+--- Eval at step 37000 (round 20, expert_step 800) ---
+  ppl=21.91 gini=0.5380 t0=0.6274 miss=0.1801 experts=36 wall=386min
+[R20 E36] Step 37050 (expert_step 850) | task=3.1009 tcost=0.2246 total=3.3019 | active=[35] frozen=35 | tokens=151.8M | wall=387min
+[R20 E36] Step 37100 (expert_step 900) | task=3.1073 tcost=0.2271 total=3.3096 | active=[35] frozen=35 | tokens=152.0M | wall=387min
+[R20 E36] Step 37150 (expert_step 950) | task=3.0654 tcost=0.2254 total=3.2682 | active=[35] frozen=35 | tokens=152.2M | wall=388min
+[R20 E36] Step 37200 (expert_step 1000) | task=3.0687 tcost=0.2245 total=3.2700 | active=[35] frozen=35 | tokens=152.4M | wall=388min
+
+--- Eval at step 37200 (round 20, expert_step 1000) ---
+  ppl=21.73 gini=0.5359 t0=0.6238 miss=0.1814 experts=36 wall=388min
+[R20 E36] Step 37250 (expert_step 1050) | task=3.0677 tcost=0.2280 total=3.2704 | active=[35] frozen=35 | tokens=152.6M | wall=389min
+[R20 E36] Step 37300 (expert_step 1100) | task=3.0674 tcost=0.2250 total=3.2651 | active=[35] frozen=35 | tokens=152.8M | wall=389min
+[R20 E36] Step 37350 (expert_step 1150) | task=3.1374 tcost=0.2233 total=3.3360 | active=[35] frozen=35 | tokens=153.0M | wall=390min
+[R20 E36] Step 37400 (expert_step 1200) | task=3.1225 tcost=0.2236 total=3.3215 | active=[35] frozen=35 | tokens=153.2M | wall=390min
+
+--- Eval at step 37400 (round 20, expert_step 1200) ---
+  ppl=21.58 gini=0.5393 t0=0.6294 miss=0.1735 experts=36 wall=390min
+[R20 E36] Step 37450 (expert_step 1250) | task=3.0893 tcost=0.2247 total=3.2899 | active=[35] frozen=35 | tokens=153.4M | wall=391min
+[R20 E36] Step 37500 (expert_step 1300) | task=3.0732 tcost=0.2240 total=3.2703 | active=[35] frozen=35 | tokens=153.6M | wall=391min
+[R20 E36] Step 37550 (expert_step 1350) | task=3.0673 tcost=0.2240 total=3.2644 | active=[35] frozen=35 | tokens=153.8M | wall=392min
+[R20 E36] Step 37600 (expert_step 1400) | task=3.1143 tcost=0.2237 total=3.3145 | active=[35] frozen=35 | tokens=154.0M | wall=392min
+
+--- Eval at step 37600 (round 20, expert_step 1400) ---
+  ppl=21.51 gini=0.5400 t0=0.6316 miss=0.1726 experts=36 wall=392min
+[R20 E36] Step 37650 (expert_step 1450) | task=3.0715 tcost=0.2214 total=3.2669 | active=[35] frozen=35 | tokens=154.2M | wall=393min
+[R20 E36] Step 37700 (expert_step 1500) | task=3.0978 tcost=0.2225 total=3.2953 | active=[35] frozen=35 | tokens=154.4M | wall=394min
+[R20 E36] Step 37750 (expert_step 1550) | task=3.0770 tcost=0.2230 total=3.2767 | active=[35] frozen=35 | tokens=154.6M | wall=394min
+[R20 E36] Step 37800 (expert_step 1600) | task=3.1115 tcost=0.2220 total=3.3053 | active=[35] frozen=35 | tokens=154.8M | wall=395min
+
+--- Eval at step 37800 (round 20, expert_step 1600) ---
+  ppl=21.53 gini=0.5411 t0=0.6344 miss=0.1694 experts=36 wall=395min
+
+============================================================
+EXPERT ROUND 20 CONVERGED at step 37800
+  Expert step: 1600, PPL: 21.53
+============================================================
+  Hard tokens: 25.9% (PPL 1131.4 vs easy 4.8)
+
+============================================================
+INTRODUCING EXPERT 36 (round 21)
+  Frozen: 36 experts, Active: [36]
+  Triggered by: 25.9% hard tokens (PPL 1131.4)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[36], frozen=63
+[R21 E37] Step 37850 (expert_step 50) | task=3.0655 tcost=0.2298 total=51880411033.6000 | active=[36] frozen=36 | tokens=155.0M | wall=395min
+[R21 E37] Step 37900 (expert_step 100) | task=6.7856 tcost=0.2927 total=1406800531.4224 | active=[36] frozen=36 | tokens=155.2M | wall=396min
+[R21 E37] Step 37950 (expert_step 150) | task=8.4901 tcost=0.3334 total=72.0364 | active=[36] frozen=36 | tokens=155.4M | wall=396min
+[R21 E37] Step 38000 (expert_step 200) | task=4.1381 tcost=0.3018 total=4.8786 | active=[36] frozen=36 | tokens=155.6M | wall=397min
+
+--- Eval at step 38000 (round 21, expert_step 200) ---
+  ppl=36.80 gini=0.4830 t0=0.5127 miss=0.2622 experts=37 wall=397min
+[R21 E37] Step 38050 (expert_step 250) | task=3.3575 tcost=0.2795 total=3.6977 | active=[36] frozen=36 | tokens=155.9M | wall=397min
+[R21 E37] Step 38100 (expert_step 300) | task=3.1873 tcost=0.2591 total=3.4712 | active=[36] frozen=36 | tokens=156.1M | wall=398min
+[R21 E37] Step 38150 (expert_step 350) | task=3.1799 tcost=0.2453 total=3.4198 | active=[36] frozen=36 | tokens=156.3M | wall=398min
+[R21 E37] Step 38200 (expert_step 400) | task=3.1656 tcost=0.2389 total=3.3899 | active=[36] frozen=36 | tokens=156.5M | wall=399min
+
+--- Eval at step 38200 (round 21, expert_step 400) ---
+  ppl=22.33 gini=0.5268 t0=0.6089 miss=0.1956 experts=37 wall=399min
+[R21 E37] Step 38250 (expert_step 450) | task=3.0890 tcost=0.2359 total=3.3104 | active=[36] frozen=36 | tokens=156.7M | wall=399min
+[R21 E37] Step 38300 (expert_step 500) | task=3.0876 tcost=0.2346 total=3.3018 | active=[36] frozen=36 | tokens=156.9M | wall=400min
+[R21 E37] Step 38350 (expert_step 550) | task=3.0504 tcost=0.2317 total=3.2621 | active=[36] frozen=36 | tokens=157.1M | wall=400min
+[R21 E37] Step 38400 (expert_step 600) | task=3.1474 tcost=0.2323 total=3.3591 | active=[36] frozen=36 | tokens=157.3M | wall=401min
+
+--- Eval at step 38400 (round 21, expert_step 600) ---
+  ppl=21.87 gini=0.5288 t0=0.6178 miss=0.1839 experts=37 wall=401min
+[R21 E37] Step 38450 (expert_step 650) | task=3.0706 tcost=0.2351 total=3.2840 | active=[36] frozen=36 | tokens=157.5M | wall=402min
+[R21 E37] Step 38500 (expert_step 700) | task=3.1134 tcost=0.2340 total=3.3255 | active=[36] frozen=36 | tokens=157.7M | wall=402min
+[R21 E37] Step 38550 (expert_step 750) | task=3.0804 tcost=0.2330 total=3.2911 | active=[36] frozen=36 | tokens=157.9M | wall=403min
+[R21 E37] Step 38600 (expert_step 800) | task=3.0598 tcost=0.2349 total=3.2716 | active=[36] frozen=36 | tokens=158.1M | wall=403min
+
+--- Eval at step 38600 (round 21, expert_step 800) ---
+  ppl=21.48 gini=0.5236 t0=0.6103 miss=0.1918 experts=37 wall=403min
+[R21 E37] Step 38650 (expert_step 850) | task=3.1261 tcost=0.2346 total=3.3347 | active=[36] frozen=36 | tokens=158.3M | wall=404min
+[R21 E37] Step 38700 (expert_step 900) | task=3.0531 tcost=0.2318 total=3.2605 | active=[36] frozen=36 | tokens=158.5M | wall=404min
+[R21 E37] Step 38750 (expert_step 950) | task=3.0895 tcost=0.2312 total=3.2970 | active=[36] frozen=36 | tokens=158.7M | wall=405min
+[R21 E37] Step 38800 (expert_step 1000) | task=3.0533 tcost=0.2322 total=3.2603 | active=[36] frozen=36 | tokens=158.9M | wall=405min
+
+--- Eval at step 38800 (round 21, expert_step 1000) ---
+  ppl=21.46 gini=0.5282 t0=0.6210 miss=0.1800 experts=37 wall=405min
+[R21 E37] Step 38850 (expert_step 1050) | task=3.0561 tcost=0.2315 total=3.2622 | active=[36] frozen=36 | tokens=159.1M | wall=406min
+[R21 E37] Step 38900 (expert_step 1100) | task=3.0522 tcost=0.2300 total=3.2634 | active=[36] frozen=36 | tokens=159.3M | wall=406min
+[R21 E37] Step 38950 (expert_step 1150) | task=3.0479 tcost=0.2318 total=3.2562 | active=[36] frozen=36 | tokens=159.5M | wall=407min
+[R21 E37] Step 39000 (expert_step 1200) | task=3.0192 tcost=0.2326 total=3.2260 | active=[36] frozen=36 | tokens=159.7M | wall=407min
+
+--- Eval at step 39000 (round 21, expert_step 1200) ---
+  ppl=21.25 gini=0.5296 t0=0.6217 miss=0.1793 experts=37 wall=408min
+[R21 E37] Step 39050 (expert_step 1250) | task=3.0430 tcost=0.2312 total=3.2517 | active=[36] frozen=36 | tokens=159.9M | wall=408min
+[R21 E37] Step 39100 (expert_step 1300) | task=3.0506 tcost=0.2318 total=3.2574 | active=[36] frozen=36 | tokens=160.2M | wall=408min
+[R21 E37] Step 39150 (expert_step 1350) | task=3.0032 tcost=0.2312 total=3.2076 | active=[36] frozen=36 | tokens=160.4M | wall=409min
+[R21 E37] Step 39200 (expert_step 1400) | task=2.9460 tcost=0.2301 total=3.1500 | active=[36] frozen=36 | tokens=160.6M | wall=409min
+
+--- Eval at step 39200 (round 21, expert_step 1400) ---
+  ppl=21.13 gini=0.5268 t0=0.6185 miss=0.1803 experts=37 wall=410min
+[R21 E37] Step 39250 (expert_step 1450) | task=3.0663 tcost=0.2317 total=3.2708 | active=[36] frozen=36 | tokens=160.8M | wall=410min
+[R21 E37] Step 39300 (expert_step 1500) | task=3.1083 tcost=0.2328 total=3.3167 | active=[36] frozen=36 | tokens=161.0M | wall=411min
+[R21 E37] Step 39350 (expert_step 1550) | task=3.0600 tcost=0.2306 total=3.2625 | active=[36] frozen=36 | tokens=161.2M | wall=411min
+[R21 E37] Step 39400 (expert_step 1600) | task=3.0901 tcost=0.2279 total=3.2906 | active=[36] frozen=36 | tokens=161.4M | wall=412min
+
+--- Eval at step 39400 (round 21, expert_step 1600) ---
+  ppl=21.12 gini=0.5308 t0=0.6249 miss=0.1766 experts=37 wall=412min
+
+============================================================
+EXPERT ROUND 21 CONVERGED at step 39400
+  Expert step: 1600, PPL: 21.12
+============================================================
+  Hard tokens: 25.9% (PPL 1131.4 vs easy 4.7)
+
+============================================================
+INTRODUCING EXPERT 37 (round 22)
+  Frozen: 37 experts, Active: [37]
+  Triggered by: 25.9% hard tokens (PPL 1131.4)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[37], frozen=63
+[R22 E38] Step 39450 (expert_step 50) | task=3.0733 tcost=0.2328 total=5153702868336.6396 | active=[37] frozen=37 | tokens=161.6M | wall=412min
+[R22 E38] Step 39500 (expert_step 100) | task=4.2228 tcost=0.2956 total=7062681806.2587 | active=[37] frozen=37 | tokens=161.8M | wall=413min
+[R22 E38] Step 39550 (expert_step 150) | task=8.0686 tcost=0.3712 total=25183.2765 | active=[37] frozen=37 | tokens=162.0M | wall=413min
+[R22 E38] Step 39600 (expert_step 200) | task=6.1828 tcost=0.3695 total=8.2379 | active=[37] frozen=37 | tokens=162.2M | wall=414min
+
+--- Eval at step 39600 (round 22, expert_step 200) ---
+  ppl=72.01 gini=0.4964 t0=0.4779 miss=0.2470 experts=38 wall=414min
+[R22 E38] Step 39650 (expert_step 250) | task=4.2201 tcost=0.3387 total=6.6488 | active=[37] frozen=37 | tokens=162.4M | wall=414min
+[R22 E38] Step 39700 (expert_step 300) | task=3.6200 tcost=0.3115 total=4.8518 | active=[37] frozen=37 | tokens=162.6M | wall=415min
+[R22 E38] Step 39750 (expert_step 350) | task=3.3151 tcost=0.2810 total=3.6346 | active=[37] frozen=37 | tokens=162.8M | wall=415min
+[R22 E38] Step 39800 (expert_step 400) | task=3.2143 tcost=0.2594 total=3.4771 | active=[37] frozen=37 | tokens=163.0M | wall=416min
+
+--- Eval at step 39800 (round 22, expert_step 400) ---
+  ppl=23.47 gini=0.5112 t0=0.5891 miss=0.2162 experts=38 wall=416min
+[R22 E38] Step 39850 (expert_step 450) | task=3.1560 tcost=0.2505 total=3.4033 | active=[37] frozen=37 | tokens=163.2M | wall=417min
+[R22 E38] Step 39900 (expert_step 500) | task=3.1079 tcost=0.2449 total=3.3431 | active=[37] frozen=37 | tokens=163.4M | wall=417min
+[R22 E38] Step 39950 (expert_step 550) | task=3.1234 tcost=0.2454 total=3.3600 | active=[37] frozen=37 | tokens=163.6M | wall=418min
+[R22 E38] Step 40000 (expert_step 600) | task=3.1094 tcost=0.2444 total=3.3410 | active=[37] frozen=37 | tokens=163.8M | wall=418min
+
+--- Eval at step 40000 (round 22, expert_step 600) ---
+  ppl=22.22 gini=0.5180 t0=0.6058 miss=0.1997 experts=38 wall=418min
+[R22 E38] Step 40050 (expert_step 650) | task=3.1224 tcost=0.2431 total=3.3493 | active=[37] frozen=37 | tokens=164.0M | wall=419min
+[R22 E38] Step 40100 (expert_step 700) | task=3.1182 tcost=0.2435 total=3.3442 | active=[37] frozen=37 | tokens=164.2M | wall=419min
+[R22 E38] Step 40150 (expert_step 750) | task=3.0886 tcost=0.2442 total=3.3189 | active=[37] frozen=37 | tokens=164.5M | wall=420min
+[R22 E38] Step 40200 (expert_step 800) | task=3.0927 tcost=0.2419 total=3.3160 | active=[37] frozen=37 | tokens=164.7M | wall=420min
+
+--- Eval at step 40200 (round 22, expert_step 800) ---
+  ppl=21.71 gini=0.5181 t0=0.6078 miss=0.1942 experts=38 wall=420min
+[R22 E38] Step 40250 (expert_step 850) | task=3.0668 tcost=0.2417 total=3.2916 | active=[37] frozen=37 | tokens=164.9M | wall=421min
+[R22 E38] Step 40300 (expert_step 900) | task=3.1085 tcost=0.2433 total=3.3361 | active=[37] frozen=37 | tokens=165.1M | wall=421min
+[R22 E38] Step 40350 (expert_step 950) | task=3.0497 tcost=0.2414 total=3.2730 | active=[37] frozen=37 | tokens=165.3M | wall=422min
+[R22 E38] Step 40400 (expert_step 1000) | task=3.0990 tcost=0.2422 total=3.3201 | active=[37] frozen=37 | tokens=165.5M | wall=422min
+
+--- Eval at step 40400 (round 22, expert_step 1000) ---
+  ppl=21.48 gini=0.5177 t0=0.6073 miss=0.1910 experts=38 wall=422min
+[R22 E38] Step 40450 (expert_step 1050) | task=3.1208 tcost=0.2402 total=3.3393 | active=[37] frozen=37 | tokens=165.7M | wall=423min
+[R22 E38] Step 40500 (expert_step 1100) | task=3.0154 tcost=0.2399 total=3.2533 | active=[37] frozen=37 | tokens=165.9M | wall=423min
+[R22 E38] Step 40550 (expert_step 1150) | task=3.0650 tcost=0.2403 total=3.2824 | active=[37] frozen=37 | tokens=166.1M | wall=424min
+[R22 E38] Step 40600 (expert_step 1200) | task=3.0273 tcost=0.2414 total=3.2485 | active=[37] frozen=37 | tokens=166.3M | wall=424min
+
+--- Eval at step 40600 (round 22, expert_step 1200) ---
+  ppl=21.38 gini=0.5165 t0=0.6075 miss=0.1925 experts=38 wall=425min
+[R22 E38] Step 40650 (expert_step 1250) | task=3.0553 tcost=0.2424 total=3.2794 | active=[37] frozen=37 | tokens=166.5M | wall=425min
+[R22 E38] Step 40700 (expert_step 1300) | task=3.0474 tcost=0.2416 total=3.2631 | active=[37] frozen=37 | tokens=166.7M | wall=426min
+[R22 E38] Step 40750 (expert_step 1350) | task=3.1059 tcost=0.2403 total=3.3199 | active=[37] frozen=37 | tokens=166.9M | wall=426min
+[R22 E38] Step 40800 (expert_step 1400) | task=3.1281 tcost=0.2371 total=3.3431 | active=[37] frozen=37 | tokens=167.1M | wall=427min
+
+--- Eval at step 40800 (round 22, expert_step 1400) ---
+  ppl=21.32 gini=0.5192 t0=0.6119 miss=0.1877 experts=38 wall=427min
+[R22 E38] Step 40850 (expert_step 1450) | task=3.1135 tcost=0.2403 total=3.3330 | active=[37] frozen=37 | tokens=167.3M | wall=427min
+[R22 E38] Step 40900 (expert_step 1500) | task=3.0510 tcost=0.2397 total=3.2664 | active=[37] frozen=37 | tokens=167.5M | wall=428min
+[R22 E38] Step 40950 (expert_step 1550) | task=3.0578 tcost=0.2390 total=3.2731 | active=[37] frozen=37 | tokens=167.7M | wall=428min
+[R22 E38] Step 41000 (expert_step 1600) | task=3.0738 tcost=0.2381 total=3.2866 | active=[37] frozen=37 | tokens=167.9M | wall=429min
+
+--- Eval at step 41000 (round 22, expert_step 1600) ---
+  ppl=21.20 gini=0.5188 t0=0.6132 miss=0.1881 experts=38 wall=429min
+[R22 E38] Step 41050 (expert_step 1650) | task=3.0833 tcost=0.2380 total=3.2980 | active=[37] frozen=37 | tokens=168.1M | wall=429min
+[R22 E38] Step 41100 (expert_step 1700) | task=3.0653 tcost=0.2379 total=3.2857 | active=[37] frozen=37 | tokens=168.3M | wall=430min
+[R22 E38] Step 41150 (expert_step 1750) | task=3.0543 tcost=0.2393 total=3.2692 | active=[37] frozen=37 | tokens=168.6M | wall=430min
+[R22 E38] Step 41200 (expert_step 1800) | task=3.0530 tcost=0.2404 total=3.2702 | active=[37] frozen=37 | tokens=168.8M | wall=431min
+
+--- Eval at step 41200 (round 22, expert_step 1800) ---
+  ppl=21.19 gini=0.5166 t0=0.6111 miss=0.1891 experts=38 wall=431min
+
+============================================================
+EXPERT ROUND 22 CONVERGED at step 41200
+  Expert step: 1800, PPL: 21.19
+============================================================
+  Hard tokens: 26.0% (PPL 1096.6 vs easy 4.7)
+
+============================================================
+INTRODUCING EXPERT 38 (round 23)
+  Frozen: 38 experts, Active: [38]
+  Triggered by: 26.0% hard tokens (PPL 1096.6)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[38], frozen=63
+[R23 E39] Step 41250 (expert_step 50) | task=3.0486 tcost=0.2495 total=36250246062.0800 | active=[38] frozen=38 | tokens=169.0M | wall=432min
+[R23 E39] Step 41300 (expert_step 100) | task=5.5646 tcost=0.3239 total=994018450.6424 | active=[38] frozen=38 | tokens=169.2M | wall=432min
+[R23 E39] Step 41350 (expert_step 150) | task=7.7026 tcost=0.3572 total=516.0448 | active=[38] frozen=38 | tokens=169.4M | wall=433min
+[R23 E39] Step 41400 (expert_step 200) | task=4.0457 tcost=0.3241 total=10.0516 | active=[38] frozen=38 | tokens=169.6M | wall=433min
+
+--- Eval at step 41400 (round 23, expert_step 200) ---
+  ppl=43.27 gini=0.4604 t0=0.4854 miss=0.2724 experts=39 wall=433min
+[R23 E39] Step 41450 (expert_step 250) | task=3.4972 tcost=0.3037 total=4.1104 | active=[38] frozen=38 | tokens=169.8M | wall=434min
+[R23 E39] Step 41500 (expert_step 300) | task=3.2662 tcost=0.2822 total=3.5837 | active=[38] frozen=38 | tokens=170.0M | wall=434min
+[R23 E39] Step 41550 (expert_step 350) | task=3.1469 tcost=0.2691 total=3.4231 | active=[38] frozen=38 | tokens=170.2M | wall=435min
+[R23 E39] Step 41600 (expert_step 400) | task=3.1928 tcost=0.2599 total=3.4471 | active=[38] frozen=38 | tokens=170.4M | wall=435min
+
+--- Eval at step 41600 (round 23, expert_step 400) ---
+  ppl=22.87 gini=0.5037 t0=0.5841 miss=0.2192 experts=39 wall=435min
+[R23 E39] Step 41650 (expert_step 450) | task=3.1727 tcost=0.2583 total=3.4351 | active=[38] frozen=38 | tokens=170.6M | wall=436min
+[R23 E39] Step 41700 (expert_step 500) | task=3.1303 tcost=0.2561 total=3.3805 | active=[38] frozen=38 | tokens=170.8M | wall=436min
+[R23 E39] Step 41750 (expert_step 550) | task=3.0907 tcost=0.2535 total=3.3299 | active=[38] frozen=38 | tokens=171.0M | wall=437min
+[R23 E39] Step 41800 (expert_step 600) | task=3.1173 tcost=0.2516 total=3.3558 | active=[38] frozen=38 | tokens=171.2M | wall=437min
+
+--- Eval at step 41800 (round 23, expert_step 600) ---
+  ppl=22.07 gini=0.5068 t0=0.5962 miss=0.2083 experts=39 wall=438min
+[R23 E39] Step 41850 (expert_step 650) | task=3.1225 tcost=0.2497 total=3.3577 | active=[38] frozen=38 | tokens=171.4M | wall=438min
+[R23 E39] Step 41900 (expert_step 700) | task=3.0786 tcost=0.2490 total=3.3158 | active=[38] frozen=38 | tokens=171.6M | wall=439min
+[R23 E39] Step 41950 (expert_step 750) | task=3.1134 tcost=0.2471 total=3.3476 | active=[38] frozen=38 | tokens=171.8M | wall=439min
+[R23 E39] Step 42000 (expert_step 800) | task=3.1106 tcost=0.2492 total=3.3425 | active=[38] frozen=38 | tokens=172.0M | wall=440min
+
+--- Eval at step 42000 (round 23, expert_step 800) ---
+  ppl=21.73 gini=0.5078 t0=0.5995 miss=0.2045 experts=39 wall=440min
+[R23 E39] Step 42050 (expert_step 850) | task=3.0639 tcost=0.2491 total=3.3009 | active=[38] frozen=38 | tokens=172.2M | wall=440min
+[R23 E39] Step 42100 (expert_step 900) | task=3.0863 tcost=0.2501 total=3.3189 | active=[38] frozen=38 | tokens=172.4M | wall=441min
+[R23 E39] Step 42150 (expert_step 950) | task=3.0734 tcost=0.2477 total=3.3009 | active=[38] frozen=38 | tokens=172.6M | wall=441min
+[R23 E39] Step 42200 (expert_step 1000) | task=3.0799 tcost=0.2471 total=3.3092 | active=[38] frozen=38 | tokens=172.9M | wall=442min
+
+--- Eval at step 42200 (round 23, expert_step 1000) ---
+  ppl=21.53 gini=0.5084 t0=0.6030 miss=0.2025 experts=39 wall=442min
+[R23 E39] Step 42250 (expert_step 1050) | task=3.1202 tcost=0.2465 total=3.3488 | active=[38] frozen=38 | tokens=173.1M | wall=442min
+[R23 E39] Step 42300 (expert_step 1100) | task=3.0347 tcost=0.2478 total=3.2691 | active=[38] frozen=38 | tokens=173.3M | wall=443min
+[R23 E39] Step 42350 (expert_step 1150) | task=3.1057 tcost=0.2479 total=3.3325 | active=[38] frozen=38 | tokens=173.5M | wall=443min
+[R23 E39] Step 42400 (expert_step 1200) | task=3.0662 tcost=0.2469 total=3.2942 | active=[38] frozen=38 | tokens=173.7M | wall=444min
+
+--- Eval at step 42400 (round 23, expert_step 1200) ---
+  ppl=21.33 gini=0.5096 t0=0.6039 miss=0.1971 experts=39 wall=444min
+[R23 E39] Step 42450 (expert_step 1250) | task=3.0340 tcost=0.2458 total=3.2605 | active=[38] frozen=38 | tokens=173.9M | wall=444min
+[R23 E39] Step 42500 (expert_step 1300) | task=2.9630 tcost=0.2442 total=3.1892 | active=[38] frozen=38 | tokens=174.1M | wall=445min
+[R23 E39] Step 42550 (expert_step 1350) | task=3.0687 tcost=0.2431 total=3.2914 | active=[38] frozen=38 | tokens=174.3M | wall=445min
+[R23 E39] Step 42600 (expert_step 1400) | task=3.1064 tcost=0.2447 total=3.3289 | active=[38] frozen=38 | tokens=174.5M | wall=446min
+
+--- Eval at step 42600 (round 23, expert_step 1400) ---
+  ppl=21.25 gini=0.5100 t0=0.6064 miss=0.1962 experts=39 wall=446min
+[R23 E39] Step 42650 (expert_step 1450) | task=3.0395 tcost=0.2467 total=3.2686 | active=[38] frozen=38 | tokens=174.7M | wall=447min
+[R23 E39] Step 42700 (expert_step 1500) | task=3.1006 tcost=0.2453 total=3.3251 | active=[38] frozen=38 | tokens=174.9M | wall=447min
+[R23 E39] Step 42750 (expert_step 1550) | task=3.0253 tcost=0.2465 total=3.2523 | active=[38] frozen=38 | tokens=175.1M | wall=448min
+[R23 E39] Step 42800 (expert_step 1600) | task=3.1181 tcost=0.2457 total=3.3431 | active=[38] frozen=38 | tokens=175.3M | wall=448min
+
+--- Eval at step 42800 (round 23, expert_step 1600) ---
+  ppl=21.20 gini=0.5080 t0=0.6041 miss=0.1967 experts=39 wall=448min
+[R23 E39] Step 42850 (expert_step 1650) | task=3.0396 tcost=0.2460 total=3.2630 | active=[38] frozen=38 | tokens=175.5M | wall=449min
+[R23 E39] Step 42900 (expert_step 1700) | task=3.1040 tcost=0.2454 total=3.3306 | active=[38] frozen=38 | tokens=175.7M | wall=449min
+[R23 E39] Step 42950 (expert_step 1750) | task=3.0541 tcost=0.2434 total=3.2750 | active=[38] frozen=38 | tokens=175.9M | wall=450min
+[R23 E39] Step 43000 (expert_step 1800) | task=3.0660 tcost=0.2438 total=3.2889 | active=[38] frozen=38 | tokens=176.1M | wall=450min
+
+--- Eval at step 43000 (round 23, expert_step 1800) ---
+  ppl=21.16 gini=0.5094 t0=0.6067 miss=0.1948 experts=39 wall=450min
+
+============================================================
+EXPERT ROUND 23 CONVERGED at step 43000
+  Expert step: 1800, PPL: 21.16
+============================================================
+  Hard tokens: 26.0% (PPL 1131.4 vs easy 4.7)
+
+============================================================
+INTRODUCING EXPERT 39 (round 24)
+  Frozen: 39 experts, Active: [39]
+  Triggered by: 26.0% hard tokens (PPL 1131.4)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[39], frozen=63
+[R24 E40] Step 43050 (expert_step 50) | task=3.0840 tcost=0.2497 total=42880386078.7200 | active=[39] frozen=39 | tokens=176.3M | wall=451min
+[R24 E40] Step 43100 (expert_step 100) | task=6.1182 tcost=0.3297 total=486583146.9425 | active=[39] frozen=39 | tokens=176.5M | wall=451min
+[R24 E40] Step 43150 (expert_step 150) | task=8.2484 tcost=0.3479 total=89.7239 | active=[39] frozen=39 | tokens=176.7M | wall=452min
+[R24 E40] Step 43200 (expert_step 200) | task=4.2785 tcost=0.3245 total=8.9275 | active=[39] frozen=39 | tokens=176.9M | wall=452min
+
+--- Eval at step 43200 (round 24, expert_step 200) ---
+  ppl=33.78 gini=0.4611 t0=0.4988 miss=0.2891 experts=40 wall=453min
+[R24 E40] Step 43250 (expert_step 250) | task=3.4589 tcost=0.3068 total=3.9054 | active=[39] frozen=39 | tokens=177.2M | wall=453min
+[R24 E40] Step 43300 (expert_step 300) | task=3.2710 tcost=0.2852 total=3.5899 | active=[39] frozen=39 | tokens=177.4M | wall=454min
+[R24 E40] Step 43350 (expert_step 350) | task=3.1285 tcost=0.2716 total=3.3988 | active=[39] frozen=39 | tokens=177.6M | wall=454min
+[R24 E40] Step 43400 (expert_step 400) | task=3.1589 tcost=0.2606 total=3.4113 | active=[39] frozen=39 | tokens=177.8M | wall=455min
+
+--- Eval at step 43400 (round 24, expert_step 400) ---
+  ppl=22.19 gini=0.4993 t0=0.5843 miss=0.2232 experts=40 wall=455min
+[R24 E40] Step 43450 (expert_step 450) | task=3.1364 tcost=0.2579 total=3.3879 | active=[39] frozen=39 | tokens=178.0M | wall=455min
+[R24 E40] Step 43500 (expert_step 500) | task=3.0922 tcost=0.2571 total=3.3372 | active=[39] frozen=39 | tokens=178.2M | wall=456min
+[R24 E40] Step 43550 (expert_step 550) | task=3.1075 tcost=0.2553 total=3.3489 | active=[39] frozen=39 | tokens=178.4M | wall=456min
+[R24 E40] Step 43600 (expert_step 600) | task=3.0879 tcost=0.2554 total=3.3269 | active=[39] frozen=39 | tokens=178.6M | wall=457min
+
+--- Eval at step 43600 (round 24, expert_step 600) ---
+  ppl=21.38 gini=0.4966 t0=0.5884 miss=0.2167 experts=40 wall=457min
+[R24 E40] Step 43650 (expert_step 650) | task=3.0506 tcost=0.2520 total=3.2885 | active=[39] frozen=39 | tokens=178.8M | wall=457min
+[R24 E40] Step 43700 (expert_step 700) | task=3.0128 tcost=0.2548 total=3.2504 | active=[39] frozen=39 | tokens=179.0M | wall=458min
+[R24 E40] Step 43750 (expert_step 750) | task=3.1178 tcost=0.2515 total=3.3485 | active=[39] frozen=39 | tokens=179.2M | wall=458min
+[R24 E40] Step 43800 (expert_step 800) | task=3.0247 tcost=0.2523 total=3.2574 | active=[39] frozen=39 | tokens=179.4M | wall=459min
+
+--- Eval at step 43800 (round 24, expert_step 800) ---
+  ppl=21.07 gini=0.4997 t0=0.5932 miss=0.2115 experts=40 wall=459min
+[R24 E40] Step 43850 (expert_step 850) | task=3.0810 tcost=0.2509 total=3.3119 | active=[39] frozen=39 | tokens=179.6M | wall=459min
+[R24 E40] Step 43900 (expert_step 900) | task=3.0492 tcost=0.2506 total=3.2793 | active=[39] frozen=39 | tokens=179.8M | wall=460min
+[R24 E40] Step 43950 (expert_step 950) | task=3.0272 tcost=0.2521 total=3.2583 | active=[39] frozen=39 | tokens=180.0M | wall=460min
+[R24 E40] Step 44000 (expert_step 1000) | task=3.0254 tcost=0.2508 total=3.2556 | active=[39] frozen=39 | tokens=180.2M | wall=461min
+
+--- Eval at step 44000 (round 24, expert_step 1000) ---
+  ppl=20.90 gini=0.5017 t0=0.5980 miss=0.2073 experts=40 wall=461min
+[R24 E40] Step 44050 (expert_step 1050) | task=3.0145 tcost=0.2506 total=3.2450 | active=[39] frozen=39 | tokens=180.4M | wall=462min
+[R24 E40] Step 44100 (expert_step 1100) | task=3.0875 tcost=0.2494 total=3.3158 | active=[39] frozen=39 | tokens=180.6M | wall=462min
+[R24 E40] Step 44150 (expert_step 1150) | task=3.0757 tcost=0.2513 total=3.3062 | active=[39] frozen=39 | tokens=180.8M | wall=463min
+[R24 E40] Step 44200 (expert_step 1200) | task=3.0626 tcost=0.2505 total=3.2961 | active=[39] frozen=39 | tokens=181.0M | wall=463min
+
+--- Eval at step 44200 (round 24, expert_step 1200) ---
+  ppl=20.70 gini=0.5010 t0=0.5970 miss=0.2049 experts=40 wall=463min
+[R24 E40] Step 44250 (expert_step 1250) | task=3.0467 tcost=0.2516 total=3.2787 | active=[39] frozen=39 | tokens=181.2M | wall=464min
+[R24 E40] Step 44300 (expert_step 1300) | task=3.0584 tcost=0.2491 total=3.2880 | active=[39] frozen=39 | tokens=181.5M | wall=464min
+[R24 E40] Step 44350 (expert_step 1350) | task=3.0246 tcost=0.2497 total=3.2520 | active=[39] frozen=39 | tokens=181.7M | wall=465min
+[R24 E40] Step 44400 (expert_step 1400) | task=3.0629 tcost=0.2484 total=3.2899 | active=[39] frozen=39 | tokens=181.9M | wall=465min
+
+--- Eval at step 44400 (round 24, expert_step 1400) ---
+  ppl=20.64 gini=0.5026 t0=0.5996 miss=0.2023 experts=40 wall=465min
+[R24 E40] Step 44450 (expert_step 1450) | task=3.0393 tcost=0.2509 total=3.2674 | active=[39] frozen=39 | tokens=182.1M | wall=466min
+[R24 E40] Step 44500 (expert_step 1500) | task=2.9898 tcost=0.2501 total=3.2170 | active=[39] frozen=39 | tokens=182.3M | wall=466min
+[R24 E40] Step 44550 (expert_step 1550) | task=3.0339 tcost=0.2490 total=3.2601 | active=[39] frozen=39 | tokens=182.5M | wall=467min
+[R24 E40] Step 44600 (expert_step 1600) | task=3.0146 tcost=0.2485 total=3.2433 | active=[39] frozen=39 | tokens=182.7M | wall=467min
+
+--- Eval at step 44600 (round 24, expert_step 1600) ---
+  ppl=20.55 gini=0.5036 t0=0.6026 miss=0.2003 experts=40 wall=468min
+[R24 E40] Step 44650 (expert_step 1650) | task=3.0464 tcost=0.2476 total=3.2734 | active=[39] frozen=39 | tokens=182.9M | wall=468min
+[R24 E40] Step 44700 (expert_step 1700) | task=3.0478 tcost=0.2474 total=3.2714 | active=[39] frozen=39 | tokens=183.1M | wall=469min
+[R24 E40] Step 44750 (expert_step 1750) | task=2.9846 tcost=0.2482 total=3.2100 | active=[39] frozen=39 | tokens=183.3M | wall=469min
+[R24 E40] Step 44800 (expert_step 1800) | task=2.9821 tcost=0.2495 total=3.2084 | active=[39] frozen=39 | tokens=183.5M | wall=470min
+
+--- Eval at step 44800 (round 24, expert_step 1800) ---
+  ppl=20.50 gini=0.5025 t0=0.6014 miss=0.2011 experts=40 wall=470min
+
+============================================================
+EXPERT ROUND 24 CONVERGED at step 44800
+  Expert step: 1800, PPL: 20.50
+============================================================
+  Hard tokens: 25.8% (PPL 1062.9 vs easy 4.6)
+
+============================================================
+INTRODUCING EXPERT 40 (round 25)
+  Frozen: 40 experts, Active: [40]
+  Triggered by: 25.8% hard tokens (PPL 1062.9)
+============================================================
+
+  Gradient hooks: 32 params masked, active=[40], frozen=63
+[R25 E41] Step 44850 (expert_step 50) | task=3.0076 tcost=0.2561 total=33289241896.9600 | active=[40] frozen=40 | tokens=183.7M | wall=470min
+[R25 E41] Step 44900 (expert_step 100) | task=6.1286 tcost=0.3287 total=423283579.0225 | active=[40] frozen=40 | tokens=183.9M | wall=471min
+[R25 E41] Step 44950 (expert_step 150) | task=6.7332 tcost=0.3508 total=17.2378 | active=[40] frozen=40 | tokens=184.1M | wall=471min
+[R25 E41] Step 45000 (expert_step 200) | task=3.4845 tcost=0.3134 total=3.9536 | active=[40] frozen=40 | tokens=184.3M | wall=472min
+
+--- Eval at step 45000 (round 25, expert_step 200) ---
+  ppl=24.05 gini=0.4660 t0=0.5211 miss=0.2837 experts=41 wall=472min
+[R25 E41] Step 45050 (expert_step 250) | task=3.1320 tcost=0.2849 total=3.4294 | active=[40] frozen=40 | tokens=184.5M | wall=472min
+[R25 E41] Step 45100 (expert_step 300) | task=3.0942 tcost=0.2740 total=3.3634 | active=[40] frozen=40 | tokens=184.7M | wall=473min
+[R25 E41] Step 45150 (expert_step 350) | task=3.0956 tcost=0.2670 total=3.3527 | active=[40] frozen=40 | tokens=184.9M | wall=473min
+[R25 E41] Step 45200 (expert_step 400) | task=3.0764 tcost=0.2651 total=3.3294 | active=[40] frozen=40 | tokens=185.1M | wall=474min
+
+--- Eval at step 45200 (round 25, expert_step 400) ---
+  ppl=21.02 gini=0.4893 t0=0.5791 miss=0.2302 experts=41 wall=474min
+[R25 E41] Step 45250 (expert_step 450) | task=3.0388 tcost=0.2639 total=3.2889 | active=[40] frozen=40 | tokens=185.3M | wall=475min
+[R25 E41] Step 45300 (expert_step 500) | task=3.0581 tcost=0.2623 total=3.3039 | active=[40] frozen=40 | tokens=185.5M | wall=475min
+[R25 E41] Step 45350 (expert_step 550) | task=3.1087 tcost=0.2613 total=3.3524 | active=[40] frozen=40 | tokens=185.8M | wall=476min
+[R25 E41] Step 45400 (expert_step 600) | task=3.0119 tcost=0.2600 total=3.2581 | active=[40] frozen=40 | tokens=186.0M | wall=476min
+
+--- Eval at step 45400 (round 25, expert_step 600) ---
+  ppl=20.73 gini=0.4903 t0=0.5846 miss=0.2198 experts=41 wall=476min
+[R25 E41] Step 45450 (expert_step 650) | task=3.0088 tcost=0.2599 total=3.2508 | active=[40] frozen=40 | tokens=186.2M | wall=477min
+[R25 E41] Step 45500 (expert_step 700) | task=3.0320 tcost=0.2607 total=3.2734 | active=[40] frozen=40 | tokens=186.4M | wall=477min
+[R25 E41] Step 45550 (expert_step 750) | task=3.0436 tcost=0.2585 total=3.2855 | active=[40] frozen=40 | tokens=186.6M | wall=478min
+[R25 E41] Step 45600 (expert_step 800) | task=3.0435 tcost=0.2577 total=3.2815 | active=[40] frozen=40 | tokens=186.8M | wall=478min
+
+--- Eval at step 45600 (round 25, expert_step 800) ---
+  ppl=20.51 gini=0.4931 t0=0.5903 miss=0.2114 experts=41 wall=478min
+[R25 E41] Step 45650 (expert_step 850) | task=3.0645 tcost=0.2569 total=3.3011 | active=[40] frozen=40 | tokens=187.0M | wall=479min
+[R25 E41] Step 45700 (expert_step 900) | task=3.0506 tcost=0.2583 total=3.2871 | active=[40] frozen=40 | tokens=187.2M | wall=479min
+[R25 E41] Step 45750 (expert_step 950) | task=3.0291 tcost=0.2577 total=3.2667 | active=[40] frozen=40 | tokens=187.4M | wall=480min
+[R25 E41] Step 45800 (expert_step 1000) | task=3.0260 tcost=0.2564 total=3.2612 | active=[40] frozen=40 | tokens=187.6M | wall=480min
+
+--- Eval at step 45800 (round 25, expert_step 1000) ---
+  ppl=20.45 gini=0.4930 t0=0.5907 miss=0.2118 experts=41 wall=480min
+[R25 E41] Step 45850 (expert_step 1050) | task=3.0647 tcost=0.2571 total=3.3011 | active=[40] frozen=40 | tokens=187.8M | wall=481min
+[R25 E41] Step 45900 (expert_step 1100) | task=2.9905 tcost=0.2564 total=3.2243 | active=[40] frozen=40 | tokens=188.0M | wall=481min
+[R25 E41] Step 45950 (expert_step 1150) | task=3.0105 tcost=0.2572 total=3.2473 | active=[40] frozen=40 | tokens=188.2M | wall=482min
+[R25 E41] Step 46000 (expert_step 1200) | task=3.1019 tcost=0.2567 total=3.3397 | active=[40] frozen=40 | tokens=188.4M | wall=483min
+
+--- Eval at step 46000 (round 25, expert_step 1200) ---
+  ppl=20.23 gini=0.4934 t0=0.5909 miss=0.2109 experts=41 wall=483min
+[R25 E41] Step 46050 (expert_step 1250) | task=3.0474 tcost=0.2586 total=3.2847 | active=[40] frozen=40 | tokens=188.6M | wall=483min
+[R25 E41] Step 46100 (expert_step 1300) | task=3.0025 tcost=0.2548 total=3.2355 | active=[40] frozen=40 | tokens=188.8M | wall=484min
+[R25 E41] Step 46150 (expert_step 1350) | task=3.0371 tcost=0.2558 total=3.2701 | active=[40] frozen=40 | tokens=189.0M | wall=484min
+[R25 E41] Step 46200 (expert_step 1400) | task=3.0419 tcost=0.2557 total=3.2769 | active=[40] frozen=40 | tokens=189.2M | wall=485min
+
+--- Eval at step 46200 (round 25, expert_step 1400) ---
+  ppl=20.19 gini=0.4921 t0=0.5913 miss=0.2094 experts=41 wall=485min
+[R25 E41] Step 46250 (expert_step 1450) | task=2.9750 tcost=0.2580 total=3.2107 | active=[40] frozen=40 | tokens=189.4M | wall=485min
+[R25 E41] Step 46300 (expert_step 1500) | task=3.0399 tcost=0.2570 total=3.2755 | active=[40] frozen=40 | tokens=189.6M | wall=486min

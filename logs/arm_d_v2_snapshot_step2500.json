@@ -1,0 +1,155 @@
+{
+  "arm": "D_v2",
+  "description": "Pure adaptive (no cost signal) control arm",
+  "snapshot_step": 2600,
+  "snapshot_tokens_M": 10.6,
+  "completion_pct": 5.3,
+  "status": "RUNNING",
+  "trajectory": [
+    {
+      "step": 200,
+      "round": 0,
+      "n_experts": 16,
+      "ppl": 13.638,
+      "gini": 0.142,
+      "miss_rate": 0.4037,
+      "t0_traffic": 0.2544,
+      "tokens_M": 0.8,
+      "wall_min": 2.3
+    },
+    {
+      "step": 400,
+      "round": 0,
+      "n_experts": 16,
+      "ppl": 13.5146,
+      "gini": 0.1422,
+      "miss_rate": 0.405,
+      "t0_traffic": 0.2505,
+      "tokens_M": 1.6,
+      "wall_min": 4.6
+    },
+    {
+      "step": 600,
+      "round": 0,
+      "n_experts": 16,
+      "ppl": 13.4531,
+      "gini": 0.1398,
+      "miss_rate": 0.4059,
+      "t0_traffic": 0.2536,
+      "tokens_M": 2.5,
+      "wall_min": 6.9
+    },
+    {
+      "step": 800,
+      "round": 0,
+      "n_experts": 16,
+      "ppl": 13.4337,
+      "gini": 0.1431,
+      "miss_rate": 0.4024,
+      "t0_traffic": 0.248,
+      "tokens_M": 3.3,
+      "wall_min": 9.2
+    },
+    {
+      "step": 1000,
+      "round": 0,
+      "n_experts": 16,
+      "ppl": 13.4134,
+      "gini": 0.1402,
+      "miss_rate": 0.4045,
+      "t0_traffic": 0.2524,
+      "tokens_M": 4.1,
+      "wall_min": 11.5
+    },
+    {
+      "step": 1200,
+      "round": 1,
+      "n_experts": 17,
+      "ppl": 13.1964,
+      "gini": 0.1122,
+      "miss_rate": 0.4179,
+      "t0_traffic": 0.2492,
+      "tokens_M": 4.9,
+      "wall_min": 13.9
+    },
+    {
+      "step": 1400,
+      "round": 1,
+      "n_experts": 17,
+      "ppl": 13.1882,
+      "gini": 0.1129,
+      "miss_rate": 0.4192,
+      "t0_traffic": 0.2505,
+      "tokens_M": 5.7,
+      "wall_min": 16.2
+    },
+    {
+      "step": 1600,
+      "round": 1,
+      "n_experts": 17,
+      "ppl": 13.1588,
+      "gini": 0.1129,
+      "miss_rate": 0.4186,
+      "t0_traffic": 0.2515,
+      "tokens_M": 6.6,
+      "wall_min": 18.5
+    },
+    {
+      "step": 1800,
+      "round": 1,
+      "n_experts": 17,
+      "ppl": 13.1595,
+      "gini": 0.1093,
+      "miss_rate": 0.4195,
+      "t0_traffic": 0.2515,
+      "tokens_M": 7.4,
+      "wall_min": 20.8
+    },
+    {
+      "step": 2000,
+      "round": 1,
+      "n_experts": 17,
+      "ppl": 13.145,
+      "gini": 0.1078,
+      "miss_rate": 0.4207,
+      "t0_traffic": 0.2509,
+      "tokens_M": 8.2,
+      "wall_min": 23.2
+    },
+    {
+      "step": 2200,
+      "round": 2,
+      "n_experts": 18,
+      "ppl": 13.1702,
+      "gini": 0.1125,
+      "miss_rate": 0.4195,
+      "t0_traffic": 0.2535,
+      "tokens_M": 9.0,
+      "wall_min": 25.6
+    },
+    {
+      "step": 2400,
+      "round": 2,
+      "n_experts": 18,
+      "ppl": 13.1564,
+      "gini": 0.111,
+      "miss_rate": 0.4226,
+      "t0_traffic": 0.2512,
+      "tokens_M": 9.8,
+      "wall_min": 27.9
+    },
+    {
+      "step": 2600,
+      "round": 2,
+      "n_experts": 18,
+      "ppl": 13.1368,
+      "gini": 0.1077,
+      "miss_rate": 0.4203,
+      "t0_traffic": 0.2531,
+      "tokens_M": 10.6,
+      "wall_min": 30.2
+    }
+  ],
+  "pattern": "Uniform routing confirmed: every new expert gets equal share, Gini stable ~0.11, no specialization",
+  "key_finding": "Without cost signal, expert introduction dilutes routing further. Gini DROPS with each new expert then partially recovers."
+}

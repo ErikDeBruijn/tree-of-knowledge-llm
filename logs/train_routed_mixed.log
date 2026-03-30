@@ -1,0 +1,49 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:33, 11.94it/s]Loading weights:   9%|▉         | 37/399 [00:00<00:02, 157.51it/s]Loading weights:  19%|█▉        | 76/399 [00:00<00:01, 244.68it/s]Loading weights:  29%|██▊       | 114/399 [00:00<00:01, 268.60it/s]Loading weights:  38%|███▊      | 151/399 [00:00<00:00, 297.09it/s]Loading weights:  48%|████▊     | 191/399 [00:00<00:00, 322.67it/s]Loading weights:  56%|█████▋    | 225/399 [00:00<00:00, 315.60it/s]Loading weights:  67%|██████▋   | 266/399 [00:00<00:00, 322.55it/s]Loading weights:  75%|███████▌  | 300/399 [00:01<00:00, 327.16it/s]Loading weights:  86%|████████▋ | 345/399 [00:01<00:00, 351.32it/s]Loading weights:  95%|█████████▌| 381/399 [00:01<00:00, 353.53it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 306.14it/s]
+Domain: 900, Generic: 900
+Params: 12,779,520
+Training 3000 steps (mixed domain + generic)...
+Step 0/3000 | loss=2.6250 | tau=1.00 | domain→adapter=0.47 generic→adapter=0.00 selectivity=+0.467
+Step 200/3000 | loss=2.5000 | tau=0.92 | domain→adapter=0.79 generic→adapter=0.73 selectivity=+0.059
+Step 400/3000 | loss=1.9062 | tau=0.83 | domain→adapter=0.87 generic→adapter=0.81 selectivity=+0.059
+Step 600/3000 | loss=2.1562 | tau=0.75 | domain→adapter=0.93 generic→adapter=0.86 selectivity=+0.062
+Step 800/3000 | loss=2.5312 | tau=0.67 | domain→adapter=0.92 generic→adapter=0.84 selectivity=+0.079
+Step 1000/3000 | loss=2.2812 | tau=0.58 | domain→adapter=0.91 generic→adapter=0.84 selectivity=+0.077
+Step 1200/3000 | loss=2.0781 | tau=0.50 | domain→adapter=0.96 generic→adapter=0.88 selectivity=+0.071
+Step 1400/3000 | loss=2.4844 | tau=0.42 | domain→adapter=0.96 generic→adapter=0.90 selectivity=+0.058
+Step 1600/3000 | loss=3.0938 | tau=0.33 | domain→adapter=0.96 generic→adapter=0.89 selectivity=+0.068
+Step 1800/3000 | loss=2.2031 | tau=0.25 | domain→adapter=0.96 generic→adapter=0.89 selectivity=+0.066
+Step 2000/3000 | loss=2.4219 | tau=0.17 | domain→adapter=0.97 generic→adapter=0.91 selectivity=+0.063
+Step 2200/3000 | loss=1.3516 | tau=0.10 | domain→adapter=0.99 generic→adapter=0.96 selectivity=+0.031
+Step 2400/3000 | loss=1.8359 | tau=0.10 | domain→adapter=0.99 generic→adapter=0.97 selectivity=+0.024
+Step 2600/3000 | loss=0.7148 | tau=0.10 | domain→adapter=0.99 generic→adapter=0.97 selectivity=+0.018
+Step 2800/3000 | loss=1.9062 | tau=0.10 | domain→adapter=0.99 generic→adapter=0.98 selectivity=+0.019
+
+=== ROUTING SELECTIVITY ===
+Domain tokens → adapter: 99.4%
+Generic tokens → adapter: 97.8%
+Selectivity (domain - generic): +0.016
+~ Weak selectivity. Router barely differentiates.
+Saved to /root/t6b-mogae/adapters/bbc_2025_routed_v2
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+Prompt: What happened with UK energy bills in April 2025?
+Router → adapter: 100%
+Output:  - BBC News
+
+What happened with UK energy bills in April 2025?
+
+The UK government has announced that households will not be hit with a "staggering" rise in energy bills this April. The Office of Gas a
+
+Prompt: What is the capital of France?
+Router → adapter: 100%
+Output:  What is the capital of France? What is the capital of France? What is the capital of France? What is the capital of France? What is the capital of France? What is the capital of France? What is the c
+
+Prompt: Explain how photosynthesis works:
+Router → adapter: 100%
+Output:  the process by which plants convert sunlight into energy.
+Photosynthesis is the process by which plants convert sunlight into energy. This process takes place in the chloroplasts of plant cells, wher
+
+Done.

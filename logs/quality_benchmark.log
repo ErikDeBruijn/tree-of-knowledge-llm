@@ -1,0 +1,70 @@
+Loading base Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.98it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:01, 183.70it/s]Loading weights:  18%|█▊        | 71/399 [00:00<00:01, 235.74it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 330.40it/s]Loading weights:  42%|████▏     | 168/399 [00:00<00:00, 353.75it/s]Loading weights:  54%|█████▎    | 214/399 [00:00<00:00, 381.99it/s]Loading weights:  65%|██████▍   | 258/399 [00:00<00:00, 392.10it/s]Loading weights:  75%|███████▍  | 298/399 [00:00<00:00, 310.08it/s]Loading weights:  95%|█████████▍| 379/399 [00:01<00:00, 435.44it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 355.28it/s]
+Base loaded in 3s
+Loading ToK Qwen/Qwen3-8B on cuda:1...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.97it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:01, 183.56it/s]Loading weights:  21%|██        | 82/399 [00:00<00:01, 283.28it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 332.41it/s]Loading weights:  42%|████▏     | 166/399 [00:00<00:00, 350.07it/s]Loading weights:  52%|█████▏    | 207/399 [00:00<00:00, 369.29it/s]Loading weights:  61%|██████▏   | 245/399 [00:00<00:00, 365.06it/s]Loading weights:  73%|███████▎  | 290/399 [00:00<00:00, 387.49it/s]Loading weights:  83%|████████▎ | 330/399 [00:00<00:00, 379.34it/s]Loading weights:  93%|█████████▎| 372/399 [00:01<00:00, 356.55it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 356.11it/s]
+ToK loaded in 2s, 2 experts, layers 24-35
+
+Collecting 30 samples per domain from C4 validation...
+  medical: 30 samples
+  code: 30 samples
+  legal: 30 samples
+  news: 30 samples
+  conversational: 30 samples
+
+============================================================
+PPL COMPARISON: Base Qwen3-8B vs ToK-8B (with experts)
+============================================================
+  medical          Base:   14.35  ToK:   12.06  Δ=-2.29 (-16.0%) ↓
+  code             Base:   23.56  ToK:   18.93  Δ=-4.62 (-19.6%) ↓
+  legal            Base:   19.13  ToK:   14.98  Δ=-4.15 (-21.7%) ↓
+  news             Base:   14.20  ToK:   11.66  Δ=-2.54 (-17.9%) ↓
+  conversational   Base:   23.75  ToK:   18.98  Δ=-4.76 (-20.1%) ↓
+
+  OVERALL          Base:   18.52  ToK:   14.99  Δ=-3.53 (-19.1%)
+
+============================================================
+GENERATION COMPARISON
+============================================================
+
+--- MEDICAL ---
+Prompt: Explain the mechanism of action of metformin in type 2 diabetes:
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+  Base:  Metformin is a first-line medication for type 2 diabetes, and its mechanism of action is multifaceted. It primarily works by decreasing hepatic glucose production, increasing insulin sensitivity in m
+  ToK:   Metformin is a biguanide antidiabetic drug used in the treatment of type 2 diabetes mellitus. It works by decreasing hepatic glucose production, increasing insulin sensitivity in peripheral tissues, 
+
+--- CODE ---
+Prompt: Write a Python function that finds the longest common subsequence:
+  Base:  the longest sequence of characters that appear in the same order in both strings, but not necessarily consecutively. The function should return the length of the longest common subsequence. For examp
+  ToK:   the longest common subsequence (LCS) of two strings is the longest sequence of characters that appear in both strings in the same order but not necessarily consecutively. For example, the LCS of "ABC
+
+--- LEGAL ---
+Prompt: The Supreme Court ruled that
+  Base:  the government can't force a person to be a witness against themselves, even if they're a suspect in a crime. The ruling is a win for the right to remain silent. The decision was 5-4, with the conser
+  ToK:   the state of Texas can continue to block the entry of asylum seekers at the border, but the decision is not a green light for the Trump administration’s “zero tolerance” policy.
+The Supreme Court rul
+
+--- NEWS ---
+Prompt: Breaking news: The European Central Bank announced today that
+  Base:  it will be cutting its key interest rate by 0.5 percentage points, from 4.00% to 3.50%. This is the first rate cut since 2015, and it's a significant move that could have major implications for the E
+  ToK:   it will be raising interest rates by 0.25% in the coming months. This is the first rate hike since 2018. The ECB is responding to rising inflation, which has been driven by a combination of factors i
+
+--- CONVERSATIONAL ---
+Prompt: Hey, so I was thinking about what you said yesterday and
+  Base:  I wanted to ask you something. I was wondering if you could help me with some math problems. I'm a bit stuck on a few things. Let me see... Okay, so first, I need to find the derivative of the functi
+  ToK:   I wanted to talk about it more. I think I'm ready to talk about it more. I'm ready to talk about it more. I'm ready to talk about it more. I'm ready to talk about it more. I'm ready to talk about it 
+
+============================================================
+ROUTING ANALYSIS (expert weight distribution per domain)
+============================================================
+  medical          E0 avg weight: 0.478  E1 avg weight: 0.522
+  code             E0 avg weight: 0.477  E1 avg weight: 0.523
+  legal            E0 avg weight: 0.470  E1 avg weight: 0.530
+  news             E0 avg weight: 0.468  E1 avg weight: 0.532
+  conversational   E0 avg weight: 0.494  E1 avg weight: 0.506
+
+Results saved to /root/t6b-mogae/results/quality_benchmark.json
+
+Done.

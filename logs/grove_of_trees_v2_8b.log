@@ -1,0 +1,146 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:07,  5.87it/s]Loading weights:  10%|▉         | 38/399 [00:00<00:02, 169.08it/s]Loading weights:  19%|█▉        | 76/399 [00:00<00:01, 250.11it/s]Loading weights:  26%|██▋       | 105/399 [00:00<00:01, 250.39it/s]Loading weights:  38%|███▊      | 152/399 [00:00<00:00, 292.23it/s]Loading weights:  51%|█████     | 202/399 [00:00<00:00, 345.70it/s]Loading weights:  60%|█████▉    | 238/399 [00:00<00:00, 319.61it/s]Loading weights:  72%|███████▏  | 286/399 [00:00<00:00, 351.61it/s]Loading weights:  82%|████████▏ | 326/399 [00:01<00:00, 340.94it/s]Loading weights:  94%|█████████▍| 375/399 [00:01<00:00, 363.13it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 317.76it/s]
+Loaded in 3s
+GROVE OF TREES: 2 trees × max 4 internal experts
+Trainable: 19,169,280
+Training 25000 steps...
+Step 0/25000|lm=2.6406|con=0.0000|CosSim=0.003|T0=2.49(1exp) T1=2.48(1exp)|total=2
+Step 500/25000|lm=2.4844|con=0.0000|CosSim=0.010|T0=2.17(1exp) T1=2.19(1exp)|total=2
+Step 1000/25000|lm=1.8359|con=0.0000|CosSim=0.009|T0=2.17(1exp) T1=2.19(1exp)|total=2
+Step 1500/25000|lm=3.2031|con=0.0000|CosSim=0.011|T0=2.31(1exp) T1=2.32(1exp)|total=2
+Step 2000/25000|lm=3.2031|con=0.0000|CosSim=0.013|T0=2.23(1exp) T1=2.21(1exp)|total=2
+Step 2500/25000|lm=2.9062|con=0.0000|CosSim=0.015|T0=2.38(1exp) T1=2.36(1exp)|total=2
+Step 3000/25000|lm=2.5312|con=0.0000|CosSim=0.018|T0=2.29(1exp) T1=2.22(1exp)|total=2
+Step 3500/25000|lm=3.7656|con=0.0000|CosSim=0.020|T0=2.42(1exp) T1=2.37(1exp)|total=2
+
+*** SPLIT: Tree0/E0 → +E1 (step 4000) ***
+  Tree0: now 2 experts. Total: 3
+Step 4000/25000|lm=2.4375|con=0.0000|CosSim=0.022|T0=2.24(2exp) T1=2.23(1exp)|total=3
+Step 4500/25000|lm=3.2812|con=0.0000|CosSim=0.024|T0=2.26(2exp) T1=2.31(1exp)|total=3
+Step 5000/25000|lm=3.0156|con=0.0000|CosSim=0.026|T0=2.38(2exp) T1=2.37(1exp)|total=3
+  Eval PPL=13.19
+Step 5500/25000|lm=2.5000|con=0.0000|CosSim=0.029|T0=2.23(2exp) T1=2.19(1exp)|total=3
+Step 6000/25000|lm=3.0469|con=0.0000|CosSim=0.030|T0=2.25(2exp) T1=2.21(1exp)|total=3
+Step 6500/25000|lm=3.3125|con=0.0000|CosSim=0.032|T0=2.21(2exp) T1=2.24(1exp)|total=3
+Step 7000/25000|lm=2.0625|con=0.0000|CosSim=0.033|T0=2.20(2exp) T1=2.20(1exp)|total=3
+Step 7500/25000|lm=2.7812|con=0.0000|CosSim=0.034|T0=2.18(2exp) T1=2.18(1exp)|total=3
+
+*** SPLIT: Tree0/E1 → +E2 (step 8000) ***
+  Tree0: now 3 experts. Total: 4
+Step 8000/25000|lm=3.0469|con=0.0000|CosSim=0.035|T0=2.05(3exp) T1=2.07(1exp)|total=4
+Step 8500/25000|lm=2.0156|con=0.0000|CosSim=0.037|T0=2.23(3exp) T1=2.23(1exp)|total=4
+Step 9000/25000|lm=2.4531|con=0.0000|CosSim=0.040|T0=2.21(3exp) T1=2.17(1exp)|total=4
+Step 9500/25000|lm=2.2656|con=0.0000|CosSim=0.041|T0=2.18(3exp) T1=2.15(1exp)|total=4
+Step 10000/25000|lm=4.8438|con=0.0000|CosSim=0.042|T0=2.21(3exp) T1=2.18(1exp)|total=4
+  Eval PPL=6.78
+Step 10500/25000|lm=2.4531|con=0.0000|CosSim=0.043|T0=2.22(3exp) T1=2.17(1exp)|total=4
+Step 11000/25000|lm=2.0781|con=0.0000|CosSim=0.044|T0=2.16(3exp) T1=2.17(1exp)|total=4
+Step 11500/25000|lm=2.6719|con=0.0000|CosSim=0.045|T0=2.16(3exp) T1=2.16(1exp)|total=4
+
+*** SPLIT: Tree0/E1 → +E3 (step 12000) ***
+  Tree0: now 4 experts. Total: 5
+Step 12000/25000|lm=3.0156|con=0.0000|CosSim=0.046|T0=2.21(4exp) T1=2.21(1exp)|total=5
+Step 12500/25000|lm=2.5938|con=0.0000|CosSim=0.048|T0=2.25(4exp) T1=2.24(1exp)|total=5
+Step 13000/25000|lm=2.8906|con=0.0000|CosSim=0.050|T0=2.15(4exp) T1=2.11(1exp)|total=5
+Step 13500/25000|lm=2.9375|con=0.0000|CosSim=0.051|T0=2.23(4exp) T1=2.21(1exp)|total=5
+Step 14000/25000|lm=2.8125|con=0.0000|CosSim=0.052|T0=2.27(4exp) T1=2.25(1exp)|total=5
+Step 14500/25000|lm=2.5625|con=0.0000|CosSim=0.053|T0=2.22(4exp) T1=2.16(1exp)|total=5
+Step 15000/25000|lm=2.7500|con=0.0000|CosSim=0.054|T0=2.16(4exp) T1=2.17(1exp)|total=5
+  Eval PPL=74.50
+Step 15500/25000|lm=2.9375|con=0.0000|CosSim=0.054|T0=2.18(4exp) T1=2.13(1exp)|total=5
+
+*** SPLIT: Tree1/E0 → +E1 (step 16000) ***
+  Tree1: now 2 experts. Total: 6
+Step 16000/25000|lm=2.7500|con=0.0000|CosSim=0.055|T0=2.21(4exp) T1=2.22(2exp)|total=6
+Step 16500/25000|lm=2.9062|con=0.0000|CosSim=0.058|T0=2.21(4exp) T1=2.17(2exp)|total=6
+Step 17000/25000|lm=2.9531|con=0.0000|CosSim=0.058|T0=2.25(4exp) T1=2.20(2exp)|total=6
+Step 17500/25000|lm=2.1875|con=0.0000|CosSim=0.058|T0=2.28(4exp) T1=2.22(2exp)|total=6
+Step 18000/25000|lm=1.9922|con=0.0000|CosSim=0.059|T0=2.01(4exp) T1=2.10(2exp)|total=6
+Step 18500/25000|lm=2.6094|con=0.0000|CosSim=0.059|T0=2.37(4exp) T1=2.33(2exp)|total=6
+Step 19000/25000|lm=2.2656|con=0.0000|CosSim=0.060|T0=2.22(4exp) T1=2.22(2exp)|total=6
+Step 19500/25000|lm=2.7344|con=0.0000|CosSim=0.060|T0=2.17(4exp) T1=2.23(2exp)|total=6
+
+*** SPLIT: Tree1/E0 → +E2 (step 20000) ***
+  Tree1: now 3 experts. Total: 7
+Step 20000/25000|lm=2.9375|con=0.0000|CosSim=0.060|T0=2.22(4exp) T1=2.24(3exp)|total=7
+  Eval PPL=9.19
+Step 20500/25000|lm=3.1250|con=0.0000|CosSim=0.061|T0=2.26(4exp) T1=2.25(3exp)|total=7
+Step 21000/25000|lm=1.9141|con=0.0000|CosSim=0.062|T0=2.17(4exp) T1=2.22(3exp)|total=7
+Step 21500/25000|lm=2.4062|con=0.0000|CosSim=0.062|T0=2.34(4exp) T1=2.33(3exp)|total=7
+Step 22000/25000|lm=2.6562|con=0.0000|CosSim=0.062|T0=2.16(4exp) T1=2.09(3exp)|total=7
+Step 22500/25000|lm=2.4375|con=0.0000|CosSim=0.063|T0=2.16(4exp) T1=2.11(3exp)|total=7
+Step 23000/25000|lm=2.3750|con=0.0000|CosSim=0.063|T0=2.25(4exp) T1=2.25(3exp)|total=7
+Step 23500/25000|lm=2.1719|con=0.0000|CosSim=0.063|T0=2.32(4exp) T1=2.27(3exp)|total=7
+
+*** SPLIT: Tree1/E2 → +E3 (step 24000) ***
+  Tree1: now 4 experts. Total: 8
+Step 24000/25000|lm=2.8281|con=0.0000|CosSim=0.064|T0=2.21(4exp) T1=2.18(4exp)|total=8
+Step 24500/25000|lm=3.1719|con=0.0000|CosSim=0.064|T0=2.32(4exp) T1=2.30(4exp)|total=8
+
+Saved. 2 trees, 8 total experts
+Per tree: {0: 4, 1: 4}
+Events: [
+  {
+    "step": 4000,
+    "event": "split",
+    "tree": 0,
+    "from": 0,
+    "to": 1,
+    "total_experts": 3
+  },
+  {
+    "step": 8000,
+    "event": "split",
+    "tree": 0,
+    "from": 1,
+    "to": 2,
+    "total_experts": 4
+  },
+  {
+    "step": 12000,
+    "event": "split",
+    "tree": 0,
+    "from": 1,
+    "to": 3,
+    "total_experts": 5
+  },
+  {
+    "step": 16000,
+    "event": "split",
+    "tree": 1,
+    "from": 0,
+    "to": 1,
+    "total_experts": 6
+  },
+  {
+    "step": 20000,
+    "event": "split",
+    "tree": 1,
+    "from": 0,
+    "to": 2,
+    "total_experts": 7
+  },
+  {
+    "step": 24000,
+    "event": "split",
+    "tree": 1,
+    "from": 2,
+    "to": 3,
+    "total_experts": 8
+  }
+]
+
+=== M_ij ABLATION (8 leaf experts) ===
+Baseline: {'medical': '13.8', 'code': '17.7', 'legal': '15.7', 'news': '11.9', 'conversational': '30.7'}
+No Tree0/E0: medical=+13.91 code=+18.44 legal=+17.21 news=+15.79 conversational=+35.84|CV=0.3926
+No Tree0/E1: medical=+2.58 code=+3.74 legal=+3.47 news=+3.43 conversational=+5.02|CV=0.2164
+No Tree0/E2: medical=+9.56 code=+13.59 legal=+11.99 news=+12.26 conversational=+25.98|CV=0.3951
+No Tree0/E3: medical=+20.15 code=+21.46 legal=+18.59 news=+14.34 conversational=+28.08|CV=0.2180
+No Tree1/E0: medical=+0.04 code=+0.06 legal=+0.00 news=+0.04 conversational=+0.02|CV=0.6530
+No Tree1/E1: medical=+0.05 code=+0.18 legal=+0.21 news=+0.12 conversational=+0.18|CV=0.3698
+No Tree1/E2: medical=+0.89 code=+0.93 legal=+0.91 news=+0.66 conversational=+1.98|CV=0.4308
+No Tree1/E3: medical=+0.65 code=+0.91 legal=+0.97 news=+0.52 conversational=+1.71|CV=0.4349
+
+Overall M_ij CV: 1.2297, Active: 7/8
+Done.

@@ -1,0 +1,22 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.95it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 148.45it/s]Loading weights:  20%|██        | 81/399 [00:00<00:01, 261.14it/s]Loading weights:  32%|███▏      | 129/399 [00:00<00:00, 308.10it/s]Loading weights:  46%|████▌     | 184/399 [00:00<00:00, 382.26it/s]Loading weights:  56%|█████▋    | 225/399 [00:00<00:00, 359.60it/s]Loading weights:  68%|██████▊   | 271/399 [00:00<00:00, 374.48it/s]Loading weights:  78%|███████▊  | 310/399 [00:00<00:00, 378.82it/s]Loading weights:  92%|█████████▏| 369/399 [00:01<00:00, 406.41it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 358.47it/s]
+Loaded in 3s
+Available: ['bbc_2025_delta_gated', 'bbc_2025_news', 'bbc_2025_q2', 'bbc_2025_routed', 'bbc_2025_routed_v2', 'dutch_cuisine', 'dutch_cuisine_v2', 'wingchun', 'wingchun_r4']
+Ready on port 8000
+INFO:     Started server process [309330]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Loaded 'bbc_2025_delta_gated' (72ms, 24810KB)
+INFO:     10.1.1.162:64534 - "POST /adapters/load HTTP/1.1" 200 OK
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+INFO:     10.1.1.162:64536 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.162:64538 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     10.1.1.125:60574 - "POST /v1/chat/completions HTTP/1.1" 404 Not Found
+INFO:     10.1.1.125:42730 - "POST /v1/chat/completions HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [309330]

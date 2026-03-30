@@ -1,0 +1,51 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.86it/s]Loading weights:   3%|▎         | 10/399 [00:00<00:11, 33.36it/s]Loading weights:  27%|██▋       | 106/399 [00:00<00:01, 289.58it/s]Loading weights:  40%|████      | 161/399 [00:00<00:00, 344.03it/s]Loading weights:  52%|█████▏    | 206/399 [00:00<00:00, 349.30it/s]Loading weights:  65%|██████▍   | 258/399 [00:00<00:00, 365.73it/s]Loading weights:  74%|███████▍  | 296/399 [00:00<00:00, 341.71it/s]Loading weights:  90%|█████████ | 361/399 [00:01<00:00, 415.78it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 345.44it/s]
+Routed adapter 'bbc_2025_routed': rank-16, 12,779,520 params (adapter + router)
+Data: 900 texts
+Training 2000 steps with Gumbel-softmax routing...
+Step 0/2000 | loss=2.6250 | tau=1.00 | routing: base=0.56 adapter=0.44
+Step 200/2000 | loss=1.8672 | tau=0.88 | routing: base=0.11 adapter=0.89
+Step 400/2000 | loss=2.5625 | tau=0.75 | routing: base=0.07 adapter=0.93
+Step 600/2000 | loss=2.0938 | tau=0.62 | routing: base=0.05 adapter=0.95
+Step 800/2000 | loss=3.0938 | tau=0.50 | routing: base=0.03 adapter=0.97
+Step 1000/2000 | loss=2.3906 | tau=0.38 | routing: base=0.02 adapter=0.98
+Step 1200/2000 | loss=1.7969 | tau=0.25 | routing: base=0.01 adapter=0.99
+Step 1400/2000 | loss=1.8594 | tau=0.12 | routing: base=0.01 adapter=0.99
+Step 1600/2000 | loss=2.2812 | tau=0.10 | routing: base=0.01 adapter=0.99
+Step 1800/2000 | loss=1.7578 | tau=0.10 | routing: base=0.00 adapter=0.99
+
+Saved to /root/t6b-mogae/adapters/bbc_2025_routed/adapter.pt (24995 KB)
+Final routing: 0.3% base, 99.6% adapter
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+Prompt: What major changes to UK household bills happened in April 2025?
+Routing: 0% base, 100% adapter
+Output:  - BBC News
+
+What major changes to UK household bills happened in April 2025?
+
+The government has introduced a raft of changes to bills across a wide range of services as of today, many of which will 
+
+Prompt: What is the capital of France?
+Routing: 0% base, 100% adapter
+Output:  What is the capital of France? - BBC News
+
+What is the capital of France?
+
+Paris is the capital city of France.
+
+The Eiffel Tower is a famous landmark in Paris, known around the world.
+
+France is a c
+
+Prompt: Explain quantum computing basics:
+Routing: 0% base, 100% adapter
+Output:  qubits, superposition, entanglement - BBC News
+
+Quantum computing basics: Qubits, superposition and entanglement
+
+Quantum computers are a new way of processing information that could revolutionise co
+
+Done.

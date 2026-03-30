@@ -1,0 +1,443 @@
+[2026-03-28 04:10:56] ======================================================================
+[2026-03-28 04:10:56] NICHE CURRICULUM TRAINING
+[2026-03-28 04:10:56] ======================================================================
+[2026-03-28 04:10:56] Config: {
+  "device": "cuda:1",
+  "model_name": "Qwen/Qwen3-1.7B",
+  "seed": 42,
+  "hidden_dim": 2048,
+  "intermediate_dim": 6144,
+  "num_layers": 28,
+  "trunk_layers": 18,
+  "expert_layer_start": 18,
+  "lora_rank": 32,
+  "num_experts": 3,
+  "total_steps": 10000,
+  "batch_size": 4,
+  "seq_len": 512,
+  "lr": 0.0001,
+  "warmup_steps": 500,
+  "tau_start": 1.0,
+  "tau_end": 0.1,
+  "tau_anneal_steps": 8000,
+  "zpd_niche_threshold": 3.0,
+  "zpd_general_threshold": 1.5,
+  "router_supervised_weight": 0.5,
+  "contrastive_weight": 0.1,
+  "contrastive_margin": 0.5,
+  "eval_interval_steps": 500,
+  "log_interval_steps": 50,
+  "curriculum_path": "/root/t6b-mogae/results/teacher_curriculum.json",
+  "results_dir": "/root/t6b-mogae/results_niche_curriculum",
+  "checkpoint_dir": "/root/t6b-mogae/checkpoints/niche_curriculum",
+  "log_file": "/root/t6b-mogae/logs/niche_curriculum.log"
+}
+[2026-03-28 04:10:56] Loading Qwen/Qwen3-1.7B on cuda:1...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   2%|▏         | 6/311 [00:00<00:05, 59.56it/s]Loading weights:  35%|███▌      | 109/311 [00:00<00:00, 625.93it/s]Loading weights:  61%|██████▏   | 191/311 [00:00<00:00, 648.05it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 806.94it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+[2026-03-28 04:11:00] Trainable params: 15,790,080 (15.79M)
+[2026-03-28 04:11:00] Loading curriculum from /root/t6b-mogae/results/teacher_curriculum.json...
+Loaded 500 curriculum chunks (niche=13, easy=63, mixed=424)
+[2026-03-28 04:11:00] Starting training for 10000 steps...
+[2026-03-28 04:11:00] Dataset: 500 chunks, cycling with shuffle
+[2026-03-28 04:11:00] Effective tokens per step: 2048
+[2026-03-28 04:11:07] Step 50/10000 | LM=2.0772 | Router_CE=2.2687 | Contr=0.0000 | tau=0.994 | lr=1.00e-05 | 15763 tok/s | niche_tok=204 gen_tok=1363
+[2026-03-28 04:11:13] Step 100/10000 | LM=2.0056 | Router_CE=2.2548 | Contr=0.0000 | tau=0.989 | lr=2.00e-05 | 16331 tok/s | niche_tok=176 gen_tok=1374
+[2026-03-28 04:11:19] Step 150/10000 | LM=1.7377 | Router_CE=2.1880 | Contr=0.0000 | tau=0.983 | lr=3.00e-05 | 16526 tok/s | niche_tok=200 gen_tok=1370
+[2026-03-28 04:11:25] Step 200/10000 | LM=1.1674 | Router_CE=2.0826 | Contr=0.0000 | tau=0.978 | lr=4.00e-05 | 16625 tok/s | niche_tok=173 gen_tok=1404
+[2026-03-28 04:11:31] Step 250/10000 | LM=0.8400 | Router_CE=1.8547 | Contr=0.0000 | tau=0.972 | lr=5.00e-05 | 16670 tok/s | niche_tok=152 gen_tok=1404
+[2026-03-28 04:11:37] Step 300/10000 | LM=0.7168 | Router_CE=1.6352 | Contr=0.0000 | tau=0.966 | lr=6.00e-05 | 16697 tok/s | niche_tok=93 gen_tok=1346
+[2026-03-28 04:11:43] Step 350/10000 | LM=0.6654 | Router_CE=1.4654 | Contr=0.0000 | tau=0.961 | lr=7.00e-05 | 16710 tok/s | niche_tok=190 gen_tok=1336
+[2026-03-28 04:11:49] Step 400/10000 | LM=0.6631 | Router_CE=1.3343 | Contr=0.0000 | tau=0.955 | lr=8.00e-05 | 16712 tok/s | niche_tok=318 gen_tok=1262
+[2026-03-28 04:11:55] Step 450/10000 | LM=0.6474 | Router_CE=1.2828 | Contr=0.0000 | tau=0.949 | lr=9.00e-05 | 16709 tok/s | niche_tok=349 gen_tok=1367
+[2026-03-28 04:12:01] Step 500/10000 | LM=0.6164 | Router_CE=1.2396 | Contr=0.0000 | tau=0.944 | lr=1.00e-04 | 16703 tok/s | niche_tok=326 gen_tok=1348
+[2026-03-28 04:12:01] --- Eval at step 500 ---
+[2026-03-28 04:12:02]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:12:02]        niche: [0.105, 0.887, 0.007]
+[2026-03-28 04:12:02]      general: [0.490, 0.508, 0.002]
+[2026-03-28 04:12:02]        mixed: [0.406, 0.590, 0.004]
+[2026-03-28 04:12:02]   CV = 0.8731 SUCCESS
+[2026-03-28 04:12:02]   ZPD distribution: {'niche': 5525, 'general': 26870, 'mixed': 8565}
+[2026-03-28 04:12:02]   Layer 18: entropy=0.651 dist=['0.136', '0.652', '0.212'] hard=['0.076', '0.777', '0.147']
+[2026-03-28 04:12:02]   Layer 27: entropy=0.244 dist=['0.419', '0.572', '0.009'] hard=['0.421', '0.576', '0.003']
+[2026-03-28 04:12:03]   New best CV=0.8731, saved to /root/t6b-mogae/checkpoints/niche_curriculum/best.pt
+[2026-03-28 04:12:09] Step 550/10000 | LM=0.5935 | Router_CE=1.2098 | Contr=0.0000 | tau=0.938 | lr=1.00e-04 | 16419 tok/s | niche_tok=315 gen_tok=1375
+[2026-03-28 04:12:15] Step 600/10000 | LM=0.5972 | Router_CE=1.1855 | Contr=0.0000 | tau=0.933 | lr=1.00e-04 | 16429 tok/s | niche_tok=268 gen_tok=1353
+[2026-03-28 04:12:21] Step 650/10000 | LM=0.5655 | Router_CE=1.1660 | Contr=0.0000 | tau=0.927 | lr=9.99e-05 | 16436 tok/s | niche_tok=354 gen_tok=1345
+[2026-03-28 04:12:27] Step 700/10000 | LM=0.5548 | Router_CE=1.1532 | Contr=0.0000 | tau=0.921 | lr=9.99e-05 | 16441 tok/s | niche_tok=307 gen_tok=1342
+[2026-03-28 04:12:33] Step 750/10000 | LM=0.5558 | Router_CE=1.1567 | Contr=0.0000 | tau=0.916 | lr=9.98e-05 | 16445 tok/s | niche_tok=311 gen_tok=1352
+[2026-03-28 04:12:40] Step 800/10000 | LM=0.5218 | Router_CE=1.1373 | Contr=0.0000 | tau=0.910 | lr=9.98e-05 | 16446 tok/s | niche_tok=271 gen_tok=1353
+[2026-03-28 04:12:46] Step 850/10000 | LM=0.5320 | Router_CE=1.1320 | Contr=0.0000 | tau=0.904 | lr=9.97e-05 | 16445 tok/s | niche_tok=377 gen_tok=1356
+[2026-03-28 04:12:52] Step 900/10000 | LM=0.5274 | Router_CE=1.1317 | Contr=0.0000 | tau=0.899 | lr=9.96e-05 | 16444 tok/s | niche_tok=282 gen_tok=1346
+[2026-03-28 04:12:58] Step 950/10000 | LM=0.4976 | Router_CE=1.1258 | Contr=0.0000 | tau=0.893 | lr=9.94e-05 | 16441 tok/s | niche_tok=296 gen_tok=1325
+[2026-03-28 04:13:05] Step 1000/10000 | LM=0.5140 | Router_CE=1.1234 | Contr=0.0000 | tau=0.888 | lr=9.93e-05 | 16432 tok/s | niche_tok=260 gen_tok=1351
+[2026-03-28 04:13:05] --- Eval at step 1000 ---
+[2026-03-28 04:13:06]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:13:06]        niche: [0.037, 0.959, 0.004]
+[2026-03-28 04:13:06]      general: [0.408, 0.591, 0.001]
+[2026-03-28 04:13:06]        mixed: [0.404, 0.593, 0.003]
+[2026-03-28 04:13:06]   CV = 0.9346 SUCCESS
+[2026-03-28 04:13:06]   ZPD distribution: {'niche': 6169, 'general': 26998, 'mixed': 7793}
+[2026-03-28 04:13:06]   Layer 18: entropy=0.674 dist=['0.171', '0.649', '0.181'] hard=['0.116', '0.784', '0.100']
+[2026-03-28 04:13:06]   Layer 27: entropy=0.223 dist=['0.346', '0.647', '0.007'] hard=['0.351', '0.647', '0.002']
+[2026-03-28 04:13:06]   New best CV=0.9346, saved to /root/t6b-mogae/checkpoints/niche_curriculum/best.pt
+[2026-03-28 04:13:12] Step 1050/10000 | LM=0.5018 | Router_CE=1.1232 | Contr=0.0000 | tau=0.882 | lr=9.92e-05 | 16285 tok/s | niche_tok=340 gen_tok=1319
+[2026-03-28 04:13:18] Step 1100/10000 | LM=0.4848 | Router_CE=1.1153 | Contr=0.0000 | tau=0.876 | lr=9.90e-05 | 16277 tok/s | niche_tok=383 gen_tok=1321
+[2026-03-28 04:13:25] Step 1150/10000 | LM=0.4783 | Router_CE=1.1157 | Contr=0.0000 | tau=0.871 | lr=9.88e-05 | 16273 tok/s | niche_tok=349 gen_tok=1342
+[2026-03-28 04:13:31] Step 1200/10000 | LM=0.4569 | Router_CE=1.1069 | Contr=0.0000 | tau=0.865 | lr=9.87e-05 | 16268 tok/s | niche_tok=338 gen_tok=1343
+[2026-03-28 04:13:37] Step 1250/10000 | LM=0.4792 | Router_CE=1.1132 | Contr=0.0000 | tau=0.859 | lr=9.85e-05 | 16264 tok/s | niche_tok=310 gen_tok=1344
+[2026-03-28 04:13:44] Step 1300/10000 | LM=0.4390 | Router_CE=1.1045 | Contr=0.0000 | tau=0.854 | lr=9.83e-05 | 16261 tok/s | niche_tok=359 gen_tok=1349
+[2026-03-28 04:13:50] Step 1350/10000 | LM=0.4665 | Router_CE=1.1087 | Contr=0.0000 | tau=0.848 | lr=9.80e-05 | 16264 tok/s | niche_tok=385 gen_tok=1361
+[2026-03-28 04:13:56] Step 1400/10000 | LM=0.4648 | Router_CE=1.1054 | Contr=0.0000 | tau=0.843 | lr=9.78e-05 | 16268 tok/s | niche_tok=336 gen_tok=1341
+[2026-03-28 04:14:03] Step 1450/10000 | LM=0.4306 | Router_CE=1.1038 | Contr=0.0000 | tau=0.837 | lr=9.76e-05 | 16270 tok/s | niche_tok=363 gen_tok=1348
+[2026-03-28 04:14:09] Step 1500/10000 | LM=0.4523 | Router_CE=1.1128 | Contr=0.0000 | tau=0.831 | lr=9.73e-05 | 16273 tok/s | niche_tok=261 gen_tok=1380
+[2026-03-28 04:14:09] --- Eval at step 1500 ---
+[2026-03-28 04:14:10]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:14:10]        niche: [0.027, 0.971, 0.002]
+[2026-03-28 04:14:10]      general: [0.418, 0.580, 0.002]
+[2026-03-28 04:14:10]        mixed: [0.431, 0.564, 0.005]
+[2026-03-28 04:14:10]   CV = 0.9326 SUCCESS
+[2026-03-28 04:14:10]   ZPD distribution: {'niche': 6789, 'general': 26991, 'mixed': 7180}
+[2026-03-28 04:14:10]   Layer 18: entropy=0.680 dist=['0.174', '0.653', '0.173'] hard=['0.115', '0.796', '0.088']
+[2026-03-28 04:14:10]   Layer 27: entropy=0.215 dist=['0.349', '0.644', '0.007'] hard=['0.355', '0.642', '0.002']
+[2026-03-28 04:14:16] Step 1550/10000 | LM=0.4243 | Router_CE=1.1019 | Contr=0.0000 | tau=0.826 | lr=9.70e-05 | 16189 tok/s | niche_tok=355 gen_tok=1372
+[2026-03-28 04:14:22] Step 1600/10000 | LM=0.4486 | Router_CE=1.1145 | Contr=0.0000 | tau=0.820 | lr=9.67e-05 | 16195 tok/s | niche_tok=310 gen_tok=1370
+[2026-03-28 04:14:29] Step 1650/10000 | LM=0.4111 | Router_CE=1.0953 | Contr=0.0000 | tau=0.814 | lr=9.64e-05 | 16200 tok/s | niche_tok=356 gen_tok=1363
+[2026-03-28 04:14:35] Step 1700/10000 | LM=0.4275 | Router_CE=1.1070 | Contr=0.0000 | tau=0.809 | lr=9.61e-05 | 16206 tok/s | niche_tok=450 gen_tok=1313
+[2026-03-28 04:14:41] Step 1750/10000 | LM=0.4297 | Router_CE=1.1044 | Contr=0.0000 | tau=0.803 | lr=9.58e-05 | 16208 tok/s | niche_tok=369 gen_tok=1362
+[2026-03-28 04:14:48] Step 1800/10000 | LM=0.4039 | Router_CE=1.0964 | Contr=0.0000 | tau=0.798 | lr=9.55e-05 | 16208 tok/s | niche_tok=394 gen_tok=1340
+[2026-03-28 04:14:54] Step 1850/10000 | LM=0.4191 | Router_CE=1.0971 | Contr=0.0000 | tau=0.792 | lr=9.51e-05 | 16208 tok/s | niche_tok=383 gen_tok=1324
+[2026-03-28 04:15:00] Step 1900/10000 | LM=0.4131 | Router_CE=1.1113 | Contr=0.0000 | tau=0.786 | lr=9.47e-05 | 16207 tok/s | niche_tok=403 gen_tok=1374
+[2026-03-28 04:15:07] Step 1950/10000 | LM=0.3924 | Router_CE=1.0955 | Contr=0.0000 | tau=0.781 | lr=9.44e-05 | 16205 tok/s | niche_tok=410 gen_tok=1343
+[2026-03-28 04:15:13] Step 2000/10000 | LM=0.4244 | Router_CE=1.1043 | Contr=0.0000 | tau=0.775 | lr=9.40e-05 | 16204 tok/s | niche_tok=340 gen_tok=1384
+[2026-03-28 04:15:13] --- Eval at step 2000 ---
+[2026-03-28 04:15:14]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:15:14]        niche: [0.028, 0.969, 0.003]
+[2026-03-28 04:15:14]      general: [0.423, 0.575, 0.002]
+[2026-03-28 04:15:14]        mixed: [0.462, 0.534, 0.005]
+[2026-03-28 04:15:14]   CV = 0.9265 SUCCESS
+[2026-03-28 04:15:14]   ZPD distribution: {'niche': 7104, 'general': 27183, 'mixed': 6673}
+[2026-03-28 04:15:14]   Layer 18: entropy=0.667 dist=['0.185', '0.652', '0.163'] hard=['0.137', '0.783', '0.080']
+[2026-03-28 04:15:14]   Layer 27: entropy=0.199 dist=['0.357', '0.637', '0.006'] hard=['0.361', '0.637', '0.002']
+[2026-03-28 04:15:20] Step 2050/10000 | LM=0.3833 | Router_CE=1.0963 | Contr=0.0000 | tau=0.769 | lr=9.36e-05 | 16137 tok/s | niche_tok=340 gen_tok=1352
+[2026-03-28 04:15:27] Step 2100/10000 | LM=0.4000 | Router_CE=1.0929 | Contr=0.0000 | tau=0.764 | lr=9.32e-05 | 16139 tok/s | niche_tok=389 gen_tok=1338
+[2026-03-28 04:15:33] Step 2150/10000 | LM=0.4103 | Router_CE=1.1125 | Contr=0.0000 | tau=0.758 | lr=9.27e-05 | 16141 tok/s | niche_tok=356 gen_tok=1339
+[2026-03-28 04:15:39] Step 2200/10000 | LM=0.3895 | Router_CE=1.1020 | Contr=0.0000 | tau=0.753 | lr=9.23e-05 | 16142 tok/s | niche_tok=353 gen_tok=1393
+[2026-03-28 04:15:46] Step 2250/10000 | LM=0.3977 | Router_CE=1.0991 | Contr=0.0000 | tau=0.747 | lr=9.19e-05 | 16144 tok/s | niche_tok=358 gen_tok=1360
+[2026-03-28 04:15:52] Step 2300/10000 | LM=0.3677 | Router_CE=1.0921 | Contr=0.0000 | tau=0.741 | lr=9.14e-05 | 16145 tok/s | niche_tok=424 gen_tok=1307
+[2026-03-28 04:15:58] Step 2350/10000 | LM=0.3928 | Router_CE=1.1054 | Contr=0.0000 | tau=0.736 | lr=9.09e-05 | 16147 tok/s | niche_tok=431 gen_tok=1377
+[2026-03-28 04:16:04] Step 2400/10000 | LM=0.3800 | Router_CE=1.1002 | Contr=0.0000 | tau=0.730 | lr=9.05e-05 | 16147 tok/s | niche_tok=444 gen_tok=1379
+[2026-03-28 04:16:11] Step 2450/10000 | LM=0.3779 | Router_CE=1.0975 | Contr=0.0000 | tau=0.724 | lr=9.00e-05 | 16149 tok/s | niche_tok=409 gen_tok=1350
+[2026-03-28 04:16:17] Step 2500/10000 | LM=0.3909 | Router_CE=1.1072 | Contr=0.0000 | tau=0.719 | lr=8.95e-05 | 16150 tok/s | niche_tok=415 gen_tok=1354
+[2026-03-28 04:16:17] --- Eval at step 2500 ---
+[2026-03-28 04:16:18]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:16:18]        niche: [0.020, 0.977, 0.002]
+[2026-03-28 04:16:18]      general: [0.356, 0.642, 0.002]
+[2026-03-28 04:16:18]        mixed: [0.457, 0.537, 0.007]
+[2026-03-28 04:16:18]   CV = 0.9506 SUCCESS
+[2026-03-28 04:16:18]   ZPD distribution: {'niche': 7824, 'general': 27271, 'mixed': 5865}
+[2026-03-28 04:16:18]   Layer 18: entropy=0.652 dist=['0.188', '0.667', '0.145'] hard=['0.137', '0.803', '0.060']
+[2026-03-28 04:16:18]   Layer 27: entropy=0.181 dist=['0.303', '0.691', '0.006'] hard=['0.307', '0.691', '0.002']
+[2026-03-28 04:16:18]   New best CV=0.9506, saved to /root/t6b-mogae/checkpoints/niche_curriculum/best.pt
+[2026-03-28 04:16:25] Step 2550/10000 | LM=0.3652 | Router_CE=1.1072 | Contr=0.0000 | tau=0.713 | lr=8.89e-05 | 16097 tok/s | niche_tok=387 gen_tok=1331
+[2026-03-28 04:16:31] Step 2600/10000 | LM=0.3707 | Router_CE=1.0911 | Contr=0.0000 | tau=0.708 | lr=8.84e-05 | 16100 tok/s | niche_tok=359 gen_tok=1343
+[2026-03-28 04:16:37] Step 2650/10000 | LM=0.3702 | Router_CE=1.0945 | Contr=0.0000 | tau=0.702 | lr=8.79e-05 | 16102 tok/s | niche_tok=338 gen_tok=1385
+[2026-03-28 04:16:43] Step 2700/10000 | LM=0.3684 | Router_CE=1.1031 | Contr=0.0000 | tau=0.696 | lr=8.73e-05 | 16104 tok/s | niche_tok=400 gen_tok=1363
+[2026-03-28 04:16:50] Step 2750/10000 | LM=0.3827 | Router_CE=1.1027 | Contr=0.0000 | tau=0.691 | lr=8.68e-05 | 16106 tok/s | niche_tok=352 gen_tok=1336
+[2026-03-28 04:16:56] Step 2800/10000 | LM=0.3536 | Router_CE=1.1010 | Contr=0.0000 | tau=0.685 | lr=8.62e-05 | 16108 tok/s | niche_tok=436 gen_tok=1323
+[2026-03-28 04:17:02] Step 2850/10000 | LM=0.3748 | Router_CE=1.1076 | Contr=0.0000 | tau=0.679 | lr=8.56e-05 | 16109 tok/s | niche_tok=417 gen_tok=1346
+[2026-03-28 04:17:09] Step 2900/10000 | LM=0.3599 | Router_CE=1.0876 | Contr=0.0000 | tau=0.674 | lr=8.51e-05 | 16110 tok/s | niche_tok=418 gen_tok=1315
+[2026-03-28 04:17:15] Step 2950/10000 | LM=0.3586 | Router_CE=1.1028 | Contr=0.0000 | tau=0.668 | lr=8.45e-05 | 16112 tok/s | niche_tok=372 gen_tok=1337
+[2026-03-28 04:17:21] Step 3000/10000 | LM=0.3632 | Router_CE=1.0991 | Contr=0.0000 | tau=0.663 | lr=8.39e-05 | 16112 tok/s | niche_tok=436 gen_tok=1353
+[2026-03-28 04:17:21] --- Eval at step 3000 ---
+[2026-03-28 04:17:22]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:17:22]        niche: [0.018, 0.981, 0.002]
+[2026-03-28 04:17:22]      general: [0.403, 0.596, 0.002]
+[2026-03-28 04:17:22]        mixed: [0.477, 0.516, 0.007]
+[2026-03-28 04:17:22]   CV = 0.9363 SUCCESS
+[2026-03-28 04:17:22]   ZPD distribution: {'niche': 7768, 'general': 27300, 'mixed': 5892}
+[2026-03-28 04:17:22]   Layer 18: entropy=0.660 dist=['0.203', '0.650', '0.147'] hard=['0.158', '0.777', '0.064']
+[2026-03-28 04:17:22]   Layer 27: entropy=0.181 dist=['0.337', '0.658', '0.006'] hard=['0.340', '0.657', '0.002']
+[2026-03-28 04:17:29] Step 3050/10000 | LM=0.3506 | Router_CE=1.1048 | Contr=0.0000 | tau=0.657 | lr=8.33e-05 | 16070 tok/s | niche_tok=515 gen_tok=1321
+[2026-03-28 04:17:35] Step 3100/10000 | LM=0.3569 | Router_CE=1.0923 | Contr=0.0000 | tau=0.651 | lr=8.26e-05 | 16072 tok/s | niche_tok=444 gen_tok=1359
+[2026-03-28 04:17:41] Step 3150/10000 | LM=0.3473 | Router_CE=1.0940 | Contr=0.0000 | tau=0.646 | lr=8.20e-05 | 16074 tok/s | niche_tok=395 gen_tok=1359
+[2026-03-28 04:17:48] Step 3200/10000 | LM=0.3500 | Router_CE=1.0979 | Contr=0.0000 | tau=0.640 | lr=8.14e-05 | 16076 tok/s | niche_tok=409 gen_tok=1370
+[2026-03-28 04:17:54] Step 3250/10000 | LM=0.3642 | Router_CE=1.1088 | Contr=0.0000 | tau=0.634 | lr=8.07e-05 | 16077 tok/s | niche_tok=413 gen_tok=1425
+[2026-03-28 04:18:00] Step 3300/10000 | LM=0.3428 | Router_CE=1.0988 | Contr=0.0000 | tau=0.629 | lr=8.01e-05 | 16079 tok/s | niche_tok=435 gen_tok=1262
+[2026-03-28 04:18:07] Step 3350/10000 | LM=0.3515 | Router_CE=1.1076 | Contr=0.0000 | tau=0.623 | lr=7.94e-05 | 16080 tok/s | niche_tok=384 gen_tok=1316
+[2026-03-28 04:18:13] Step 3400/10000 | LM=0.3399 | Router_CE=1.0900 | Contr=0.0000 | tau=0.618 | lr=7.87e-05 | 16082 tok/s | niche_tok=493 gen_tok=1341
+[2026-03-28 04:18:19] Step 3450/10000 | LM=0.3419 | Router_CE=1.1008 | Contr=0.0000 | tau=0.612 | lr=7.80e-05 | 16083 tok/s | niche_tok=440 gen_tok=1369
+[2026-03-28 04:18:26] Step 3500/10000 | LM=0.3525 | Router_CE=1.1019 | Contr=0.0000 | tau=0.606 | lr=7.73e-05 | 16085 tok/s | niche_tok=414 gen_tok=1332
+[2026-03-28 04:18:26] --- Eval at step 3500 ---
+[2026-03-28 04:18:27]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:18:27]        niche: [0.017, 0.981, 0.002]
+[2026-03-28 04:18:27]      general: [0.371, 0.628, 0.002]
+[2026-03-28 04:18:27]        mixed: [0.463, 0.531, 0.006]
+[2026-03-28 04:18:27]   CV = 0.9482 SUCCESS
+[2026-03-28 04:18:27]   ZPD distribution: {'niche': 8014, 'general': 27290, 'mixed': 5656}
+[2026-03-28 04:18:27]   Layer 18: entropy=0.658 dist=['0.204', '0.655', '0.141'] hard=['0.156', '0.786', '0.058']
+[2026-03-28 04:18:27]   Layer 27: entropy=0.170 dist=['0.310', '0.686', '0.005'] hard=['0.314', '0.684', '0.002']
+[2026-03-28 04:18:33] Step 3550/10000 | LM=0.3242 | Router_CE=1.0952 | Contr=0.0000 | tau=0.601 | lr=7.67e-05 | 16048 tok/s | niche_tok=409 gen_tok=1388
+[2026-03-28 04:18:39] Step 3600/10000 | LM=0.3558 | Router_CE=1.1074 | Contr=0.0000 | tau=0.595 | lr=7.59e-05 | 16050 tok/s | niche_tok=436 gen_tok=1313
+[2026-03-28 04:18:46] Step 3650/10000 | LM=0.3442 | Router_CE=1.0999 | Contr=0.0000 | tau=0.589 | lr=7.52e-05 | 16053 tok/s | niche_tok=414 gen_tok=1388
+[2026-03-28 04:18:52] Step 3700/10000 | LM=0.3326 | Router_CE=1.1004 | Contr=0.0000 | tau=0.584 | lr=7.45e-05 | 16055 tok/s | niche_tok=440 gen_tok=1372
+[2026-03-28 04:18:58] Step 3750/10000 | LM=0.3440 | Router_CE=1.1012 | Contr=0.0000 | tau=0.578 | lr=7.38e-05 | 16056 tok/s | niche_tok=510 gen_tok=1362
+[2026-03-28 04:19:05] Step 3800/10000 | LM=0.3274 | Router_CE=1.1033 | Contr=0.0000 | tau=0.573 | lr=7.31e-05 | 16057 tok/s | niche_tok=400 gen_tok=1385
+[2026-03-28 04:19:11] Step 3850/10000 | LM=0.3381 | Router_CE=1.1011 | Contr=0.0000 | tau=0.567 | lr=7.23e-05 | 16059 tok/s | niche_tok=347 gen_tok=1355
+[2026-03-28 04:19:17] Step 3900/10000 | LM=0.3349 | Router_CE=1.0979 | Contr=0.0000 | tau=0.561 | lr=7.16e-05 | 16060 tok/s | niche_tok=437 gen_tok=1348
+[2026-03-28 04:19:24] Step 3950/10000 | LM=0.3368 | Router_CE=1.1075 | Contr=0.0000 | tau=0.556 | lr=7.08e-05 | 16061 tok/s | niche_tok=370 gen_tok=1360
+[2026-03-28 04:19:30] Step 4000/10000 | LM=0.3319 | Router_CE=1.0958 | Contr=0.0000 | tau=0.550 | lr=7.01e-05 | 16063 tok/s | niche_tok=445 gen_tok=1342
+[2026-03-28 04:19:30] --- Eval at step 4000 ---
+[2026-03-28 04:19:31]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:19:31]        niche: [0.011, 0.987, 0.001]
+[2026-03-28 04:19:31]      general: [0.372, 0.626, 0.002]
+[2026-03-28 04:19:31]        mixed: [0.447, 0.546, 0.007]
+[2026-03-28 04:19:31]   CV = 0.9531 SUCCESS
+[2026-03-28 04:19:31]   ZPD distribution: {'niche': 8281, 'general': 27336, 'mixed': 5343}
+[2026-03-28 04:19:31]   Layer 18: entropy=0.670 dist=['0.205', '0.647', '0.148'] hard=['0.160', '0.777', '0.064']
+[2026-03-28 04:19:31]   Layer 27: entropy=0.176 dist=['0.304', '0.691', '0.005'] hard=['0.309', '0.689', '0.002']
+[2026-03-28 04:19:31]   New best CV=0.9531, saved to /root/t6b-mogae/checkpoints/niche_curriculum/best.pt
+[2026-03-28 04:19:37] Step 4050/10000 | LM=0.3187 | Router_CE=1.0837 | Contr=0.0000 | tau=0.544 | lr=6.93e-05 | 16031 tok/s | niche_tok=436 gen_tok=1380
+[2026-03-28 04:19:44] Step 4100/10000 | LM=0.3349 | Router_CE=1.1139 | Contr=0.0000 | tau=0.539 | lr=6.86e-05 | 16033 tok/s | niche_tok=397 gen_tok=1351
+[2026-03-28 04:19:50] Step 4150/10000 | LM=0.3280 | Router_CE=1.1063 | Contr=0.0000 | tau=0.533 | lr=6.78e-05 | 16036 tok/s | niche_tok=396 gen_tok=1370
+[2026-03-28 04:19:56] Step 4200/10000 | LM=0.3304 | Router_CE=1.1089 | Contr=0.0000 | tau=0.528 | lr=6.70e-05 | 16040 tok/s | niche_tok=405 gen_tok=1371
+[2026-03-28 04:20:03] Step 4250/10000 | LM=0.3303 | Router_CE=1.0924 | Contr=0.0000 | tau=0.522 | lr=6.62e-05 | 16044 tok/s | niche_tok=402 gen_tok=1384
+[2026-03-28 04:20:09] Step 4300/10000 | LM=0.3119 | Router_CE=1.0928 | Contr=0.0000 | tau=0.516 | lr=6.55e-05 | 16044 tok/s | niche_tok=414 gen_tok=1366
+[2026-03-28 04:20:15] Step 4350/10000 | LM=0.3322 | Router_CE=1.0977 | Contr=0.0000 | tau=0.511 | lr=6.47e-05 | 16046 tok/s | niche_tok=411 gen_tok=1337
+[2026-03-28 04:20:22] Step 4400/10000 | LM=0.3250 | Router_CE=1.1006 | Contr=0.0000 | tau=0.505 | lr=6.39e-05 | 16048 tok/s | niche_tok=385 gen_tok=1379
+[2026-03-28 04:20:28] Step 4450/10000 | LM=0.3239 | Router_CE=1.1058 | Contr=0.0000 | tau=0.499 | lr=6.31e-05 | 16050 tok/s | niche_tok=462 gen_tok=1346
+[2026-03-28 04:20:34] Step 4500/10000 | LM=0.3303 | Router_CE=1.1051 | Contr=0.0000 | tau=0.494 | lr=6.23e-05 | 16051 tok/s | niche_tok=435 gen_tok=1376
+[2026-03-28 04:20:34] --- Eval at step 4500 ---
+[2026-03-28 04:20:35]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:20:35]        niche: [0.015, 0.983, 0.002]
+[2026-03-28 04:20:35]      general: [0.378, 0.621, 0.001]
+[2026-03-28 04:20:35]        mixed: [0.503, 0.489, 0.008]
+[2026-03-28 04:20:35]   CV = 0.9446 SUCCESS
+[2026-03-28 04:20:35]   ZPD distribution: {'niche': 8386, 'general': 27244, 'mixed': 5330}
+[2026-03-28 04:20:35]   Layer 18: entropy=0.648 dist=['0.201', '0.662', '0.137'] hard=['0.150', '0.794', '0.055']
+[2026-03-28 04:20:35]   Layer 27: entropy=0.165 dist=['0.316', '0.680', '0.005'] hard=['0.320', '0.678', '0.002']
+[2026-03-28 04:20:42] Step 4550/10000 | LM=0.3106 | Router_CE=1.0891 | Contr=0.0000 | tau=0.488 | lr=6.15e-05 | 16023 tok/s | niche_tok=431 gen_tok=1354
+[2026-03-28 04:20:48] Step 4600/10000 | LM=0.3282 | Router_CE=1.1101 | Contr=0.0000 | tau=0.483 | lr=6.07e-05 | 16025 tok/s | niche_tok=428 gen_tok=1365
+[2026-03-28 04:20:54] Step 4650/10000 | LM=0.3254 | Router_CE=1.1018 | Contr=0.0000 | tau=0.477 | lr=5.99e-05 | 16027 tok/s | niche_tok=436 gen_tok=1345
+[2026-03-28 04:21:01] Step 4700/10000 | LM=0.3134 | Router_CE=1.1033 | Contr=0.0000 | tau=0.471 | lr=5.90e-05 | 16028 tok/s | niche_tok=427 gen_tok=1363
+[2026-03-28 04:21:07] Step 4750/10000 | LM=0.3208 | Router_CE=1.0990 | Contr=0.0000 | tau=0.466 | lr=5.82e-05 | 16030 tok/s | niche_tok=423 gen_tok=1338
+[2026-03-28 04:21:13] Step 4800/10000 | LM=0.3150 | Router_CE=1.1009 | Contr=0.0000 | tau=0.460 | lr=5.74e-05 | 16031 tok/s | niche_tok=391 gen_tok=1367
+[2026-03-28 04:21:20] Step 4850/10000 | LM=0.3128 | Router_CE=1.0968 | Contr=0.0000 | tau=0.454 | lr=5.66e-05 | 16033 tok/s | niche_tok=377 gen_tok=1313
+[2026-03-28 04:21:26] Step 4900/10000 | LM=0.3254 | Router_CE=1.1058 | Contr=0.0000 | tau=0.449 | lr=5.58e-05 | 16034 tok/s | niche_tok=464 gen_tok=1348
+[2026-03-28 04:21:32] Step 4950/10000 | LM=0.3090 | Router_CE=1.0995 | Contr=0.0000 | tau=0.443 | lr=5.50e-05 | 16036 tok/s | niche_tok=455 gen_tok=1352
+[2026-03-28 04:21:39] Step 5000/10000 | LM=0.3260 | Router_CE=1.1015 | Contr=0.0000 | tau=0.438 | lr=5.41e-05 | 16038 tok/s | niche_tok=437 gen_tok=1365
+[2026-03-28 04:21:39] --- Eval at step 5000 ---
+[2026-03-28 04:21:40]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:21:40]        niche: [0.013, 0.985, 0.002]
+[2026-03-28 04:21:40]      general: [0.351, 0.647, 0.002]
+[2026-03-28 04:21:40]        mixed: [0.456, 0.538, 0.006]
+[2026-03-28 04:21:40]   CV = 0.9581 SUCCESS
+[2026-03-28 04:21:40]   ZPD distribution: {'niche': 8670, 'general': 27330, 'mixed': 4960}
+[2026-03-28 04:21:40]   Layer 18: entropy=0.646 dist=['0.218', '0.657', '0.125'] hard=['0.174', '0.781', '0.045']
+[2026-03-28 04:21:40]   Layer 27: entropy=0.162 dist=['0.288', '0.707', '0.005'] hard=['0.292', '0.705', '0.002']
+[2026-03-28 04:21:40]   New best CV=0.9581, saved to /root/t6b-mogae/checkpoints/niche_curriculum/best.pt
+[2026-03-28 04:21:46] Step 5050/10000 | LM=0.3069 | Router_CE=1.1009 | Contr=0.0000 | tau=0.432 | lr=5.33e-05 | 16012 tok/s | niche_tok=430 gen_tok=1358
+[2026-03-28 04:21:52] Step 5100/10000 | LM=0.3163 | Router_CE=1.0963 | Contr=0.0000 | tau=0.426 | lr=5.25e-05 | 16014 tok/s | niche_tok=405 gen_tok=1409
+[2026-03-28 04:21:59] Step 5150/10000 | LM=0.3117 | Router_CE=1.0992 | Contr=0.0000 | tau=0.421 | lr=5.17e-05 | 16016 tok/s | niche_tok=488 gen_tok=1369
+[2026-03-28 04:22:05] Step 5200/10000 | LM=0.3121 | Router_CE=1.1011 | Contr=0.0000 | tau=0.415 | lr=5.08e-05 | 16017 tok/s | niche_tok=400 gen_tok=1314
+[2026-03-28 04:22:11] Step 5250/10000 | LM=0.3250 | Router_CE=1.1041 | Contr=0.0000 | tau=0.409 | lr=5.00e-05 | 16019 tok/s | niche_tok=430 gen_tok=1327
+[2026-03-28 04:22:18] Step 5300/10000 | LM=0.3096 | Router_CE=1.1002 | Contr=0.0000 | tau=0.404 | lr=4.92e-05 | 16020 tok/s | niche_tok=468 gen_tok=1388
+[2026-03-28 04:22:24] Step 5350/10000 | LM=0.3142 | Router_CE=1.0954 | Contr=0.0000 | tau=0.398 | lr=4.83e-05 | 16022 tok/s | niche_tok=455 gen_tok=1403
+[2026-03-28 04:22:30] Step 5400/10000 | LM=0.3161 | Router_CE=1.1061 | Contr=0.0000 | tau=0.393 | lr=4.75e-05 | 16023 tok/s | niche_tok=394 gen_tok=1357
+[2026-03-28 04:22:37] Step 5450/10000 | LM=0.3064 | Router_CE=1.0913 | Contr=0.0000 | tau=0.387 | lr=4.67e-05 | 16025 tok/s | niche_tok=471 gen_tok=1407
+[2026-03-28 04:22:43] Step 5500/10000 | LM=0.3166 | Router_CE=1.1150 | Contr=0.0000 | tau=0.381 | lr=4.59e-05 | 16026 tok/s | niche_tok=427 gen_tok=1383
+[2026-03-28 04:22:43] --- Eval at step 5500 ---
+[2026-03-28 04:22:44]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:22:44]        niche: [0.014, 0.984, 0.002]
+[2026-03-28 04:22:44]      general: [0.388, 0.610, 0.002]
+[2026-03-28 04:22:44]        mixed: [0.504, 0.489, 0.007]
+[2026-03-28 04:22:44]   CV = 0.9425 SUCCESS
+[2026-03-28 04:22:44]   ZPD distribution: {'niche': 8407, 'general': 27294, 'mixed': 5259}
+[2026-03-28 04:22:44]   Layer 18: entropy=0.653 dist=['0.213', '0.655', '0.132'] hard=['0.169', '0.781', '0.050']
+[2026-03-28 04:22:44]   Layer 27: entropy=0.167 dist=['0.322', '0.673', '0.005'] hard=['0.327', '0.671', '0.002']
+[2026-03-28 04:22:50] Step 5550/10000 | LM=0.3106 | Router_CE=1.1009 | Contr=0.0000 | tau=0.376 | lr=4.50e-05 | 16004 tok/s | niche_tok=456 gen_tok=1346
+[2026-03-28 04:22:57] Step 5600/10000 | LM=0.3127 | Router_CE=1.1049 | Contr=0.0000 | tau=0.370 | lr=4.42e-05 | 16005 tok/s | niche_tok=399 gen_tok=1353
+[2026-03-28 04:23:03] Step 5650/10000 | LM=0.3085 | Router_CE=1.0966 | Contr=0.0000 | tau=0.364 | lr=4.34e-05 | 16007 tok/s | niche_tok=433 gen_tok=1400
+[2026-03-28 04:23:09] Step 5700/10000 | LM=0.3091 | Router_CE=1.1020 | Contr=0.0000 | tau=0.359 | lr=4.26e-05 | 16008 tok/s | niche_tok=437 gen_tok=1340
+[2026-03-28 04:23:16] Step 5750/10000 | LM=0.3155 | Router_CE=1.1019 | Contr=0.0000 | tau=0.353 | lr=4.18e-05 | 16010 tok/s | niche_tok=387 gen_tok=1424
+[2026-03-28 04:23:22] Step 5800/10000 | LM=0.3027 | Router_CE=1.0975 | Contr=0.0000 | tau=0.348 | lr=4.10e-05 | 16011 tok/s | niche_tok=406 gen_tok=1341
+[2026-03-28 04:23:28] Step 5850/10000 | LM=0.3107 | Router_CE=1.1040 | Contr=0.0000 | tau=0.342 | lr=4.01e-05 | 16014 tok/s | niche_tok=434 gen_tok=1340
+[2026-03-28 04:23:34] Step 5900/10000 | LM=0.3139 | Router_CE=1.1053 | Contr=0.0000 | tau=0.336 | lr=3.93e-05 | 16017 tok/s | niche_tok=418 gen_tok=1404
+[2026-03-28 04:23:41] Step 5950/10000 | LM=0.3104 | Router_CE=1.1036 | Contr=0.0000 | tau=0.331 | lr=3.85e-05 | 16019 tok/s | niche_tok=473 gen_tok=1344
+[2026-03-28 04:23:47] Step 6000/10000 | LM=0.3065 | Router_CE=1.0986 | Contr=0.0000 | tau=0.325 | lr=3.77e-05 | 16020 tok/s | niche_tok=414 gen_tok=1361
+[2026-03-28 04:23:47] --- Eval at step 6000 ---
+[2026-03-28 04:23:48]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:23:48]        niche: [0.011, 0.987, 0.002]
+[2026-03-28 04:23:48]      general: [0.346, 0.652, 0.002]
+[2026-03-28 04:23:48]        mixed: [0.475, 0.517, 0.008]
+[2026-03-28 04:23:48]   CV = 0.9586 SUCCESS
+[2026-03-28 04:23:48]   ZPD distribution: {'niche': 8529, 'general': 27464, 'mixed': 4967}
+[2026-03-28 04:23:48]   Layer 18: entropy=0.638 dist=['0.215', '0.666', '0.120'] hard=['0.166', '0.793', '0.041']
+[2026-03-28 04:23:48]   Layer 27: entropy=0.157 dist=['0.288', '0.707', '0.005'] hard=['0.292', '0.705', '0.002']
+[2026-03-28 04:23:48]   New best CV=0.9586, saved to /root/t6b-mogae/checkpoints/niche_curriculum/best.pt
+[2026-03-28 04:23:55] Step 6050/10000 | LM=0.3004 | Router_CE=1.0896 | Contr=0.0000 | tau=0.319 | lr=3.69e-05 | 15999 tok/s | niche_tok=430 gen_tok=1380
+[2026-03-28 04:24:01] Step 6100/10000 | LM=0.3138 | Router_CE=1.1053 | Contr=0.0000 | tau=0.314 | lr=3.61e-05 | 16001 tok/s | niche_tok=418 gen_tok=1361
+[2026-03-28 04:24:07] Step 6150/10000 | LM=0.3162 | Router_CE=1.1203 | Contr=0.0000 | tau=0.308 | lr=3.53e-05 | 16002 tok/s | niche_tok=424 gen_tok=1372
+[2026-03-28 04:24:14] Step 6200/10000 | LM=0.3078 | Router_CE=1.1054 | Contr=0.0000 | tau=0.303 | lr=3.45e-05 | 16003 tok/s | niche_tok=485 gen_tok=1360
+[2026-03-28 04:24:20] Step 6250/10000 | LM=0.3089 | Router_CE=1.0931 | Contr=0.0000 | tau=0.297 | lr=3.38e-05 | 16005 tok/s | niche_tok=407 gen_tok=1315
+[2026-03-28 04:24:26] Step 6300/10000 | LM=0.3076 | Router_CE=1.0984 | Contr=0.0000 | tau=0.291 | lr=3.30e-05 | 16007 tok/s | niche_tok=387 gen_tok=1365
+[2026-03-28 04:24:32] Step 6350/10000 | LM=0.3169 | Router_CE=1.1114 | Contr=0.0000 | tau=0.286 | lr=3.22e-05 | 16010 tok/s | niche_tok=379 gen_tok=1347
+[2026-03-28 04:24:39] Step 6400/10000 | LM=0.2993 | Router_CE=1.1006 | Contr=0.0000 | tau=0.280 | lr=3.14e-05 | 16012 tok/s | niche_tok=390 gen_tok=1339
+[2026-03-28 04:24:45] Step 6450/10000 | LM=0.3040 | Router_CE=1.0909 | Contr=0.0000 | tau=0.274 | lr=3.07e-05 | 16013 tok/s | niche_tok=446 gen_tok=1381
+[2026-03-28 04:24:51] Step 6500/10000 | LM=0.3133 | Router_CE=1.1075 | Contr=0.0000 | tau=0.269 | lr=2.99e-05 | 16015 tok/s | niche_tok=410 gen_tok=1308
+[2026-03-28 04:24:51] --- Eval at step 6500 ---
+[2026-03-28 04:24:52]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:24:52]        niche: [0.010, 0.988, 0.001]
+[2026-03-28 04:24:52]      general: [0.350, 0.649, 0.001]
+[2026-03-28 04:24:52]        mixed: [0.451, 0.541, 0.008]
+[2026-03-28 04:24:52]   CV = 0.9607 SUCCESS
+[2026-03-28 04:24:52]   ZPD distribution: {'niche': 8661, 'general': 27335, 'mixed': 4964}
+[2026-03-28 04:24:52]   Layer 18: entropy=0.653 dist=['0.223', '0.648', '0.129'] hard=['0.182', '0.769', '0.048']
+[2026-03-28 04:24:52]   Layer 27: entropy=0.161 dist=['0.286', '0.709', '0.005'] hard=['0.290', '0.708', '0.002']
+[2026-03-28 04:24:52]   New best CV=0.9607, saved to /root/t6b-mogae/checkpoints/niche_curriculum/best.pt
+[2026-03-28 04:24:59] Step 6550/10000 | LM=0.3198 | Router_CE=1.1166 | Contr=0.0000 | tau=0.263 | lr=2.92e-05 | 15995 tok/s | niche_tok=438 gen_tok=1340
+[2026-03-28 04:25:05] Step 6600/10000 | LM=0.2961 | Router_CE=1.0903 | Contr=0.0000 | tau=0.258 | lr=2.84e-05 | 15996 tok/s | niche_tok=432 gen_tok=1331
+[2026-03-28 04:25:11] Step 6650/10000 | LM=0.3025 | Router_CE=1.0954 | Contr=0.0000 | tau=0.252 | lr=2.77e-05 | 15998 tok/s | niche_tok=475 gen_tok=1355
+[2026-03-28 04:25:18] Step 6700/10000 | LM=0.3118 | Router_CE=1.0984 | Contr=0.0000 | tau=0.246 | lr=2.69e-05 | 15999 tok/s | niche_tok=431 gen_tok=1383
+[2026-03-28 04:25:24] Step 6750/10000 | LM=0.3100 | Router_CE=1.1095 | Contr=0.0000 | tau=0.241 | lr=2.62e-05 | 16000 tok/s | niche_tok=491 gen_tok=1356
+[2026-03-28 04:25:30] Step 6800/10000 | LM=0.3089 | Router_CE=1.1000 | Contr=0.0000 | tau=0.235 | lr=2.55e-05 | 16001 tok/s | niche_tok=429 gen_tok=1376
+[2026-03-28 04:25:37] Step 6850/10000 | LM=0.3044 | Router_CE=1.0966 | Contr=0.0000 | tau=0.229 | lr=2.48e-05 | 16003 tok/s | niche_tok=451 gen_tok=1317
+[2026-03-28 04:25:43] Step 6900/10000 | LM=0.3106 | Router_CE=1.1123 | Contr=0.0000 | tau=0.224 | lr=2.41e-05 | 16004 tok/s | niche_tok=464 gen_tok=1337
+[2026-03-28 04:25:49] Step 6950/10000 | LM=0.3058 | Router_CE=1.0971 | Contr=0.0000 | tau=0.218 | lr=2.33e-05 | 16005 tok/s | niche_tok=425 gen_tok=1348
+[2026-03-28 04:25:56] Step 7000/10000 | LM=0.3052 | Router_CE=1.1056 | Contr=0.0000 | tau=0.213 | lr=2.27e-05 | 16007 tok/s | niche_tok=451 gen_tok=1369
+[2026-03-28 04:25:56] --- Eval at step 7000 ---
+[2026-03-28 04:25:57]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:25:57]        niche: [0.011, 0.987, 0.002]
+[2026-03-28 04:25:57]      general: [0.365, 0.634, 0.001]
+[2026-03-28 04:25:57]        mixed: [0.498, 0.494, 0.008]
+[2026-03-28 04:25:57]   CV = 0.9516 SUCCESS
+[2026-03-28 04:25:57]   ZPD distribution: {'niche': 8715, 'general': 27173, 'mixed': 5072}
+[2026-03-28 04:25:57]   Layer 18: entropy=0.661 dist=['0.221', '0.647', '0.133'] hard=['0.176', '0.774', '0.050']
+[2026-03-28 04:25:57]   Layer 27: entropy=0.154 dist=['0.301', '0.694', '0.005'] hard=['0.306', '0.692', '0.002']
+[2026-03-28 04:26:03] Step 7050/10000 | LM=0.3149 | Router_CE=1.1009 | Contr=0.0000 | tau=0.207 | lr=2.20e-05 | 15989 tok/s | niche_tok=380 gen_tok=1364
+[2026-03-28 04:26:09] Step 7100/10000 | LM=0.3004 | Router_CE=1.1065 | Contr=0.0000 | tau=0.201 | lr=2.13e-05 | 15990 tok/s | niche_tok=460 gen_tok=1334
+[2026-03-28 04:26:16] Step 7150/10000 | LM=0.3091 | Router_CE=1.1026 | Contr=0.0000 | tau=0.196 | lr=2.06e-05 | 15991 tok/s | niche_tok=414 gen_tok=1392
+[2026-03-28 04:26:22] Step 7200/10000 | LM=0.3103 | Router_CE=1.1041 | Contr=0.0000 | tau=0.190 | lr=1.99e-05 | 15993 tok/s | niche_tok=442 gen_tok=1370
+[2026-03-28 04:26:28] Step 7250/10000 | LM=0.3072 | Router_CE=1.1025 | Contr=0.0000 | tau=0.184 | lr=1.93e-05 | 15994 tok/s | niche_tok=439 gen_tok=1362
+[2026-03-28 04:26:35] Step 7300/10000 | LM=0.3091 | Router_CE=1.1026 | Contr=0.0000 | tau=0.179 | lr=1.86e-05 | 15995 tok/s | niche_tok=427 gen_tok=1365
+[2026-03-28 04:26:41] Step 7350/10000 | LM=0.3084 | Router_CE=1.1047 | Contr=0.0000 | tau=0.173 | lr=1.80e-05 | 15997 tok/s | niche_tok=450 gen_tok=1345
+[2026-03-28 04:26:47] Step 7400/10000 | LM=0.3074 | Router_CE=1.1085 | Contr=0.0000 | tau=0.168 | lr=1.74e-05 | 15998 tok/s | niche_tok=510 gen_tok=1340
+[2026-03-28 04:26:54] Step 7450/10000 | LM=0.3064 | Router_CE=1.0937 | Contr=0.0000 | tau=0.162 | lr=1.67e-05 | 15999 tok/s | niche_tok=476 gen_tok=1374
+[2026-03-28 04:27:00] Step 7500/10000 | LM=0.3127 | Router_CE=1.1093 | Contr=0.0000 | tau=0.156 | lr=1.61e-05 | 16000 tok/s | niche_tok=426 gen_tok=1355
+[2026-03-28 04:27:00] --- Eval at step 7500 ---
+[2026-03-28 04:27:01]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:27:01]        niche: [0.013, 0.985, 0.002]
+[2026-03-28 04:27:01]      general: [0.350, 0.649, 0.001]
+[2026-03-28 04:27:01]        mixed: [0.463, 0.530, 0.007]
+[2026-03-28 04:27:01]   CV = 0.9576 SUCCESS
+[2026-03-28 04:27:01]   ZPD distribution: {'niche': 8702, 'general': 27203, 'mixed': 5055}
+[2026-03-28 04:27:01]   Layer 18: entropy=0.650 dist=['0.217', '0.656', '0.127'] hard=['0.170', '0.784', '0.046']
+[2026-03-28 04:27:01]   Layer 27: entropy=0.158 dist=['0.288', '0.707', '0.005'] hard=['0.292', '0.706', '0.002']
+[2026-03-28 04:27:07] Step 7550/10000 | LM=0.3123 | Router_CE=1.1115 | Contr=0.0000 | tau=0.151 | lr=1.55e-05 | 15983 tok/s | niche_tok=441 gen_tok=1348
+[2026-03-28 04:27:14] Step 7600/10000 | LM=0.3072 | Router_CE=1.0975 | Contr=0.0000 | tau=0.145 | lr=1.49e-05 | 15985 tok/s | niche_tok=439 gen_tok=1318
+[2026-03-28 04:27:20] Step 7650/10000 | LM=0.3093 | Router_CE=1.1020 | Contr=0.0000 | tau=0.139 | lr=1.44e-05 | 15986 tok/s | niche_tok=465 gen_tok=1388
+[2026-03-28 04:27:27] Step 7700/10000 | LM=0.3079 | Router_CE=1.0953 | Contr=0.0000 | tau=0.134 | lr=1.38e-05 | 15987 tok/s | niche_tok=440 gen_tok=1368
+[2026-03-28 04:27:33] Step 7750/10000 | LM=0.3159 | Router_CE=1.1104 | Contr=0.0000 | tau=0.128 | lr=1.32e-05 | 15988 tok/s | niche_tok=411 gen_tok=1350
+[2026-03-28 04:27:39] Step 7800/10000 | LM=0.3140 | Router_CE=1.1136 | Contr=0.0000 | tau=0.123 | lr=1.27e-05 | 15989 tok/s | niche_tok=446 gen_tok=1349
+[2026-03-28 04:27:45] Step 7850/10000 | LM=0.3066 | Router_CE=1.0982 | Contr=0.0000 | tau=0.117 | lr=1.21e-05 | 15990 tok/s | niche_tok=423 gen_tok=1355
+[2026-03-28 04:27:52] Step 7900/10000 | LM=0.3146 | Router_CE=1.0974 | Contr=0.0000 | tau=0.111 | lr=1.16e-05 | 15991 tok/s | niche_tok=425 gen_tok=1448
+[2026-03-28 04:27:58] Step 7950/10000 | LM=0.3073 | Router_CE=1.1052 | Contr=0.0000 | tau=0.106 | lr=1.11e-05 | 15993 tok/s | niche_tok=451 gen_tok=1379
+[2026-03-28 04:28:04] Step 8000/10000 | LM=0.3132 | Router_CE=1.1071 | Contr=0.0000 | tau=0.100 | lr=1.05e-05 | 15994 tok/s | niche_tok=415 gen_tok=1336
+[2026-03-28 04:28:04] --- Eval at step 8000 ---
+[2026-03-28 04:28:06]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:28:06]        niche: [0.013, 0.986, 0.002]
+[2026-03-28 04:28:06]      general: [0.368, 0.630, 0.002]
+[2026-03-28 04:28:06]        mixed: [0.481, 0.512, 0.007]
+[2026-03-28 04:28:06]   CV = 0.9500 SUCCESS
+[2026-03-28 04:28:06]   ZPD distribution: {'niche': 8782, 'general': 27096, 'mixed': 5082}
+[2026-03-28 04:28:06]   Layer 18: entropy=0.658 dist=['0.212', '0.654', '0.134'] hard=['0.166', '0.784', '0.050']
+[2026-03-28 04:28:06]   Layer 27: entropy=0.158 dist=['0.302', '0.694', '0.005'] hard=['0.306', '0.692', '0.002']
+[2026-03-28 04:28:12] Step 8050/10000 | LM=0.3095 | Router_CE=1.1009 | Contr=0.0000 | tau=0.100 | lr=1.00e-05 | 15978 tok/s | niche_tok=437 gen_tok=1360
+[2026-03-28 04:28:18] Step 8100/10000 | LM=0.3137 | Router_CE=1.1050 | Contr=0.0000 | tau=0.100 | lr=9.55e-06 | 15979 tok/s | niche_tok=434 gen_tok=1413
+[2026-03-28 04:28:25] Step 8150/10000 | LM=0.3107 | Router_CE=1.1088 | Contr=0.0000 | tau=0.100 | lr=9.07e-06 | 15981 tok/s | niche_tok=406 gen_tok=1368
+[2026-03-28 04:28:31] Step 8200/10000 | LM=0.3108 | Router_CE=1.1015 | Contr=0.0000 | tau=0.100 | lr=8.60e-06 | 15982 tok/s | niche_tok=422 gen_tok=1315
+[2026-03-28 04:28:37] Step 8250/10000 | LM=0.3124 | Router_CE=1.1003 | Contr=0.0000 | tau=0.100 | lr=8.14e-06 | 15983 tok/s | niche_tok=436 gen_tok=1379
+[2026-03-28 04:28:44] Step 8300/10000 | LM=0.3022 | Router_CE=1.0975 | Contr=0.0000 | tau=0.100 | lr=7.70e-06 | 15984 tok/s | niche_tok=399 gen_tok=1353
+[2026-03-28 04:28:50] Step 8350/10000 | LM=0.3134 | Router_CE=1.1087 | Contr=0.0000 | tau=0.100 | lr=7.26e-06 | 15985 tok/s | niche_tok=441 gen_tok=1338
+[2026-03-28 04:28:56] Step 8400/10000 | LM=0.3217 | Router_CE=1.1076 | Contr=0.0000 | tau=0.100 | lr=6.84e-06 | 15986 tok/s | niche_tok=480 gen_tok=1349
+[2026-03-28 04:29:03] Step 8450/10000 | LM=0.3086 | Router_CE=1.1114 | Contr=0.0000 | tau=0.100 | lr=6.43e-06 | 15988 tok/s | niche_tok=469 gen_tok=1344
+[2026-03-28 04:29:09] Step 8500/10000 | LM=0.3066 | Router_CE=1.0943 | Contr=0.0000 | tau=0.100 | lr=6.03e-06 | 15988 tok/s | niche_tok=472 gen_tok=1406
+[2026-03-28 04:29:09] --- Eval at step 8500 ---
+[2026-03-28 04:29:10]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:29:10]        niche: [0.012, 0.987, 0.002]
+[2026-03-28 04:29:10]      general: [0.359, 0.639, 0.002]
+[2026-03-28 04:29:10]        mixed: [0.485, 0.507, 0.008]
+[2026-03-28 04:29:10]   CV = 0.9533 SUCCESS
+[2026-03-28 04:29:10]   ZPD distribution: {'niche': 8855, 'general': 27218, 'mixed': 4887}
+[2026-03-28 04:29:10]   Layer 18: entropy=0.643 dist=['0.217', '0.659', '0.124'] hard=['0.174', '0.782', '0.044']
+[2026-03-28 04:29:10]   Layer 27: entropy=0.156 dist=['0.295', '0.700', '0.005'] hard=['0.299', '0.699', '0.003']
+[2026-03-28 04:29:16] Step 8550/10000 | LM=0.3198 | Router_CE=1.1119 | Contr=0.0000 | tau=0.100 | lr=5.64e-06 | 15974 tok/s | niche_tok=408 gen_tok=1338
+[2026-03-28 04:29:23] Step 8600/10000 | LM=0.3097 | Router_CE=1.0999 | Contr=0.0000 | tau=0.100 | lr=5.26e-06 | 15975 tok/s | niche_tok=451 gen_tok=1351
+[2026-03-28 04:29:29] Step 8650/10000 | LM=0.3116 | Router_CE=1.1009 | Contr=0.0000 | tau=0.100 | lr=4.90e-06 | 15976 tok/s | niche_tok=457 gen_tok=1361
+[2026-03-28 04:29:35] Step 8700/10000 | LM=0.3093 | Router_CE=1.1060 | Contr=0.0000 | tau=0.100 | lr=4.55e-06 | 15977 tok/s | niche_tok=425 gen_tok=1353
+[2026-03-28 04:29:42] Step 8750/10000 | LM=0.3098 | Router_CE=1.0972 | Contr=0.0000 | tau=0.100 | lr=4.21e-06 | 15978 tok/s | niche_tok=439 gen_tok=1378
+[2026-03-28 04:29:48] Step 8800/10000 | LM=0.3101 | Router_CE=1.1032 | Contr=0.0000 | tau=0.100 | lr=3.89e-06 | 15979 tok/s | niche_tok=444 gen_tok=1351
+[2026-03-28 04:29:54] Step 8850/10000 | LM=0.3104 | Router_CE=1.1070 | Contr=0.0000 | tau=0.100 | lr=3.57e-06 | 15980 tok/s | niche_tok=466 gen_tok=1386
+[2026-03-28 04:30:01] Step 8900/10000 | LM=0.3192 | Router_CE=1.1013 | Contr=0.0000 | tau=0.100 | lr=3.27e-06 | 15982 tok/s | niche_tok=427 gen_tok=1343
+[2026-03-28 04:30:07] Step 8950/10000 | LM=0.3035 | Router_CE=1.1027 | Contr=0.0000 | tau=0.100 | lr=2.98e-06 | 15983 tok/s | niche_tok=440 gen_tok=1318
+[2026-03-28 04:30:13] Step 9000/10000 | LM=0.3116 | Router_CE=1.1044 | Contr=0.0000 | tau=0.100 | lr=2.71e-06 | 15984 tok/s | niche_tok=457 gen_tok=1357
+[2026-03-28 04:30:13] --- Eval at step 9000 ---
+[2026-03-28 04:30:14]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:30:14]        niche: [0.013, 0.986, 0.001]
+[2026-03-28 04:30:14]      general: [0.372, 0.626, 0.001]
+[2026-03-28 04:30:14]        mixed: [0.496, 0.496, 0.008]
+[2026-03-28 04:30:14]   CV = 0.9480 SUCCESS
+[2026-03-28 04:30:14]   ZPD distribution: {'niche': 8751, 'general': 27161, 'mixed': 5048}
+[2026-03-28 04:30:14]   Layer 18: entropy=0.659 dist=['0.211', '0.652', '0.137'] hard=['0.165', '0.781', '0.054']
+[2026-03-28 04:30:14]   Layer 27: entropy=0.159 dist=['0.306', '0.689', '0.005'] hard=['0.311', '0.687', '0.002']
+[2026-03-28 04:30:21] Step 9050/10000 | LM=0.3106 | Router_CE=1.0936 | Contr=0.0000 | tau=0.100 | lr=2.45e-06 | 15970 tok/s | niche_tok=439 gen_tok=1369
+[2026-03-28 04:30:27] Step 9100/10000 | LM=0.3155 | Router_CE=1.1145 | Contr=0.0000 | tau=0.100 | lr=2.20e-06 | 15972 tok/s | niche_tok=436 gen_tok=1370
+[2026-03-28 04:30:33] Step 9150/10000 | LM=0.3124 | Router_CE=1.1092 | Contr=0.0000 | tau=0.100 | lr=1.96e-06 | 15973 tok/s | niche_tok=411 gen_tok=1334
+[2026-03-28 04:30:40] Step 9200/10000 | LM=0.3141 | Router_CE=1.0951 | Contr=0.0000 | tau=0.100 | lr=1.74e-06 | 15974 tok/s | niche_tok=429 gen_tok=1349
+[2026-03-28 04:30:46] Step 9250/10000 | LM=0.3074 | Router_CE=1.1069 | Contr=0.0000 | tau=0.100 | lr=1.53e-06 | 15976 tok/s | niche_tok=422 gen_tok=1378
+[2026-03-28 04:30:52] Step 9300/10000 | LM=0.3110 | Router_CE=1.1016 | Contr=0.0000 | tau=0.100 | lr=1.33e-06 | 15977 tok/s | niche_tok=395 gen_tok=1350
+[2026-03-28 04:30:59] Step 9350/10000 | LM=0.3138 | Router_CE=1.1084 | Contr=0.0000 | tau=0.100 | lr=1.15e-06 | 15978 tok/s | niche_tok=387 gen_tok=1311
+[2026-03-28 04:31:05] Step 9400/10000 | LM=0.3187 | Router_CE=1.1092 | Contr=0.0000 | tau=0.100 | lr=9.81e-07 | 15979 tok/s | niche_tok=428 gen_tok=1379
+[2026-03-28 04:31:11] Step 9450/10000 | LM=0.3075 | Router_CE=1.1037 | Contr=0.0000 | tau=0.100 | lr=8.25e-07 | 15980 tok/s | niche_tok=432 gen_tok=1452
+[2026-03-28 04:31:17] Step 9500/10000 | LM=0.3081 | Router_CE=1.0921 | Contr=0.0000 | tau=0.100 | lr=6.82e-07 | 15982 tok/s | niche_tok=477 gen_tok=1359
+[2026-03-28 04:31:17] --- Eval at step 9500 ---
+[2026-03-28 04:31:19]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:31:19]        niche: [0.011, 0.987, 0.002]
+[2026-03-28 04:31:19]      general: [0.359, 0.640, 0.002]
+[2026-03-28 04:31:19]        mixed: [0.474, 0.519, 0.006]
+[2026-03-28 04:31:19]   CV = 0.9556 SUCCESS
+[2026-03-28 04:31:19]   ZPD distribution: {'niche': 8650, 'general': 27282, 'mixed': 5028}
+[2026-03-28 04:31:19]   Layer 18: entropy=0.648 dist=['0.218', '0.657', '0.126'] hard=['0.173', '0.783', '0.044']
+[2026-03-28 04:31:19]   Layer 27: entropy=0.158 dist=['0.295', '0.700', '0.005'] hard=['0.299', '0.698', '0.002']
+[2026-03-28 04:31:25] Step 9550/10000 | LM=0.3169 | Router_CE=1.1094 | Contr=0.0000 | tau=0.100 | lr=5.53e-07 | 15969 tok/s | niche_tok=453 gen_tok=1345
+[2026-03-28 04:31:31] Step 9600/10000 | LM=0.3090 | Router_CE=1.0966 | Contr=0.0000 | tau=0.100 | lr=4.37e-07 | 15970 tok/s | niche_tok=457 gen_tok=1330
+[2026-03-28 04:31:38] Step 9650/10000 | LM=0.3154 | Router_CE=1.1065 | Contr=0.0000 | tau=0.100 | lr=3.35e-07 | 15971 tok/s | niche_tok=476 gen_tok=1325
+[2026-03-28 04:31:44] Step 9700/10000 | LM=0.3096 | Router_CE=1.0996 | Contr=0.0000 | tau=0.100 | lr=2.46e-07 | 15973 tok/s | niche_tok=496 gen_tok=1366
+[2026-03-28 04:31:50] Step 9750/10000 | LM=0.3078 | Router_CE=1.1048 | Contr=0.0000 | tau=0.100 | lr=1.71e-07 | 15974 tok/s | niche_tok=431 gen_tok=1352
+[2026-03-28 04:31:56] Step 9800/10000 | LM=0.3178 | Router_CE=1.1118 | Contr=0.0000 | tau=0.100 | lr=1.09e-07 | 15975 tok/s | niche_tok=460 gen_tok=1339
+[2026-03-28 04:32:03] Step 9850/10000 | LM=0.3057 | Router_CE=1.0975 | Contr=0.0000 | tau=0.100 | lr=6.15e-08 | 15976 tok/s | niche_tok=404 gen_tok=1317
+[2026-03-28 04:32:09] Step 9900/10000 | LM=0.3134 | Router_CE=1.1086 | Contr=0.0000 | tau=0.100 | lr=2.73e-08 | 15977 tok/s | niche_tok=434 gen_tok=1363
+[2026-03-28 04:32:15] Step 9950/10000 | LM=0.3122 | Router_CE=1.0995 | Contr=0.0000 | tau=0.100 | lr=6.83e-09 | 15978 tok/s | niche_tok=469 gen_tok=1380
+[2026-03-28 04:32:22] Step 10000/10000 | LM=0.3123 | Router_CE=1.1014 | Contr=0.0000 | tau=0.100 | lr=0.00e+00 | 15979 tok/s | niche_tok=422 gen_tok=1363
+[2026-03-28 04:32:22] --- Eval at step 10000 ---
+[2026-03-28 04:32:23]   M_ij matrix (rows=token_type, cols=expert):
+[2026-03-28 04:32:23]        niche: [0.012, 0.987, 0.001]
+[2026-03-28 04:32:23]      general: [0.346, 0.653, 0.001]
+[2026-03-28 04:32:23]        mixed: [0.468, 0.523, 0.009]
+[2026-03-28 04:32:23]   CV = 0.9582 SUCCESS
+[2026-03-28 04:32:23]   ZPD distribution: {'niche': 8851, 'general': 27332, 'mixed': 4777}
+[2026-03-28 04:32:23]   Layer 18: entropy=0.648 dist=['0.224', '0.655', '0.120'] hard=['0.180', '0.780', '0.041']
+[2026-03-28 04:32:23]   Layer 27: entropy=0.156 dist=['0.284', '0.711', '0.005'] hard=['0.288', '0.710', '0.002']
+[2026-03-28 04:32:23] ======================================================================
+[2026-03-28 04:32:23] TRAINING COMPLETE
+[2026-03-28 04:32:23]   Steps: 10000
+[2026-03-28 04:32:23]   Tokens: 20,480,000
+[2026-03-28 04:32:23]   Wall time: 1283s (0.4h)
+[2026-03-28 04:32:23]   Throughput: 15966 tok/s
+[2026-03-28 04:32:23]   Best CV: 0.9607
+[2026-03-28 04:32:23]   Pre-registered threshold: CV > 0.2
+[2026-03-28 04:32:23]   Verdict: SUCCESS
+[2026-03-28 04:32:23] ======================================================================
+[2026-03-28 04:32:23] Results saved to /root/t6b-mogae/results_niche_curriculum/niche_curriculum_results.json
+[2026-03-28 04:32:23] Final checkpoint saved

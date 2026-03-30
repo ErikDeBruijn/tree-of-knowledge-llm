@@ -1,0 +1,51 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:01,  6.43it/s]Loading weights:   9%|▉         | 36/399 [00:00<00:02, 170.73it/s]Loading weights:  19%|█▉        | 77/399 [00:00<00:01, 264.54it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 330.86it/s]Loading weights:  43%|████▎     | 171/399 [00:00<00:00, 366.65it/s]Loading weights:  53%|█████▎    | 210/399 [00:00<00:00, 371.11it/s]Loading weights:  62%|██████▏   | 249/399 [00:00<00:00, 366.03it/s]Loading weights:  72%|███████▏  | 287/399 [00:00<00:00, 309.79it/s]Loading weights:  85%|████████▌ | 341/399 [00:01<00:00, 345.94it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 350.48it/s]
+Loaded in 3s. Rank-16 L12
+Trainable: 25,362,432
+Training 15000 steps...
+Step 0/15000|loss=2.6406|tau=1.000|LT:E0=2.49 E1=2.48|LR:E0=1.0e-04 E1=1.0e-04
+Step 500/15000|loss=2.4844|tau=0.958|LT:E0=2.27 E1=1.85|LR:E0=8.4e-05 E1=3.6e-05
+Step 1000/15000|loss=1.8594|tau=0.917|LT:E0=2.27 E1=1.85|LR:E0=8.4e-05 E1=3.6e-05
+Step 1500/15000|loss=3.2656|tau=0.875|LT:E0=2.40 E1=1.92|LR:E0=8.8e-05 E1=3.4e-05
+Step 2000/15000|loss=3.2188|tau=0.833|LT:E0=2.31 E1=1.83|LR:E0=9.0e-05 E1=3.3e-05
+Step 2500/15000|loss=2.9219|tau=0.792|LT:E0=2.47 E1=1.91|LR:E0=9.4e-05 E1=3.2e-05
+Step 3000/15000|loss=2.5625|tau=0.750|LT:E0=2.34 E1=1.85|LR:E0=9.0e-05 E1=3.3e-05
+Step 3500/15000|loss=3.7500|tau=0.708|LT:E0=2.48 E1=1.94|LR:E0=9.2e-05 E1=3.2e-05
+Step 4000/15000|loss=2.4531|tau=0.667|LT:E0=2.31 E1=1.80|LR:E0=9.2e-05 E1=3.2e-05
+Step 4500/15000|loss=3.3281|tau=0.625|LT:E0=2.36 E1=1.84|LR:E0=9.3e-05 E1=3.2e-05
+Step 5000/15000|loss=3.0000|tau=0.583|LT:E0=2.44 E1=1.87|LR:E0=9.7e-05 E1=3.1e-05
+  Eval PPL=13.56
+Step 5500/15000|loss=2.5000|tau=0.542|LT:E0=2.30 E1=1.65|LR:E0=1.1e-04 E1=2.7e-05
+Step 6000/15000|loss=3.0625|tau=0.500|LT:E0=2.32 E1=1.66|LR:E0=1.1e-04 E1=2.7e-05
+Step 6500/15000|loss=3.2969|tau=0.458|LT:E0=2.29 E1=1.75|LR:E0=9.7e-05 E1=3.1e-05
+Step 7000/15000|loss=2.2031|tau=0.417|LT:E0=2.27 E1=1.72|LR:E0=9.8e-05 E1=3.1e-05
+Step 7500/15000|loss=2.7812|tau=0.375|LT:E0=2.28 E1=1.51|LR:E0=1.3e-04 E1=2.3e-05
+Step 8000/15000|loss=3.1094|tau=0.333|LT:E0=2.15 E1=1.44|LR:E0=1.3e-04 E1=2.4e-05
+Step 8500/15000|loss=2.0312|tau=0.292|LT:E0=2.31 E1=1.65|LR:E0=1.1e-04 E1=2.7e-05
+Step 9000/15000|loss=2.4688|tau=0.250|LT:E0=2.29 E1=1.42|LR:E0=1.5e-04 E1=2.0e-05
+Step 9500/15000|loss=2.2812|tau=0.208|LT:E0=2.23 E1=1.56|LR:E0=1.2e-04 E1=2.6e-05
+Step 10000/15000|loss=4.8750|tau=0.167|LT:E0=2.25 E1=1.70|LR:E0=1.0e-04 E1=3.0e-05
+  Eval PPL=6.78
+Step 10500/15000|loss=2.4688|tau=0.125|LT:E0=2.27 E1=1.61|LR:E0=1.1e-04 E1=2.7e-05
+Step 11000/15000|loss=2.0938|tau=0.100|LT:E0=2.25 E1=1.45|LR:E0=1.4e-04 E1=2.2e-05
+Step 11500/15000|loss=2.6875|tau=0.100|LT:E0=2.23 E1=1.56|LR:E0=1.2e-04 E1=2.6e-05
+Step 12000/15000|loss=3.0469|tau=0.100|LT:E0=2.28 E1=1.65|LR:E0=1.1e-04 E1=2.8e-05
+Step 12500/15000|loss=2.6094|tau=0.100|LT:E0=2.30 E1=1.75|LR:E0=9.8e-05 E1=3.0e-05
+Step 13000/15000|loss=2.9062|tau=0.100|LT:E0=2.19 E1=1.61|LR:E0=1.0e-04 E1=2.9e-05
+Step 13500/15000|loss=2.9531|tau=0.100|LT:E0=2.29 E1=1.64|LR:E0=1.1e-04 E1=2.7e-05
+Step 14000/15000|loss=2.7812|tau=0.100|LT:E0=2.34 E1=1.47|LR:E0=1.4e-04 E1=2.1e-05
+Step 14500/15000|loss=2.5781|tau=0.100|LT:E0=2.27 E1=1.56|LR:E0=1.2e-04 E1=2.5e-05
+
+=== M_ij ABLATION (rank-16, L12) ===
+Baseline: {'medical': '14.1', 'code': '18.5', 'legal': '16.0', 'news': '12.2', 'conversational': '31.5'}
+No E0: medical=+989.60 code=+1437.38 legal=+1668.42 news=+1317.49 conversational=+2348.89 | CV=0.2928
+No E1: medical=+7.21 code=+10.10 legal=+9.97 news=+9.18 conversational=+20.57 | CV=0.4117
+
+Overall M_ij CV: 1.0677
+
+Rank-selectivity curve (L12):
+  Rank-4:    CV=1.07
+  Rank-16:   CV=1.0677
+  Rank-1024: CV=0.47
+Done.

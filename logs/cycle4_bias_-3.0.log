@@ -1,0 +1,25 @@
+=== Cycle 4: bias_init=-3.0 ===
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:33, 11.85it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:02, 167.84it/s]Loading weights:  19%|█▉        | 75/399 [00:00<00:01, 235.97it/s]Loading weights:  26%|██▋       | 105/399 [00:00<00:01, 251.78it/s]Loading weights:  45%|████▌     | 181/399 [00:00<00:00, 409.61it/s]Loading weights:  56%|█████▋    | 225/399 [00:00<00:00, 394.10it/s]Loading weights:  67%|██████▋   | 268/399 [00:00<00:00, 396.74it/s]Loading weights:  77%|███████▋  | 309/399 [00:00<00:00, 397.34it/s]Loading weights:  88%|████████▊ | 350/399 [00:01<00:00, 359.69it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 349.67it/s]
+Loading Phase 1 adapter from /root/t6b-mogae/adapters/cycle3_l1_seed42_phase1.pt...
+Adapter frozen. Phase 1 from cache.
+
+=== PHASE 2: Gate training (bias=-3.0, 1500 steps) ===
+  Step 0/1500 | lm=2.5312 | dom=0.047 gen=0.000 sel=+0.047
+  Step 300/1500 | lm=1.1719 | dom=0.939 gen=0.647 sel=+0.292
+  Step 600/1500 | lm=0.9883 | dom=0.948 gen=0.409 sel=+0.539
+  Step 900/1500 | lm=1.0938 | dom=0.972 gen=0.270 sel=+0.703
+  Step 1200/1500 | lm=1.6797 | dom=0.981 gen=0.285 sel=+0.695
+
+=== EVALUATION ===
+  Domain (gated): PPL=10.74
+  Generic (gated): PPL=16.11
+  Domain (base): PPL=12.97
+  Generic (base): PPL=17.12
+
+=== FINAL: bias=-3.0 ===
+Selectivity: +0.624
+Domain PPL: 10.74 (-17.1%)
+Generic PPL: 16.11 (-5.9%)
+Saved to /root/t6b-mogae/results/cycle4_bias_-3.0.json

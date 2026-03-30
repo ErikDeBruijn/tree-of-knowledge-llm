@@ -1,0 +1,45 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:35, 11.13it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:03, 109.35it/s]Loading weights:  32%|███▏      | 127/399 [00:00<00:00, 331.88it/s]Loading weights:  43%|████▎     | 173/399 [00:00<00:00, 348.13it/s]Loading weights:  54%|█████▍    | 216/399 [00:00<00:00, 352.56it/s]Loading weights:  64%|██████▍   | 257/399 [00:00<00:00, 365.39it/s]Loading weights:  75%|███████▍  | 298/399 [00:00<00:00, 364.29it/s]Loading weights:  86%|████████▌ | 342/399 [00:01<00:00, 382.65it/s]Loading weights:  96%|█████████▌| 383/399 [00:01<00:00, 384.45it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 331.27it/s]
+BBC eval: 50, Cuisine eval: 50, Generic eval: 50
+Loading BBC adapter...
+Loading cuisine adapter...
+
+=== BASE MODEL (no adapters) ===
+  BBC: PPL=12.64 | BBC_gate=N/A | Cuisine_gate=N/A
+  Generic: PPL=15.78 | BBC_gate=N/A | Cuisine_gate=N/A
+  Cuisine: PPL=12.24 | BBC_gate=N/A | Cuisine_gate=N/A
+
+=== SINGLE ADAPTER  BBC→BBC: PP  BBC→BBC: PPL=5.45 | BBC_gate=0.783 | Cuisine_gate=N/A
+  BBC→Generic: PPL=14.57 | BBC_gate=0.302 | Cu  BBC→Cuisine  BBC→Cuisine: PPL=11.73 | BBC_gate=0.305 | Cuisine_gate=N/A
+
+=== SINGLE ADAPTER: Cu  Cuisine→BBC  Cuisine→BBC: PPL=10.97 | BBC_gate=N/A | Cuisine_gate=0.476
+  Cuisine→Generic: PPL=14.20 | BBC_gate=N/A | Cuis  Cuisine→Cui  Cuisine→Cuisine: PPL=5.79 | BBC_gate=N/A | Cuisine_gate=0.873
+
+=== DUAL ADAPTERS: BBC + Cuisine simu  Dual→BBC: P  Dual→BBC: PPL=5.77 | BBC_gate=0.786 | Cuis  Dual→Generi  Dual→Generic: PPL=14.46 | BBC_gate=0.298 | Cuis  Dual→Cuisin  Dual→Cuisine: PPL=6.18 | BBC_gate=0.328 | Cuisine_gate=0.874
+
+=== VERDICT ===
+Condition            Input      BBC gate   Cuis gate  PPL       
+------------------------------------------------------------
+Single BBC           BBC        0.783      N/A        5.45      
+Single BBC           Generic    0.302      N/A        14.57     
+Dual                 BBC        0.786      0.489      5.77      
+Dual                 Generic    0.298      0.458      14.46     
+Single Cuisine       Cuisine    N/A        0.873      5.79      
+Dual                 Cuisine    0.328      0.874      6.18      
+
+--- Success criteria ---
+  [PASS] BBC gate on BBC > 0.6: 0.786
+  [FAIL] Cuisine gate on BBC < 0.4: 0.489
+  [PASS] BBC gate on generic < 0.4: 0.298
+  [FAIL] Cuisine gate on generic < 0.4: 0.458
+  [PASS] Cuisine gate on Cuisine > 0.6: 0.874
+  [PASS] BBC gate on Cuisine < 0.4: 0.328
+  [FAIL] Dual BBC PPL within 5% of single (+5.9%): 5.884
+  [FAIL] Dual Cuisine PPL within 5% of single (+6.8%): 6.828
+
+4/8 criteria passed
+VERDICT: FAIL — gates interfere or do not differentiate.
+
+Results saved to /root/t6b-mogae/results/cycle4_two_adapter_gating.json
+Done.

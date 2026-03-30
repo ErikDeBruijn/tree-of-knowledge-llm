@@ -1,0 +1,98 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:01,  6.47it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:01, 180.60it/s]Loading weights:  16%|█▌        | 64/399 [00:00<00:01, 180.94it/s]Loading weights:  33%|███▎      | 133/399 [00:00<00:00, 348.08it/s]Loading weights:  43%|████▎     | 172/399 [00:00<00:00, 357.57it/s]Loading weights:  54%|█████▎    | 214/399 [00:00<00:00, 375.62it/s]Loading weights:  64%|██████▎   | 254/399 [00:00<00:00, 365.90it/s]Loading weights:  76%|███████▌  | 303/399 [00:00<00:00, 367.93it/s]Loading weights:  88%|████████▊ | 350/399 [00:01<00:00, 372.89it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 351.97it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loaded in 3s. Trunk FROZEN.
+Collecting domain-specific texts from C4...
+  medical: 2000 texts
+  code: 2000 texts
+  legal: 2000 texts
+  news: 2000 texts
+  conversational: 2000 texts
+DOMAIN-PARTITIONED GROVE: 2 experts, rank-8, L12
+Trainable: 12,779,520
+
+Training 20000 steps with domain-cycling data...
+Step 0/20000|loss=2.9531|dom=medical|exp=2|LT:E0=2.52 E1=2.52
+Step 500/20000|loss=2.5469|dom=medical|exp=2|LT:E0=2.16 E1=2.44
+Step 1000/20000|loss=3.0156|dom=medical|exp=2|LT:E0=1.82 E1=2.43
+Step 1500/20000|loss=3.3750|dom=medical|exp=2|LT:E0=1.93 E1=2.46
+Step 2000/20000|loss=3.0312|dom=medical|exp=2|LT:E0=2.04 E1=2.49
+Step 2500/20000|loss=2.6719|dom=medical|exp=2|LT:E0=1.88 E1=2.43
+
+*** SPLIT: E1 → E1+E2 (LT=2.38) ***
+Step 3000/20000|loss=2.5156|dom=medical|exp=3|LT:E0=1.89 E1=2.38 E2=2.38
+Step 3500/20000|loss=2.9531|dom=medical|exp=3|LT:E0=2.21 E1=2.53 E2=2.35
+Step 4000/20000|loss=2.6875|dom=medical|exp=3|LT:E0=2.37 E1=2.51 E2=2.29
+Step 4500/20000|loss=2.1562|dom=medical|exp=3|LT:E0=2.33 E1=2.55 E2=2.24
+Step 5000/20000|loss=2.7344|dom=medical|exp=3|LT:E0=2.37 E1=2.66 E2=2.33
+  Per-domain learntropy (E0):
+    medical: 2.149
+    code: 2.390
+    legal: 2.508
+    news: 2.309
+    conversational: 2.398
+Step 5500/20000|loss=2.4844|dom=medical|exp=3|LT:E0=2.30 E1=2.48 E2=2.24
+
+*** SPLIT: E1 → E1+E3 (LT=2.51) ***
+Step 6000/20000|loss=2.9062|dom=medical|exp=4|LT:E0=2.25 E1=2.51 E2=2.14 E3=2.51
+Step 6500/20000|loss=3.3281|dom=medical|exp=4|LT:E0=1.97 E1=2.49 E2=2.27 E3=2.44
+Step 7000/20000|loss=2.9844|dom=medical|exp=4|LT:E0=2.20 E1=2.50 E2=2.31 E3=2.52
+Step 7500/20000|loss=2.6250|dom=medical|exp=4|LT:E0=2.14 E1=2.42 E2=2.22 E3=2.44
+Step 8000/20000|loss=2.5156|dom=medical|exp=4|LT:E0=1.84 E1=2.40 E2=2.26 E3=2.39
+Step 8500/20000|loss=2.8906|dom=medical|exp=4|LT:E0=2.09 E1=2.46 E2=2.29 E3=2.50
+
+*** SPLIT: E3 → E3+E4 (LT=2.42) ***
+Step 9000/20000|loss=2.6719|dom=medical|exp=5|LT:E0=2.30 E1=2.41 E2=2.28 E3=2.42 E4=2.42
+Step 9500/20000|loss=2.1250|dom=medical|exp=5|LT:E0=2.02 E1=2.47 E2=2.11 E3=2.43 E4=2.66
+Step 10000/20000|loss=2.7188|dom=medical|exp=5|LT:E0=2.19 E1=2.58 E2=2.22 E3=2.54 E4=2.74
+  Per-domain learntropy (E0):
+    medical: 2.076
+    code: 2.111
+    legal: 2.168
+    news: 2.008
+    conversational: 1.840
+Step 10500/20000|loss=2.4531|dom=medical|exp=5|LT:E0=2.10 E1=2.37 E2=2.06 E3=2.41 E4=2.62
+Step 11000/20000|loss=2.9062|dom=medical|exp=5|LT:E0=1.61 E1=2.47 E2=1.98 E3=2.33 E4=2.67
+Step 11500/20000|loss=3.2812|dom=medical|exp=5|LT:E0=2.02 E1=2.39 E2=2.19 E3=2.34 E4=2.49
+
+*** SPLIT: E4 → E4+E5 (LT=2.71) ***
+Step 12000/20000|loss=2.9062|dom=medical|exp=6|LT:E0=2.39 E1=2.45 E2=2.16 E3=2.45 E4=2.71 E5=2.71
+Step 12500/20000|loss=2.5781|dom=medical|exp=6|LT:E0=1.32 E1=2.39 E2=2.05 E3=2.35 E4=2.65 E5=2.47
+Step 13000/20000|loss=2.4844|dom=medical|exp=6|LT:E0=1.48 E1=2.26 E2=2.18 E3=2.32 E4=2.53 E5=2.38
+Step 13500/20000|loss=2.8750|dom=medical|exp=6|LT:E0=2.19 E1=2.45 E2=2.16 E3=2.44 E4=2.63 E5=2.52
+Step 14000/20000|loss=2.6719|dom=medical|exp=6|LT:E0=1.81 E1=2.37 E2=2.20 E3=2.36 E4=2.55 E5=2.44
+Step 14500/20000|loss=2.0938|dom=medical|exp=6|LT:E0=1.37 E1=2.44 E2=2.09 E3=2.38 E4=2.59 E5=2.47
+
+*** SPLIT: E4 → E4+E6 (LT=2.71) ***
+Step 15000/20000|loss=2.7031|dom=medical|exp=7|LT:E0=2.45 E1=2.47 E2=2.16 E3=2.53 E4=2.71 E5=2.65 E6=2.71
+  Per-domain learntropy (E0):
+    medical: 2.025
+    code: 2.023
+    legal: 2.009
+    news: 2.872
+    conversational: 1.980
+Step 15500/20000|loss=2.4375|dom=medical|exp=7|LT:E0=1.60 E1=2.38 E2=2.03 E3=2.21 E4=2.57 E5=2.36 E6=2.56
+Step 16000/20000|loss=2.7812|dom=medical|exp=7|LT:E0=1.52 E1=2.30 E2=1.93 E3=2.24 E4=2.73 E5=2.37 E6=2.55
+Step 16500/20000|loss=3.2500|dom=medical|exp=7|LT:E0=1.72 E1=2.37 E2=2.11 E3=2.16 E4=2.59 E5=2.40 E6=2.54
+Step 17000/20000|loss=2.9531|dom=medical|exp=7|LT:E0=2.07 E1=2.48 E2=2.09 E3=2.32 E4=2.61 E5=2.59 E6=2.81
+Step 17500/20000|loss=2.5469|dom=medical|exp=7|LT:E0=1.54 E1=2.28 E2=2.05 E3=2.30 E4=2.42 E5=2.47 E6=2.51
+
+*** SPLIT: E6 → E6+E7 (LT=2.63) ***
+Step 18000/20000|loss=2.4531|dom=medical|exp=8|LT:E0=1.77 E1=2.29 E2=2.07 E3=2.21 E4=2.50 E5=2.38 E6=2.63 E7=2.63
+Step 18500/20000|loss=2.8594|dom=medical|exp=8|LT:E0=1.52 E1=2.40 E2=2.07 E3=2.48 E4=2.51 E5=2.43 E6=2.68 E7=2.43
+Step 19000/20000|loss=2.6406|dom=medical|exp=8|LT:E0=1.52 E1=2.31 E2=2.19 E3=2.29 E4=2.50 E5=2.45 E6=2.61 E7=2.42
+Step 19500/20000|loss=2.0469|dom=medical|exp=8|LT:E0=1.31 E1=2.41 E2=2.01 E3=2.35 E4=2.52 E5=2.38 E6=2.53 E7=2.61
+
+=== M_ij ABLATION (8 experts, domain-trained) ===
+Baseline: {'medical': '13.9', 'code': '19.8', 'legal': '18.6', 'news': '13.7', 'conversational': '24.4'}
+No E0: medical=+9.71 code=+18.06 legal=+14.86 news=+10.98 conversational=+23.82|CV=0.3293
+No E1: medical=+5.94 code=+9.11 legal=+7.42 news=+7.05 conversational=+10.98|CV=0.2176
+No E2: medical=+9.81 code=+16.44 legal=+13.45 news=+12.61 conversational=+20.55|CV=0.2513
+No E3: medical=+2.43 code=+3.50 legal=+3.05 news=+3.07 conversational=+5.29|CV=0.2813
+No E4: medical=+0.44 code=+1.01 legal=+0.73 news=+1.00 conversational=+1.64|CV=0.4102
+No E5: medical=+2.49 code=+3.23 legal=+3.22 news=+3.25 conversational=+5.98|CV=0.3325
+No E6: medical=+1.72 code=+2.46 legal=+2.78 news=+1.74 conversational=+3.91|CV=0.3202
+No E7: medical=+2.53 code=+3.58 legal=+3.24 news=+3.09 conversational=+5.11|CV=0.2474
+
+Overall M_ij CV: 0.8857, Active: 8/8
+Done.

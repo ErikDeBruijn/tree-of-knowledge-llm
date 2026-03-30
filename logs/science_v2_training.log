@@ -1,0 +1,344 @@
+=== Training physics ===
+=== Grove Contributor Training ===
+Contributor: science_v2
+Domain: physics
+Seed: 42, Rank: 16
+Domain data SHA-256: e1987ebe18c85f57...
+Domain texts: 500 (train: 450, eval: 50)
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<00:50,  7.91it/s]Loading weights:   1%|          | 2/399 [00:00<01:37,  4.07it/s]Loading weights:   1%|▏         | 5/399 [00:00<00:38, 10.34it/s]Loading weights:   4%|▍         | 16/399 [00:00<00:10, 36.04it/s]Loading weights:   9%|▉         | 35/399 [00:00<00:04, 74.83it/s]Loading weights:  20%|██        | 81/399 [00:00<00:01, 175.36it/s]Loading weights:  30%|██▉       | 118/399 [00:01<00:01, 195.59it/s]Loading weights:  35%|███▌      | 140/399 [00:01<00:01, 150.97it/s]Loading weights:  40%|███▉      | 158/399 [00:01<00:01, 127.65it/s]Loading weights:  51%|█████     | 203/399 [00:01<00:01, 176.78it/s]Loading weights:  56%|█████▌    | 224/399 [00:02<00:01, 118.08it/s]Loading weights:  60%|██████    | 240/399 [00:02<00:01, 85.86it/s] Loading weights:  63%|██████▎   | 253/399 [00:02<00:01, 78.79it/s]Loading weights:  73%|███████▎  | 292/399 [00:02<00:00, 122.12it/s]Loading weights:  78%|███████▊  | 311/399 [00:02<00:00, 127.48it/s]Loading weights:  82%|████████▏ | 329/399 [00:03<00:00, 110.01it/s]Loading weights:  98%|█████████▊| 390/399 [00:03<00:00, 197.62it/s]Loading weights: 100%|██████████| 399/399 [00:03<00:00, 124.86it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.5156
+  Step 200/2000 | loss=2.3281
+  Step 400/2000 | loss=0.9922
+  Step 600/2000 | loss=1.5000
+  Step 800/2000 | loss=3.0156
+  Step 1000/2000 | loss=0.9844
+  Step 1200/2000 | loss=0.6211
+  Step 1400/2000 | loss=1.5469
+  Step 1600/2000 | loss=1.2109
+  Step 1800/2000 | loss=0.2559
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.1094 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.3770 | domain=0.930 generic=0.326 sel=+0.604
+  Step 400/1500 | lm=1.0391 | domain=0.955 generic=0.352 sel=+0.602
+  Step 600/1500 | lm=0.4219 | domain=0.770 generic=0.394 sel=+0.376
+  Step 800/1500 | lm=0.1016 | domain=0.857 generic=0.271 sel=+0.586
+  Step 1000/1500 | lm=1.1406 | domain=0.880 generic=0.253 sel=+0.626
+  Step 1200/1500 | lm=0.0635 | domain=0.925 generic=0.416 sel=+0.509
+  Step 1400/1500 | lm=1.4062 | domain=0.957 generic=0.438 sel=+0.518
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=15.42
+  Generic (gated): PPL=16.79
+  Domain (base): PPL=9.11
+  Generic (base): PPL=17.49
+
+Selectivity: +0.682
+Domain PPL: 15.42 (+69.3% vs base)
+Generic PPL: 16.79 (-4.0% vs base)
+Per-layer gate range: [0.239 - 0.803]
+
+Package saved to /root/t6b-mogae/grove_adapters_science_v2/physics/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+=== Training biology ===
+=== Grove Contributor Training ===
+Contributor: science_v2
+Domain: biology
+Seed: 42, Rank: 16
+Domain data SHA-256: 1ef2c74dd533318f...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:15,  5.25it/s]Loading weights:  12%|█▏        | 48/399 [00:00<00:01, 199.21it/s]Loading weights:  21%|██▏       | 85/399 [00:00<00:01, 245.90it/s]Loading weights:  34%|███▍      | 136/399 [00:00<00:00, 309.22it/s]Loading weights:  44%|████▍     | 176/399 [00:00<00:00, 319.65it/s]Loading weights:  53%|█████▎    | 210/399 [00:00<00:00, 308.86it/s]Loading weights:  67%|██████▋   | 268/399 [00:00<00:00, 379.65it/s]Loading weights:  77%|███████▋  | 308/399 [00:00<00:00, 375.66it/s]Loading weights:  87%|████████▋ | 347/399 [00:01<00:00, 378.23it/s]Loading weights:  97%|█████████▋| 389/399 [00:01<00:00, 385.31it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 331.79it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=1.9375
+  Step 200/2000 | loss=2.5312
+  Step 400/2000 | loss=1.7422
+  Step 600/2000 | loss=2.2812
+  Step 800/2000 | loss=2.0938
+  Step 1000/2000 | loss=1.7422
+  Step 1200/2000 | loss=1.7656
+  Step 1400/2000 | loss=1.0469
+  Step 1600/2000 | loss=1.0312
+  Step 1800/2000 | loss=0.5547
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=1.7344 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.8711 | domain=0.866 generic=0.337 sel=+0.530
+  Step 400/1500 | lm=0.9102 | domain=0.918 generic=0.287 sel=+0.631
+  Step 600/1500 | lm=1.7969 | domain=0.939 generic=0.654 sel=+0.285
+  Step 800/1500 | lm=1.1094 | domain=0.827 generic=0.343 sel=+0.484
+  Step 1000/1500 | lm=0.9219 | domain=0.865 generic=0.227 sel=+0.638
+  Step 1200/1500 | lm=0.6602 | domain=0.895 generic=0.481 sel=+0.414
+  Step 1400/1500 | lm=1.1641 | domain=0.958 generic=0.418 sel=+0.540
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=17.28
+  Generic (gated): PPL=16.62
+  Domain (base): PPL=9.34
+  Generic (base): PPL=17.49
+
+Selectivity: +0.683
+Domain PPL: 17.28 (+84.9% vs base)
+Generic PPL: 16.62 (-5.0% vs base)
+Per-layer gate range: [0.403 - 0.934]
+
+Package saved to /root/t6b-mogae/grove_adapters_science_v2/biology/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+=== Training chemistry ===
+=== Grove Contributor Training ===
+Contributor: science_v2
+Domain: chemistry
+Seed: 42, Rank: 16
+Domain data SHA-256: b2d2b21ca048c653...
+Domain texts: 500 (train: 450, eval: 50)
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.40it/s]Loading weights:   9%|▉         | 37/399 [00:00<00:02, 163.11it/s]Loading weights:  18%|█▊        | 71/399 [00:00<00:01, 211.42it/s]Loading weights:  32%|███▏      | 126/399 [00:00<00:00, 319.02it/s]Loading weights:  41%|████      | 162/399 [00:00<00:00, 309.65it/s]Loading weights:  52%|█████▏    | 206/399 [00:00<00:00, 328.30it/s]Loading weights:  63%|██████▎   | 252/399 [00:00<00:00, 356.16it/s]Loading weights:  75%|███████▌  | 301/399 [00:00<00:00, 386.97it/s]Loading weights:  85%|████████▌ | 341/399 [00:01<00:00, 343.54it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 331.04it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.4531
+  Step 200/2000 | loss=2.1094
+  Step 400/2000 | loss=1.4531
+  Step 600/2000 | loss=1.5703
+  Step 800/2000 | loss=1.9062
+  Step 1000/2000 | loss=1.4844
+  Step 1200/2000 | loss=1.3125
+  Step 1400/2000 | loss=0.3789
+  Step 1600/2000 | loss=0.6797
+  Step 1800/2000 | loss=0.9102
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.2500 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=1.4453 | domain=0.640 generic=0.476 sel=+0.164
+  Step 400/1500 | lm=0.5781 | domain=0.925 generic=0.372 sel=+0.553
+  Step 600/1500 | lm=1.5391 | domain=0.885 generic=0.550 sel=+0.335
+  Step 800/1500 | lm=0.3594 | domain=0.702 generic=0.294 sel=+0.409
+  Step 1000/1500 | lm=0.2910 | domain=0.828 generic=0.268 sel=+0.559
+  Step 1200/1500 | lm=0.1533 | domain=0.935 generic=0.523 sel=+0.413
+  Step 1400/1500 | lm=0.8906 | domain=0.926 generic=0.364 sel=+0.562
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=15.35
+  Generic (gated): PPL=16.93
+  Domain (base): PPL=9.30
+  Generic (base): PPL=17.49
+
+Selectivity: +0.637
+Domain PPL: 15.35 (+65.0% vs base)
+Generic PPL: 16.93 (-3.2% vs base)
+Per-layer gate range: [0.188 - 0.971]
+
+Package saved to /root/t6b-mogae/grove_adapters_science_v2/chemistry/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+=== Training mathematics ===
+=== Grove Contributor Training ===
+Contributor: science_v2
+Domain: mathematics
+Seed: 42, Rank: 16
+Domain data SHA-256: 6b6e94bd008a6a95...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:40,  9.75it/s]Loading weights:   7%|▋         | 26/399 [00:00<00:03, 103.58it/s]Loading weights:  10%|█         | 41/399 [00:00<00:03, 101.68it/s]Loading weights:  24%|██▎       | 94/399 [00:00<00:01, 230.31it/s]Loading weights:  33%|███▎      | 130/399 [00:00<00:01, 255.48it/s]Loading weights:  40%|███▉      | 159/399 [00:00<00:01, 213.56it/s]Loading weights:  48%|████▊     | 193/399 [00:00<00:00, 245.12it/s]Loading weights:  58%|█████▊    | 232/399 [00:01<00:00, 282.59it/s]Loading weights:  66%|██████▌   | 263/399 [00:01<00:00, 203.58it/s]Loading weights:  82%|████████▏ | 328/399 [00:01<00:00, 283.53it/s]Loading weights:  95%|█████████▌| 381/399 [00:01<00:00, 331.52it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 255.14it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=1.3359
+  Step 200/2000 | loss=1.4766
+  Step 400/2000 | loss=2.7656
+  Step 600/2000 | loss=1.2656
+  Step 800/2000 | loss=0.2969
+  Step 1000/2000 | loss=1.4922
+  Step 1200/2000 | loss=1.4062
+  Step 1400/2000 | loss=0.1660
+  Step 1600/2000 | loss=0.3789
+  Step 1800/2000 | loss=0.0432
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=0.7930 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.8477 | domain=0.730 generic=0.338 sel=+0.392
+  Step 400/1500 | lm=0.5234 | domain=0.825 generic=0.293 sel=+0.533
+  Step 600/1500 | lm=1.0469 | domain=0.872 generic=0.334 sel=+0.538
+  Step 800/1500 | lm=2.4062 | domain=0.660 generic=0.332 sel=+0.328
+  Step 1000/1500 | lm=0.0928 | domain=0.825 generic=0.256 sel=+0.569
+  Step 1200/1500 | lm=0.1318 | domain=0.963 generic=0.331 sel=+0.632
+  Step 1400/1500 | lm=0.4395 | domain=0.941 generic=0.419 sel=+0.522
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=14.20
+  Generic (gated): PPL=16.85
+  Domain (base): PPL=8.33
+  Generic (base): PPL=17.49
+
+Selectivity: +0.636
+Domain PPL: 14.20 (+70.4% vs base)
+Generic PPL: 16.85 (-3.7% vs base)
+Per-layer gate range: [0.452 - 0.894]
+
+Package saved to /root/t6b-mogae/grove_adapters_science_v2/mathematics/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+=== Training computer_science ===
+=== Grove Contributor Training ===
+Contributor: science_v2
+Domain: computer_science
+Seed: 42, Rank: 16
+Domain data SHA-256: 34f92659486c1632...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:38, 10.39it/s]Loading weights:   2%|▏         | 9/399 [00:00<00:10, 35.75it/s]Loading weights:  13%|█▎        | 53/399 [00:00<00:01, 186.89it/s]Loading weights:  23%|██▎       | 91/399 [00:00<00:01, 220.58it/s]Loading weights:  33%|███▎      | 130/399 [00:00<00:01, 248.72it/s]Loading weights:  45%|████▌     | 180/399 [00:00<00:00, 299.28it/s]Loading weights:  56%|█████▋    | 225/399 [00:00<00:00, 324.47it/s]Loading weights:  65%|██████▍   | 259/399 [00:01<00:00, 323.30it/s]Loading weights:  74%|███████▍  | 297/399 [00:01<00:00, 320.75it/s]Loading weights:  86%|████████▌ | 342/399 [00:01<00:00, 353.87it/s]Loading weights:  95%|█████████▍| 379/399 [00:01<00:00, 338.10it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 287.72it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.3281
+  Step 200/2000 | loss=2.7344
+  Step 400/2000 | loss=1.3281
+  Step 600/2000 | loss=0.2266
+  Step 800/2000 | loss=1.7578
+  Step 1000/2000 | loss=1.2812
+  Step 1200/2000 | loss=1.0234
+  Step 1400/2000 | loss=0.7344
+  Step 1600/2000 | loss=1.1250
+  Step 1800/2000 | loss=0.8438
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.1094 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.5117 | domain=0.684 generic=0.301 sel=+0.382
+  Step 400/1500 | lm=1.1328 | domain=0.919 generic=0.356 sel=+0.563
+  Step 600/1500 | lm=0.9766 | domain=0.813 generic=0.506 sel=+0.307
+  Step 800/1500 | lm=0.5039 | domain=0.906 generic=0.334 sel=+0.572
+  Step 1000/1500 | lm=0.3262 | domain=0.896 generic=0.229 sel=+0.667
+  Step 1200/1500 | lm=0.0216 | domain=0.919 generic=0.379 sel=+0.540
+  Step 1400/1500 | lm=1.1406 | domain=0.865 generic=0.358 sel=+0.507
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=17.35
+  Generic (gated): PPL=17.08
+  Domain (base): PPL=10.06
+  Generic (base): PPL=17.49
+
+Selectivity: +0.618
+Domain PPL: 17.35 (+72.5% vs base)
+Generic PPL: 17.08 (-2.3% vs base)
+Per-layer gate range: [0.452 - 0.932]
+
+Package saved to /root/t6b-mogae/grove_adapters_science_v2/computer_science/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+=== Training medicine ===
+=== Grove Contributor Training ===
+Contributor: science_v2
+Domain: medicine
+Seed: 42, Rank: 16
+Domain data SHA-256: 17c6694a76b9e169...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<00:39,  9.99it/s]Loading weights:   1%|          | 2/399 [00:00<00:46,  8.60it/s]Loading weights:   5%|▌         | 21/399 [00:00<00:05, 70.11it/s]Loading weights:  16%|█▋        | 65/399 [00:00<00:01, 175.08it/s]Loading weights:  27%|██▋       | 109/399 [00:00<00:01, 248.87it/s]Loading weights:  37%|███▋      | 147/399 [00:00<00:01, 216.23it/s]Loading weights:  47%|████▋     | 186/399 [00:00<00:00, 253.80it/s]Loading weights:  58%|█████▊    | 230/399 [00:01<00:00, 259.94it/s]Loading weights:  69%|██████▊   | 274/399 [00:01<00:00, 299.30it/s]Loading weights:  78%|███████▊  | 312/399 [00:01<00:00, 290.78it/s]Loading weights:  88%|████████▊ | 351/399 [00:01<00:00, 281.53it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 255.24it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.4219
+  Step 200/2000 | loss=1.4844
+  Step 400/2000 | loss=2.8906
+  Step 600/2000 | loss=1.6641
+  Step 800/2000 | loss=1.6562
+  Step 1000/2000 | loss=1.2578
+  Step 1200/2000 | loss=1.4453
+  Step 1400/2000 | loss=0.4668
+  Step 1600/2000 | loss=1.0703
+  Step 1800/2000 | loss=0.4395
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.1250 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.8047 | domain=0.777 generic=0.289 sel=+0.489
+  Step 400/1500 | lm=0.3809 | domain=0.968 generic=0.262 sel=+0.705
+  Step 600/1500 | lm=1.2031 | domain=0.926 generic=0.698 sel=+0.229
+  Step 800/1500 | lm=2.2969 | domain=0.819 generic=0.227 sel=+0.592
+  Step 1000/1500 | lm=0.4336 | domain=0.841 generic=0.179 sel=+0.662
+  Step 1200/1500 | lm=0.3027 | domain=0.900 generic=0.501 sel=+0.398
+  Step 1400/1500 | lm=1.1484 | domain=0.933 generic=0.232 sel=+0.701
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=13.16
+  Generic (gated): PPL=16.95
+  Domain (base): PPL=7.39
+  Generic (base): PPL=17.49
+
+Selectivity: +0.761
+Domain PPL: 13.16 (+78.0% vs base)
+Generic PPL: 16.95 (-3.1% vs base)
+Per-layer gate range: [0.407 - 0.826]
+
+Package saved to /root/t6b-mogae/grove_adapters_science_v2/medicine/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+=== Training ai_ml ===
+=== Grove Contributor Training ===
+Contributor: ai_researcher
+Domain: AI and machine learning
+Seed: 200, Rank: 16
+Domain data SHA-256: 3d4e01b4f63d354f...
+Domain texts: 500 (train: 450, eval: 50)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 450
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:18,  5.09it/s]Loading weights:   6%|▌         | 22/399 [00:00<00:04, 89.77it/s]Loading weights:  16%|█▌        | 63/399 [00:00<00:02, 165.46it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 299.97it/s]Loading weights:  40%|████      | 161/399 [00:00<00:00, 289.13it/s]Loading weights:  49%|████▊     | 194/399 [00:00<00:00, 288.77it/s]Loading weights:  58%|█████▊    | 230/399 [00:00<00:00, 305.60it/s]Loading weights:  66%|██████▌   | 263/399 [00:01<00:00, 301.39it/s]Loading weights:  74%|███████▍  | 295/399 [00:01<00:00, 289.95it/s]Loading weights:  82%|████████▏ | 328/399 [00:01<00:00, 278.60it/s]Loading weights:  94%|█████████▎| 374/399 [00:01<00:00, 301.59it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 281.50it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.0625
+  Step 200/2000 | loss=2.5938
+  Step 400/2000 | loss=2.1094
+  Step 600/2000 | loss=1.3281
+  Step 800/2000 | loss=2.0625
+  Step 1000/2000 | loss=1.6953
+  Step 1200/2000 | loss=1.1328
+  Step 1400/2000 | loss=0.8086
+  Step 1600/2000 | loss=1.2188
+  Step 1800/2000 | loss=0.7969
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=1.7969 | domain=0.119 generic=0.000 sel=+0.119
+  Step 200/1500 | lm=0.9609 | domain=0.846 generic=0.224 sel=+0.621
+  Step 400/1500 | lm=1.1641 | domain=0.923 generic=0.197 sel=+0.726
+  Step 600/1500 | lm=1.1016 | domain=0.931 generic=0.197 sel=+0.734
+  Step 800/1500 | lm=1.3047 | domain=0.908 generic=0.192 sel=+0.716
+  Step 1000/1500 | lm=0.6445 | domain=0.870 generic=0.186 sel=+0.684
+  Step 1200/1500 | lm=0.2412 | domain=0.922 generic=0.196 sel=+0.726
+  Step 1400/1500 | lm=1.3750 | domain=0.969 generic=0.278 sel=+0.691
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=14.60
+  Generic (gated): PPL=16.71
+  Domain (base): PPL=8.42
+  Generic (base): PPL=17.49
+
+Selectivity: +0.721
+Domain PPL: 14.60 (+73.4% vs base)
+Generic PPL: 16.71 (-4.5% vs base)
+Per-layer gate range: [0.376 - 0.865]
+
+Package saved to /root/t6b-mogae/grove_adapters_science_v2/ai_ml/
+  adapter.pt, manifest.json, validation.json, training_log.json
+Done.
+ALL DONE

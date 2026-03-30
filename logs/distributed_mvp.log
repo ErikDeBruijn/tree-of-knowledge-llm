@@ -1,0 +1,220 @@
+============================================================
+  GROVE OF KNOWLEDGE — DISTRIBUTED TRAINING MVP
+============================================================
+Contributors: 3
+  alice: BBC news 2025 (seed=42, rank=16, lr=0.0003)
+  bob: Dutch cuisine (seed=137, rank=16, lr=0.0002)
+  carol: Wing Chun martial arts (seed=7, rank=8, lr=0.0003)
+Device: cuda:0
+
+
+============================================================
+  PHASE A: INDEPENDENT CONTRIBUTOR TRAINING
+============================================================
+
+============================================================
+  Training adapter for alice (BBC news 2025)
+============================================================
+=== Grove Contributor Training ===
+Contributor: alice
+Domain: BBC news 2025
+Seed: 42, Rank: 16
+Domain data SHA-256: 84fdcf4d346e7474...
+Domain texts: 900 (train: 810, eval: 90)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 810
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:37, 10.66it/s]Loading weights:  12%|█▏        | 48/399 [00:00<00:01, 196.00it/s]Loading weights:  23%|██▎       | 92/399 [00:00<00:01, 277.95it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:01, 245.82it/s]Loading weights:  46%|████▋     | 185/399 [00:00<00:00, 341.41it/s]Loading weights:  56%|█████▌    | 223/399 [00:00<00:00, 348.39it/s]Loading weights:  67%|██████▋   | 267/399 [00:00<00:00, 360.76it/s]Loading weights:  76%|███████▋  | 305/399 [00:01<00:00, 335.98it/s]Loading weights:  88%|████████▊ | 353/399 [00:01<00:00, 359.65it/s]Loading weights:  98%|█████████▊| 391/399 [00:01<00:00, 359.27it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 320.75it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.6250
+  Step 500/2000 | loss=2.2969
+  Step 1000/2000 | loss=1.1328
+  Step 1500/2000 | loss=1.7578
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.4062 | domain=0.119 generic=0.000 sel=+0.119
+  Step 300/1500 | lm=1.1875 | domain=0.939 generic=0.653 sel=+0.286
+  Step 600/1500 | lm=0.9805 | domain=0.948 generic=0.422 sel=+0.527
+  Step 900/1500 | lm=1.1016 | domain=0.973 generic=0.271 sel=+0.702
+  Step 1200/1500 | lm=1.6797 | domain=0.979 generic=0.289 sel=+0.690
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=10.73
+  Generic (gated): PPL=16.60
+  Domain (base): PPL=12.97
+  Generic (base): PPL=17.96
+
+Selectivity: +0.654
+Domain PPL: 10.73 (-17.3% vs base)
+Generic PPL: 16.60 (-7.6% vs base)
+
+Package saved to /root/t6b-mogae/grove_adapters/bbc_alice/
+  adapter.pt, manifest.json, validation.json
+Done.
+
+============================================================
+  Training adapter for bob (Dutch cuisine)
+============================================================
+=== Grove Contributor Training ===
+Contributor: bob
+Domain: Dutch cuisine
+Seed: 137, Rank: 16
+Domain data SHA-256: e87cd7805b929b9e...
+Domain texts: 873 (train: 786, eval: 87)
+Generic texts: 786
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:02,  6.34it/s]Loading weights:   8%|▊         | 32/399 [00:00<00:02, 150.54it/s]Loading weights:  21%|██        | 83/399 [00:00<00:01, 288.84it/s]Loading weights:  30%|███       | 121/399 [00:00<00:00, 308.59it/s]Loading weights:  43%|████▎     | 170/399 [00:00<00:00, 367.23it/s]Loading weights:  53%|█████▎    | 211/399 [00:00<00:00, 373.99it/s]Loading weights:  63%|██████▎   | 250/399 [00:00<00:00, 355.53it/s]Loading weights:  72%|███████▏  | 287/399 [00:00<00:00, 353.30it/s]Loading weights:  84%|████████▍ | 336/399 [00:01<00:00, 387.21it/s]Loading weights:  98%|█████████▊| 391/399 [00:01<00:00, 426.65it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 353.80it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=1.8438
+  Step 500/2000 | loss=1.9453
+  Step 1000/2000 | loss=1.7656
+  Step 1500/2000 | loss=2.2969
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=1.6641 | domain=0.119 generic=0.000 sel=+0.119
+  Step 300/1500 | lm=1.8516 | domain=0.916 generic=0.728 sel=+0.187
+  Step 600/1500 | lm=1.0312 | domain=0.964 generic=0.691 sel=+0.273
+  Step 900/1500 | lm=2.1875 | domain=0.967 generic=0.649 sel=+0.317
+  Step 1200/1500 | lm=1.7109 | domain=0.980 generic=0.651 sel=+0.328
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=11.01
+  Generic (gated): PPL=15.26
+  Domain (base): PPL=12.66
+  Generic (base): PPL=16.96
+
+Selectivity: +0.387
+Domain PPL: 11.01 (-13.1% vs base)
+Generic PPL: 15.26 (-10.0% vs base)
+
+Package saved to /root/t6b-mogae/grove_adapters/cuisine_bob/
+  adapter.pt, manifest.json, validation.json
+Done.
+
+============================================================
+  Training adapter for carol (Wing Chun martial arts)
+============================================================
+=== Grove Contributor Training ===
+Contributor: carol
+Domain: Wing Chun martial arts
+Seed: 7, Rank: 8
+Domain data SHA-256: aedcc8c76ff6376a...
+Domain texts: 27 (train: 22, eval: 5)
+Generic texts: 22
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.89it/s]Loading weights:  11%|█         | 42/399 [00:00<00:01, 178.63it/s]Loading weights:  22%|██▏       | 87/399 [00:00<00:01, 249.50it/s]Loading weights:  36%|███▌      | 142/399 [00:00<00:00, 339.03it/s]Loading weights:  48%|████▊     | 192/399 [00:00<00:00, 387.05it/s]Loading weights:  58%|█████▊    | 233/399 [00:00<00:00, 357.74it/s]Loading weights:  71%|███████   | 283/399 [00:00<00:00, 386.59it/s]Loading weights:  84%|████████▎ | 334/399 [00:00<00:00, 413.33it/s]Loading weights:  94%|█████████▍| 377/399 [00:01<00:00, 411.69it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 359.50it/s]
+
+=== PHASE 1: Adapter training (1000 steps) ===
+  Step 0/1000 | loss=2.2500
+  Step 500/1000 | loss=0.0159
+Adapter frozen.
+
+=== PHASE 2: Gate training (750 steps, L1=0.05) ===
+  Step 0/750 | lm=1.9141 | domain=0.119 generic=0.000 sel=+0.119
+  Step 300/750 | lm=0.0041 | domain=0.920 generic=0.173 sel=+0.746
+  Step 600/750 | lm=0.0034 | domain=0.917 generic=0.186 sel=+0.732
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=28.89
+  Generic (gated): PPL=16.77
+  Domain (base): PPL=12.39
+  Generic (base): PPL=17.76
+
+Selectivity: +0.451
+Domain PPL: 28.89 (+133.2% vs base)
+Generic PPL: 16.77 (-5.6% vs base)
+
+Package saved to /root/t6b-mogae/grove_adapters/wingchun_carol/
+  adapter.pt, manifest.json, validation.json
+Done.
+
+============================================================
+  PHASE B: ADAPTER VALIDATION
+============================================================
+
+============================================================
+  Validating bbc_alice
+============================================================
+=== Validating adapter: /root/t6b-mogae/grove_adapters/bbc_alice ===
+
+--- Structural Checks ---
+  [PASS] file_exists:adapter.pt: /root/t6b-mogae/grove_adapters/bbc_alice/adapter.pt
+  [PASS] file_exists:manifest.json: /root/t6b-mogae/grove_adapters/bbc_alice/manifest.json
+  [PASS] manifest_key:format_version: 0.1.0
+  [PASS] manifest_key:name: bbc_alice
+  [PASS] manifest_key:contributor: alice
+  [PASS] manifest_key:domain: BBC news 2025
+  [PASS] manifest_key:trunk_model: Qwen/Qwen3-8B
+  [PASS] manifest_key:architecture: {'type': 'delta_gated_scalar', 'rank': 16, 'expert_start': 1
+  [PASS] manifest_key:training: {'seed': 42, 'phase1_steps': 2000, 'phase1_lr': 0.0003, 'pha
+  [PASS] arch_key:type: delta_gated_scalar
+  [PASS] arch_key:rank: 16
+  [PASS] arch_key:expert_start: 12
+  [PASS] trunk_model_match: Qwen/Qwen3-8B (expected Qwen/Qwen3-8B)
+  [PASS] checkpoint_loadable: keys: ['adapter', 'gates', 'name', 'rank', 'expert_start', '
+  [PASS] ckpt_key:adapter: {'12.gate_lora.A': tensor([[ 2.9541e-02, -1.0986e-
+  [PASS] ckpt_key:gates: {'12.linear.weight': tensor([[-0.0354,  0.0227,  0
+  [PASS] ckpt_key:rank: 16
+  [PASS] ckpt_key:expert_start: 12
+
+Structural: 18/18
+
+--- Quality Checks ---
+Loading model for quality checks...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.83it/s]Loading weights:  10%|█         | 41/399 [00:00<00:01, 192.75it/s]Loading weights:  18%|█▊        | 71/399 [00:00<00:01, 231.73it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 325.11it/s]Loading weights:  42%|████▏     | 168/399 [00:00<00:00, 356.51it/s]Loading weights:  51%|█████▏    | 205/399 [00:00<00:00, 325.93it/s]Loading weights:  67%|██████▋   | 268/399 [00:00<00:00, 400.93it/s]Loading weights:  78%|███████▊  | 310/399 [00:00<00:00, 391.65it/s]Loading weights:  91%|█████████ | 364/399 [00:01<00:00, 433.32it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 357.17it/s]
+Evaluating generic PPL with adapter...
+Evaluating base generic PPL...
+  Generic PPL: 14.55 (base: 15.78, delta: -7.8%)
+  Selectivity: +0.636 (domain_gate=0.948, generic_gate=0.311)
+  Max per-layer selectivity: 0.683
+  [PASS] generic_ppl_delta: -7.793 (threshold: 5.0)
+  [PASS] selectivity: 0.636 (threshold: 0.1)
+  [PASS] no_gate_collapse: 0.683 (threshold: 0.05)
+
+Quality: 3/3
+VERDICT: ACCEPTED
+Traceback (most recent call last):
+  File "/root/t6b-mogae/scripts/grove/validate_adapter.py", line 306, in <module>
+    main()
+  File "/root/t6b-mogae/scripts/grove/validate_adapter.py", line 301, in main
+    json.dump(result, f, indent=2)
+  File "/usr/lib/python3.12/json/__init__.py", line 179, in dump
+    for chunk in iterable:
+  File "/usr/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 326, in _iterencode_list
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bool is not JSON serializable
+FAILED: Validating bbc_alice (exit code 1)
+Traceback (most recent call last):
+  File "/root/t6b-mogae/scripts/grove/run_distributed_mvp.py", line 221, in <module>
+    main()
+  File "/root/t6b-mogae/scripts/grove/run_distributed_mvp.py", line 134, in main
+    result = json.load(f)
+             ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 92 column 17 (char 1670)

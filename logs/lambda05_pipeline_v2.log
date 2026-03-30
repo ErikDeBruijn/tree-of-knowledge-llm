@@ -1,0 +1,29 @@
+============================================================
+Lambda=0.5 Pipeline: P1+P2 only (5K steps). No P3 — P2b is optimal.
+  Phase 1 (2a): 2000 steps, tier-0 only, λ_tc=0.5
+  Phase 2 (2b): 3000 steps, tier-0+1, λ_tc=0.25
+  Phase 3 (2c): 0 steps, ALL tiers, λ_tc=0.05
+  Total: 5000 steps, 200M tokens
+============================================================
+
+Loading model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/179 [00:00<?, ?it/s]Loading weights:   3%|▎         | 5/179 [00:00<00:05, 29.76it/s]Loading weights:  15%|█▍        | 26/179 [00:00<00:01, 105.30it/s]Loading weights:  21%|██        | 38/179 [00:00<00:01, 82.27it/s] Loading weights:  27%|██▋       | 49/179 [00:00<00:01, 89.83it/s]Loading weights:  34%|███▎      | 60/179 [00:00<00:01, 95.46it/s]Loading weights:  45%|████▌     | 81/179 [00:00<00:00, 125.47it/s]Loading weights:  53%|█████▎    | 95/179 [00:00<00:00, 107.67it/s]Loading weights:  64%|██████▍   | 115/179 [00:01<00:00, 113.39it/s]Loading weights:  77%|███████▋  | 137/179 [00:01<00:00, 121.51it/s]Loading weights:  89%|████████▉ | 159/179 [00:01<00:00, 127.62it/s]Loading weights: 100%|██████████| 179/179 [00:01<00:00, 118.57it/s]
+Model loaded in 4.4s
+
+Patching routers with learnable biases...
+Patched 16 routers
+Phase 1: 32 gradient hooks (tier-0 only)
+
+Streaming C4 dataset (200M tokens)...
+  Tokenized 80M tokens...
+  Tokenized 160M tokens...
+Got 195313 chunks (200M tok) in 261s
+Train: 185547 chunks, Eval: 9766 chunks
+
+Setting up optimizer...
+
+Starting training (5000 total steps)...
+
+--- Epoch 1 (step 0/5000) ---
+[P1] Step 100/5000 | task=2.6472 slot=-0.4954 ratio=0.3038 tcost=0.5633 total=2.9071 | bias: t0=+0.299 t1=+0.056 t2=-0.253 | ETA: 0.9h

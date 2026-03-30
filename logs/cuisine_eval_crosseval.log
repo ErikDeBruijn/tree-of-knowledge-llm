@@ -1,0 +1,70 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 13.13it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 142.51it/s]Loading weights:  16%|█▌        | 64/399 [00:00<00:01, 186.54it/s]Loading weights:  37%|███▋      | 147/399 [00:00<00:00, 400.52it/s]Loading weights:  48%|████▊     | 192/399 [00:00<00:00, 382.71it/s]Loading weights:  59%|█████▊    | 234/399 [00:00<00:00, 383.35it/s]Loading weights:  70%|██████▉   | 279/399 [00:00<00:00, 399.34it/s]Loading weights:  80%|████████  | 321/399 [00:00<00:00, 368.76it/s]Loading weights:  90%|█████████ | 360/399 [00:01<00:00, 365.18it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 349.83it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Cuisine: 873, BBC: 900, Generic: 873
+
+=== BASE PPL (no adapter) ===
+  Base cuisine PPL: 16.705 +/- 7.840
+  Base generic PPL: 23.692 +/- 18.353
+  Base BBC PPL: 14.233 +/- 4.121
+
+=== CUISINE ADAPTER ===
+  Per-layer selectivity (cuisine vs generic):
+  L12: cuisine=0.598 generic=0.474 sel=+0.124
+  L13: cuisine=0.914 generic=0.437 sel=+0.477
+  L14: cuisine=0.992 generic=0.897 sel=+0.094
+  L15: cuisine=0.971 generic=0.537 sel=+0.433
+  L16: cuisine=0.967 generic=0.609 sel=+0.358
+  L17: cuisine=0.926 generic=0.230 sel=+0.696
+  L18: cuisine=0.946 generic=0.255 sel=+0.691
+  L19: cuisine=0.831 generic=0.241 sel=+0.590
+  L20: cuisine=0.507 generic=0.286 sel=+0.221
+  L21: cuisine=0.978 generic=0.479 sel=+0.500
+  L22: cuisine=0.962 generic=0.241 sel=+0.721
+  L23: cuisine=0.941 generic=0.407 sel=+0.533
+  L24: cuisine=0.977 generic=0.173 sel=+0.804
+  L25: cuisine=0.671 generic=0.215 sel=+0.456
+  L26: cuisine=0.926 generic=0.188 sel=+0.738
+  L27: cuisine=0.206 generic=0.154 sel=+0.052
+  L28: cuisine=0.887 generic=0.274 sel=+0.614
+  L29: cuisine=0.861 generic=0.254 sel=+0.606
+  L30: cuisine=0.990 generic=0.502 sel=+0.489
+  L31: cuisine=0.931 generic=0.672 sel=+0.258
+  L32: cuisine=0.993 generic=0.572 sel=+0.421
+  L33: cuisine=0.999 generic=0.908 sel=+0.091
+  L34: cuisine=0.998 generic=0.882 sel=+0.116
+  L35: cuisine=0.999 generic=0.996 sel=+0.003
+  Mean selectivity: +0.420
+  Cuisine adapter -> cuisine: 5.988
+  Cuisine adapter -> generic: 20.456
+  Cuisine adapter -> BBC: 12.283
+
+=== BBC ADAPTER (cross-eval) ===
+  BBC adapter -> BBC: 3.772
+  BBC adapter -> cuisine: 15.945
+  BBC adapter -> generic: 20.828
+
+=== M_ij MATRIX (PPL) ===
+               BBC_eval  Cuisine_eval  Generic_eval
+  BBC adapter:    3.772        15.945        20.828
+  Cui adapter:   12.283         5.988        20.456
+  Base model:    14.233        16.705        23.692
+
+=== M_ij MATRIX (% change from base) ===
+               BBC_eval  Cuisine_eval  Generic_eval
+  BBC adapter:   -73.5%         -4.5%        -12.1%
+  Cui adapter:   -13.7%        -64.2%        -13.7%
+
+  Diagonal: BBC=-73.5%, Cuisine=-64.2%
+  Off-diag: BBC->cuisine=-4.5%, Cuisine->BBC=-13.7%
+
+=== HYPOTHESIS TEST ===
+  Selectivity: +0.420 (success >= 0.35, fail < 0.25) -> PASS
+  Domain PPL: -64.2% (success <= -30%, fail > -15%) -> PASS
+  Generic PPL: -13.7% (success <= +5%, fail > +15%) -> PASS
+
+  Confidence: SUPPORTED
+  Verdict: Domain generalization CONFIRMED. Cuisine selectivity +0.420, domain PPL -64.2%, generic -13.7%. Delta-gated mechanism generalizes across domains.
+
+Results saved to /root/t6b-mogae/results/second_domain_cuisine.json
+Done.

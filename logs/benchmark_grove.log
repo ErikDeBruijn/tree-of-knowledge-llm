@@ -1,0 +1,21 @@
+=== E2E BENCHMARK: Base + Grove ===
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 13.03it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:02, 150.63it/s]Loading weights:  26%|██▌       | 103/399 [00:00<00:00, 313.88it/s]Loading weights:  35%|███▍      | 138/399 [00:00<00:00, 295.53it/s]Loading weights:  46%|████▌     | 184/399 [00:00<00:00, 276.03it/s]Loading weights:  70%|██████▉   | 279/399 [00:00<00:00, 444.31it/s]Loading weights:  83%|████████▎ | 330/399 [00:01<00:00, 360.51it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 363.05it/s]
+Loading bbc_alice...
+Loading cuisine_bob...
+Loading wingchun_carol...
+
+Loaded 3 adapters: ['bbc_alice', 'cuisine_bob', 'wingchun_carol']
+Grove hooks installed. Running benchmarks via lm-eval API...
+
+lm-eval API failed: property 'prefix_token_id' of 'GroveModel' object has no setter
+Falling back to manual PPL comparison...
+Traceback (most recent call last):
+  File "/root/t6b-mogae/scripts/grove/benchmark_grove.py", line 167, in <module>
+    grove_lm = GroveModel(model, tok, DEVICE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/t6b-mogae/scripts/grove/benchmark_grove.py", line 123, in __init__
+    self.prefix_token_id = None
+    ^^^^^^^^^^^^^^^^^^^^
+AttributeError: property 'prefix_token_id' of 'GroveModel' object has no setter

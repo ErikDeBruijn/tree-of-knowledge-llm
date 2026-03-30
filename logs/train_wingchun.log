@@ -1,0 +1,51 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:31, 12.73it/s]Loading weights:   5%|▌         | 21/399 [00:00<00:04, 87.67it/s]Loading weights:  23%|██▎       | 93/399 [00:00<00:00, 324.03it/s]Loading weights:  34%|███▍      | 135/399 [00:00<00:00, 351.71it/s]Loading weights:  44%|████▍     | 177/399 [00:00<00:00, 371.86it/s]Loading weights:  54%|█████▍    | 217/399 [00:00<00:00, 326.09it/s]Loading weights:  67%|██████▋   | 268/399 [00:00<00:00, 375.19it/s]Loading weights:  79%|███████▊  | 314/399 [00:00<00:00, 382.92it/s]Loading weights:  92%|█████████▏| 367/399 [00:01<00:00, 397.70it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 355.43it/s]
+Adapter 'wingchun': rank-16, 12,582,912 params, 24576 KB
+Loading data from data/wing-chun-data.jsonl...
+Loaded 27 texts
+Training 3000 steps...
+Step 0/3000 | loss=2.2500
+Step 100/3000 | loss=0.8125
+Step 200/3000 | loss=0.1089
+Step 300/3000 | loss=0.0228
+Step 400/3000 | loss=0.0118
+Step 500/3000 | loss=0.0043
+Step 600/3000 | loss=0.0103
+Step 700/3000 | loss=0.0019
+Step 800/3000 | loss=0.0078
+Step 900/3000 | loss=0.0040
+Step 1000/3000 | loss=0.0011
+Step 1100/3000 | loss=0.0009
+Step 1200/3000 | loss=0.0093
+Step 1300/3000 | loss=0.0029
+Step 1400/3000 | loss=0.0014
+Step 1500/3000 | loss=0.0079
+Step 1600/3000 | loss=0.0012
+Step 1700/3000 | loss=0.0025
+Step 1800/3000 | loss=0.0010
+Step 1900/3000 | loss=0.0066
+Step 2000/3000 | loss=0.0009
+Step 2100/3000 | loss=0.0090
+Step 2200/3000 | loss=0.0068
+Step 2300/3000 | loss=0.0010
+Step 2400/3000 | loss=0.0007
+Step 2500/3000 | loss=0.0020
+Step 2600/3000 | loss=0.0006
+Step 2700/3000 | loss=0.0012
+Step 2800/3000 | loss=0.0004
+Step 2900/3000 | loss=0.0047
+
+Saved to /root/t6b-mogae/adapters/wingchun/adapter.pt (24576 KB)
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+Prompt: The key principles of Wing Chun martial art are:
+Output:  1) Wing Chun is written as always being on the offensive, emphasizing proactive engagement rather than reactive defense. 2) The centerline is the most important concept in Wing Chun, serving as the p
+
+Prompt: Ip Man was important to Wing Chun because:
+Output:  1) He was the subject of the first ever Wing Chun biographical novel, 2) His techniques appear in multiple Wing Chun lineages, 3) He was the first to teach Wing Chun outside the Shaolin Temple, and 4
+
+Prompt: The Siu Nim Tao form in Wing Chun involves:
+Output:  a wooden dummy practice, blindfolded practice, and single hand practice. The blindfolded practice ensures that the practitioner develops proper structure and sensitivity without visual cues. Single h
+
+Done.

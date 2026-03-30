@@ -1,0 +1,38 @@
+Data: 600 texts, 175,278 words
+Train: 480, Val: 120
+Training tokens: 178,977
+Auto rank: 13
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.67it/s]Loading weights:   7%|▋         | 29/399 [00:00<00:02, 125.43it/s]Loading weights:  19%|█▉        | 76/399 [00:00<00:01, 257.24it/s]Loading weights:  27%|██▋       | 107/399 [00:00<00:01, 230.73it/s]Loading weights:  41%|████      | 162/399 [00:00<00:00, 305.45it/s]Loading weights:  52%|█████▏    | 209/399 [00:00<00:00, 307.59it/s]Loading weights:  61%|██████    | 242/399 [00:00<00:00, 268.08it/s]Loading weights:  81%|████████▏ | 325/399 [00:01<00:00, 399.19it/s]Loading weights:  93%|█████████▎| 370/399 [00:01<00:00, 374.40it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 318.94it/s]
+Adapter: rank-13, 10,223,616 params, 19968 KB
+Baseline val PPL: 14.22
+Training 1440 steps...
+Step 0/1440 loss=2.5625
+Step 200/1440 loss=2.4375
+Step 400/1440 loss=2.5156
+  Val PPL: 9.36 (best: 14.22)
+Step 600/1440 loss=1.8281
+Step 800/1440 loss=1.8672
+  Val PPL: 10.23 (best: 9.36)
+Step 1000/1440 loss=1.0781
+Step 1200/1440 loss=1.2734
+Step 1400/1440 loss=1.9062
+  Val PPL: 13.24 (best: 9.36)
+Final: 14.22 -> 9.36 (+34.2%)
+Interference: +23.97
+Saved: 19996 KB
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+Prompt: What happened in the news in January 2025?
+Output:  Here's a summary of the biggest stories of the month.
+
+This video can not be played To play this video you need to enable JavaScript in your browser. Watch: The moment a man was shot dead by police i
+
+Prompt: Tell me about recent events in the UK:
+Output:  10 January 2025
+
+This video can not be played To play this video you need to enable JavaScript in your browser. Watch: The Queen's funeral and the day after
+
+The Queen's funeral took place on 10 Janu
+
+Done.

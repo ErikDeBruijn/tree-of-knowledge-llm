@@ -1,0 +1,446 @@
+[2026-03-27 15:05:46] ======================================================================
+[2026-03-27 15:05:46] Domain-Conditional Gradient Masking Experiment
+[2026-03-27 15:05:46] ======================================================================
+[2026-03-27 15:05:46] Hypothesis: Forced domain specialization via supervised routing
+[2026-03-27 15:05:46] will produce causal locality (diagonal M_ij) that emergent
+[2026-03-27 15:05:46] routing has failed to achieve in 8 prior experiments.
+[2026-03-27 15:05:46] ======================================================================
+[2026-03-27 15:05:46] Config: {'device': 'cuda:0', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': 'fork_trunk18_phase1_final', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 18, 'expert_layer_start': 18, 'initial_rank': 4, 'num_experts': 4, 'total_tokens': 51200000, 'batch_size': 4, 'seq_len': 512, 'lr': 0.0001, 'tau_start': 1.0, 'tau_end': 0.1, 'tau_anneal_steps': 25000, 'router_loss_weight': 0.1, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results_domain_conditional', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/fork_trunk18', 'save_checkpoint_dir': '/root/t6b-mogae/checkpoints/domain_conditional', 'log_file': '/root/t6b-mogae/logs/domain_conditional.log'}
+[2026-03-27 15:05:46] Loading Qwen/Qwen3-1.7B...
+[2026-03-27 15:05:49] Base model loaded: 1,720,574,976 params
+[2026-03-27 15:05:49] Verified: hidden=2048, intermediate=6144
+[2026-03-27 15:05:49] Loading Phase 1 checkpoint: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase1_final.pt
+[2026-03-27 15:05:49] Loaded Phase 1 weights (step 24414, phase 1)
+[2026-03-27 15:05:49] Forking: 1 -> 2 experts...
+[2026-03-27 15:07:31] ======================================================================
+[2026-03-27 15:07:31] Domain-Conditional Gradient Masking Experiment
+[2026-03-27 15:07:31] ======================================================================
+[2026-03-27 15:07:31] Hypothesis: Forced domain specialization via supervised routing
+[2026-03-27 15:07:31] will produce causal locality (diagonal M_ij) that emergent
+[2026-03-27 15:07:31] routing has failed to achieve in 8 prior experiments.
+[2026-03-27 15:07:31] ======================================================================
+[2026-03-27 15:07:31] Config: {'device': 'cuda:0', 'model_name': 'Qwen/Qwen3-1.7B', 'checkpoint': 'fork_trunk18_phase1_final', 'seed': 42, 'hidden_dim': 2048, 'intermediate_dim': 6144, 'num_layers': 28, 'trunk_layers': 18, 'expert_layer_start': 18, 'initial_rank': 4, 'num_experts': 4, 'total_tokens': 51200000, 'batch_size': 4, 'seq_len': 512, 'lr': 0.0001, 'tau_start': 1.0, 'tau_end': 0.1, 'tau_anneal_steps': 25000, 'router_loss_weight': 0.1, 'eval_interval_steps': 1000, 'eval_tokens': 524288, 'results_dir': '/root/t6b-mogae/results_domain_conditional', 'checkpoint_dir': '/root/t6b-mogae/checkpoints/fork_trunk18', 'save_checkpoint_dir': '/root/t6b-mogae/checkpoints/domain_conditional', 'log_file': '/root/t6b-mogae/logs/domain_conditional.log'}
+[2026-03-27 15:07:31] Loading Qwen/Qwen3-1.7B...
+[2026-03-27 15:07:34] Base model loaded: 1,720,574,976 params
+[2026-03-27 15:07:34] Verified: hidden=2048, intermediate=6144
+[2026-03-27 15:07:34] Loading Phase 1 checkpoint: /root/t6b-mogae/checkpoints/fork_trunk18/fork_trunk18_phase1_final.pt
+[2026-03-27 15:07:34] Loaded Phase 1 weights (step 24414, phase 1)
+[2026-03-27 15:07:34] Forking: 1 -> 2 experts...
+[2026-03-27 15:07:34] Forking: 2 -> 4 experts...
+[2026-03-27 15:07:34] Fork complete. Tree: {18: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 19: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 20: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 21: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 22: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 23: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 24: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 25: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 26: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 27: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}}
+[2026-03-27 15:07:34] Trainable params: 2,703,360
+[2026-03-27 15:07:34] Training: 25000 steps, LR=0.0001, batch=4x512
+[2026-03-27 15:07:34] Gumbel-softmax: tau 1.0 -> 0.1 over 25000 steps
+[2026-03-27 15:07:34] Router supervised loss weight: 0.1
+[2026-03-27 15:07:34] NO contrastive loss, NO load-balancing loss
+[2026-03-27 15:07:34] Trainable params: 2,703,360
+[2026-03-27 15:07:34] Expert tree: {18: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 19: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 20: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 21: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 22: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 23: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 24: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 25: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 26: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 27: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}}
+[2026-03-27 15:07:53]   step 100/25000 | lm=3.4688 router=0.4888 tau=0.996 | lr=1.00e-04 | 10945 tok/s route_L18=[0.10, 0.08, 0.04, 0.78] | domains={'medical': 65, 'code': 0, 'legal': 0, 'general': 1983}
+[2026-03-27 15:08:08]   step 200/25000 | lm=2.9375 router=0.7378 tau=0.993 | lr=1.00e-04 | 12026 tok/s route_L18=[0.08, 0.05, 0.03, 0.84] | domains={'medical': 0, 'code': 195, 'legal': 106, 'general': 1747}
+[2026-03-27 15:08:24]   step 300/25000 | lm=2.8438 router=0.4468 tau=0.989 | lr=1.00e-04 | 12369 tok/s route_L18=[0.05, 0.07, 0.04, 0.85] | domains={'medical': 0, 'code': 130, 'legal': 0, 'general': 1918}
+[2026-03-27 15:08:39]   step 400/25000 | lm=1.8906 router=0.9881 tau=0.986 | lr=9.99e-05 | 12532 tok/s route_L18=[0.06, 0.14, 0.08, 0.72] | domains={'medical': 0, 'code': 331, 'legal': 0, 'general': 1717}
+[2026-03-27 15:08:55]   step 500/25000 | lm=2.8281 router=0.9341 tau=0.982 | lr=9.99e-05 | 12638 tok/s route_L18=[0.07, 0.07, 0.03, 0.82] | domains={'medical': 65, 'code': 314, 'legal': 65, 'general': 1604}
+[2026-03-27 15:09:11]   step 600/25000 | lm=2.4688 router=1.3277 tau=0.978 | lr=9.99e-05 | 12686 tok/s route_L18=[0.06, 0.08, 0.05, 0.81] | domains={'medical': 459, 'code': 312, 'legal': 0, 'general': 1277}
+[2026-03-27 15:09:27]   step 700/25000 | lm=3.3594 router=0.4830 tau=0.975 | lr=9.98e-05 | 12708 tok/s route_L18=[0.05, 0.06, 0.04, 0.85] | domains={'medical': 0, 'code': 44, 'legal': 190, 'general': 1814}
+[2026-03-27 15:09:43]   step 800/25000 | lm=3.2656 router=0.3872 tau=0.971 | lr=9.97e-05 | 12728 tok/s route_L18=[0.08, 0.07, 0.03, 0.82] | domains={'medical': 0, 'code': 93, 'legal': 0, 'general': 1955}
+[2026-03-27 15:09:59]   step 900/25000 | lm=2.4844 router=0.2794 tau=0.968 | lr=9.97e-05 | 12736 tok/s route_L18=[0.08, 0.07, 0.04, 0.80] | domains={'medical': 0, 'code': 33, 'legal': 0, 'general': 2015}
+[2026-03-27 15:10:15]   step 1000/25000 | lm=3.3438 router=0.4262 tau=0.964 | lr=9.96e-05 | 12734 tok/s route_L18=[0.06, 0.10, 0.03, 0.81] | domains={'medical': 0, 'code': 65, 'legal': 65, 'general': 1918}
+[2026-03-27 15:10:15] --- Eval at step 1000 (tau=0.964) ---
+[2026-03-27 15:10:37]   PPL=20.14 | mean_cossim=0.991796875
+[2026-03-27 15:10:37]   L18: routing_acc=0.836 per_domain={'medical': 0.02130507118999958, 'code': 0.011463080532848835, 'legal': 0.021175337955355644, 'general': 0.987554669380188}
+[2026-03-27 15:10:37]   L18: entropy=0.625 selectivity=0.551 dist=['0.069', '0.084', '0.046', '0.801']
+[2026-03-27 15:10:37] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step1000.pt
+[2026-03-27 15:10:53]   step 1100/25000 | lm=3.0156 router=1.0894 tau=0.960 | lr=9.95e-05 | 11300 tok/s route_L18=[0.08, 0.11, 0.03, 0.79] | domains={'medical': 65, 'code': 500, 'legal': 0, 'general': 1483}
+[2026-03-27 15:11:09]   step 1200/25000 | lm=2.6719 router=0.6132 tau=0.957 | lr=9.94e-05 | 11408 tok/s route_L18=[0.07, 0.08, 0.03, 0.81] | domains={'medical': 65, 'code': 132, 'legal': 65, 'general': 1786}
+[2026-03-27 15:11:25]   step 1300/25000 | lm=3.0938 router=0.7802 tau=0.953 | lr=9.93e-05 | 11504 tok/s route_L18=[0.06, 0.05, 0.06, 0.83] | domains={'medical': 130, 'code': 130, 'legal': 320, 'general': 1468}
+[2026-03-27 15:11:41]   step 1400/25000 | lm=3.1562 router=0.5055 tau=0.950 | lr=9.92e-05 | 11587 tok/s route_L18=[0.06, 0.07, 0.04, 0.84] | domains={'medical': 71, 'code': 65, 'legal': 65, 'general': 1847}
+[2026-03-27 15:11:58]   step 1500/25000 | lm=2.9375 router=0.8310 tau=0.946 | lr=9.91e-05 | 11655 tok/s route_L18=[0.07, 0.09, 0.06, 0.79] | domains={'medical': 0, 'code': 325, 'legal': 115, 'general': 1608}
+[2026-03-27 15:12:14]   step 1600/25000 | lm=3.0625 router=0.5678 tau=0.942 | lr=9.90e-05 | 11719 tok/s route_L18=[0.07, 0.10, 0.03, 0.80] | domains={'medical': 272, 'code': 0, 'legal': 0, 'general': 1776}
+[2026-03-27 15:12:30]   step 1700/25000 | lm=3.1406 router=0.6567 tau=0.939 | lr=9.89e-05 | 11771 tok/s route_L18=[0.07, 0.05, 0.06, 0.81] | domains={'medical': 103, 'code': 65, 'legal': 148, 'general': 1732}
+[2026-03-27 15:12:46]   step 1800/25000 | lm=3.6875 router=0.5338 tau=0.935 | lr=9.87e-05 | 11822 tok/s route_L18=[0.06, 0.08, 0.04, 0.82] | domains={'medical': 65, 'code': 130, 'legal': 0, 'general': 1853}
+[2026-03-27 15:13:02]   step 1900/25000 | lm=3.6406 router=0.5205 tau=0.932 | lr=9.86e-05 | 11866 tok/s route_L18=[0.05, 0.08, 0.04, 0.83] | domains={'medical': 0, 'code': 188, 'legal': 17, 'general': 1843}
+[2026-03-27 15:13:18]   step 2000/25000 | lm=3.2969 router=0.5789 tau=0.928 | lr=9.84e-05 | 11906 tok/s route_L18=[0.09, 0.07, 0.06, 0.78] | domains={'medical': 0, 'code': 240, 'legal': 0, 'general': 1808}
+[2026-03-27 15:13:18] --- Eval at step 2000 (tau=0.928) ---
+[2026-03-27 15:13:40]   PPL=20.15 | mean_cossim=0.984765625
+[2026-03-27 15:13:40]   L18: routing_acc=0.841 per_domain={'medical': 0.040765389800071716, 'code': 0.0067660133354365826, 'legal': 0.07545050978660583, 'general': 0.9903454184532166}
+[2026-03-27 15:13:40]   L18: entropy=0.586 selectivity=0.566 dist=['0.062', '0.073', '0.047', '0.816']
+[2026-03-27 15:13:40] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step2000.pt
+[2026-03-27 15:13:57]   step 2100/25000 | lm=2.8594 router=0.8123 tau=0.924 | lr=9.83e-05 | 11243 tok/s route_L18=[0.07, 0.09, 0.07, 0.77] | domains={'medical': 130, 'code': 234, 'legal': 0, 'general': 1684}
+[2026-03-27 15:14:12]   step 2200/25000 | lm=3.2031 router=0.4937 tau=0.921 | lr=9.81e-05 | 11306 tok/s route_L18=[0.06, 0.07, 0.04, 0.84] | domains={'medical': 173, 'code': 65, 'legal': 0, 'general': 1810}
+[2026-03-27 15:14:28]   step 2300/25000 | lm=2.8438 router=0.6294 tau=0.917 | lr=9.79e-05 | 11364 tok/s route_L18=[0.09, 0.09, 0.04, 0.78] | domains={'medical': 172, 'code': 169, 'legal': 0, 'general': 1707}
+[2026-03-27 15:14:44]   step 2400/25000 | lm=2.6875 router=0.8411 tau=0.914 | lr=9.77e-05 | 11418 tok/s route_L18=[0.06, 0.07, 0.05, 0.83] | domains={'medical': 0, 'code': 246, 'legal': 187, 'general': 1615}
+[2026-03-27 15:15:00]   step 2500/25000 | lm=3.1250 router=0.7318 tau=0.910 | lr=9.76e-05 | 11468 tok/s route_L18=[0.05, 0.09, 0.05, 0.81] | domains={'medical': 0, 'code': 325, 'legal': 65, 'general': 1658}
+[2026-03-27 15:15:16]   step 2600/25000 | lm=3.5781 router=0.3899 tau=0.906 | lr=9.74e-05 | 11513 tok/s route_L18=[0.04, 0.06, 0.05, 0.85] | domains={'medical': 0, 'code': 65, 'legal': 159, 'general': 1824}
+[2026-03-27 15:15:32]   step 2700/25000 | lm=3.2188 router=0.3547 tau=0.903 | lr=9.71e-05 | 11557 tok/s route_L18=[0.04, 0.07, 0.02, 0.87] | domains={'medical': 0, 'code': 65, 'legal': 65, 'general': 1918}
+[2026-03-27 15:15:49]   step 2800/25000 | lm=3.3125 router=1.0315 tau=0.899 | lr=9.69e-05 | 11592 tok/s route_L18=[0.07, 0.08, 0.05, 0.80] | domains={'medical': 275, 'code': 339, 'legal': 65, 'general': 1369}
+[2026-03-27 15:16:05]   step 2900/25000 | lm=2.9688 router=0.6545 tau=0.896 | lr=9.67e-05 | 11629 tok/s route_L18=[0.08, 0.09, 0.06, 0.77] | domains={'medical': 0, 'code': 65, 'legal': 325, 'general': 1658}
+[2026-03-27 15:16:21]   step 3000/25000 | lm=3.3594 router=0.8827 tau=0.892 | lr=9.65e-05 | 11662 tok/s route_L18=[0.08, 0.08, 0.04, 0.80] | domains={'medical': 328, 'code': 139, 'legal': 65, 'general': 1516}
+[2026-03-27 15:16:21] --- Eval at step 3000 (tau=0.892) ---
+[2026-03-27 15:16:43]   PPL=20.15 | mean_cossim=0.9821614583333333
+[2026-03-27 15:16:43]   L18: routing_acc=0.840 per_domain={'medical': 0.055523402988910675, 'code': 0.008723124861717224, 'legal': 0.05160151794552803, 'general': 0.9898117184638977}
+[2026-03-27 15:16:43]   L18: entropy=0.586 selectivity=0.562 dist=['0.064', '0.084', '0.038', '0.812']
+[2026-03-27 15:16:43] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step3000.pt
+[2026-03-27 15:16:59]   step 3100/25000 | lm=2.6406 router=0.7200 tau=0.888 | lr=9.63e-05 | 11238 tok/s route_L18=[0.10, 0.08, 0.02, 0.79] | domains={'medical': 129, 'code': 212, 'legal': 0, 'general': 1707}
+[2026-03-27 15:17:15]   step 3200/25000 | lm=3.2500 router=0.4713 tau=0.885 | lr=9.60e-05 | 11274 tok/s route_L18=[0.07, 0.08, 0.03, 0.82] | domains={'medical': 0, 'code': 197, 'legal': 0, 'general': 1851}
+[2026-03-27 15:17:31]   step 3300/25000 | lm=2.7500 router=1.0559 tau=0.881 | lr=9.58e-05 | 11317 tok/s route_L18=[0.13, 0.07, 0.08, 0.72] | domains={'medical': 332, 'code': 63, 'legal': 430, 'general': 1223}
+[2026-03-27 15:17:47]   step 3400/25000 | lm=4.0000 router=0.9944 tau=0.878 | lr=9.55e-05 | 11355 tok/s route_L18=[0.06, 0.06, 0.03, 0.85] | domains={'medical': 160, 'code': 318, 'legal': 65, 'general': 1505}
+[2026-03-27 15:18:03]   step 3500/25000 | lm=3.1562 router=0.9405 tau=0.874 | lr=9.52e-05 | 11392 tok/s route_L18=[0.04, 0.08, 0.03, 0.85] | domains={'medical': 65, 'code': 455, 'legal': 0, 'general': 1528}
+[2026-03-27 15:18:19]   step 3600/25000 | lm=3.3750 router=0.9393 tau=0.870 | lr=9.50e-05 | 11427 tok/s route_L18=[0.06, 0.07, 0.04, 0.83] | domains={'medical': 474, 'code': 130, 'legal': 0, 'general': 1444}
+[2026-03-27 15:18:35]   step 3700/25000 | lm=2.9531 router=0.3013 tau=0.867 | lr=9.47e-05 | 11458 tok/s route_L18=[0.05, 0.06, 0.04, 0.85] | domains={'medical': 65, 'code': 0, 'legal': 40, 'general': 1943}
+[2026-03-27 15:18:51]   step 3800/25000 | lm=2.8906 router=0.7166 tau=0.863 | lr=9.44e-05 | 11489 tok/s route_L18=[0.05, 0.08, 0.02, 0.84] | domains={'medical': 0, 'code': 369, 'legal': 0, 'general': 1679}
+[2026-03-27 15:19:07]   step 3900/25000 | lm=3.1094 router=0.5224 tau=0.860 | lr=9.41e-05 | 11519 tok/s route_L18=[0.05, 0.06, 0.04, 0.85] | domains={'medical': 65, 'code': 65, 'legal': 65, 'general': 1853}
+[2026-03-27 15:19:23]   step 4000/25000 | lm=3.1406 router=0.9220 tau=0.856 | lr=9.38e-05 | 11547 tok/s route_L18=[0.11, 0.08, 0.03, 0.79] | domains={'medical': 403, 'code': 260, 'legal': 65, 'general': 1320}
+[2026-03-27 15:19:23] --- Eval at step 4000 (tau=0.856) ---
+[2026-03-27 15:19:45]   PPL=20.15 | mean_cossim=0.9782552083333333
+[2026-03-27 15:19:45]   L18: routing_acc=0.841 per_domain={'medical': 0.05621066316962242, 'code': 0.005843375343829393, 'legal': 0.053419601172208786, 'general': 0.9913337230682373}
+[2026-03-27 15:19:45]   L18: entropy=0.562 selectivity=0.574 dist=['0.064', '0.074', '0.037', '0.824']
+[2026-03-27 15:19:46] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step4000.pt
+[2026-03-27 15:20:01]   step 4100/25000 | lm=1.6328 router=0.5969 tau=0.852 | lr=9.35e-05 | 11234 tok/s route_L18=[0.08, 0.06, 0.05, 0.81] | domains={'medical': 221, 'code': 0, 'legal': 65, 'general': 1762}
+[2026-03-27 15:20:18]   step 4200/25000 | lm=2.9375 router=0.4867 tau=0.849 | lr=9.32e-05 | 11266 tok/s route_L18=[0.10, 0.07, 0.03, 0.80] | domains={'medical': 0, 'code': 195, 'legal': 0, 'general': 1853}
+[2026-03-27 15:20:34]   step 4300/25000 | lm=2.9375 router=0.5084 tau=0.845 | lr=9.29e-05 | 11294 tok/s route_L18=[0.09, 0.06, 0.03, 0.82] | domains={'medical': 120, 'code': 130, 'legal': 0, 'general': 1798}
+[2026-03-27 15:20:50]   step 4400/25000 | lm=2.9062 router=0.3106 tau=0.842 | lr=9.25e-05 | 11323 tok/s route_L18=[0.08, 0.16, 0.01, 0.75] | domains={'medical': 0, 'code': 39, 'legal': 0, 'general': 2009}
+[2026-03-27 15:21:06]   step 4500/25000 | lm=3.3438 router=1.0193 tau=0.838 | lr=9.22e-05 | 11351 tok/s route_L18=[0.05, 0.07, 0.03, 0.86] | domains={'medical': 195, 'code': 65, 'legal': 226, 'general': 1562}
+[2026-03-27 15:21:22]   step 4600/25000 | lm=2.9844 router=0.1226 tau=0.834 | lr=9.19e-05 | 11378 tok/s route_L18=[0.03, 0.07, 0.02, 0.89] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:21:38]   step 4700/25000 | lm=3.2344 router=0.7959 tau=0.831 | lr=9.15e-05 | 11402 tok/s route_L18=[0.04, 0.07, 0.02, 0.87] | domains={'medical': 0, 'code': 423, 'legal': 0, 'general': 1625}
+[2026-03-27 15:21:54]   step 4800/25000 | lm=3.1719 router=0.5755 tau=0.827 | lr=9.12e-05 | 11427 tok/s route_L18=[0.07, 0.06, 0.04, 0.83] | domains={'medical': 121, 'code': 142, 'legal': 0, 'general': 1785}
+[2026-03-27 15:22:10]   step 4900/25000 | lm=3.0938 router=0.6020 tau=0.824 | lr=9.08e-05 | 11450 tok/s route_L18=[0.10, 0.08, 0.03, 0.79] | domains={'medical': 0, 'code': 225, 'legal': 65, 'general': 1758}
+[2026-03-27 15:22:26]   step 5000/25000 | lm=2.8281 router=0.5509 tau=0.820 | lr=9.05e-05 | 11474 tok/s route_L18=[0.06, 0.09, 0.04, 0.81] | domains={'medical': 0, 'code': 242, 'legal': 0, 'general': 1806}
+[2026-03-27 15:22:26] --- Eval at step 5000 (tau=0.820) ---
+[2026-03-27 15:22:48]   PPL=20.15 | mean_cossim=0.9768880208333334
+[2026-03-27 15:22:48]   L18: routing_acc=0.842 per_domain={'medical': 0.07328365743160248, 'code': 0.005144407041370869, 'legal': 0.0633121207356453, 'general': 0.9905760884284973}
+[2026-03-27 15:22:48]   L18: entropy=0.566 selectivity=0.574 dist=['0.068', '0.070', '0.039', '0.824']
+[2026-03-27 15:22:48] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step5000.pt
+[2026-03-27 15:23:04]   step 5100/25000 | lm=3.1406 router=0.4907 tau=0.816 | lr=9.01e-05 | 11226 tok/s route_L18=[0.08, 0.07, 0.02, 0.83] | domains={'medical': 197, 'code': 0, 'legal': 65, 'general': 1786}
+[2026-03-27 15:23:20]   step 5200/25000 | lm=3.1250 router=0.8115 tau=0.813 | lr=8.97e-05 | 11254 tok/s route_L18=[0.05, 0.06, 0.03, 0.86] | domains={'medical': 65, 'code': 0, 'legal': 329, 'general': 1654}
+[2026-03-27 15:23:37]   step 5300/25000 | lm=2.9219 router=0.3052 tau=0.809 | lr=8.93e-05 | 11276 tok/s route_L18=[0.08, 0.05, 0.02, 0.85] | domains={'medical': 0, 'code': 98, 'legal': 0, 'general': 1950}
+[2026-03-27 15:23:53]   step 5400/25000 | lm=3.0156 router=0.6297 tau=0.806 | lr=8.89e-05 | 11301 tok/s route_L18=[0.08, 0.08, 0.05, 0.79] | domains={'medical': 286, 'code': 130, 'legal': 0, 'general': 1632}
+[2026-03-27 15:24:09]   step 5500/25000 | lm=3.0781 router=0.8822 tau=0.802 | lr=8.85e-05 | 11323 tok/s route_L18=[0.07, 0.10, 0.04, 0.79] | domains={'medical': 0, 'code': 448, 'legal': 65, 'general': 1535}
+[2026-03-27 15:24:25]   step 5600/25000 | lm=3.0625 router=0.7770 tau=0.798 | lr=8.81e-05 | 11346 tok/s route_L18=[0.08, 0.07, 0.06, 0.79] | domains={'medical': 152, 'code': 65, 'legal': 235, 'general': 1596}
+[2026-03-27 15:24:41]   step 5700/25000 | lm=3.0938 router=0.3991 tau=0.795 | lr=8.77e-05 | 11368 tok/s route_L18=[0.05, 0.06, 0.03, 0.86] | domains={'medical': 0, 'code': 161, 'legal': 0, 'general': 1887}
+[2026-03-27 15:24:57]   step 5800/25000 | lm=2.1250 router=0.4810 tau=0.791 | lr=8.73e-05 | 11389 tok/s route_L18=[0.13, 0.06, 0.05, 0.76] | domains={'medical': 65, 'code': 130, 'legal': 0, 'general': 1853}
+[2026-03-27 15:25:13]   step 5900/25000 | lm=3.3438 router=0.4014 tau=0.788 | lr=8.69e-05 | 11410 tok/s route_L18=[0.06, 0.05, 0.03, 0.86] | domains={'medical': 0, 'code': 65, 'legal': 65, 'general': 1918}
+[2026-03-27 15:25:29]   step 6000/25000 | lm=3.2500 router=0.6994 tau=0.784 | lr=8.64e-05 | 11429 tok/s route_L18=[0.11, 0.07, 0.03, 0.79] | domains={'medical': 428, 'code': 98, 'legal': 28, 'general': 1494}
+[2026-03-27 15:25:29] --- Eval at step 6000 (tau=0.784) ---
+[2026-03-27 15:25:51]   PPL=20.15 | mean_cossim=0.9747395833333333
+[2026-03-27 15:25:51]   L18: routing_acc=0.841 per_domain={'medical': 0.0835563912987709, 'code': 0.006598261184990406, 'legal': 0.05988984555006027, 'general': 0.9891716837882996}
+[2026-03-27 15:25:51]   L18: entropy=0.586 selectivity=0.562 dist=['0.070', '0.078', '0.038', '0.812']
+[2026-03-27 15:25:51] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step6000.pt
+[2026-03-27 15:26:07]   step 6100/25000 | lm=2.9062 router=1.0175 tau=0.780 | lr=8.60e-05 | 11221 tok/s route_L18=[0.15, 0.10, 0.03, 0.71] | domains={'medical': 714, 'code': 82, 'legal': 0, 'general': 1252}
+[2026-03-27 15:26:23]   step 6200/25000 | lm=3.2969 router=0.7422 tau=0.777 | lr=8.56e-05 | 11244 tok/s route_L18=[0.09, 0.09, 0.05, 0.77] | domains={'medical': 116, 'code': 35, 'legal': 203, 'general': 1694}
+[2026-03-27 15:26:40]   step 6300/25000 | lm=3.1094 router=0.8119 tau=0.773 | lr=8.51e-05 | 11262 tok/s route_L18=[0.06, 0.10, 0.03, 0.82] | domains={'medical': 283, 'code': 259, 'legal': 0, 'general': 1506}
+[2026-03-27 15:26:56]   step 6400/25000 | lm=3.2969 router=0.4038 tau=0.770 | lr=8.47e-05 | 11282 tok/s route_L18=[0.07, 0.09, 0.03, 0.80] | domains={'medical': 74, 'code': 65, 'legal': 48, 'general': 1861}
+[2026-03-27 15:27:12]   step 6500/25000 | lm=3.7812 router=0.7024 tau=0.766 | lr=8.42e-05 | 11302 tok/s route_L18=[0.10, 0.07, 0.02, 0.81] | domains={'medical': 130, 'code': 189, 'legal': 0, 'general': 1729}
+[2026-03-27 15:27:28]   step 6600/25000 | lm=2.5938 router=0.4308 tau=0.762 | lr=8.38e-05 | 11321 tok/s route_L18=[0.04, 0.07, 0.09, 0.80] | domains={'medical': 0, 'code': 0, 'legal': 130, 'general': 1918}
+[2026-03-27 15:27:44]   step 6700/25000 | lm=2.6250 router=0.6785 tau=0.759 | lr=8.33e-05 | 11341 tok/s route_L18=[0.09, 0.08, 0.06, 0.77] | domains={'medical': 267, 'code': 65, 'legal': 224, 'general': 1492}
+[2026-03-27 15:28:00]   step 6800/25000 | lm=3.3438 router=0.7458 tau=0.755 | lr=8.28e-05 | 11360 tok/s route_L18=[0.06, 0.07, 0.02, 0.85] | domains={'medical': 0, 'code': 396, 'legal': 0, 'general': 1652}
+[2026-03-27 15:28:16]   step 6900/25000 | lm=2.3750 router=0.6935 tau=0.752 | lr=8.24e-05 | 11379 tok/s route_L18=[0.07, 0.09, 0.16, 0.68] | domains={'medical': 0, 'code': 104, 'legal': 305, 'general': 1639}
+[2026-03-27 15:28:32]   step 7000/25000 | lm=3.1250 router=0.5255 tau=0.748 | lr=8.19e-05 | 11396 tok/s route_L18=[0.06, 0.06, 0.02, 0.85] | domains={'medical': 65, 'code': 118, 'legal': 65, 'general': 1800}
+[2026-03-27 15:28:32] --- Eval at step 7000 (tau=0.748) ---
+[2026-03-27 15:28:54]   PPL=20.14 | mean_cossim=0.97421875
+[2026-03-27 15:28:54]   L18: routing_acc=0.841 per_domain={'medical': 0.09024813771247864, 'code': 0.007213353179395199, 'legal': 0.05202930048108101, 'general': 0.9888143539428711}
+[2026-03-27 15:28:54]   L18: entropy=0.586 selectivity=0.562 dist=['0.073', '0.078', '0.036', '0.812']
+[2026-03-27 15:28:54] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step7000.pt
+[2026-03-27 15:29:10]   step 7100/25000 | lm=3.1094 router=0.8009 tau=0.744 | lr=8.14e-05 | 11219 tok/s route_L18=[0.07, 0.07, 0.03, 0.83] | domains={'medical': 65, 'code': 353, 'legal': 0, 'general': 1630}
+[2026-03-27 15:29:26]   step 7200/25000 | lm=3.4219 router=0.5128 tau=0.741 | lr=8.09e-05 | 11239 tok/s route_L18=[0.05, 0.06, 0.02, 0.88] | domains={'medical': 130, 'code': 65, 'legal': 0, 'general': 1853}
+[2026-03-27 15:29:42]   step 7300/25000 | lm=2.9219 router=0.3771 tau=0.737 | lr=8.04e-05 | 11255 tok/s route_L18=[0.08, 0.06, 0.06, 0.79] | domains={'medical': 0, 'code': 127, 'legal': 0, 'general': 1921}
+[2026-03-27 15:29:58]   step 7400/25000 | lm=2.3438 router=0.8578 tau=0.734 | lr=7.99e-05 | 11274 tok/s route_L18=[0.11, 0.07, 0.04, 0.77] | domains={'medical': 0, 'code': 325, 'legal': 0, 'general': 1723}
+[2026-03-27 15:30:14]   step 7500/25000 | lm=3.2031 router=0.4402 tau=0.730 | lr=7.94e-05 | 11291 tok/s route_L18=[0.06, 0.09, 0.05, 0.80] | domains={'medical': 65, 'code': 0, 'legal': 101, 'general': 1882}
+[2026-03-27 15:30:30]   step 7600/25000 | lm=2.7812 router=0.3307 tau=0.726 | lr=7.89e-05 | 11307 tok/s route_L18=[0.04, 0.08, 0.02, 0.86] | domains={'medical': 65, 'code': 65, 'legal': 0, 'general': 1918}
+[2026-03-27 15:30:47]   step 7700/25000 | lm=2.5625 router=0.2713 tau=0.723 | lr=7.84e-05 | 11324 tok/s route_L18=[0.08, 0.06, 0.03, 0.84] | domains={'medical': 0, 'code': 110, 'legal': 0, 'general': 1938}
+[2026-03-27 15:31:03]   step 7800/25000 | lm=2.8750 router=0.8791 tau=0.719 | lr=7.78e-05 | 11340 tok/s route_L18=[0.09, 0.07, 0.07, 0.76] | domains={'medical': 108, 'code': 126, 'legal': 300, 'general': 1514}
+[2026-03-27 15:31:19]   step 7900/25000 | lm=3.3750 router=0.3983 tau=0.716 | lr=7.73e-05 | 11356 tok/s route_L18=[0.05, 0.06, 0.03, 0.86] | domains={'medical': 0, 'code': 65, 'legal': 65, 'general': 1918}
+[2026-03-27 15:31:35]   step 8000/25000 | lm=2.7969 router=0.6024 tau=0.712 | lr=7.68e-05 | 11372 tok/s route_L18=[0.07, 0.10, 0.04, 0.79] | domains={'medical': 0, 'code': 260, 'legal': 0, 'general': 1788}
+[2026-03-27 15:31:35] --- Eval at step 8000 (tau=0.712) ---
+[2026-03-27 15:31:57]   PPL=20.14 | mean_cossim=0.9733723958333333
+[2026-03-27 15:31:57]   L18: routing_acc=0.842 per_domain={'medical': 0.07360920310020447, 'code': 0.005060530733317137, 'legal': 0.05817870423197746, 'general': 0.9907932281494141}
+[2026-03-27 15:31:57]   L18: entropy=0.559 selectivity=0.578 dist=['0.064', '0.069', '0.039', '0.828']
+[2026-03-27 15:31:57] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step8000.pt
+[2026-03-27 15:32:13]   step 8100/25000 | lm=3.2969 router=0.9076 tau=0.708 | lr=7.63e-05 | 11216 tok/s route_L18=[0.13, 0.08, 0.04, 0.75] | domains={'medical': 853, 'code': 0, 'legal': 0, 'general': 1195}
+[2026-03-27 15:32:29]   step 8200/25000 | lm=3.6094 router=0.3642 tau=0.705 | lr=7.57e-05 | 11232 tok/s route_L18=[0.06, 0.07, 0.02, 0.85] | domains={'medical': 0, 'code': 65, 'legal': 65, 'general': 1918}
+[2026-03-27 15:32:45]   step 8300/25000 | lm=2.8906 router=0.9442 tau=0.701 | lr=7.52e-05 | 11247 tok/s route_L18=[0.15, 0.07, 0.05, 0.73] | domains={'medical': 434, 'code': 133, 'legal': 65, 'general': 1416}
+[2026-03-27 15:33:01]   step 8400/25000 | lm=2.8906 router=0.4182 tau=0.698 | lr=7.46e-05 | 11263 tok/s route_L18=[0.07, 0.10, 0.03, 0.80] | domains={'medical': 39, 'code': 130, 'legal': 0, 'general': 1879}
+[2026-03-27 15:33:17]   step 8500/25000 | lm=3.1562 router=0.1868 tau=0.694 | lr=7.41e-05 | 11279 tok/s route_L18=[0.05, 0.05, 0.03, 0.87] | domains={'medical': 0, 'code': 38, 'legal': 0, 'general': 2010}
+[2026-03-27 15:33:33]   step 8600/25000 | lm=2.8281 router=0.5051 tau=0.690 | lr=7.35e-05 | 11294 tok/s route_L18=[0.06, 0.07, 0.05, 0.82] | domains={'medical': 65, 'code': 65, 'legal': 206, 'general': 1712}
+[2026-03-27 15:33:50]   step 8700/25000 | lm=3.2812 router=0.6915 tau=0.687 | lr=7.30e-05 | 11309 tok/s route_L18=[0.11, 0.06, 0.03, 0.80] | domains={'medical': 315, 'code': 75, 'legal': 111, 'general': 1547}
+[2026-03-27 15:34:06]   step 8800/25000 | lm=2.7969 router=0.3866 tau=0.683 | lr=7.24e-05 | 11323 tok/s route_L18=[0.07, 0.06, 0.03, 0.84] | domains={'medical': 0, 'code': 139, 'legal': 0, 'general': 1909}
+[2026-03-27 15:34:22]   step 8900/25000 | lm=3.2031 router=0.7281 tau=0.680 | lr=7.19e-05 | 11338 tok/s route_L18=[0.07, 0.08, 0.02, 0.82] | domains={'medical': 0, 'code': 430, 'legal': 0, 'general': 1618}
+[2026-03-27 15:34:38]   step 9000/25000 | lm=3.2188 router=0.6429 tau=0.676 | lr=7.13e-05 | 11352 tok/s route_L18=[0.06, 0.06, 0.04, 0.85] | domains={'medical': 0, 'code': 247, 'legal': 18, 'general': 1783}
+[2026-03-27 15:34:38] --- Eval at step 9000 (tau=0.676) ---
+[2026-03-27 15:35:00]   PPL=20.14 | mean_cossim=0.9729817708333334
+[2026-03-27 15:35:00]   L18: routing_acc=0.841 per_domain={'medical': 0.09227374196052551, 'code': 0.007101518101990223, 'legal': 0.05817870423197746, 'general': 0.9885249137878418}
+[2026-03-27 15:35:00]   L18: entropy=0.586 selectivity=0.562 dist=['0.071', '0.076', '0.038', '0.812']
+[2026-03-27 15:35:00] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step9000.pt
+[2026-03-27 15:35:16]   step 9100/25000 | lm=3.2344 router=0.1313 tau=0.672 | lr=7.07e-05 | 11215 tok/s route_L18=[0.05, 0.06, 0.03, 0.87] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:35:32]   step 9200/25000 | lm=2.5000 router=0.1834 tau=0.669 | lr=7.01e-05 | 11230 tok/s route_L18=[0.06, 0.08, 0.04, 0.82] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:35:48]   step 9300/25000 | lm=2.7969 router=0.7208 tau=0.665 | lr=6.96e-05 | 11246 tok/s route_L18=[0.08, 0.07, 0.09, 0.75] | domains={'medical': 276, 'code': 65, 'legal': 86, 'general': 1621}
+[2026-03-27 15:36:04]   step 9400/25000 | lm=3.1094 router=0.5212 tau=0.662 | lr=6.90e-05 | 11259 tok/s route_L18=[0.04, 0.07, 0.04, 0.85] | domains={'medical': 0, 'code': 195, 'legal': 125, 'general': 1728}
+[2026-03-27 15:36:20]   step 9500/25000 | lm=2.7656 router=0.5543 tau=0.658 | lr=6.84e-05 | 11273 tok/s route_L18=[0.06, 0.06, 0.03, 0.85] | domains={'medical': 0, 'code': 195, 'legal': 65, 'general': 1788}
+[2026-03-27 15:36:36]   step 9600/25000 | lm=3.0000 router=0.8736 tau=0.654 | lr=6.78e-05 | 11287 tok/s route_L18=[0.07, 0.07, 0.03, 0.82] | domains={'medical': 334, 'code': 173, 'legal': 65, 'general': 1476}
+[2026-03-27 15:36:52]   step 9700/25000 | lm=3.1250 router=0.7277 tau=0.651 | lr=6.72e-05 | 11300 tok/s route_L18=[0.06, 0.08, 0.06, 0.80] | domains={'medical': 0, 'code': 173, 'legal': 310, 'general': 1565}
+[2026-03-27 15:37:08]   step 9800/25000 | lm=3.0312 router=0.4395 tau=0.647 | lr=6.66e-05 | 11313 tok/s route_L18=[0.07, 0.06, 0.05, 0.82] | domains={'medical': 0, 'code': 130, 'legal': 65, 'general': 1853}
+[2026-03-27 15:37:24]   step 9900/25000 | lm=2.6250 router=1.1781 tau=0.644 | lr=6.60e-05 | 11325 tok/s route_L18=[0.06, 0.08, 0.08, 0.78] | domains={'medical': 263, 'code': 195, 'legal': 232, 'general': 1358}
+[2026-03-27 15:37:40]   step 10000/25000 | lm=3.0938 router=0.7600 tau=0.640 | lr=6.55e-05 | 11338 tok/s route_L18=[0.06, 0.07, 0.05, 0.82] | domains={'medical': 65, 'code': 230, 'legal': 129, 'general': 1624}
+[2026-03-27 15:37:40] --- Eval at step 10000 (tau=0.640) ---
+[2026-03-27 15:38:03]   PPL=20.14 | mean_cossim=0.9727864583333333
+[2026-03-27 15:38:03]   L18: routing_acc=0.842 per_domain={'medical': 0.07657527178525925, 'code': 0.0056756227277219296, 'legal': 0.054649483412504196, 'general': 0.9904019832611084}
+[2026-03-27 15:38:03]   L18: entropy=0.559 selectivity=0.578 dist=['0.064', '0.071', '0.037', '0.828']
+[2026-03-27 15:38:03] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step10000.pt
+[2026-03-27 15:38:19]   step 10100/25000 | lm=2.9844 router=1.1199 tau=0.636 | lr=6.49e-05 | 11214 tok/s route_L18=[0.06, 0.07, 0.04, 0.83] | domains={'medical': 653, 'code': 37, 'legal': 158, 'general': 1200}
+[2026-03-27 15:38:34]   step 10200/25000 | lm=3.2500 router=0.2114 tau=0.633 | lr=6.43e-05 | 11228 tok/s route_L18=[0.03, 0.05, 0.02, 0.91] | domains={'medical': 0, 'code': 57, 'legal': 0, 'general': 1991}
+[2026-03-27 15:38:51]   step 10300/25000 | lm=3.0781 router=0.1545 tau=0.629 | lr=6.36e-05 | 11241 tok/s route_L18=[0.07, 0.08, 0.03, 0.82] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:39:07]   step 10400/25000 | lm=3.3438 router=0.3083 tau=0.626 | lr=6.30e-05 | 11252 tok/s route_L18=[0.04, 0.07, 0.02, 0.88] | domains={'medical': 0, 'code': 0, 'legal': 100, 'general': 1948}
+[2026-03-27 15:39:23]   step 10500/25000 | lm=3.5156 router=1.3677 tau=0.622 | lr=6.24e-05 | 11264 tok/s route_L18=[0.05, 0.08, 0.02, 0.85] | domains={'medical': 0, 'code': 993, 'legal': 0, 'general': 1055}
+[2026-03-27 15:39:39]   step 10600/25000 | lm=2.9688 router=1.0733 tau=0.618 | lr=6.18e-05 | 11276 tok/s route_L18=[0.12, 0.06, 0.05, 0.77] | domains={'medical': 0, 'code': 489, 'legal': 65, 'general': 1494}
+[2026-03-27 15:39:55]   step 10700/25000 | lm=2.7500 router=0.7932 tau=0.615 | lr=6.12e-05 | 11288 tok/s route_L18=[0.11, 0.08, 0.04, 0.77] | domains={'medical': 63, 'code': 257, 'legal': 65, 'general': 1663}
+[2026-03-27 15:40:11]   step 10800/25000 | lm=2.8281 router=0.5865 tau=0.611 | lr=6.06e-05 | 11300 tok/s route_L18=[0.07, 0.08, 0.07, 0.79] | domains={'medical': 65, 'code': 65, 'legal': 182, 'general': 1736}
+[2026-03-27 15:40:27]   step 10900/25000 | lm=2.5938 router=0.5535 tau=0.608 | lr=6.00e-05 | 11312 tok/s route_L18=[0.08, 0.08, 0.04, 0.80] | domains={'medical': 0, 'code': 65, 'legal': 137, 'general': 1846}
+[2026-03-27 15:40:43]   step 11000/25000 | lm=3.2969 router=0.3599 tau=0.604 | lr=5.94e-05 | 11324 tok/s route_L18=[0.07, 0.06, 0.03, 0.84] | domains={'medical': 58, 'code': 65, 'legal': 0, 'general': 1925}
+[2026-03-27 15:40:43] --- Eval at step 11000 (tau=0.604) ---
+[2026-03-27 15:41:06]   PPL=20.14 | mean_cossim=0.9723958333333333
+[2026-03-27 15:41:06]   L18: routing_acc=0.841 per_domain={'medical': 0.08294147253036499, 'code': 0.006458467338234186, 'legal': 0.060424573719501495, 'general': 0.9894068837165833}
+[2026-03-27 15:41:06]   L18: entropy=0.574 selectivity=0.570 dist=['0.067', '0.074', '0.040', '0.820']
+[2026-03-27 15:41:06] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step11000.pt
+[2026-03-27 15:41:22]   step 11100/25000 | lm=3.1719 router=0.5178 tau=0.600 | lr=5.88e-05 | 11211 tok/s route_L18=[0.08, 0.07, 0.03, 0.82] | domains={'medical': 130, 'code': 108, 'legal': 0, 'general': 1810}
+[2026-03-27 15:41:38]   step 11200/25000 | lm=3.1719 router=0.2397 tau=0.597 | lr=5.81e-05 | 11223 tok/s route_L18=[0.06, 0.04, 0.04, 0.85] | domains={'medical': 0, 'code': 0, 'legal': 65, 'general': 1983}
+[2026-03-27 15:41:54]   step 11300/25000 | lm=3.0156 router=0.9235 tau=0.593 | lr=5.75e-05 | 11236 tok/s route_L18=[0.06, 0.07, 0.03, 0.84] | domains={'medical': 343, 'code': 115, 'legal': 0, 'general': 1590}
+[2026-03-27 15:42:10]   step 11400/25000 | lm=2.9844 router=0.5139 tau=0.590 | lr=5.69e-05 | 11247 tok/s route_L18=[0.05, 0.08, 0.04, 0.82] | domains={'medical': 0, 'code': 161, 'legal': 65, 'general': 1822}
+[2026-03-27 15:42:26]   step 11500/25000 | lm=3.0312 router=0.5266 tau=0.586 | lr=5.63e-05 | 11258 tok/s route_L18=[0.07, 0.07, 0.04, 0.81] | domains={'medical': 63, 'code': 65, 'legal': 215, 'general': 1705}
+[2026-03-27 15:42:42]   step 11600/25000 | lm=3.0000 router=1.1349 tau=0.582 | lr=5.56e-05 | 11269 tok/s route_L18=[0.10, 0.11, 0.04, 0.75] | domains={'medical': 618, 'code': 65, 'legal': 65, 'general': 1300}
+[2026-03-27 15:42:58]   step 11700/25000 | lm=2.9531 router=0.8204 tau=0.579 | lr=5.50e-05 | 11280 tok/s route_L18=[0.09, 0.07, 0.04, 0.81] | domains={'medical': 65, 'code': 400, 'legal': 0, 'general': 1583}
+[2026-03-27 15:43:14]   step 11800/25000 | lm=3.2656 router=0.3337 tau=0.575 | lr=5.44e-05 | 11291 tok/s route_L18=[0.05, 0.06, 0.03, 0.86] | domains={'medical': 0, 'code': 53, 'legal': 75, 'general': 1920}
+[2026-03-27 15:43:30]   step 11900/25000 | lm=3.1250 router=0.7315 tau=0.572 | lr=5.38e-05 | 11302 tok/s route_L18=[0.05, 0.07, 0.02, 0.86] | domains={'medical': 183, 'code': 189, 'legal': 0, 'general': 1676}
+[2026-03-27 15:43:47]   step 12000/25000 | lm=2.8281 router=0.4039 tau=0.568 | lr=5.31e-05 | 11312 tok/s route_L18=[0.07, 0.09, 0.03, 0.81] | domains={'medical': 0, 'code': 130, 'legal': 0, 'general': 1918}
+[2026-03-27 15:43:47] --- Eval at step 12000 (tau=0.568) ---
+[2026-03-27 15:44:09]   PPL=20.14 | mean_cossim=0.9723307291666666
+[2026-03-27 15:44:09]   L18: routing_acc=0.841 per_domain={'medical': 0.09162265807390213, 'code': 0.007353146560490131, 'legal': 0.06753649562597275, 'general': 0.9884117841720581}
+[2026-03-27 15:44:09]   L18: entropy=0.590 selectivity=0.562 dist=['0.070', '0.076', '0.042', '0.812']
+[2026-03-27 15:44:09] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step12000.pt
+[2026-03-27 15:44:25]   step 12100/25000 | lm=2.8281 router=0.5789 tau=0.564 | lr=5.25e-05 | 11208 tok/s route_L18=[0.08, 0.11, 0.04, 0.78] | domains={'medical': 130, 'code': 159, 'legal': 0, 'general': 1759}
+[2026-03-27 15:44:41]   step 12200/25000 | lm=3.2656 router=0.5091 tau=0.561 | lr=5.19e-05 | 11220 tok/s route_L18=[0.05, 0.05, 0.02, 0.88] | domains={'medical': 65, 'code': 173, 'legal': 0, 'general': 1810}
+[2026-03-27 15:44:57]   step 12300/25000 | lm=2.9531 router=0.1256 tau=0.557 | lr=5.13e-05 | 11231 tok/s route_L18=[0.05, 0.06, 0.03, 0.86] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:45:13]   step 12400/25000 | lm=3.1562 router=0.2208 tau=0.554 | lr=5.06e-05 | 11241 tok/s route_L18=[0.04, 0.06, 0.02, 0.88] | domains={'medical': 0, 'code': 0, 'legal': 65, 'general': 1983}
+[2026-03-27 15:45:29]   step 12500/25000 | lm=2.9688 router=0.5172 tau=0.550 | lr=5.00e-05 | 11252 tok/s route_L18=[0.07, 0.07, 0.10, 0.75] | domains={'medical': 0, 'code': 36, 'legal': 405, 'general': 1607}
+[2026-03-27 15:45:45]   step 12600/25000 | lm=2.9062 router=0.8281 tau=0.546 | lr=4.94e-05 | 11262 tok/s route_L18=[0.06, 0.07, 0.03, 0.84] | domains={'medical': 65, 'code': 387, 'legal': 0, 'general': 1596}
+[2026-03-27 15:46:01]   step 12700/25000 | lm=3.1719 router=0.5429 tau=0.543 | lr=4.87e-05 | 11272 tok/s route_L18=[0.06, 0.08, 0.03, 0.82] | domains={'medical': 170, 'code': 0, 'legal': 65, 'general': 1813}
+[2026-03-27 15:46:18]   step 12800/25000 | lm=3.2344 router=1.3710 tau=0.539 | lr=4.81e-05 | 11282 tok/s route_L18=[0.12, 0.09, 0.06, 0.74] | domains={'medical': 385, 'code': 68, 'legal': 438, 'general': 1157}
+[2026-03-27 15:46:34]   step 12900/25000 | lm=3.2500 router=0.5068 tau=0.536 | lr=4.75e-05 | 11292 tok/s route_L18=[0.05, 0.08, 0.03, 0.83] | domains={'medical': 79, 'code': 195, 'legal': 0, 'general': 1774}
+[2026-03-27 15:46:50]   step 13000/25000 | lm=3.0781 router=0.2285 tau=0.532 | lr=4.69e-05 | 11303 tok/s route_L18=[0.05, 0.05, 0.03, 0.87] | domains={'medical': 0, 'code': 65, 'legal': 0, 'general': 1983}
+[2026-03-27 15:46:50] --- Eval at step 13000 (tau=0.532) ---
+[2026-03-27 15:47:12]   PPL=20.14 | mean_cossim=0.9723307291666666
+[2026-03-27 15:47:12]   L18: routing_acc=0.841 per_domain={'medical': 0.09263546019792557, 'code': 0.007073559332638979, 'legal': 0.0683920606970787, 'general': 0.9883326292037964}
+[2026-03-27 15:47:12]   L18: entropy=0.594 selectivity=0.562 dist=['0.071', '0.075', '0.043', '0.812']
+[2026-03-27 15:47:12] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step13000.pt
+[2026-03-27 15:47:28]   step 13100/25000 | lm=2.6875 router=0.4756 tau=0.528 | lr=4.62e-05 | 11208 tok/s route_L18=[0.06, 0.09, 0.03, 0.82] | domains={'medical': 65, 'code': 66, 'legal': 65, 'general': 1852}
+[2026-03-27 15:47:44]   step 13200/25000 | lm=5.4375 router=0.9519 tau=0.525 | lr=4.56e-05 | 11218 tok/s route_L18=[0.07, 0.09, 0.03, 0.82] | domains={'medical': 183, 'code': 292, 'legal': 22, 'general': 1551}
+[2026-03-27 15:48:00]   step 13300/25000 | lm=3.3594 router=0.7617 tau=0.521 | lr=4.50e-05 | 11229 tok/s route_L18=[0.06, 0.07, 0.07, 0.79] | domains={'medical': 130, 'code': 65, 'legal': 232, 'general': 1621}
+[2026-03-27 15:48:16]   step 13400/25000 | lm=3.2031 router=0.5401 tau=0.518 | lr=4.44e-05 | 11239 tok/s route_L18=[0.07, 0.07, 0.03, 0.84] | domains={'medical': 65, 'code': 191, 'legal': 9, 'general': 1783}
+[2026-03-27 15:48:32]   step 13500/25000 | lm=3.2500 router=0.4843 tau=0.514 | lr=4.37e-05 | 11249 tok/s route_L18=[0.04, 0.07, 0.02, 0.87] | domains={'medical': 0, 'code': 245, 'legal': 0, 'general': 1803}
+[2026-03-27 15:48:48]   step 13600/25000 | lm=2.9844 router=0.7464 tau=0.510 | lr=4.31e-05 | 11257 tok/s route_L18=[0.06, 0.08, 0.03, 0.83] | domains={'medical': 65, 'code': 256, 'legal': 65, 'general': 1662}
+[2026-03-27 15:49:04]   step 13700/25000 | lm=2.9844 router=0.6974 tau=0.507 | lr=4.25e-05 | 11266 tok/s route_L18=[0.07, 0.09, 0.05, 0.79] | domains={'medical': 0, 'code': 383, 'legal': 0, 'general': 1665}
+[2026-03-27 15:49:21]   step 13800/25000 | lm=3.5938 router=0.9547 tau=0.503 | lr=4.19e-05 | 11275 tok/s route_L18=[0.10, 0.06, 0.04, 0.80] | domains={'medical': 430, 'code': 100, 'legal': 121, 'general': 1397}
+[2026-03-27 15:49:37]   step 13900/25000 | lm=3.0781 router=0.4407 tau=0.500 | lr=4.12e-05 | 11285 tok/s route_L18=[0.04, 0.08, 0.02, 0.86] | domains={'medical': 130, 'code': 48, 'legal': 0, 'general': 1870}
+[2026-03-27 15:49:53]   step 14000/25000 | lm=3.2969 router=0.7210 tau=0.496 | lr=4.06e-05 | 11295 tok/s route_L18=[0.06, 0.08, 0.03, 0.82] | domains={'medical': 50, 'code': 260, 'legal': 65, 'general': 1673}
+[2026-03-27 15:49:53] --- Eval at step 14000 (tau=0.496) ---
+[2026-03-27 15:50:15]   PPL=20.13 | mean_cossim=0.9725260416666667
+[2026-03-27 15:50:15]   L18: routing_acc=0.842 per_domain={'medical': 0.0882948711514473, 'code': 0.006290714722126722, 'legal': 0.06673439592123032, 'general': 0.989078938961029}
+[2026-03-27 15:50:15]   L18: entropy=0.590 selectivity=0.566 dist=['0.070', '0.073', '0.043', '0.816']
+[2026-03-27 15:50:15] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step14000.pt
+[2026-03-27 15:50:31]   step 14100/25000 | lm=2.5312 router=1.0028 tau=0.492 | lr=4.00e-05 | 11206 tok/s route_L18=[0.18, 0.08, 0.05, 0.69] | domains={'medical': 511, 'code': 195, 'legal': 0, 'general': 1342}
+[2026-03-27 15:50:47]   step 14200/25000 | lm=2.8125 router=0.6076 tau=0.489 | lr=3.94e-05 | 11215 tok/s route_L18=[0.04, 0.06, 0.03, 0.87] | domains={'medical': 72, 'code': 209, 'legal': 0, 'general': 1767}
+[2026-03-27 15:51:03]   step 14300/25000 | lm=2.9219 router=2.1302 tau=0.485 | lr=3.88e-05 | 11225 tok/s route_L18=[0.10, 0.08, 0.08, 0.74] | domains={'medical': 92, 'code': 224, 'legal': 1294, 'general': 438}
+[2026-03-27 15:51:19]   step 14400/25000 | lm=2.9375 router=0.7620 tau=0.482 | lr=3.82e-05 | 11234 tok/s route_L18=[0.15, 0.08, 0.05, 0.72] | domains={'medical': 0, 'code': 407, 'legal': 0, 'general': 1641}
+[2026-03-27 15:51:35]   step 14500/25000 | lm=3.2812 router=0.3642 tau=0.478 | lr=3.76e-05 | 11243 tok/s route_L18=[0.04, 0.05, 0.04, 0.87] | domains={'medical': 0, 'code': 65, 'legal': 182, 'general': 1801}
+[2026-03-27 15:51:52]   step 14600/25000 | lm=2.7656 router=1.0173 tau=0.474 | lr=3.70e-05 | 11251 tok/s route_L18=[0.06, 0.07, 0.23, 0.63] | domains={'medical': 58, 'code': 195, 'legal': 403, 'general': 1392}
+[2026-03-27 15:52:08]   step 14700/25000 | lm=2.8750 router=0.3071 tau=0.471 | lr=3.64e-05 | 11260 tok/s route_L18=[0.06, 0.08, 0.04, 0.82] | domains={'medical': 65, 'code': 0, 'legal': 0, 'general': 1983}
+[2026-03-27 15:52:24]   step 14800/25000 | lm=2.6719 router=0.4581 tau=0.467 | lr=3.57e-05 | 11269 tok/s route_L18=[0.07, 0.08, 0.03, 0.82] | domains={'medical': 130, 'code': 65, 'legal': 0, 'general': 1853}
+[2026-03-27 15:52:40]   step 14900/25000 | lm=2.9688 router=0.3945 tau=0.464 | lr=3.51e-05 | 11277 tok/s route_L18=[0.07, 0.05, 0.04, 0.84] | domains={'medical': 65, 'code': 65, 'legal': 0, 'general': 1918}
+[2026-03-27 15:52:56]   step 15000/25000 | lm=2.9531 router=0.5623 tau=0.460 | lr=3.45e-05 | 11286 tok/s route_L18=[0.08, 0.06, 0.09, 0.78] | domains={'medical': 0, 'code': 58, 'legal': 231, 'general': 1759}
+[2026-03-27 15:52:56] --- Eval at step 15000 (tau=0.460) ---
+[2026-03-27 15:53:19]   PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 15:53:19]   L18: routing_acc=0.842 per_domain={'medical': 0.08601605892181396, 'code': 0.006234797649085522, 'legal': 0.06657397747039795, 'general': 0.9891445636749268}
+[2026-03-27 15:53:19]   L18: entropy=0.586 selectivity=0.566 dist=['0.069', '0.073', '0.043', '0.816']
+[2026-03-27 15:53:19] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step15000.pt
+[2026-03-27 15:53:35]   step 15100/25000 | lm=2.9531 router=0.5462 tau=0.456 | lr=3.40e-05 | 11202 tok/s route_L18=[0.08, 0.06, 0.05, 0.81] | domains={'medical': 271, 'code': 0, 'legal': 65, 'general': 1712}
+[2026-03-27 15:53:51]   step 15200/25000 | lm=3.5312 router=0.4824 tau=0.453 | lr=3.34e-05 | 11211 tok/s route_L18=[0.04, 0.08, 0.03, 0.85] | domains={'medical': 0, 'code': 233, 'legal': 0, 'general': 1815}
+[2026-03-27 15:54:07]   step 15300/25000 | lm=2.9375 router=0.6215 tau=0.449 | lr=3.28e-05 | 11219 tok/s route_L18=[0.09, 0.07, 0.04, 0.79] | domains={'medical': 65, 'code': 255, 'legal': 0, 'general': 1728}
+[2026-03-27 15:54:23]   step 15400/25000 | lm=2.9688 router=0.4223 tau=0.446 | lr=3.22e-05 | 11228 tok/s route_L18=[0.08, 0.07, 0.05, 0.80] | domains={'medical': 157, 'code': 23, 'legal': 69, 'general': 1799}
+[2026-03-27 15:54:39]   step 15500/25000 | lm=3.1250 router=0.5600 tau=0.442 | lr=3.16e-05 | 11237 tok/s route_L18=[0.05, 0.06, 0.02, 0.87] | domains={'medical': 0, 'code': 263, 'legal': 0, 'general': 1785}
+[2026-03-27 15:54:55]   step 15600/25000 | lm=2.7656 router=0.6315 tau=0.438 | lr=3.10e-05 | 11245 tok/s route_L18=[0.07, 0.07, 0.04, 0.82] | domains={'medical': 221, 'code': 82, 'legal': 0, 'general': 1745}
+[2026-03-27 15:55:11]   step 15700/25000 | lm=2.9062 router=0.6764 tau=0.435 | lr=3.04e-05 | 11253 tok/s route_L18=[0.07, 0.08, 0.05, 0.81] | domains={'medical': 0, 'code': 315, 'legal': 65, 'general': 1668}
+[2026-03-27 15:55:27]   step 15800/25000 | lm=3.1562 router=0.4071 tau=0.431 | lr=2.99e-05 | 11261 tok/s route_L18=[0.07, 0.07, 0.05, 0.81] | domains={'medical': 0, 'code': 119, 'legal': 0, 'general': 1929}
+[2026-03-27 15:55:44]   step 15900/25000 | lm=3.2188 router=0.6480 tau=0.428 | lr=2.93e-05 | 11269 tok/s route_L18=[0.07, 0.06, 0.06, 0.81] | domains={'medical': 0, 'code': 241, 'legal': 70, 'general': 1737}
+[2026-03-27 15:56:00]   step 16000/25000 | lm=3.2500 router=0.2155 tau=0.424 | lr=2.87e-05 | 11278 tok/s route_L18=[0.09, 0.06, 0.04, 0.80] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:56:00] --- Eval at step 16000 (tau=0.424) ---
+[2026-03-27 15:56:22]   PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 15:56:22]   L18: routing_acc=0.842 per_domain={'medical': 0.08843955397605896, 'code': 0.00634663226082921, 'legal': 0.06994277983903885, 'general': 0.9888527989387512}
+[2026-03-27 15:56:22]   L18: entropy=0.594 selectivity=0.562 dist=['0.070', '0.073', '0.044', '0.812']
+[2026-03-27 15:56:22] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step16000.pt
+[2026-03-27 15:56:38]   step 16100/25000 | lm=3.3594 router=0.3824 tau=0.420 | lr=2.81e-05 | 11201 tok/s route_L18=[0.06, 0.06, 0.04, 0.84] | domains={'medical': 0, 'code': 130, 'legal': 0, 'general': 1918}
+[2026-03-27 15:56:54]   step 16200/25000 | lm=4.3750 router=0.7078 tau=0.417 | lr=2.76e-05 | 11210 tok/s route_L18=[0.07, 0.07, 0.03, 0.84] | domains={'medical': 0, 'code': 65, 'legal': 270, 'general': 1713}
+[2026-03-27 15:57:10]   step 16300/25000 | lm=2.9844 router=1.4156 tau=0.413 | lr=2.70e-05 | 11218 tok/s route_L18=[0.06, 0.06, 0.05, 0.83] | domains={'medical': 65, 'code': 589, 'legal': 214, 'general': 1180}
+[2026-03-27 15:57:26]   step 16400/25000 | lm=3.1406 router=0.3422 tau=0.410 | lr=2.65e-05 | 11226 tok/s route_L18=[0.05, 0.06, 0.03, 0.86] | domains={'medical': 0, 'code': 0, 'legal': 142, 'general': 1906}
+[2026-03-27 15:57:42]   step 16500/25000 | lm=3.2969 router=0.0880 tau=0.406 | lr=2.59e-05 | 11234 tok/s route_L18=[0.05, 0.04, 0.02, 0.89] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:57:58]   step 16600/25000 | lm=2.7969 router=0.6422 tau=0.402 | lr=2.54e-05 | 11242 tok/s route_L18=[0.05, 0.08, 0.07, 0.79] | domains={'medical': 0, 'code': 192, 'legal': 102, 'general': 1754}
+[2026-03-27 15:58:14]   step 16700/25000 | lm=1.6484 router=0.0981 tau=0.399 | lr=2.48e-05 | 11250 tok/s route_L18=[0.02, 0.04, 0.02, 0.91] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 15:58:30]   step 16800/25000 | lm=2.7500 router=0.7000 tau=0.395 | lr=2.43e-05 | 11258 tok/s route_L18=[0.07, 0.06, 0.04, 0.82] | domains={'medical': 65, 'code': 260, 'legal': 0, 'general': 1723}
+[2026-03-27 15:58:46]   step 16900/25000 | lm=3.3125 router=0.3336 tau=0.392 | lr=2.37e-05 | 11266 tok/s route_L18=[0.06, 0.09, 0.02, 0.83] | domains={'medical': 65, 'code': 0, 'legal': 0, 'general': 1983}
+[2026-03-27 15:59:02]   step 17000/25000 | lm=3.0781 router=0.4316 tau=0.388 | lr=2.32e-05 | 11274 tok/s route_L18=[0.06, 0.08, 0.04, 0.82] | domains={'medical': 0, 'code': 165, 'legal': 0, 'general': 1883}
+[2026-03-27 15:59:02] --- Eval at step 17000 (tau=0.388) ---
+[2026-03-27 15:59:24]   PPL=20.13 | mean_cossim=0.9725260416666667
+[2026-03-27 15:59:24]   L18: routing_acc=0.842 per_domain={'medical': 0.08710120618343353, 'code': 0.006430508568882942, 'legal': 0.0693545788526535, 'general': 0.9890088438987732}
+[2026-03-27 15:59:24]   L18: entropy=0.590 selectivity=0.562 dist=['0.069', '0.073', '0.044', '0.812']
+[2026-03-27 15:59:24] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step17000.pt
+[2026-03-27 15:59:40]   step 17100/25000 | lm=3.0469 router=0.2954 tau=0.384 | lr=2.27e-05 | 11202 tok/s route_L18=[0.05, 0.06, 0.04, 0.86] | domains={'medical': 0, 'code': 109, 'legal': 0, 'general': 1939}
+[2026-03-27 15:59:56]   step 17200/25000 | lm=2.8594 router=0.4466 tau=0.381 | lr=2.22e-05 | 11211 tok/s route_L18=[0.05, 0.09, 0.02, 0.84] | domains={'medical': 0, 'code': 235, 'legal': 0, 'general': 1813}
+[2026-03-27 16:00:12]   step 17300/25000 | lm=3.4375 router=0.3413 tau=0.377 | lr=2.16e-05 | 11218 tok/s route_L18=[0.05, 0.07, 0.03, 0.86] | domains={'medical': 126, 'code': 0, 'legal': 0, 'general': 1922}
+[2026-03-27 16:00:28]   step 17400/25000 | lm=3.4219 router=0.7250 tau=0.374 | lr=2.11e-05 | 11226 tok/s route_L18=[0.07, 0.09, 0.03, 0.81] | domains={'medical': 130, 'code': 285, 'legal': 0, 'general': 1633}
+[2026-03-27 16:00:44]   step 17500/25000 | lm=2.4688 router=0.4730 tau=0.370 | lr=2.06e-05 | 11233 tok/s route_L18=[0.09, 0.14, 0.02, 0.74] | domains={'medical': 65, 'code': 130, 'legal': 0, 'general': 1853}
+[2026-03-27 16:01:01]   step 17600/25000 | lm=3.2969 router=0.7490 tau=0.366 | lr=2.01e-05 | 11241 tok/s route_L18=[0.09, 0.06, 0.05, 0.80] | domains={'medical': 0, 'code': 189, 'legal': 242, 'general': 1617}
+[2026-03-27 16:01:17]   step 17700/25000 | lm=5.3750 router=1.0574 tau=0.363 | lr=1.96e-05 | 11248 tok/s route_L18=[0.11, 0.08, 0.03, 0.78] | domains={'medical': 563, 'code': 158, 'legal': 0, 'general': 1327}
+[2026-03-27 16:01:33]   step 17800/25000 | lm=3.1250 router=0.6814 tau=0.359 | lr=1.91e-05 | 11254 tok/s route_L18=[0.12, 0.08, 0.05, 0.75] | domains={'medical': 179, 'code': 163, 'legal': 0, 'general': 1706}
+[2026-03-27 16:01:49]   step 17900/25000 | lm=3.2500 router=0.8987 tau=0.356 | lr=1.86e-05 | 11262 tok/s route_L18=[0.09, 0.07, 0.04, 0.80] | domains={'medical': 65, 'code': 391, 'legal': 0, 'general': 1592}
+[2026-03-27 16:02:05]   step 18000/25000 | lm=3.1094 router=0.3011 tau=0.352 | lr=1.81e-05 | 11269 tok/s route_L18=[0.06, 0.05, 0.03, 0.86] | domains={'medical': 0, 'code': 95, 'legal': 0, 'general': 1953}
+[2026-03-27 16:02:05] --- Eval at step 18000 (tau=0.352) ---
+[2026-03-27 16:02:27]   PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 16:02:27]   L18: routing_acc=0.842 per_domain={'medical': 0.0872458964586258, 'code': 0.00648642610758543, 'legal': 0.0707983523607254, 'general': 0.9889523386955261}
+[2026-03-27 16:02:27]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:02:27] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step18000.pt
+[2026-03-27 16:02:43]   step 18100/25000 | lm=2.9688 router=0.4129 tau=0.348 | lr=1.76e-05 | 11201 tok/s route_L18=[0.10, 0.06, 0.03, 0.81] | domains={'medical': 105, 'code': 65, 'legal': 0, 'general': 1878}
+[2026-03-27 16:02:59]   step 18200/25000 | lm=2.9531 router=0.5614 tau=0.345 | lr=1.72e-05 | 11209 tok/s route_L18=[0.07, 0.09, 0.05, 0.79] | domains={'medical': 0, 'code': 139, 'legal': 119, 'general': 1790}
+[2026-03-27 16:03:16]   step 18300/25000 | lm=3.4375 router=0.6711 tau=0.341 | lr=1.67e-05 | 11216 tok/s route_L18=[0.10, 0.07, 0.02, 0.80] | domains={'medical': 328, 'code': 73, 'legal': 0, 'general': 1647}
+[2026-03-27 16:03:32]   step 18400/25000 | lm=2.8125 router=0.5756 tau=0.338 | lr=1.62e-05 | 11223 tok/s route_L18=[0.06, 0.10, 0.04, 0.80] | domains={'medical': 65, 'code': 208, 'legal': 0, 'general': 1775}
+[2026-03-27 16:03:48]   step 18500/25000 | lm=3.5156 router=1.1394 tau=0.334 | lr=1.58e-05 | 11230 tok/s route_L18=[0.06, 0.06, 0.03, 0.85] | domains={'medical': 251, 'code': 65, 'legal': 331, 'general': 1401}
+[2026-03-27 16:04:04]   step 18600/25000 | lm=2.6250 router=1.0809 tau=0.330 | lr=1.53e-05 | 11237 tok/s route_L18=[0.10, 0.06, 0.12, 0.73] | domains={'medical': 366, 'code': 130, 'legal': 144, 'general': 1408}
+[2026-03-27 16:04:20]   step 18700/25000 | lm=2.9375 router=0.8606 tau=0.327 | lr=1.49e-05 | 11244 tok/s route_L18=[0.05, 0.08, 0.04, 0.84] | domains={'medical': 65, 'code': 344, 'legal': 79, 'general': 1560}
+[2026-03-27 16:04:36]   step 18800/25000 | lm=2.5781 router=0.9931 tau=0.323 | lr=1.44e-05 | 11250 tok/s route_L18=[0.07, 0.13, 0.04, 0.77] | domains={'medical': 156, 'code': 422, 'legal': 65, 'general': 1405}
+[2026-03-27 16:04:52]   step 18900/25000 | lm=2.6719 router=0.7177 tau=0.320 | lr=1.40e-05 | 11257 tok/s route_L18=[0.10, 0.10, 0.11, 0.70] | domains={'medical': 197, 'code': 0, 'legal': 283, 'general': 1568}
+[2026-03-27 16:05:09]   step 19000/25000 | lm=2.8906 router=1.0027 tau=0.316 | lr=1.36e-05 | 11264 tok/s route_L18=[0.06, 0.05, 0.06, 0.84] | domains={'medical': 0, 'code': 502, 'legal': 0, 'general': 1546}
+[2026-03-27 16:05:09] --- Eval at step 19000 (tau=0.316) ---
+[2026-03-27 16:05:31]   PPL=20.13 | mean_cossim=0.9725260416666667
+[2026-03-27 16:05:31]   L18: routing_acc=0.842 per_domain={'medical': 0.08720972388982773, 'code': 0.00648642610758543, 'legal': 0.07111918926239014, 'general': 0.988956868648529}
+[2026-03-27 16:05:31]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:05:31] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step19000.pt
+[2026-03-27 16:05:47]   step 19100/25000 | lm=2.8438 router=0.6820 tau=0.312 | lr=1.31e-05 | 11199 tok/s route_L18=[0.08, 0.08, 0.05, 0.79] | domains={'medical': 130, 'code': 130, 'legal': 107, 'general': 1681}
+[2026-03-27 16:06:03]   step 19200/25000 | lm=3.4062 router=0.5701 tau=0.309 | lr=1.27e-05 | 11206 tok/s route_L18=[0.09, 0.06, 0.04, 0.81] | domains={'medical': 200, 'code': 193, 'legal': 0, 'general': 1655}
+[2026-03-27 16:06:19]   step 19300/25000 | lm=2.9219 router=1.5169 tau=0.305 | lr=1.23e-05 | 11213 tok/s route_L18=[0.09, 0.08, 0.07, 0.75] | domains={'medical': 506, 'code': 265, 'legal': 432, 'general': 845}
+[2026-03-27 16:06:35]   step 19400/25000 | lm=3.1875 router=0.6339 tau=0.302 | lr=1.19e-05 | 11220 tok/s route_L18=[0.07, 0.07, 0.03, 0.83] | domains={'medical': 65, 'code': 65, 'legal': 130, 'general': 1788}
+[2026-03-27 16:06:51]   step 19500/25000 | lm=3.1562 router=0.1411 tau=0.298 | lr=1.15e-05 | 11227 tok/s route_L18=[0.05, 0.05, 0.04, 0.87] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 16:07:07]   step 19600/25000 | lm=2.5781 router=0.7917 tau=0.294 | lr=1.11e-05 | 11234 tok/s route_L18=[0.07, 0.11, 0.07, 0.75] | domains={'medical': 0, 'code': 421, 'legal': 0, 'general': 1627}
+[2026-03-27 16:07:23]   step 19700/25000 | lm=3.1562 router=0.5113 tau=0.291 | lr=1.07e-05 | 11240 tok/s route_L18=[0.04, 0.08, 0.07, 0.81] | domains={'medical': 0, 'code': 65, 'legal': 206, 'general': 1777}
+[2026-03-27 16:07:40]   step 19800/25000 | lm=2.8438 router=0.6521 tau=0.287 | lr=1.03e-05 | 11246 tok/s route_L18=[0.11, 0.08, 0.04, 0.77] | domains={'medical': 344, 'code': 14, 'legal': 0, 'general': 1690}
+[2026-03-27 16:07:56]   step 19900/25000 | lm=3.1406 router=0.6683 tau=0.284 | lr=9.92e-06 | 11252 tok/s route_L18=[0.11, 0.06, 0.03, 0.80] | domains={'medical': 260, 'code': 81, 'legal': 65, 'general': 1642}
+[2026-03-27 16:08:12]   step 20000/25000 | lm=2.9219 router=1.2243 tau=0.280 | lr=9.55e-06 | 11258 tok/s route_L18=[0.11, 0.07, 0.06, 0.76] | domains={'medical': 693, 'code': 41, 'legal': 65, 'general': 1249}
+[2026-03-27 16:08:12] --- Eval at step 20000 (tau=0.280) ---
+[2026-03-27 16:08:34]   PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 16:08:34]   L18: routing_acc=0.842 per_domain={'medical': 0.08739057928323746, 'code': 0.00648642610758543, 'legal': 0.0717608705163002, 'general': 0.9889296889305115}
+[2026-03-27 16:08:34]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:08:34] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step20000.pt
+[2026-03-27 16:08:50]   step 20100/25000 | lm=3.1719 router=0.5384 tau=0.276 | lr=9.18e-06 | 11197 tok/s route_L18=[0.05, 0.08, 0.05, 0.83] | domains={'medical': 65, 'code': 65, 'legal': 134, 'general': 1784}
+[2026-03-27 16:09:06]   step 20200/25000 | lm=3.0000 router=0.2509 tau=0.273 | lr=8.82e-06 | 11204 tok/s route_L18=[0.11, 0.05, 0.05, 0.79] | domains={'medical': 0, 'code': 0, 'legal': 65, 'general': 1983}
+[2026-03-27 16:09:22]   step 20300/25000 | lm=2.9219 router=0.7543 tau=0.269 | lr=8.47e-06 | 11211 tok/s route_L18=[0.06, 0.08, 0.03, 0.83] | domains={'medical': 0, 'code': 301, 'legal': 65, 'general': 1682}
+[2026-03-27 16:09:38]   step 20400/25000 | lm=2.3438 router=0.5070 tau=0.266 | lr=8.12e-06 | 11217 tok/s route_L18=[0.12, 0.05, 0.04, 0.79] | domains={'medical': 130, 'code': 65, 'legal': 0, 'general': 1853}
+[2026-03-27 16:09:54]   step 20500/25000 | lm=2.6719 router=0.5196 tau=0.262 | lr=7.78e-06 | 11224 tok/s route_L18=[0.06, 0.06, 0.07, 0.81] | domains={'medical': 65, 'code': 0, 'legal': 199, 'general': 1784}
+[2026-03-27 16:10:11]   step 20600/25000 | lm=3.1250 router=0.3180 tau=0.258 | lr=7.45e-06 | 11231 tok/s route_L18=[0.10, 0.06, 0.04, 0.80] | domains={'medical': 65, 'code': 0, 'legal': 65, 'general': 1918}
+[2026-03-27 16:10:27]   step 20700/25000 | lm=2.7656 router=1.1324 tau=0.255 | lr=7.12e-06 | 11237 tok/s route_L18=[0.09, 0.08, 0.05, 0.78] | domains={'medical': 433, 'code': 238, 'legal': 130, 'general': 1247}
+[2026-03-27 16:10:43]   step 20800/25000 | lm=2.9375 router=0.2553 tau=0.251 | lr=6.80e-06 | 11244 tok/s route_L18=[0.07, 0.06, 0.05, 0.82] | domains={'medical': 0, 'code': 0, 'legal': 65, 'general': 1983}
+[2026-03-27 16:10:59]   step 20900/25000 | lm=2.8438 router=0.4044 tau=0.248 | lr=6.49e-06 | 11250 tok/s route_L18=[0.07, 0.07, 0.02, 0.84] | domains={'medical': 0, 'code': 103, 'legal': 92, 'general': 1853}
+[2026-03-27 16:11:15]   step 21000/25000 | lm=3.2344 router=0.6592 tau=0.244 | lr=6.18e-06 | 11256 tok/s route_L18=[0.05, 0.06, 0.05, 0.84] | domains={'medical': 0, 'code': 246, 'legal': 65, 'general': 1737}
+[2026-03-27 16:11:15] --- Eval at step 21000 (tau=0.244) ---
+[2026-03-27 16:11:37]   PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 16:11:37]   L18: routing_acc=0.842 per_domain={'medical': 0.08739057928323746, 'code': 0.00648642610758543, 'legal': 0.07170739024877548, 'general': 0.9889251589775085}
+[2026-03-27 16:11:37]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:11:37] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step21000.pt
+[2026-03-27 16:11:53]   step 21100/25000 | lm=3.3594 router=0.5347 tau=0.240 | lr=5.89e-06 | 11198 tok/s route_L18=[0.06, 0.06, 0.03, 0.84] | domains={'medical': 148, 'code': 130, 'legal': 0, 'general': 1770}
+[2026-03-27 16:12:09]   step 21200/25000 | lm=3.1719 router=1.0566 tau=0.237 | lr=5.59e-06 | 11204 tok/s route_L18=[0.07, 0.06, 0.04, 0.84] | domains={'medical': 130, 'code': 147, 'legal': 314, 'general': 1457}
+[2026-03-27 16:12:25]   step 21300/25000 | lm=2.4688 router=1.4508 tau=0.233 | lr=5.31e-06 | 11210 tok/s route_L18=[0.11, 0.08, 0.03, 0.77] | domains={'medical': 1168, 'code': 42, 'legal': 0, 'general': 838}
+[2026-03-27 16:12:41]   step 21400/25000 | lm=3.1719 router=0.3416 tau=0.230 | lr=5.03e-06 | 11217 tok/s route_L18=[0.07, 0.05, 0.05, 0.82] | domains={'medical': 65, 'code': 47, 'legal': 0, 'general': 1936}
+[2026-03-27 16:12:57]   step 21500/25000 | lm=2.5469 router=0.1406 tau=0.226 | lr=4.76e-06 | 11223 tok/s route_L18=[0.04, 0.05, 0.04, 0.86] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 16:13:14]   step 21600/25000 | lm=2.9219 router=0.7550 tau=0.222 | lr=4.49e-06 | 11229 tok/s route_L18=[0.08, 0.07, 0.07, 0.78] | domains={'medical': 94, 'code': 65, 'legal': 334, 'general': 1555}
+[2026-03-27 16:13:29]   step 21700/25000 | lm=3.0312 router=0.3480 tau=0.219 | lr=4.24e-06 | 11235 tok/s route_L18=[0.06, 0.07, 0.03, 0.84] | domains={'medical': 0, 'code': 55, 'legal': 65, 'general': 1928}
+[2026-03-27 16:13:45]   step 21800/25000 | lm=2.8906 router=0.5167 tau=0.215 | lr=3.99e-06 | 11242 tok/s route_L18=[0.07, 0.06, 0.02, 0.85] | domains={'medical': 195, 'code': 0, 'legal': 0, 'general': 1853}
+[2026-03-27 16:14:02]   step 21900/25000 | lm=1.9531 router=0.3380 tau=0.212 | lr=3.75e-06 | 11246 tok/s route_L18=[0.08, 0.04, 0.04, 0.83] | domains={'medical': 0, 'code': 0, 'legal': 130, 'general': 1918}
+[2026-03-27 16:14:18]   step 22000/25000 | lm=2.8438 router=0.7580 tau=0.208 | lr=3.51e-06 | 11252 tok/s route_L18=[0.07, 0.07, 0.04, 0.81] | domains={'medical': 0, 'code': 355, 'legal': 65, 'general': 1628}
+[2026-03-27 16:14:18] --- Eval at step 22000 (tau=0.208) ---
+[2026-03-27 16:14:41]   PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 16:14:41]   L18: routing_acc=0.842 per_domain={'medical': 0.08742675185203552, 'code': 0.00648642610758543, 'legal': 0.07165391743183136, 'general': 0.9889228940010071}
+[2026-03-27 16:14:41]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:14:41] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step22000.pt
+[2026-03-27 16:14:57]   step 22100/25000 | lm=3.2031 router=0.3734 tau=0.204 | lr=3.28e-06 | 11196 tok/s route_L18=[0.06, 0.05, 0.03, 0.85] | domains={'medical': 108, 'code': 0, 'legal': 65, 'general': 1875}
+[2026-03-27 16:15:13]   step 22200/25000 | lm=3.0781 router=0.5170 tau=0.201 | lr=3.06e-06 | 11202 tok/s route_L18=[0.08, 0.06, 0.04, 0.83] | domains={'medical': 130, 'code': 65, 'legal': 49, 'general': 1804}
+[2026-03-27 16:15:29]   step 22300/25000 | lm=2.8750 router=0.7342 tau=0.197 | lr=2.85e-06 | 11209 tok/s route_L18=[0.08, 0.05, 0.03, 0.84] | domains={'medical': 0, 'code': 260, 'legal': 65, 'general': 1723}
+[2026-03-27 16:15:45]   step 22400/25000 | lm=2.0781 router=1.0774 tau=0.194 | lr=2.65e-06 | 11215 tok/s route_L18=[0.10, 0.09, 0.19, 0.62] | domains={'medical': 65, 'code': 331, 'legal': 97, 'general': 1555}
+[2026-03-27 16:16:01]   step 22500/25000 | lm=2.5000 router=0.8125 tau=0.190 | lr=2.45e-06 | 11221 tok/s route_L18=[0.06, 0.09, 0.15, 0.70] | domains={'medical': 0, 'code': 186, 'legal': 577, 'general': 1285}
+[2026-03-27 16:16:17]   step 22600/25000 | lm=3.2969 router=0.4788 tau=0.186 | lr=2.26e-06 | 11227 tok/s route_L18=[0.08, 0.11, 0.06, 0.75] | domains={'medical': 0, 'code': 65, 'legal': 130, 'general': 1853}
+[2026-03-27 16:16:33]   step 22700/25000 | lm=3.0625 router=0.5713 tau=0.183 | lr=2.07e-06 | 11233 tok/s route_L18=[0.08, 0.07, 0.05, 0.80] | domains={'medical': 65, 'code': 103, 'legal': 133, 'general': 1747}
+[2026-03-27 16:16:49]   step 22800/25000 | lm=2.6562 router=0.7055 tau=0.179 | lr=1.90e-06 | 11239 tok/s route_L18=[0.11, 0.07, 0.07, 0.75] | domains={'medical': 411, 'code': 65, 'legal': 0, 'general': 1572}
+[2026-03-27 16:17:05]   step 22900/25000 | lm=3.0312 router=0.4481 tau=0.176 | lr=1.73e-06 | 11245 tok/s route_L18=[0.06, 0.08, 0.04, 0.82] | domains={'medical': 0, 'code': 90, 'legal': 110, 'general': 1848}
+[2026-03-27 16:17:21]   step 23000/25000 | lm=2.9688 router=0.3091 tau=0.172 | lr=1.57e-06 | 11250 tok/s route_L18=[0.11, 0.08, 0.03, 0.78] | domains={'medical': 0, 'code': 65, 'legal': 0, 'general': 1983}
+[2026-03-27 16:17:21] --- Eval at step 23000 (tau=0.172) ---
+[2026-03-27 16:17:43]   PPL=20.13 | mean_cossim=0.9725260416666667
+[2026-03-27 16:17:43]   L18: routing_acc=0.842 per_domain={'medical': 0.08739057928323746, 'code': 0.00648642610758543, 'legal': 0.07170739024877548, 'general': 0.98892742395401}
+[2026-03-27 16:17:43]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:17:43] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step23000.pt
+[2026-03-27 16:17:59]   step 23100/25000 | lm=3.3281 router=0.4996 tau=0.168 | lr=1.42e-06 | 11198 tok/s route_L18=[0.04, 0.08, 0.04, 0.84] | domains={'medical': 0, 'code': 229, 'legal': 61, 'general': 1758}
+[2026-03-27 16:18:15]   step 23200/25000 | lm=2.9062 router=0.4650 tau=0.165 | lr=1.27e-06 | 11204 tok/s route_L18=[0.06, 0.08, 0.03, 0.82] | domains={'medical': 0, 'code': 216, 'legal': 0, 'general': 1832}
+[2026-03-27 16:18:31]   step 23300/25000 | lm=3.0938 router=0.9540 tau=0.161 | lr=1.14e-06 | 11210 tok/s route_L18=[0.05, 0.05, 0.06, 0.84] | domains={'medical': 0, 'code': 0, 'legal': 573, 'general': 1475}
+[2026-03-27 16:18:47]   step 23400/25000 | lm=2.8281 router=0.6440 tau=0.158 | lr=1.01e-06 | 11217 tok/s route_L18=[0.13, 0.08, 0.05, 0.75] | domains={'medical': 551, 'code': 59, 'legal': 0, 'general': 1438}
+[2026-03-27 16:19:02]   step 23500/25000 | lm=2.8906 router=0.4753 tau=0.154 | lr=8.86e-07 | 11223 tok/s route_L18=[0.09, 0.11, 0.04, 0.76] | domains={'medical': 0, 'code': 201, 'legal': 0, 'general': 1847}
+[2026-03-27 16:19:18]   step 23600/25000 | lm=2.9062 router=0.5244 tau=0.150 | lr=7.72e-07 | 11228 tok/s route_L18=[0.08, 0.09, 0.05, 0.79] | domains={'medical': 65, 'code': 58, 'legal': 113, 'general': 1812}
+[2026-03-27 16:19:34]   step 23700/25000 | lm=3.1250 router=0.6126 tau=0.147 | lr=6.66e-07 | 11234 tok/s route_L18=[0.05, 0.05, 0.04, 0.86] | domains={'medical': 65, 'code': 195, 'legal': 0, 'general': 1788}
+[2026-03-27 16:19:50]   step 23800/25000 | lm=3.1094 router=1.1626 tau=0.143 | lr=5.67e-07 | 11240 tok/s route_L18=[0.05, 0.05, 0.04, 0.85] | domains={'medical': 130, 'code': 362, 'legal': 59, 'general': 1497}
+[2026-03-27 16:20:06]   step 23900/25000 | lm=3.0312 router=0.1610 tau=0.140 | lr=4.77e-07 | 11246 tok/s route_L18=[0.05, 0.08, 0.04, 0.83] | domains={'medical': 0, 'code': 0, 'legal': 0, 'general': 2048}
+[2026-03-27 16:20:23]   step 24000/25000 | lm=3.7188 router=0.7222 tau=0.136 | lr=3.94e-07 | 11251 tok/s route_L18=[0.06, 0.08, 0.04, 0.82] | domains={'medical': 0, 'code': 411, 'legal': 0, 'general': 1637}
+[2026-03-27 16:20:23] --- Eval at step 24000 (tau=0.136) ---
+[2026-03-27 16:20:45]   PPL=20.13 | mean_cossim=0.9725260416666667
+[2026-03-27 16:20:45]   L18: routing_acc=0.842 per_domain={'medical': 0.08742675185203552, 'code': 0.00648642610758543, 'legal': 0.07170739024877548, 'general': 0.98892742395401}
+[2026-03-27 16:20:45]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:20:45] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step24000.pt
+[2026-03-27 16:21:01]   step 24100/25000 | lm=3.5000 router=0.5884 tau=0.132 | lr=3.19e-07 | 11201 tok/s route_L18=[0.03, 0.06, 0.03, 0.88] | domains={'medical': 0, 'code': 257, 'legal': 0, 'general': 1791}
+[2026-03-27 16:21:16]   step 24200/25000 | lm=2.9062 router=1.0279 tau=0.129 | lr=2.52e-07 | 11207 tok/s route_L18=[0.09, 0.08, 0.08, 0.75] | domains={'medical': 506, 'code': 65, 'legal': 162, 'general': 1315}
+[2026-03-27 16:21:32]   step 24300/25000 | lm=3.0156 router=0.8383 tau=0.125 | lr=1.93e-07 | 11213 tok/s route_L18=[0.07, 0.05, 0.06, 0.82] | domains={'medical': 0, 'code': 195, 'legal': 297, 'general': 1556}
+[2026-03-27 16:21:48]   step 24400/25000 | lm=2.8125 router=0.4741 tau=0.122 | lr=1.42e-07 | 11218 tok/s route_L18=[0.04, 0.09, 0.02, 0.85] | domains={'medical': 0, 'code': 153, 'legal': 65, 'general': 1830}
+[2026-03-27 16:22:04]   step 24500/25000 | lm=3.2188 router=1.1028 tau=0.118 | lr=9.87e-08 | 11224 tok/s route_L18=[0.05, 0.09, 0.03, 0.83] | domains={'medical': 130, 'code': 474, 'legal': 0, 'general': 1444}
+[2026-03-27 16:22:20]   step 24600/25000 | lm=2.9062 router=0.4355 tau=0.114 | lr=6.32e-08 | 11230 tok/s route_L18=[0.10, 0.07, 0.06, 0.77] | domains={'medical': 0, 'code': 130, 'legal': 0, 'general': 1918}
+[2026-03-27 16:22:36]   step 24700/25000 | lm=3.0781 router=0.3485 tau=0.111 | lr=3.55e-08 | 11236 tok/s route_L18=[0.06, 0.06, 0.04, 0.84] | domains={'medical': 0, 'code': 75, 'legal': 68, 'general': 1905}
+[2026-03-27 16:22:52]   step 24800/25000 | lm=4.7812 router=0.5540 tau=0.107 | lr=1.58e-08 | 11241 tok/s route_L18=[0.07, 0.06, 0.03, 0.84] | domains={'medical': 119, 'code': 65, 'legal': 65, 'general': 1799}
+[2026-03-27 16:23:08]   step 24900/25000 | lm=3.1875 router=0.5112 tau=0.104 | lr=3.95e-09 | 11247 tok/s route_L18=[0.04, 0.05, 0.04, 0.86] | domains={'medical': 65, 'code': 84, 'legal': 65, 'general': 1834}
+[2026-03-27 16:23:25]   step 25000/25000 | lm=3.2031 router=0.3932 tau=0.100 | lr=0.00e+00 | 11251 tok/s route_L18=[0.04, 0.08, 0.03, 0.84] | domains={'medical': 0, 'code': 130, 'legal': 0, 'general': 1918}
+[2026-03-27 16:23:25] --- Eval at step 25000 (tau=0.100) ---
+[2026-03-27 16:23:46]   PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 16:23:46]   L18: routing_acc=0.842 per_domain={'medical': 0.08742675185203552, 'code': 0.00648642610758543, 'legal': 0.07170739024877548, 'general': 0.98892742395401}
+[2026-03-27 16:23:46]   L18: entropy=0.594 selectivity=0.562 dist=['0.069', '0.073', '0.045', '0.812']
+[2026-03-27 16:23:46] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step25000.pt
+[2026-03-27 16:23:46] --- Final eval ---
+[2026-03-27 16:24:08]   Final PPL=20.14 | mean_cossim=0.9725260416666667
+[2026-03-27 16:24:08]   L18: final_routing_acc=0.842
+[2026-03-27 16:24:08] Checkpoint saved: /root/t6b-mogae/checkpoints/domain_conditional/domain_cond_step25000.pt
+[2026-03-27 16:24:08] 
+[2026-03-27 16:24:08] ======================================================================
+[2026-03-27 16:24:08] Computing M_ij Ablation Matrix
+[2026-03-27 16:24:08] ======================================================================
+[2026-03-27 16:25:05] Ablation matrix: collected tokens per domain: {0: 32768, 1: 32768, 2: 32768, 3: 32768}
+[2026-03-27 16:25:12] Baseline PPL per domain: ['medical=14.18', 'code=19.62', 'legal=14.67', 'general=18.82']
+[2026-03-27 16:25:18] Expert 0 (medical) ablated: M[i,0] = [1.0268432166600694, 1.0012214484863173, 1.0031788700501403, 1.0023220276777098]
+[2026-03-27 16:25:24] Expert 1 (code) ablated: M[i,1] = [1.01018333677295, 1.008827799714578, 1.0100600309034942, 1.009320511694879]
+[2026-03-27 16:25:30] Expert 2 (legal) ablated: M[i,2] = [1.0018327320917844, 1.0009770394924165, 1.035149539032194, 1.0]
+[2026-03-27 16:25:36] Expert 3 (general) ablated: M[i,3] = [1.1257035332923435, 1.2228349285158076, 1.150571515656516, 1.2509170885195715]
+[2026-03-27 16:25:36] M_ij matrix:
+[2026-03-27 16:25:36]          E0(medi)  E1(code)  E2(lega)  E3(gene)
+[2026-03-27 16:25:36]    medical:    1.027     1.010     1.002     1.126
+[2026-03-27 16:25:36]       code:    1.001     1.009     1.001     1.223
+[2026-03-27 16:25:36]      legal:    1.003     1.010     1.035     1.151
+[2026-03-27 16:25:36]    general:    1.002     1.009     1.000     1.251
+[2026-03-27 16:25:36] Diagonal dominance: [-0.019063317392290058, -0.06618333911693552, -0.019453933171189375, 0.247036242062042]
+[2026-03-27 16:25:36] Mean diagonal dominance: 0.0356
+[2026-03-27 16:25:36] Ablation matrix saved to /root/t6b-mogae/results_domain_conditional/ablation_matrix.json
+[2026-03-27 16:25:36] 
+[2026-03-27 16:25:36] ======================================================================
+[2026-03-27 16:25:36] Experiment Summary
+[2026-03-27 16:25:36] ======================================================================
+[2026-03-27 16:25:36] PPL: 20.14 -> 20.14
+[2026-03-27 16:25:36] Mean diagonal dominance: 0.0356
+[2026-03-27 16:25:36] Final PPL: 20.14
+[2026-03-27 16:25:36] FAILURE: No diagonal dominance even with forced specialization
+[2026-03-27 16:25:36] This would indicate a fundamental architecture limitation, not just routing
+[2026-03-27 16:25:36] Final routing accuracy: 0.842
+[2026-03-27 16:25:36] Done.

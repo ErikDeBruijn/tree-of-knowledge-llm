@@ -1,0 +1,51 @@
+=== LEARNTROPY v2: Loss-Reduction Routing ===
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:31, 12.42it/s]Loading weights:  11%|█         | 42/399 [00:00<00:02, 142.47it/s]Loading weights:  29%|██▉       | 116/399 [00:00<00:00, 331.75it/s]Loading weights:  39%|███▉      | 156/399 [00:00<00:00, 345.92it/s]Loading weights:  49%|████▉     | 195/399 [00:00<00:00, 305.18it/s]Loading weights:  67%|██████▋   | 269/399 [00:00<00:00, 422.01it/s]Loading weights:  79%|███████▉  | 317/399 [00:00<00:00, 394.72it/s]Loading weights:  92%|█████████▏| 367/399 [00:01<00:00, 392.70it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 358.55it/s]
+Loaded 3 adapters: ['bbc_alice', 'cuisine_bob', 'wingchun_carol']
+
+=== METHOD A: Softmax (baseline) ===
+  Softmax → bbc_alice: PPL=11.33 | bbc_alice=0.798 | cuisine_bob=0.128 | wingchun_carol=0.021
+  Softmax → cuisine_bob: PPL=10.98 | bbc_alice=0.024 | cuisine_bob=0.900 | wingchun_carol=0.016
+  Softmax → wingchun_carol: PPL=2.28 | bbc_alice=0.065 | cuisine_bob=0.146 | wingchun_carol=0.719
+  Softmax → generic: PPL=15.80 | bbc_alice=0.172 | cuisine_bob=0.461 | wingchun_carol=0.081
+
+=== METHOD C: Loss-Reduction (true learntropy) ===
+  LossReduct → bbc_alice: PPL=10.48 | bbc_alice=0.356 | cuisine_bob=0.334 | wingchun_carol=0.144
+  LossReduct → cuisine_bob: PPL=11.69 | bbc_alice=0.251 | cuisine_bob=0.355 | wingchun_carol=0.190
+  LossReduct → wingchun_carol: PPL=1.84 | bbc_alice=0.097 | cuisine_bob=0.098 | wingchun_carol=0.752
+  LossReduct → generic: PPL=18.89 | bbc_alice=0.271 | cuisine_bob=0.310 | wingchun_carol=0.248
+
+======================================================================
+COMPARISON: Softmax vs Loss-Reduction Learntropy
+======================================================================
+
+Domain               Softmax PPL  LossRed PPL  Winner    
+-------------------------------------------------------
+  bbc_alice            11.33        10.48        loss_red  
+  cuisine_bob          10.98        11.69        softmax   
+  wingchun_carol       2.28         1.84         loss_red  
+  generic              15.80        18.89        softmax   
+
+Routing patterns:
+  bbc_alice:
+    bbc_alice: softmax=0.798  loss_red=0.356
+    cuisine_bob: softmax=0.128  loss_red=0.334
+    wingchun_carol: softmax=0.021  loss_red=0.144
+  cuisine_bob:
+    bbc_alice: softmax=0.024  loss_red=0.251
+    cuisine_bob: softmax=0.900  loss_red=0.355
+    wingchun_carol: softmax=0.016  loss_red=0.190
+  wingchun_carol:
+    bbc_alice: softmax=0.065  loss_red=0.097
+    cuisine_bob: softmax=0.146  loss_red=0.098
+    wingchun_carol: softmax=0.719  loss_red=0.752
+  generic:
+    bbc_alice: softmax=0.172  loss_red=0.271
+    cuisine_bob: softmax=0.461  loss_red=0.310
+    wingchun_carol: softmax=0.081  loss_red=0.248
+
+Softmax wins: 2, Loss-reduction wins: 2
+VERDICT: Tie. Methods are equivalent.
+
+Saved to /root/t6b-mogae/results/learntropy_v2_loss_reduction.json

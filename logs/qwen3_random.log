@@ -1,0 +1,86 @@
+======================================================================
+Qwen3-1.7B MoE Upcycling Experiment
+Arm: random
+Device: cuda:1
+Phase 2: 200,000,000 tokens (97,656 steps)
+Phase 3: 50,000,000 tokens (24,414 steps)
+======================================================================
+
+Loading tokenizer...
+Loading Qwen3-1.7B in BF16...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 18260.10it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+Model loaded: 28 layers, hidden=2048, intermediate=6144, vocab=151936
+
+======================================================================
+PHASE 1: Dense → MoE Conversion
+======================================================================
+FFN architecture: hidden_size=2048, intermediate_size=6144
+Creating 8-expert MoE with top-2 routing per layer
+  Converted layer 7/28
+  Converted layer 14/28
+  Converted layer 21/28
+  Converted layer 28/28
+
+Moving model to cuda:1 in BF16...
+Model on cuda:1, VRAM: 18.9 GB
+
+Building random token assignments...
+Random partition of 151,936 tokens into 8 groups
+  Expert 0: 19,020 tokens (12.5%)
+  Expert 1: 19,079 tokens (12.6%)
+  Expert 2: 18,716 tokens (12.3%)
+  Expert 3: 18,998 tokens (12.5%)
+  Expert 4: 19,144 tokens (12.6%)
+  Expert 5: 18,990 tokens (12.5%)
+  Expert 6: 19,052 tokens (12.5%)
+  Expert 7: 18,937 tokens (12.5%)
+
+Total params: 9,430,950,912
+MoE params: 8,456,175,616 (89.7%)
+
+Loading eval data...
+Computing baseline metrics...
+Baseline PPL: 63958.87
+Baseline CosSim: 0.9979
+
+======================================================================
+PHASE 2: Expert Training (frozen core)
+======================================================================
+Frozen core: 974,775,296 frozen, 8,456,175,616 trainable
+
+======================================================================
+Phase: phase2 | Steps: 97656 | LR: 2e-05 | Arm: random
+======================================================================
+  [phase2] Step 100/97656 | Loss: 10.9040 | PPL: 54395.57 | LR: 4.00e-06 | Tok/s: 4035 | Elapsed: 51s
+  [phase2] Step 200/97656 | Loss: 9.8572 | PPL: 19094.97 | LR: 8.00e-06 | Tok/s: 4101 | Elapsed: 100s
+  [phase2] Step 300/97656 | Loss: 6.4626 | PPL: 640.72 | LR: 1.20e-05 | Tok/s: 4122 | Elapsed: 149s
+  [phase2] Step 400/97656 | Loss: 5.7652 | PPL: 319.00 | LR: 1.60e-05 | Tok/s: 4136 | Elapsed: 198s
+  [phase2] Step 500/97656 | Loss: 5.6112 | PPL: 273.48 | LR: 2.00e-05 | Tok/s: 4139 | Elapsed: 247s
+  [phase2] Step 600/97656 | Loss: 5.4664 | PPL: 236.62 | LR: 2.00e-05 | Tok/s: 4143 | Elapsed: 297s
+  [phase2] Step 700/97656 | Loss: 5.3668 | PPL: 214.18 | LR: 2.00e-05 | Tok/s: 4145 | Elapsed: 346s
+  [phase2] Step 800/97656 | Loss: 5.3388 | PPL: 208.25 | LR: 2.00e-05 | Tok/s: 4148 | Elapsed: 395s
+  [phase2] Step 900/97656 | Loss: 5.3306 | PPL: 206.55 | LR: 2.00e-05 | Tok/s: 4146 | Elapsed: 445s
+  [phase2] Step 1000/97656 | Loss: 5.3784 | PPL: 216.68 | LR: 2.00e-05 | Tok/s: 4147 | Elapsed: 494s
+
+  Evaluating at step 1000...
+  EVAL: PPL=1091.94 | CosSim=0.9979 | RouterEnt=1.5069 | Gini=0.7493
+  Expert freq: ['0.000', '0.000', '0.000', '0.499', '0.000', '0.499', '0.000', '0.000']
+  [phase2] Step 1100/97656 | Loss: 5.3277 | PPL: 205.97 | LR: 2.00e-05 | Tok/s: 3935 | Elapsed: 572s
+  [phase2] Step 1200/97656 | Loss: 5.3283 | PPL: 206.08 | LR: 2.00e-05 | Tok/s: 3953 | Elapsed: 622s
+  [phase2] Step 1300/97656 | Loss: 5.2056 | PPL: 182.29 | LR: 2.00e-05 | Tok/s: 3967 | Elapsed: 671s
+  [phase2] Step 1400/97656 | Loss: 5.2421 | PPL: 189.07 | LR: 2.00e-05 | Tok/s: 3980 | Elapsed: 720s
+  [phase2] Step 1500/97656 | Loss: 5.2575 | PPL: 192.00 | LR: 2.00e-05 | Tok/s: 3991 | Elapsed: 770s
+  [phase2] Step 1600/97656 | Loss: 5.2589 | PPL: 192.28 | LR: 2.00e-05 | Tok/s: 4001 | Elapsed: 819s
+  [phase2] Step 1700/97656 | Loss: 5.0882 | PPL: 162.10 | LR: 2.00e-05 | Tok/s: 4010 | Elapsed: 868s
+  [phase2] Step 1800/97656 | Loss: 5.0628 | PPL: 158.04 | LR: 2.00e-05 | Tok/s: 4017 | Elapsed: 918s
+  [phase2] Step 1900/97656 | Loss: 5.0939 | PPL: 163.02 | LR: 2.00e-05 | Tok/s: 4024 | Elapsed: 967s
+  [phase2] Step 2000/97656 | Loss: 5.0334 | PPL: 153.46 | LR: 2.00e-05 | Tok/s: 4030 | Elapsed: 1016s
+
+  Evaluating at step 2000...
+  EVAL: PPL=970.35 | CosSim=0.9979 | RouterEnt=1.3828 | Gini=0.7492
+  Expert freq: ['0.000', '0.000', '0.000', '0.499', '0.000', '0.499', '0.000', '0.000']
+  [phase2] Step 2100/97656 | Loss: 5.0912 | PPL: 162.58 | LR: 2.00e-05 | Tok/s: 3924 | Elapsed: 1096s
+  [phase2] Step 2200/97656 | Loss: 5.1734 | PPL: 176.51 | LR: 2.00e-05 | Tok/s: 3933 | Elapsed: 1146s
+  [phase2] Step 2300/97656 | Loss: 5.1506 | PPL: 172.54 | LR: 2.00e-05 | Tok/s: 3942 | Elapsed: 1195s

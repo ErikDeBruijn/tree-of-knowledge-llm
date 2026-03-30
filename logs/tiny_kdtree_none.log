@@ -1,0 +1,189 @@
+======================================================================
+  TINY MOE TESTBED — Routing & Curriculum Ablation
+  Routing:    kdtree
+  Curriculum: none
+  Device:     cuda:1
+  Steps:      3000
+======================================================================
+
+Device: cuda:1
+  GPU: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+  Memory: 102.0 GB
+Loading WikiText-2...
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'wikitext' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  train: 9352 chunks of 256 tokens
+  val: 966 chunks of 256 tokens
+  test: 1107 chunks of 256 tokens
+
+Model: 26.57M parameters
+Routing: kdtree
+Curriculum: none
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 1: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 2: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 3: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+
+Training for 3000 steps...
+======================================================================
+  step    50 | loss 10.5254 | ppl 37250.0 | lr 0.000075 | 83566 tok/s
+  step   100 | loss 9.4263 | ppl 12410.3 | lr 0.000150 | 91419 tok/s
+  step   150 | loss 7.9411 | ppl 2810.6 | lr 0.000225 | 93795 tok/s
+  step   200 | loss 7.1501 | ppl 1274.3 | lr 0.000300 | 94421 tok/s
+  ── eval step 200: val_ppl=1079.68, val_loss=6.9844
+  step   250 | loss 6.8768 | ppl 969.5 | lr 0.000300 | 87600 tok/s
+  step   300 | loss 6.6903 | ppl 804.6 | lr 0.000299 | 88380 tok/s
+  step   350 | loss 6.5703 | ppl 713.6 | lr 0.000298 | 88883 tok/s
+  step   400 | loss 6.4515 | ppl 633.7 | lr 0.000296 | 88954 tok/s
+  ── eval step 400: val_ppl=612.83, val_loss=6.4181
+  step   450 | loss 6.3602 | ppl 578.4 | lr 0.000294 | 85215 tok/s
+  step   500 | loss 6.3010 | ppl 545.1 | lr 0.000292 | 85652 tok/s
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 1: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 2: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 3: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  step   550 | loss 6.4552 | ppl 636.0 | lr 0.000289 | 85637 tok/s
+  step   600 | loss 6.2440 | ppl 514.9 | lr 0.000285 | 85767 tok/s
+  ── eval step 600: val_ppl=529.33, val_loss=6.2716
+  step   650 | loss 6.1228 | ppl 456.2 | lr 0.000281 | 83336 tok/s
+  step   700 | loss 6.0951 | ppl 443.7 | lr 0.000277 | 83582 tok/s
+  step   750 | loss 6.0633 | ppl 429.8 | lr 0.000272 | 83819 tok/s
+  step   800 | loss 6.0181 | ppl 410.8 | lr 0.000267 | 83925 tok/s
+  ── eval step 800: val_ppl=447.90, val_loss=6.1046
+  step   850 | loss 5.9731 | ppl 392.7 | lr 0.000262 | 82181 tok/s
+  step   900 | loss 5.9296 | ppl 376.0 | lr 0.000256 | 82316 tok/s
+  step   950 | loss 5.8785 | ppl 357.3 | lr 0.000250 | 82562 tok/s
+  step  1000 | loss 5.9025 | ppl 365.9 | lr 0.000244 | 82763 tok/s
+  ── eval step 1000: val_ppl=390.90, val_loss=5.9684
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 1: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 2: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 3: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  step  1050 | loss 6.1427 | ppl 465.3 | lr 0.000237 | 81412 tok/s
+  step  1100 | loss 5.9368 | ppl 378.7 | lr 0.000230 | 81662 tok/s
+  step  1150 | loss 5.8653 | ppl 352.6 | lr 0.000223 | 81899 tok/s
+  step  1200 | loss 5.7783 | ppl 323.2 | lr 0.000215 | 82129 tok/s
+  ── eval step 1200: val_ppl=383.24, val_loss=5.9487
+  step  1250 | loss 5.7698 | ppl 320.5 | lr 0.000207 | 80881 tok/s
+  step  1300 | loss 5.7204 | ppl 305.0 | lr 0.000200 | 80810 tok/s
+  step  1350 | loss 5.7163 | ppl 303.8 | lr 0.000192 | 80739 tok/s
+  step  1400 | loss 5.7115 | ppl 302.3 | lr 0.000183 | 80678 tok/s
+  ── eval step 1400: val_ppl=350.16, val_loss=5.8584
+  step  1450 | loss 5.6757 | ppl 291.7 | lr 0.000175 | 79877 tok/s
+  step  1500 | loss 5.6660 | ppl 288.9 | lr 0.000167 | 80115 tok/s
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 1: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 2: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 3: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  step  1550 | loss 6.0300 | ppl 415.7 | lr 0.000158 | 80200 tok/s
+  step  1600 | loss 5.7785 | ppl 323.3 | lr 0.000150 | 80231 tok/s
+  ── eval step 1600: val_ppl=360.01, val_loss=5.8861
+  step  1650 | loss 5.7217 | ppl 305.4 | lr 0.000142 | 79486 tok/s
+  step  1700 | loss 5.6869 | ppl 295.0 | lr 0.000133 | 79672 tok/s
+  step  1750 | loss 5.6803 | ppl 293.0 | lr 0.000125 | 79870 tok/s
+  step  1800 | loss 5.6002 | ppl 270.5 | lr 0.000117 | 80066 tok/s
+  ── eval step 1800: val_ppl=332.07, val_loss=5.8053
+  step  1850 | loss 5.5491 | ppl 257.0 | lr 0.000108 | 79462 tok/s
+  step  1900 | loss 5.5449 | ppl 255.9 | lr 0.000100 | 79652 tok/s
+  step  1950 | loss 5.5320 | ppl 252.7 | lr 0.000093 | 79840 tok/s
+  step  2000 | loss 5.5475 | ppl 256.6 | lr 0.000085 | 80016 tok/s
+  ── eval step 2000: val_ppl=313.52, val_loss=5.7478
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 1: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 2: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 3: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  step  2050 | loss 5.7776 | ppl 323.0 | lr 0.000077 | 79442 tok/s
+  step  2100 | loss 5.6665 | ppl 289.0 | lr 0.000070 | 79615 tok/s
+  step  2150 | loss 5.6106 | ppl 273.3 | lr 0.000063 | 79788 tok/s
+  step  2200 | loss 5.5936 | ppl 268.7 | lr 0.000056 | 79950 tok/s
+  ── eval step 2200: val_ppl=324.08, val_loss=5.7810
+  step  2250 | loss 5.5912 | ppl 268.1 | lr 0.000050 | 79457 tok/s
+  step  2300 | loss 5.5961 | ppl 269.4 | lr 0.000044 | 79594 tok/s
+  step  2350 | loss 5.5571 | ppl 259.1 | lr 0.000038 | 79708 tok/s
+  step  2400 | loss 5.5112 | ppl 247.4 | lr 0.000033 | 79858 tok/s
+  ── eval step 2400: val_ppl=310.71, val_loss=5.7389
+  step  2450 | loss 5.4837 | ppl 240.7 | lr 0.000028 | 79413 tok/s
+  step  2500 | loss 5.4985 | ppl 244.3 | lr 0.000023 | 79558 tok/s
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 1: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 2: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 3: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  step  2550 | loss 5.8320 | ppl 341.0 | lr 0.000019 | 79679 tok/s
+  step  2600 | loss 5.6992 | ppl 298.6 | lr 0.000015 | 79825 tok/s
+  ── eval step 2600: val_ppl=351.37, val_loss=5.8619
+  step  2650 | loss 5.6585 | ppl 286.7 | lr 0.000011 | 79420 tok/s
+  step  2700 | loss 5.6019 | ppl 270.9 | lr 0.000008 | 79542 tok/s
+  step  2750 | loss 5.6491 | ppl 284.0 | lr 0.000006 | 79656 tok/s
+  step  2800 | loss 5.6202 | ppl 275.9 | lr 0.000004 | 79790 tok/s
+  ── eval step 2800: val_ppl=335.58, val_loss=5.8159
+  step  2850 | loss 5.6179 | ppl 275.3 | lr 0.000002 | 79411 tok/s
+  step  2900 | loss 5.6192 | ppl 275.7 | lr 0.000001 | 79536 tok/s
+  step  2950 | loss 5.6018 | ppl 270.9 | lr 0.000000 | 79672 tok/s
+  step  3000 | loss 5.6005 | ppl 270.6 | lr 0.000000 | 79794 tok/s
+  ── eval step 3000: val_ppl=334.05, val_loss=5.8113
+Collecting hidden states for geometric router initialization...
+  Layer 0: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 1: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 2: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+  Layer 3: fitting router on 1792 hidden states
+  [KDTree] Built tree on 1792 samples, PCA dim=3
+======================================================================
+Training complete: 3000 steps in 155.0s (2.6 min)
+
+Final evaluation...
+  Validation PPL: 395.35
+  Test PPL:       399.73
+
+Computing metrics...
+  layer_0: gini=0.156, entropy=2.039/2.079, freq range=[0.076, 0.201]
+  layer_1: gini=0.103, entropy=2.054/2.079, freq range=[0.103, 0.202]
+  layer_2: gini=0.095, entropy=2.065/2.079, freq range=[0.095, 0.159]
+  layer_3: gini=0.139, entropy=2.049/2.079, freq range=[0.083, 0.174]
+  layer_0 redundancy: mean_cos=0.0003, max_cos=0.0037
+  layer_1 redundancy: mean_cos=0.0009, max_cos=0.0040
+  layer_2 redundancy: mean_cos=0.0006, max_cos=0.0037
+  layer_3 redundancy: mean_cos=0.0014, max_cos=0.0033
+
+Results saved to /root/t6b-mogae/results/tiny_moe_kdtree_none.json
+
+======================================================================
+  SUMMARY
+  Val PPL:  395.35
+  Test PPL: 399.73
+  Time:     155.0s
+======================================================================

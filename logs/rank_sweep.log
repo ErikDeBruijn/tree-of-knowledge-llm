@@ -1,0 +1,406 @@
+============================================================
+RANK SWEEP: RCR (Residual Compression Ratio) Analysis
+Ranks: [1, 2, 4, 8, 16, 32]
+Steps per rank: 5000
+Baseline PPL: 21.2
+Device: cuda:0
+============================================================
+
+Loading Qwen3-1.7B...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 18777.67it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Model loaded in 2.2s
+
+Preparing C4 data...
+Need 11.0M tokens total (10.2M train + 0.3M eval)
+  Tokenized 10000 chunks (5.1M tok)...
+  Tokenized 10000 chunks (5.1M tok)...
+  Tokenized 15000 chunks (7.7M tok)...
+  Tokenized 15000 chunks (7.7M tok)...
+  Tokenized 20000 chunks (10.2M tok)...
+  Tokenized 20000 chunks (10.2M tok)...
+Tokenized 21477 chunks (11.0M tok)
+Train: 20000 chunks (10.2M tok)
+Eval:  500 chunks (0.3M tok)
+
+Baseline eval (no LoRA)...
+Measured baseline PPL: 26.1439 (expected ~21.2)
+
+============================================================
+RANK 1: Attaching LoRA adapters (layers 18-27)
+============================================================
+Trainable params: 163,840 (0.164M)
+  Step 100/5000 | loss=3.3070 | lr=1.50e-04 | 0.2M tok | 24.8K tok/s | 0.1min
+  Step 200/5000 | loss=3.1276 | lr=3.00e-04 | 0.4M tok | 25.0K tok/s | 0.3min
+  Step 300/5000 | loss=3.0955 | lr=3.00e-04 | 0.6M tok | 25.0K tok/s | 0.4min
+  Step 400/5000 | loss=3.0519 | lr=2.99e-04 | 0.8M tok | 25.0K tok/s | 0.5min
+  Step 500/5000 | loss=3.0500 | lr=2.97e-04 | 1.0M tok | 25.0K tok/s | 0.7min
+  Step 600/5000 | loss=3.0570 | lr=2.95e-04 | 1.2M tok | 25.0K tok/s | 0.8min
+  Step 700/5000 | loss=3.0710 | lr=2.92e-04 | 1.4M tok | 24.9K tok/s | 1.0min
+  Step 800/5000 | loss=3.0254 | lr=2.89e-04 | 1.6M tok | 24.9K tok/s | 1.1min
+  Step 900/5000 | loss=3.0422 | lr=2.85e-04 | 1.8M tok | 24.9K tok/s | 1.2min
+  Step 1000/5000 | loss=3.0430 | lr=2.80e-04 | 2.0M tok | 24.8K tok/s | 1.4min
+  Step 1100/5000 | loss=3.0661 | lr=2.75e-04 | 2.3M tok | 24.8K tok/s | 1.5min
+  Step 1200/5000 | loss=3.0266 | lr=2.69e-04 | 2.5M tok | 24.7K tok/s | 1.7min
+  Step 1300/5000 | loss=3.0971 | lr=2.63e-04 | 2.7M tok | 24.7K tok/s | 1.8min
+  Step 1400/5000 | loss=3.0608 | lr=2.56e-04 | 2.9M tok | 24.7K tok/s | 1.9min
+  Step 1500/5000 | loss=3.0614 | lr=2.49e-04 | 3.1M tok | 24.6K tok/s | 2.1min
+  Step 1600/5000 | loss=3.0404 | lr=2.41e-04 | 3.3M tok | 24.6K tok/s | 2.2min
+  Step 1700/5000 | loss=3.0668 | lr=2.33e-04 | 3.5M tok | 24.6K tok/s | 2.4min
+  Step 1800/5000 | loss=3.0226 | lr=2.25e-04 | 3.7M tok | 24.5K tok/s | 2.5min
+  Step 1900/5000 | loss=3.0599 | lr=2.16e-04 | 3.9M tok | 24.5K tok/s | 2.6min
+  Step 2000/5000 | loss=3.1035 | lr=2.07e-04 | 4.1M tok | 24.5K tok/s | 2.8min
+  Step 2100/5000 | loss=3.0402 | lr=1.98e-04 | 4.3M tok | 24.5K tok/s | 2.9min
+  Step 2200/5000 | loss=3.0687 | lr=1.89e-04 | 4.5M tok | 24.4K tok/s | 3.1min
+  Step 2300/5000 | loss=3.0304 | lr=1.79e-04 | 4.7M tok | 24.4K tok/s | 3.2min
+  Step 2400/5000 | loss=3.0378 | lr=1.70e-04 | 4.9M tok | 24.4K tok/s | 3.4min
+  Step 2500/5000 | loss=3.0327 | lr=1.60e-04 | 5.1M tok | 24.4K tok/s | 3.5min
+  Step 2600/5000 | loss=3.0413 | lr=1.50e-04 | 5.3M tok | 24.4K tok/s | 3.6min
+  Step 2700/5000 | loss=3.0926 | lr=1.40e-04 | 5.5M tok | 24.4K tok/s | 3.8min
+  Step 2800/5000 | loss=3.0442 | lr=1.30e-04 | 5.7M tok | 24.4K tok/s | 3.9min
+  Step 2900/5000 | loss=3.0261 | lr=1.21e-04 | 5.9M tok | 24.3K tok/s | 4.1min
+  Step 3000/5000 | loss=3.0046 | lr=1.11e-04 | 6.1M tok | 24.3K tok/s | 4.2min
+  Step 3100/5000 | loss=3.0160 | lr=1.02e-04 | 6.3M tok | 24.3K tok/s | 4.3min
+  Step 3200/5000 | loss=3.0401 | lr=9.26e-05 | 6.6M tok | 24.3K tok/s | 4.5min
+  Step 3300/5000 | loss=3.0628 | lr=8.37e-05 | 6.8M tok | 24.3K tok/s | 4.6min
+  Step 3400/5000 | loss=3.0362 | lr=7.50e-05 | 7.0M tok | 24.3K tok/s | 4.8min
+  Step 3500/5000 | loss=3.0395 | lr=6.67e-05 | 7.2M tok | 24.3K tok/s | 4.9min
+  Step 3600/5000 | loss=3.0563 | lr=5.87e-05 | 7.4M tok | 24.3K tok/s | 5.1min
+  Step 3700/5000 | loss=3.0456 | lr=5.11e-05 | 7.6M tok | 24.3K tok/s | 5.2min
+  Step 3800/5000 | loss=3.0147 | lr=4.39e-05 | 7.8M tok | 24.3K tok/s | 5.3min
+  Step 3900/5000 | loss=3.0248 | lr=3.72e-05 | 8.0M tok | 24.3K tok/s | 5.5min
+  Step 4000/5000 | loss=3.0379 | lr=3.10e-05 | 8.2M tok | 24.3K tok/s | 5.6min
+  Step 4100/5000 | loss=3.0331 | lr=2.53e-05 | 8.4M tok | 24.3K tok/s | 5.8min
+  Step 4200/5000 | loss=3.0377 | lr=2.01e-05 | 8.6M tok | 24.3K tok/s | 5.9min
+  Step 4300/5000 | loss=3.0771 | lr=1.55e-05 | 8.8M tok | 24.3K tok/s | 6.0min
+  Step 4400/5000 | loss=3.0710 | lr=1.14e-05 | 9.0M tok | 24.3K tok/s | 6.2min
+  Step 4500/5000 | loss=3.0306 | lr=7.96e-06 | 9.2M tok | 24.3K tok/s | 6.3min
+  Step 4600/5000 | loss=3.0047 | lr=5.11e-06 | 9.4M tok | 24.3K tok/s | 6.5min
+  Step 4700/5000 | loss=3.1023 | lr=2.88e-06 | 9.6M tok | 24.3K tok/s | 6.6min
+  Step 4800/5000 | loss=3.0352 | lr=1.28e-06 | 9.8M tok | 24.3K tok/s | 6.8min
+  Step 4900/5000 | loss=3.0132 | lr=3.21e-07 | 10.0M tok | 24.3K tok/s | 6.9min
+  Step 5000/5000 | loss=3.0878 | lr=0.00e+00 | 10.2M tok | 24.2K tok/s | 7.0min
+Training done in 422s (7.0 min)
+Evaluating rank 1...
+Rank 1: PPL = 20.7256
+
+>>> Rank 1: PPL=20.7256, gain=5.4183, params=0.164M, RCR=33.0707
+
+============================================================
+RANK 2: Attaching LoRA adapters (layers 18-27)
+============================================================
+Trainable params: 327,680 (0.328M)
+  Step 100/5000 | loss=3.2958 | lr=1.50e-04 | 0.2M tok | 24.0K tok/s | 0.1min
+  Step 200/5000 | loss=3.1090 | lr=3.00e-04 | 0.4M tok | 24.1K tok/s | 0.3min
+  Step 300/5000 | loss=3.0872 | lr=3.00e-04 | 0.6M tok | 24.1K tok/s | 0.4min
+  Step 400/5000 | loss=3.0473 | lr=2.99e-04 | 0.8M tok | 24.1K tok/s | 0.6min
+  Step 500/5000 | loss=3.0461 | lr=2.97e-04 | 1.0M tok | 24.1K tok/s | 0.7min
+  Step 600/5000 | loss=3.0536 | lr=2.95e-04 | 1.2M tok | 24.1K tok/s | 0.8min
+  Step 700/5000 | loss=3.0678 | lr=2.92e-04 | 1.4M tok | 24.1K tok/s | 1.0min
+  Step 800/5000 | loss=3.0220 | lr=2.89e-04 | 1.6M tok | 24.1K tok/s | 1.1min
+  Step 900/5000 | loss=3.0396 | lr=2.85e-04 | 1.8M tok | 24.1K tok/s | 1.3min
+  Step 1000/5000 | loss=3.0401 | lr=2.80e-04 | 2.0M tok | 24.1K tok/s | 1.4min
+  Step 1100/5000 | loss=3.0633 | lr=2.75e-04 | 2.3M tok | 24.1K tok/s | 1.6min
+  Step 1200/5000 | loss=3.0241 | lr=2.69e-04 | 2.5M tok | 24.1K tok/s | 1.7min
+  Step 1300/5000 | loss=3.0941 | lr=2.63e-04 | 2.7M tok | 24.1K tok/s | 1.8min
+  Step 1400/5000 | loss=3.0580 | lr=2.56e-04 | 2.9M tok | 24.1K tok/s | 2.0min
+  Step 1500/5000 | loss=3.0587 | lr=2.49e-04 | 3.1M tok | 24.1K tok/s | 2.1min
+  Step 1600/5000 | loss=3.0377 | lr=2.41e-04 | 3.3M tok | 24.1K tok/s | 2.3min
+  Step 1700/5000 | loss=3.0642 | lr=2.33e-04 | 3.5M tok | 24.1K tok/s | 2.4min
+  Step 1800/5000 | loss=3.0201 | lr=2.25e-04 | 3.7M tok | 24.1K tok/s | 2.5min
+  Step 1900/5000 | loss=3.0575 | lr=2.16e-04 | 3.9M tok | 24.1K tok/s | 2.7min
+  Step 2000/5000 | loss=3.1006 | lr=2.07e-04 | 4.1M tok | 24.1K tok/s | 2.8min
+  Step 2100/5000 | loss=3.0377 | lr=1.98e-04 | 4.3M tok | 24.1K tok/s | 3.0min
+  Step 2200/5000 | loss=3.0657 | lr=1.89e-04 | 4.5M tok | 24.1K tok/s | 3.1min
+  Step 2300/5000 | loss=3.0274 | lr=1.79e-04 | 4.7M tok | 24.1K tok/s | 3.3min
+  Step 2400/5000 | loss=3.0345 | lr=1.70e-04 | 4.9M tok | 24.1K tok/s | 3.4min
+  Step 2500/5000 | loss=3.0298 | lr=1.60e-04 | 5.1M tok | 24.1K tok/s | 3.5min
+  Step 2600/5000 | loss=3.0383 | lr=1.50e-04 | 5.3M tok | 24.1K tok/s | 3.7min
+  Step 2700/5000 | loss=3.0895 | lr=1.40e-04 | 5.5M tok | 24.1K tok/s | 3.8min
+  Step 2800/5000 | loss=3.0413 | lr=1.30e-04 | 5.7M tok | 24.1K tok/s | 4.0min
+  Step 2900/5000 | loss=3.0229 | lr=1.21e-04 | 5.9M tok | 24.1K tok/s | 4.1min
+  Step 3000/5000 | loss=3.0014 | lr=1.11e-04 | 6.1M tok | 24.1K tok/s | 4.2min
+  Step 3100/5000 | loss=3.0128 | lr=1.02e-04 | 6.3M tok | 24.1K tok/s | 4.4min
+  Step 3200/5000 | loss=3.0366 | lr=9.26e-05 | 6.6M tok | 24.1K tok/s | 4.5min
+  Step 3300/5000 | loss=3.0597 | lr=8.37e-05 | 6.8M tok | 24.1K tok/s | 4.7min
+  Step 3400/5000 | loss=3.0329 | lr=7.50e-05 | 7.0M tok | 24.1K tok/s | 4.8min
+  Step 3500/5000 | loss=3.0359 | lr=6.67e-05 | 7.2M tok | 24.1K tok/s | 5.0min
+  Step 3600/5000 | loss=3.0532 | lr=5.87e-05 | 7.4M tok | 24.1K tok/s | 5.1min
+  Step 3700/5000 | loss=3.0424 | lr=5.11e-05 | 7.6M tok | 24.1K tok/s | 5.2min
+  Step 3800/5000 | loss=3.0112 | lr=4.39e-05 | 7.8M tok | 24.1K tok/s | 5.4min
+  Step 3900/5000 | loss=3.0213 | lr=3.72e-05 | 8.0M tok | 24.1K tok/s | 5.5min
+  Step 4000/5000 | loss=3.0346 | lr=3.10e-05 | 8.2M tok | 24.1K tok/s | 5.7min
+  Step 4100/5000 | loss=3.0298 | lr=2.53e-05 | 8.4M tok | 24.1K tok/s | 5.8min
+  Step 4200/5000 | loss=3.0343 | lr=2.01e-05 | 8.6M tok | 24.1K tok/s | 5.9min
+  Step 4300/5000 | loss=3.0739 | lr=1.55e-05 | 8.8M tok | 24.1K tok/s | 6.1min
+  Step 4400/5000 | loss=3.0674 | lr=1.14e-05 | 9.0M tok | 24.1K tok/s | 6.2min
+  Step 4500/5000 | loss=3.0273 | lr=7.96e-06 | 9.2M tok | 24.1K tok/s | 6.4min
+  Step 4600/5000 | loss=3.0013 | lr=5.11e-06 | 9.4M tok | 24.1K tok/s | 6.5min
+  Step 4700/5000 | loss=3.0989 | lr=2.88e-06 | 9.6M tok | 24.1K tok/s | 6.7min
+  Step 4800/5000 | loss=3.0316 | lr=1.28e-06 | 9.8M tok | 24.1K tok/s | 6.8min
+  Step 4900/5000 | loss=3.0095 | lr=3.21e-07 | 10.0M tok | 24.1K tok/s | 6.9min
+  Step 5000/5000 | loss=3.0845 | lr=0.00e+00 | 10.2M tok | 24.1K tok/s | 7.1min
+Training done in 425s (7.1 min)
+Evaluating rank 2...
+Rank 2: PPL = 20.6535
+
+>>> Rank 2: PPL=20.6535, gain=5.4904, params=0.328M, RCR=16.7554
+
+============================================================
+RANK 4: Attaching LoRA adapters (layers 18-27)
+============================================================
+Trainable params: 655,360 (0.655M)
+  Step 100/5000 | loss=3.2787 | lr=1.50e-04 | 0.2M tok | 23.9K tok/s | 0.1min
+  Step 200/5000 | loss=3.0956 | lr=3.00e-04 | 0.4M tok | 24.0K tok/s | 0.3min
+  Step 300/5000 | loss=3.0826 | lr=3.00e-04 | 0.6M tok | 24.0K tok/s | 0.4min
+  Step 400/5000 | loss=3.0447 | lr=2.99e-04 | 0.8M tok | 24.0K tok/s | 0.6min
+  Step 500/5000 | loss=3.0440 | lr=2.97e-04 | 1.0M tok | 24.0K tok/s | 0.7min
+  Step 600/5000 | loss=3.0516 | lr=2.95e-04 | 1.2M tok | 24.0K tok/s | 0.9min
+  Step 700/5000 | loss=3.0659 | lr=2.92e-04 | 1.4M tok | 24.1K tok/s | 1.0min
+  Step 800/5000 | loss=3.0201 | lr=2.89e-04 | 1.6M tok | 24.1K tok/s | 1.1min
+  Step 900/5000 | loss=3.0380 | lr=2.85e-04 | 1.8M tok | 24.1K tok/s | 1.3min
+  Step 1000/5000 | loss=3.0384 | lr=2.80e-04 | 2.0M tok | 24.1K tok/s | 1.4min
+  Step 1100/5000 | loss=3.0618 | lr=2.75e-04 | 2.3M tok | 24.1K tok/s | 1.6min
+  Step 1200/5000 | loss=3.0228 | lr=2.69e-04 | 2.5M tok | 24.1K tok/s | 1.7min
+  Step 1300/5000 | loss=3.0927 | lr=2.63e-04 | 2.7M tok | 24.1K tok/s | 1.8min
+  Step 1400/5000 | loss=3.0566 | lr=2.56e-04 | 2.9M tok | 24.1K tok/s | 2.0min
+  Step 1500/5000 | loss=3.0571 | lr=2.49e-04 | 3.1M tok | 24.1K tok/s | 2.1min
+  Step 1600/5000 | loss=3.0361 | lr=2.41e-04 | 3.3M tok | 24.1K tok/s | 2.3min
+  Step 1700/5000 | loss=3.0628 | lr=2.33e-04 | 3.5M tok | 24.1K tok/s | 2.4min
+  Step 1800/5000 | loss=3.0187 | lr=2.25e-04 | 3.7M tok | 24.1K tok/s | 2.6min
+  Step 1900/5000 | loss=3.0561 | lr=2.16e-04 | 3.9M tok | 24.1K tok/s | 2.7min
+  Step 2000/5000 | loss=3.0990 | lr=2.07e-04 | 4.1M tok | 24.1K tok/s | 2.8min
+  Step 2100/5000 | loss=3.0361 | lr=1.98e-04 | 4.3M tok | 24.1K tok/s | 3.0min
+  Step 2200/5000 | loss=3.0642 | lr=1.89e-04 | 4.5M tok | 24.1K tok/s | 3.1min
+  Step 2300/5000 | loss=3.0261 | lr=1.79e-04 | 4.7M tok | 24.1K tok/s | 3.3min
+  Step 2400/5000 | loss=3.0323 | lr=1.70e-04 | 4.9M tok | 24.1K tok/s | 3.4min
+  Step 2500/5000 | loss=3.0280 | lr=1.60e-04 | 5.1M tok | 24.1K tok/s | 3.5min
+  Step 2600/5000 | loss=3.0365 | lr=1.50e-04 | 5.3M tok | 24.1K tok/s | 3.7min
+  Step 2700/5000 | loss=3.0878 | lr=1.40e-04 | 5.5M tok | 24.1K tok/s | 3.8min
+  Step 2800/5000 | loss=3.0394 | lr=1.30e-04 | 5.7M tok | 24.1K tok/s | 4.0min
+  Step 2900/5000 | loss=3.0209 | lr=1.21e-04 | 5.9M tok | 24.1K tok/s | 4.1min
+  Step 3000/5000 | loss=2.9996 | lr=1.11e-04 | 6.1M tok | 24.1K tok/s | 4.3min
+  Step 3100/5000 | loss=3.0106 | lr=1.02e-04 | 6.3M tok | 24.1K tok/s | 4.4min
+  Step 3200/5000 | loss=3.0345 | lr=9.26e-05 | 6.6M tok | 24.1K tok/s | 4.5min
+  Step 3300/5000 | loss=3.0577 | lr=8.37e-05 | 6.8M tok | 24.1K tok/s | 4.7min
+  Step 3400/5000 | loss=3.0308 | lr=7.50e-05 | 7.0M tok | 24.1K tok/s | 4.8min
+  Step 3500/5000 | loss=3.0337 | lr=6.67e-05 | 7.2M tok | 24.1K tok/s | 5.0min
+  Step 3600/5000 | loss=3.0512 | lr=5.87e-05 | 7.4M tok | 24.1K tok/s | 5.1min
+  Step 3700/5000 | loss=3.0400 | lr=5.11e-05 | 7.6M tok | 24.1K tok/s | 5.2min
+  Step 3800/5000 | loss=3.0088 | lr=4.39e-05 | 7.8M tok | 24.1K tok/s | 5.4min
+  Step 3900/5000 | loss=3.0190 | lr=3.72e-05 | 8.0M tok | 24.1K tok/s | 5.5min
+  Step 4000/5000 | loss=3.0323 | lr=3.10e-05 | 8.2M tok | 24.1K tok/s | 5.7min
+  Step 4100/5000 | loss=3.0274 | lr=2.53e-05 | 8.4M tok | 24.1K tok/s | 5.8min
+  Step 4200/5000 | loss=3.0319 | lr=2.01e-05 | 8.6M tok | 24.1K tok/s | 6.0min
+  Step 4300/5000 | loss=3.0719 | lr=1.55e-05 | 8.8M tok | 24.1K tok/s | 6.1min
+  Step 4400/5000 | loss=3.0650 | lr=1.14e-05 | 9.0M tok | 24.1K tok/s | 6.2min
+  Step 4500/5000 | loss=3.0250 | lr=7.96e-06 | 9.2M tok | 24.1K tok/s | 6.4min
+  Step 4600/5000 | loss=2.9990 | lr=5.11e-06 | 9.4M tok | 24.1K tok/s | 6.5min
+  Step 4700/5000 | loss=3.0968 | lr=2.88e-06 | 9.6M tok | 24.1K tok/s | 6.7min
+  Step 4800/5000 | loss=3.0292 | lr=1.28e-06 | 9.8M tok | 24.1K tok/s | 6.8min
+  Step 4900/5000 | loss=3.0071 | lr=3.21e-07 | 10.0M tok | 24.1K tok/s | 6.9min
+  Step 5000/5000 | loss=3.0820 | lr=0.00e+00 | 10.2M tok | 24.1K tok/s | 7.1min
+Training done in 425s (7.1 min)
+Evaluating rank 4...
+Rank 4: PPL = 20.6068
+
+>>> Rank 4: PPL=20.6068, gain=5.5371, params=0.655M, RCR=8.4489
+
+============================================================
+RANK 8: Attaching LoRA adapters (layers 18-27)
+============================================================
+Trainable params: 1,310,720 (1.311M)
+  Step 100/5000 | loss=3.2633 | lr=1.50e-04 | 0.2M tok | 23.9K tok/s | 0.1min
+  Step 200/5000 | loss=3.0853 | lr=3.00e-04 | 0.4M tok | 24.0K tok/s | 0.3min
+  Step 300/5000 | loss=3.0799 | lr=3.00e-04 | 0.6M tok | 24.1K tok/s | 0.4min
+  Step 400/5000 | loss=3.0432 | lr=2.99e-04 | 0.8M tok | 24.1K tok/s | 0.6min
+  Step 500/5000 | loss=3.0427 | lr=2.97e-04 | 1.0M tok | 24.1K tok/s | 0.7min
+  Step 600/5000 | loss=3.0501 | lr=2.95e-04 | 1.2M tok | 24.1K tok/s | 0.9min
+  Step 700/5000 | loss=3.0645 | lr=2.92e-04 | 1.4M tok | 24.1K tok/s | 1.0min
+  Step 800/5000 | loss=3.0188 | lr=2.89e-04 | 1.6M tok | 24.1K tok/s | 1.1min
+  Step 900/5000 | loss=3.0370 | lr=2.85e-04 | 1.8M tok | 24.1K tok/s | 1.3min
+  Step 1000/5000 | loss=3.0372 | lr=2.80e-04 | 2.0M tok | 24.1K tok/s | 1.4min
+  Step 1100/5000 | loss=3.0605 | lr=2.75e-04 | 2.3M tok | 24.1K tok/s | 1.6min
+  Step 1200/5000 | loss=3.0218 | lr=2.69e-04 | 2.5M tok | 24.1K tok/s | 1.7min
+  Step 1300/5000 | loss=3.0913 | lr=2.63e-04 | 2.7M tok | 24.1K tok/s | 1.8min
+  Step 1400/5000 | loss=3.0554 | lr=2.56e-04 | 2.9M tok | 24.1K tok/s | 2.0min
+  Step 1500/5000 | loss=3.0556 | lr=2.49e-04 | 3.1M tok | 24.1K tok/s | 2.1min
+  Step 1600/5000 | loss=3.0350 | lr=2.41e-04 | 3.3M tok | 24.1K tok/s | 2.3min
+  Step 1700/5000 | loss=3.0612 | lr=2.33e-04 | 3.5M tok | 24.1K tok/s | 2.4min
+  Step 1800/5000 | loss=3.0173 | lr=2.25e-04 | 3.7M tok | 24.1K tok/s | 2.6min
+  Step 1900/5000 | loss=3.0545 | lr=2.16e-04 | 3.9M tok | 24.1K tok/s | 2.7min
+  Step 2000/5000 | loss=3.0972 | lr=2.07e-04 | 4.1M tok | 24.1K tok/s | 2.8min
+  Step 2100/5000 | loss=3.0343 | lr=1.98e-04 | 4.3M tok | 24.1K tok/s | 3.0min
+  Step 2200/5000 | loss=3.0619 | lr=1.89e-04 | 4.5M tok | 24.1K tok/s | 3.1min
+  Step 2300/5000 | loss=3.0242 | lr=1.79e-04 | 4.7M tok | 24.1K tok/s | 3.3min
+  Step 2400/5000 | loss=3.0302 | lr=1.70e-04 | 4.9M tok | 24.1K tok/s | 3.4min
+  Step 2500/5000 | loss=3.0256 | lr=1.60e-04 | 5.1M tok | 24.1K tok/s | 3.5min
+  Step 2600/5000 | loss=3.0341 | lr=1.50e-04 | 5.3M tok | 24.1K tok/s | 3.7min
+  Step 2700/5000 | loss=3.0854 | lr=1.40e-04 | 5.5M tok | 24.1K tok/s | 3.8min
+  Step 2800/5000 | loss=3.0366 | lr=1.30e-04 | 5.7M tok | 24.1K tok/s | 4.0min
+  Step 2900/5000 | loss=3.0184 | lr=1.21e-04 | 5.9M tok | 24.1K tok/s | 4.1min
+  Step 3000/5000 | loss=2.9969 | lr=1.11e-04 | 6.1M tok | 24.1K tok/s | 4.3min
+  Step 3100/5000 | loss=3.0080 | lr=1.02e-04 | 6.3M tok | 24.1K tok/s | 4.4min
+  Step 3200/5000 | loss=3.0316 | lr=9.26e-05 | 6.6M tok | 24.1K tok/s | 4.5min
+  Step 3300/5000 | loss=3.0549 | lr=8.37e-05 | 6.8M tok | 24.1K tok/s | 4.7min
+  Step 3400/5000 | loss=3.0278 | lr=7.50e-05 | 7.0M tok | 24.1K tok/s | 4.8min
+  Step 3500/5000 | loss=3.0308 | lr=6.67e-05 | 7.2M tok | 24.1K tok/s | 5.0min
+  Step 3600/5000 | loss=3.0482 | lr=5.87e-05 | 7.4M tok | 24.1K tok/s | 5.1min
+  Step 3700/5000 | loss=3.0372 | lr=5.11e-05 | 7.6M tok | 24.1K tok/s | 5.2min
+  Step 3800/5000 | loss=3.0061 | lr=4.39e-05 | 7.8M tok | 24.1K tok/s | 5.4min
+  Step 3900/5000 | loss=3.0162 | lr=3.72e-05 | 8.0M tok | 24.1K tok/s | 5.5min
+  Step 4000/5000 | loss=3.0292 | lr=3.10e-05 | 8.2M tok | 24.1K tok/s | 5.7min
+  Step 4100/5000 | loss=3.0245 | lr=2.53e-05 | 8.4M tok | 24.1K tok/s | 5.8min
+  Step 4200/5000 | loss=3.0290 | lr=2.01e-05 | 8.6M tok | 24.1K tok/s | 6.0min
+  Step 4300/5000 | loss=3.0691 | lr=1.55e-05 | 8.8M tok | 24.1K tok/s | 6.1min
+  Step 4400/5000 | loss=3.0620 | lr=1.14e-05 | 9.0M tok | 24.1K tok/s | 6.2min
+  Step 4500/5000 | loss=3.0223 | lr=7.96e-06 | 9.2M tok | 24.1K tok/s | 6.4min
+  Step 4600/5000 | loss=2.9959 | lr=5.11e-06 | 9.4M tok | 24.1K tok/s | 6.5min
+  Step 4700/5000 | loss=3.0938 | lr=2.88e-06 | 9.6M tok | 24.1K tok/s | 6.7min
+  Step 4800/5000 | loss=3.0261 | lr=1.28e-06 | 9.8M tok | 24.1K tok/s | 6.8min
+  Step 4900/5000 | loss=3.0042 | lr=3.21e-07 | 10.0M tok | 24.1K tok/s | 6.9min
+  Step 5000/5000 | loss=3.0793 | lr=0.00e+00 | 10.2M tok | 24.1K tok/s | 7.1min
+Training done in 425s (7.1 min)
+Evaluating rank 8...
+Rank 8: PPL = 20.5451
+
+>>> Rank 8: PPL=20.5451, gain=5.5988, params=1.311M, RCR=4.2715
+
+============================================================
+RANK 16: Attaching LoRA adapters (layers 18-27)
+============================================================
+Trainable params: 2,621,440 (2.621M)
+  Step 100/5000 | loss=3.2461 | lr=1.50e-04 | 0.2M tok | 23.9K tok/s | 0.1min
+  Step 200/5000 | loss=3.0779 | lr=3.00e-04 | 0.4M tok | 24.0K tok/s | 0.3min
+  Step 300/5000 | loss=3.0785 | lr=3.00e-04 | 0.6M tok | 24.0K tok/s | 0.4min
+  Step 400/5000 | loss=3.0422 | lr=2.99e-04 | 0.8M tok | 24.0K tok/s | 0.6min
+  Step 500/5000 | loss=3.0417 | lr=2.97e-04 | 1.0M tok | 24.0K tok/s | 0.7min
+  Step 600/5000 | loss=3.0490 | lr=2.95e-04 | 1.2M tok | 24.0K tok/s | 0.9min
+  Step 700/5000 | loss=3.0634 | lr=2.92e-04 | 1.4M tok | 24.0K tok/s | 1.0min
+  Step 800/5000 | loss=3.0174 | lr=2.89e-04 | 1.6M tok | 24.0K tok/s | 1.1min
+  Step 900/5000 | loss=3.0360 | lr=2.85e-04 | 1.8M tok | 24.0K tok/s | 1.3min
+  Step 1000/5000 | loss=3.0357 | lr=2.80e-04 | 2.0M tok | 24.0K tok/s | 1.4min
+  Step 1100/5000 | loss=3.0590 | lr=2.75e-04 | 2.3M tok | 24.0K tok/s | 1.6min
+  Step 1200/5000 | loss=3.0201 | lr=2.69e-04 | 2.5M tok | 24.0K tok/s | 1.7min
+  Step 1300/5000 | loss=3.0893 | lr=2.63e-04 | 2.7M tok | 24.0K tok/s | 1.8min
+  Step 1400/5000 | loss=3.0532 | lr=2.56e-04 | 2.9M tok | 24.0K tok/s | 2.0min
+  Step 1500/5000 | loss=3.0530 | lr=2.49e-04 | 3.1M tok | 24.0K tok/s | 2.1min
+  Step 1600/5000 | loss=3.0324 | lr=2.41e-04 | 3.3M tok | 24.0K tok/s | 2.3min
+  Step 1700/5000 | loss=3.0585 | lr=2.33e-04 | 3.5M tok | 24.0K tok/s | 2.4min
+  Step 1800/5000 | loss=3.0146 | lr=2.25e-04 | 3.7M tok | 24.0K tok/s | 2.6min
+  Step 1900/5000 | loss=3.0517 | lr=2.16e-04 | 3.9M tok | 24.0K tok/s | 2.7min
+  Step 2000/5000 | loss=3.0939 | lr=2.07e-04 | 4.1M tok | 24.0K tok/s | 2.8min
+  Step 2100/5000 | loss=3.0311 | lr=1.98e-04 | 4.3M tok | 24.0K tok/s | 3.0min
+  Step 2200/5000 | loss=3.0580 | lr=1.89e-04 | 4.5M tok | 24.0K tok/s | 3.1min
+  Step 2300/5000 | loss=3.0206 | lr=1.79e-04 | 4.7M tok | 24.0K tok/s | 3.3min
+  Step 2400/5000 | loss=3.0255 | lr=1.70e-04 | 4.9M tok | 24.0K tok/s | 3.4min
+  Step 2500/5000 | loss=3.0218 | lr=1.60e-04 | 5.1M tok | 24.0K tok/s | 3.6min
+  Step 2600/5000 | loss=3.0301 | lr=1.50e-04 | 5.3M tok | 24.0K tok/s | 3.7min
+  Step 2700/5000 | loss=3.0816 | lr=1.40e-04 | 5.5M tok | 24.0K tok/s | 3.8min
+  Step 2800/5000 | loss=3.0319 | lr=1.30e-04 | 5.7M tok | 24.0K tok/s | 4.0min
+  Step 2900/5000 | loss=3.0137 | lr=1.21e-04 | 5.9M tok | 24.0K tok/s | 4.1min
+  Step 3000/5000 | loss=2.9923 | lr=1.11e-04 | 6.1M tok | 24.0K tok/s | 4.3min
+  Step 3100/5000 | loss=3.0032 | lr=1.02e-04 | 6.3M tok | 24.0K tok/s | 4.4min
+  Step 3200/5000 | loss=3.0270 | lr=9.26e-05 | 6.6M tok | 24.0K tok/s | 4.5min
+  Step 3300/5000 | loss=3.0499 | lr=8.37e-05 | 6.8M tok | 24.0K tok/s | 4.7min
+  Step 3400/5000 | loss=3.0228 | lr=7.50e-05 | 7.0M tok | 24.0K tok/s | 4.8min
+  Step 3500/5000 | loss=3.0260 | lr=6.67e-05 | 7.2M tok | 24.0K tok/s | 5.0min
+  Step 3600/5000 | loss=3.0432 | lr=5.87e-05 | 7.4M tok | 24.0K tok/s | 5.1min
+  Step 3700/5000 | loss=3.0326 | lr=5.11e-05 | 7.6M tok | 24.0K tok/s | 5.3min
+  Step 3800/5000 | loss=3.0011 | lr=4.39e-05 | 7.8M tok | 24.0K tok/s | 5.4min
+  Step 3900/5000 | loss=3.0108 | lr=3.72e-05 | 8.0M tok | 24.0K tok/s | 5.5min
+  Step 4000/5000 | loss=3.0245 | lr=3.10e-05 | 8.2M tok | 24.0K tok/s | 5.7min
+  Step 4100/5000 | loss=3.0196 | lr=2.53e-05 | 8.4M tok | 24.0K tok/s | 5.8min
+  Step 4200/5000 | loss=3.0241 | lr=2.01e-05 | 8.6M tok | 24.0K tok/s | 6.0min
+  Step 4300/5000 | loss=3.0641 | lr=1.55e-05 | 8.8M tok | 24.0K tok/s | 6.1min
+  Step 4400/5000 | loss=3.0565 | lr=1.14e-05 | 9.0M tok | 24.0K tok/s | 6.3min
+  Step 4500/5000 | loss=3.0176 | lr=7.96e-06 | 9.2M tok | 24.0K tok/s | 6.4min
+  Step 4600/5000 | loss=2.9908 | lr=5.11e-06 | 9.4M tok | 24.0K tok/s | 6.5min
+  Step 4700/5000 | loss=3.0888 | lr=2.88e-06 | 9.6M tok | 24.0K tok/s | 6.7min
+  Step 4800/5000 | loss=3.0209 | lr=1.28e-06 | 9.8M tok | 24.0K tok/s | 6.8min
+  Step 4900/5000 | loss=2.9993 | lr=3.21e-07 | 10.0M tok | 24.0K tok/s | 7.0min
+  Step 5000/5000 | loss=3.0745 | lr=0.00e+00 | 10.2M tok | 24.0K tok/s | 7.1min
+Training done in 426s (7.1 min)
+Evaluating rank 16...
+Rank 16: PPL = 20.4321
+
+>>> Rank 16: PPL=20.4321, gain=5.7118, params=2.621M, RCR=2.1789
+
+============================================================
+RANK 32: Attaching LoRA adapters (layers 18-27)
+============================================================
+Trainable params: 5,242,880 (5.243M)
+  Step 100/5000 | loss=3.2296 | lr=1.50e-04 | 0.2M tok | 23.8K tok/s | 0.1min
+  Step 200/5000 | loss=3.0737 | lr=3.00e-04 | 0.4M tok | 23.9K tok/s | 0.3min
+  Step 300/5000 | loss=3.0777 | lr=3.00e-04 | 0.6M tok | 24.0K tok/s | 0.4min
+  Step 400/5000 | loss=3.0413 | lr=2.99e-04 | 0.8M tok | 24.0K tok/s | 0.6min
+  Step 500/5000 | loss=3.0406 | lr=2.97e-04 | 1.0M tok | 24.0K tok/s | 0.7min
+  Step 600/5000 | loss=3.0478 | lr=2.95e-04 | 1.2M tok | 24.0K tok/s | 0.9min
+  Step 700/5000 | loss=3.0621 | lr=2.92e-04 | 1.4M tok | 24.0K tok/s | 1.0min
+  Step 800/5000 | loss=3.0153 | lr=2.89e-04 | 1.6M tok | 24.0K tok/s | 1.1min
+  Step 900/5000 | loss=3.0340 | lr=2.85e-04 | 1.8M tok | 24.0K tok/s | 1.3min
+  Step 1000/5000 | loss=3.0335 | lr=2.80e-04 | 2.0M tok | 24.0K tok/s | 1.4min
+  Step 1100/5000 | loss=3.0563 | lr=2.75e-04 | 2.3M tok | 24.0K tok/s | 1.6min
+  Step 1200/5000 | loss=3.0178 | lr=2.69e-04 | 2.5M tok | 24.0K tok/s | 1.7min
+  Step 1300/5000 | loss=3.0862 | lr=2.63e-04 | 2.7M tok | 24.0K tok/s | 1.8min
+  Step 1400/5000 | loss=3.0504 | lr=2.56e-04 | 2.9M tok | 24.0K tok/s | 2.0min
+  Step 1500/5000 | loss=3.0496 | lr=2.49e-04 | 3.1M tok | 24.0K tok/s | 2.1min
+  Step 1600/5000 | loss=3.0291 | lr=2.41e-04 | 3.3M tok | 24.0K tok/s | 2.3min
+  Step 1700/5000 | loss=3.0551 | lr=2.33e-04 | 3.5M tok | 24.0K tok/s | 2.4min
+  Step 1800/5000 | loss=3.0107 | lr=2.25e-04 | 3.7M tok | 24.0K tok/s | 2.6min
+  Step 1900/5000 | loss=3.0477 | lr=2.16e-04 | 3.9M tok | 24.0K tok/s | 2.7min
+  Step 2000/5000 | loss=3.0893 | lr=2.07e-04 | 4.1M tok | 24.0K tok/s | 2.8min
+  Step 2100/5000 | loss=3.0271 | lr=1.98e-04 | 4.3M tok | 24.0K tok/s | 3.0min
+  Step 2200/5000 | loss=3.0531 | lr=1.89e-04 | 4.5M tok | 24.0K tok/s | 3.1min
+  Step 2300/5000 | loss=3.0161 | lr=1.79e-04 | 4.7M tok | 24.0K tok/s | 3.3min
+  Step 2400/5000 | loss=3.0202 | lr=1.70e-04 | 4.9M tok | 24.0K tok/s | 3.4min
+  Step 2500/5000 | loss=3.0168 | lr=1.60e-04 | 5.1M tok | 24.0K tok/s | 3.6min
+  Step 2600/5000 | loss=3.0249 | lr=1.50e-04 | 5.3M tok | 24.0K tok/s | 3.7min
+  Step 2700/5000 | loss=3.0765 | lr=1.40e-04 | 5.5M tok | 24.0K tok/s | 3.8min
+  Step 2800/5000 | loss=3.0263 | lr=1.30e-04 | 5.7M tok | 24.0K tok/s | 4.0min
+  Step 2900/5000 | loss=3.0077 | lr=1.21e-04 | 5.9M tok | 24.0K tok/s | 4.1min
+  Step 3000/5000 | loss=2.9872 | lr=1.11e-04 | 6.1M tok | 24.0K tok/s | 4.3min
+  Step 3100/5000 | loss=2.9969 | lr=1.02e-04 | 6.3M tok | 24.0K tok/s | 4.4min
+  Step 3200/5000 | loss=3.0211 | lr=9.26e-05 | 6.6M tok | 24.0K tok/s | 4.5min
+  Step 3300/5000 | loss=3.0438 | lr=8.37e-05 | 6.8M tok | 24.0K tok/s | 4.7min
+  Step 3400/5000 | loss=3.0163 | lr=7.50e-05 | 7.0M tok | 24.0K tok/s | 4.8min
+  Step 3500/5000 | loss=3.0196 | lr=6.67e-05 | 7.2M tok | 24.0K tok/s | 5.0min
+  Step 3600/5000 | loss=3.0375 | lr=5.87e-05 | 7.4M tok | 24.0K tok/s | 5.1min
+  Step 3700/5000 | loss=3.0268 | lr=5.11e-05 | 7.6M tok | 24.0K tok/s | 5.3min
+  Step 3800/5000 | loss=2.9945 | lr=4.39e-05 | 7.8M tok | 24.0K tok/s | 5.4min
+  Step 3900/5000 | loss=3.0044 | lr=3.72e-05 | 8.0M tok | 24.0K tok/s | 5.5min
+  Step 4000/5000 | loss=3.0187 | lr=3.10e-05 | 8.2M tok | 24.0K tok/s | 5.7min
+  Step 4100/5000 | loss=3.0136 | lr=2.53e-05 | 8.4M tok | 24.0K tok/s | 5.8min
+  Step 4200/5000 | loss=3.0180 | lr=2.01e-05 | 8.6M tok | 24.0K tok/s | 6.0min
+  Step 4300/5000 | loss=3.0580 | lr=1.55e-05 | 8.8M tok | 24.0K tok/s | 6.1min
+  Step 4400/5000 | loss=3.0499 | lr=1.14e-05 | 9.0M tok | 24.0K tok/s | 6.3min
+  Step 4500/5000 | loss=3.0114 | lr=7.96e-06 | 9.2M tok | 24.0K tok/s | 6.4min
+  Step 4600/5000 | loss=2.9845 | lr=5.11e-06 | 9.4M tok | 24.0K tok/s | 6.5min
+  Step 4700/5000 | loss=3.0826 | lr=2.88e-06 | 9.6M tok | 24.0K tok/s | 6.7min
+  Step 4800/5000 | loss=3.0144 | lr=1.28e-06 | 9.8M tok | 24.0K tok/s | 6.8min
+  Step 4900/5000 | loss=2.9931 | lr=3.21e-07 | 10.0M tok | 24.0K tok/s | 7.0min
+  Step 5000/5000 | loss=3.0681 | lr=0.00e+00 | 10.2M tok | 24.0K tok/s | 7.1min
+Training done in 427s (7.1 min)
+Evaluating rank 32...
+Rank 32: PPL = 20.2914
+
+>>> Rank 32: PPL=20.2914, gain=5.8525, params=5.243M, RCR=1.1163
+
+================================================================================
+RCR SUMMARY TABLE
+================================================================================
+  Rank  Params(M)      PPL     Gain        RCR  Time(s)
+------ ---------- -------- -------- ---------- --------
+     1     0.1638  20.7256   5.4183    33.0707    422.4
+     2     0.3277  20.6535   5.4904    16.7554    424.7
+     4     0.6554  20.6068   5.5371     8.4489    425.4
+     8     1.3107  20.5451   5.5988     4.2715    425.1
+    16     2.6214  20.4321   5.7118     2.1789    426.3
+    32     5.2429  20.2914   5.8525     1.1163    426.6
+================================================================================
+Baseline PPL (measured): 26.1439
+Total wall time: 43.2 min
+
+Results saved to /root/t6b-mogae/results/rank_sweep.json

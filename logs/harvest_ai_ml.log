@@ -1,0 +1,36 @@
+=== HARVESTING AI/ML DATA ===
+
+Harvesting ArXiv ML/AI papers...
+  Total: 500 AI/ML papers
+Harvesting PyTorch code from FineWeb...
+  Checked 100000, found 0
+  Checked 200000, found 0
+  Checked 300000, found 0
+  Checked 400000, found 0
+  Checked 500000, found 0
+  Checked 600000, found 0
+  Checked 700000, found 0
+  Checked 800000, found 0
+  Checked 900000, found 0
+  Checked 1000000, found 0
+  Checked 1100000, found 0
+  Checked 1200000, found 0
+  Checked 1300000, found 0
+  Checked 1400000, found 0
+  Checked 1500000, found 0
+  Checked 1600000, found 0
+  Checked 1700000, found 0
+  Checked 1800000, found 0
+  Checked 1900000, found 0
+  Total: 0 PyTorch texts
+
+=== SUMMARY ===
+  ai_ml_papers: 500 texts
+  pytorch_code: 0 texts
+Fatal Python error: PyGILState_Release: thread state 0x7695200c4a90 must be current when releasing
+Python runtime state: finalizing (tstate=0x0000000000ba5748)
+
+Thread 0x00007696c6c59080 (most recent call first):
+  <no Python frame>
+
+Extension modules: zstandard.backend_c, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, pyarrow.lib, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._generator, numpy.random._mt19937, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, _cyutility, pandas._libs._cyutility, pandas._libs.tslibs.ccalendar, pandas._libs.tslibs.np_datetime, pandas._libs.tslibs.dtypes, pandas._libs.tslibs.base, pandas._libs.tslibs.nattype, pandas._libs.tslibs.timezones, pandas._libs.properties, pandas._libs.tslibs.fields, pandas._libs.tslibs.timedeltas, pandas._libs.tslibs.tzconversion, pandas._libs.tslibs.timestamps, pandas._libs.tslibs.offsets, pandas._libs.tslibs.strptime, pandas._libs.tslibs.parsing, pandas._libs.tslibs.conversion, pandas._libs.tslibs.period, pandas._libs.tslibs.vectorized, pandas._libs.ops_dispatch, pandas._libs.missing, pandas._libs.hashtable, pandas._libs.algos, pandas._libs.interval, pandas._libs.lib, pyarrow._compute, pandas._libs.ops, pandas._libs.hashing, pandas._libs.arrays, pandas._libs.tslib, pandas._libs.sparse, pandas._libs.internals, pandas._libs.indexing, pandas._libs.index, pandas._libs.writers, pandas._libs.join, pandas._libs.window.aggregations, pandas._libs.window.indexers, pandas._libs.reshape, pandas._libs.groupby, pandas._libs.json, pandas._libs.parsers, pandas._libs.testing, pyarrow._acero, pyarrow._fs, pyarrow._csv, pyarrow._json, pyarrow._substrait, pyarrow._dataset, pyarrow._dataset_orc, pyarrow._parquet, pyarrow._azurefs, pyarrow._hdfs, pyarrow._gcsfs, pyarrow._s3fs, pyarrow._parquet_encryption, pyarrow._dataset_parquet_encryption, pyarrow._dataset_parquet, yaml._yaml, charset_normalizer.md, charset_normalizer.cd, multidict._multidict, yarl._quoting_c, propcache._helpers_c, aiohttp._http_writer, aiohttp._http_parser, aiohttp._websocket.mask, aiohttp._websocket.reader_c, frozenlist._frozenlist, xxhash._xxhash, scipy._cyutility, scipy._lib._ccallback_c, scipy.sparse._sparsetools, _csparsetools, scipy.sparse._csparsetools, scipy.io.matlab._mio_utils, scipy.io.matlab._streams, scipy.io.matlab._mio5_utils, torch._C, torch._C._dynamo.autograd_compiler, torch._C._dynamo.eval_frame, torch._C._dynamo.guards, torch._C._dynamo.utils, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special (total: 102)

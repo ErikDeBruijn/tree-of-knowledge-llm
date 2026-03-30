@@ -1,0 +1,37 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:14,  5.37it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 143.87it/s]Loading weights:  21%|██        | 83/399 [00:00<00:01, 274.47it/s]Loading weights:  30%|██▉       | 119/399 [00:00<00:00, 300.76it/s]Loading weights:  38%|███▊      | 153/399 [00:00<00:00, 256.01it/s]Loading weights:  51%|█████     | 203/399 [00:00<00:00, 278.65it/s]Loading weights:  64%|██████▍   | 257/399 [00:01<00:00, 283.72it/s]Loading weights:  91%|█████████▏| 365/399 [00:01<00:00, 463.98it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 342.60it/s]
+Loading adapters...
+BBC train: 850, Cuisine train: 823, Generic: 850
+
+=== JOINT GATE TRAINING (1500 steps) ===
+  Step 0/1500 | lm=1.7344 | BBC text: bbc_g=0.598 cui_g=0.235 | Cuisine text: bbc_g=0.000 cui_g=0.000
+  Step 200/1500 | lm=2.5625 | BBC text: bbc_g=0.886 cui_g=0.048 | Cuisine text: bbc_g=0.045 cui_g=0.877
+  Step 400/1500 | lm=1.3906 | BBC text: bbc_g=0.955 cui_g=0.019 | Cuisine text: bbc_g=0.022 cui_g=0.880
+  Step 600/1500 | lm=0.3477 | BBC text: bbc_g=0.955 cui_g=0.022 | Cuisine text: bbc_g=0.011 cui_g=0.926
+  Step 800/1500 | lm=2.7188 | BBC text: bbc_g=0.950 cui_g=0.025 | Cuisine text: bbc_g=0.007 cui_g=0.976
+  Step 1000/1500 | lm=2.0469 | BBC text: bbc_g=0.933 cui_g=0.024 | Cuisine text: bbc_g=0.010 cui_g=0.921
+  Step 1200/1500 | lm=0.2598 | BBC text: bbc_g=0.878 cui_g=0.028 | Cuisine text: bbc_g=0.014 cui_g=0.811
+  Step 1400/1500 | lm=2.6562 | BBC text: bbc_g=0.856 cui_g=0.030 | Cuisine text: bbc_g=0.011 cui_g=0.848
+
+=== EVALUATION ===
+  BBC text: PPL=5.50 | BBC_gate=0.823 | Cuisine_gate=0.034
+  Cuisine text: PPL=5.87 | BBC_gate=0.011 | Cuisine_gate=0.847
+  Generic text: PPL=18.37 | BBC_gate=0.170 | Cuisine_gate=0.319
+  Base on BBC: PPL=12.64
+  Base on Cuisine: PPL=12.24
+  Base on Generic: PPL=20.01
+
+=== RESULTS ===
+Metric                         Value      Threshold    Pass? 
+----------------------------------------------------------
+  [PASS] BBC gate on BBC >= 0.70: 0.823 (threshold: 0.7)
+  [PASS] Cuisine gate on BBC < 0.25: 0.034 (threshold: 0.25)
+  [PASS] BBC gate on cuisine < 0.25: 0.011 (threshold: 0.25)
+  [PASS] Cuisine gate on cuisine >= 0.70: 0.847 (threshold: 0.7)
+  [PASS] BBC PPL improves vs base: -56.518 (threshold: 0)
+  [PASS] Cuisine PPL improves vs base: -52.033 (threshold: 0)
+  [PASS] Generic PPL within +2%: -8.185 (threshold: 2)
+
+7/7 passed. VERDICT: SUCCESS
+
+Saved to /root/t6b-mogae/results/cycle6_joint_gate.json

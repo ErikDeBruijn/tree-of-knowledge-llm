@@ -1,0 +1,352 @@
+============================================================
+  DISTRIBUTED MVP v2 — REPLICATION WITH DIFFERENT CONFIG
+============================================================
+  dave: BBC news 2025 (seed=1337, rank=16, lr=0.0002)
+  eve: Dutch cuisine (seed=256, rank=8, lr=0.0003)
+  frank: Wing Chun martial arts (seed=99, rank=16, lr=0.0001)
+
+============================================================
+  Training bbc_dave
+============================================================
+=== Grove Contributor Training ===
+Contributor: dave
+Domain: BBC news 2025
+Seed: 1337, Rank: 16
+Domain data SHA-256: 84fdcf4d346e7474...
+Domain texts: 900 (train: 810, eval: 90)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 810
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.92it/s]Loading weights:   8%|▊         | 32/399 [00:00<00:02, 135.45it/s]Loading weights:  24%|██▎       | 94/399 [00:00<00:00, 312.06it/s]Loading weights:  34%|███▍      | 136/399 [00:00<00:00, 334.60it/s]Loading weights:  43%|████▎     | 172/399 [00:00<00:00, 337.95it/s]Loading weights:  56%|█████▌    | 223/399 [00:00<00:00, 387.74it/s]Loading weights:  67%|██████▋   | 268/399 [00:00<00:00, 388.71it/s]Loading weights:  77%|███████▋  | 308/399 [00:00<00:00, 391.33it/s]Loading weights:  87%|████████▋ | 348/399 [00:01<00:00, 393.78it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 359.16it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=2.6250
+  Step 500/2000 | loss=2.2812
+  Step 1000/2000 | loss=1.2969
+  Step 1500/2000 | loss=1.9375
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=2.4531 | domain=0.119 generic=0.000 sel=+0.119
+  Step 300/1500 | lm=1.2422 | domain=0.967 generic=0.676 sel=+0.291
+  Step 600/1500 | lm=1.2578 | domain=0.960 generic=0.483 sel=+0.477
+  Step 900/1500 | lm=1.5312 | domain=0.974 generic=0.320 sel=+0.654
+  Step 1200/1500 | lm=1.7266 | domain=0.981 generic=0.345 sel=+0.636
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=10.25
+  Generic (gated): PPL=16.35
+  Domain (base): PPL=12.97
+  Generic (base): PPL=17.96
+
+Selectivity: +0.585
+Domain PPL: 10.25 (-20.9% vs base)
+Generic PPL: 16.35 (-9.0% vs base)
+
+Package saved to /root/t6b-mogae/grove_adapters_v2/bbc_dave/
+  adapter.pt, manifest.json, validation.json
+Done.
+
+============================================================
+  Training cuisine_eve
+============================================================
+=== Grove Contributor Training ===
+Contributor: eve
+Domain: Dutch cuisine
+Seed: 256, Rank: 8
+Domain data SHA-256: e87cd7805b929b9e...
+Domain texts: 873 (train: 786, eval: 87)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 786
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:36, 10.83it/s]Loading weights:  10%|█         | 41/399 [00:00<00:02, 169.33it/s]Loading weights:  22%|██▏       | 88/399 [00:00<00:01, 263.94it/s]Loading weights:  34%|███▍      | 136/399 [00:00<00:00, 335.34it/s]Loading weights:  45%|████▌     | 180/399 [00:00<00:00, 361.19it/s]Loading weights:  56%|█████▌    | 222/399 [00:00<00:00, 369.45it/s]Loading weights:  68%|██████▊   | 270/399 [00:00<00:00, 395.67it/s]Loading weights:  78%|███████▊  | 311/399 [00:00<00:00, 389.15it/s]Loading weights:  90%|████████▉ | 358/399 [00:01<00:00, 410.23it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 353.09it/s]
+
+=== PHASE 1: Adapter training (2000 steps) ===
+  Step 0/2000 | loss=1.8438
+  Step 500/2000 | loss=1.9453
+  Step 1000/2000 | loss=1.7734
+  Step 1500/2000 | loss=2.2969
+Adapter frozen.
+
+=== PHASE 2: Gate training (1500 steps, L1=0.05) ===
+  Step 0/1500 | lm=1.6719 | domain=0.119 generic=0.000 sel=+0.119
+  Step 300/1500 | lm=1.8828 | domain=0.902 generic=0.684 sel=+0.218
+  Step 600/1500 | lm=1.0469 | domain=0.949 generic=0.654 sel=+0.295
+  Step 900/1500 | lm=2.2188 | domain=0.964 generic=0.598 sel=+0.366
+  Step 1200/1500 | lm=1.6797 | domain=0.925 generic=0.603 sel=+0.322
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=10.90
+  Generic (gated): PPL=15.24
+  Domain (base): PPL=12.66
+  Generic (base): PPL=16.96
+
+Selectivity: +0.374
+Domain PPL: 10.90 (-13.9% vs base)
+Generic PPL: 15.24 (-10.2% vs base)
+
+Package saved to /root/t6b-mogae/grove_adapters_v2/cuisine_eve/
+  adapter.pt, manifest.json, validation.json
+Done.
+
+============================================================
+  Training wingchun_frank
+============================================================
+=== Grove Contributor Training ===
+Contributor: frank
+Domain: Wing Chun martial arts
+Seed: 99, Rank: 16
+Domain data SHA-256: aedcc8c76ff6376a...
+Domain texts: 27 (train: 22, eval: 5)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generic texts: 22
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:09,  5.72it/s]Loading weights:  12%|█▏        | 48/399 [00:00<00:01, 210.84it/s]Loading weights:  19%|█▉        | 75/399 [00:00<00:01, 220.48it/s]Loading weights:  32%|███▏      | 129/399 [00:00<00:00, 294.75it/s]Loading weights:  46%|████▌     | 183/399 [00:00<00:00, 322.68it/s]Loading weights:  54%|█████▍    | 217/399 [00:00<00:00, 321.57it/s]Loading weights:  71%|███████   | 283/399 [00:00<00:00, 352.99it/s]Loading weights:  87%|████████▋ | 349/399 [00:01<00:00, 399.16it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 351.45it/s]
+
+=== PHASE 1: Adapter training (1500 steps) ===
+  Step 0/1500 | loss=2.2500
+  Step 500/1500 | loss=0.0306
+  Step 1000/1500 | loss=0.0103
+Adapter frozen.
+
+=== PHASE 2: Gate training (1000 steps, L1=0.05) ===
+  Step 0/1000 | lm=1.9688 | domain=0.119 generic=0.000 sel=+0.119
+  Step 300/1000 | lm=0.0035 | domain=0.950 generic=0.197 sel=+0.753
+  Step 600/1000 | lm=0.0033 | domain=0.942 generic=0.202 sel=+0.739
+  Step 900/1000 | lm=0.0086 | domain=0.950 generic=0.217 sel=+0.733
+
+=== SELF-VALIDATION ===
+  Domain (gated): PPL=38.50
+  Generic (gated): PPL=16.92
+  Domain (base): PPL=12.39
+  Generic (base): PPL=17.76
+
+Selectivity: +0.453
+Domain PPL: 38.50 (+210.8% vs base)
+Generic PPL: 16.92 (-4.7% vs base)
+
+Package saved to /root/t6b-mogae/grove_adapters_v2/wingchun_frank/
+  adapter.pt, manifest.json, validation.json
+Done.
+
+============================================================
+  PHASE B: VALIDATION
+============================================================
+
+============================================================
+  Validating bbc_dave
+============================================================
+=== Validating adapter: /root/t6b-mogae/grove_adapters_v2/bbc_dave ===
+
+--- Structural Checks ---
+  [PASS] file_exists:adapter.pt: /root/t6b-mogae/grove_adapters_v2/bbc_dave/adapter.pt
+  [PASS] file_exists:manifest.json: /root/t6b-mogae/grove_adapters_v2/bbc_dave/manifest.json
+  [PASS] manifest_key:format_version: 0.1.0
+  [PASS] manifest_key:name: bbc_dave
+  [PASS] manifest_key:contributor: dave
+  [PASS] manifest_key:domain: BBC news 2025
+  [PASS] manifest_key:trunk_model: Qwen/Qwen3-8B
+  [PASS] manifest_key:architecture: {'type': 'delta_gated_scalar', 'rank': 16, 'expert_start': 1
+  [PASS] manifest_key:training: {'seed': 1337, 'phase1_steps': 2000, 'phase1_lr': 0.0002, 'p
+  [PASS] arch_key:type: delta_gated_scalar
+  [PASS] arch_key:rank: 16
+  [PASS] arch_key:expert_start: 12
+  [PASS] trunk_model_match: Qwen/Qwen3-8B (expected Qwen/Qwen3-8B)
+  [PASS] checkpoint_loadable: keys: ['adapter', 'gates', 'name', 'rank', 'expert_start', '
+  [PASS] ckpt_key:adapter: {'12.gate_lora.A': tensor([[-0.0146, -0.0075,  0.0
+  [PASS] ckpt_key:gates: {'12.linear.weight': tensor([[-9.7656e-03,  3.1982
+  [PASS] ckpt_key:rank: 16
+  [PASS] ckpt_key:expert_start: 12
+
+Structural: 18/18
+
+--- Quality Checks ---
+Loading model for quality checks...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:31, 12.46it/s]Loading weights:  11%|█▏        | 45/399 [00:00<00:01, 207.65it/s]Loading weights:  22%|██▏       | 86/399 [00:00<00:01, 287.08it/s]Loading weights:  31%|███       | 123/399 [00:00<00:00, 307.23it/s]Loading weights:  41%|████▏     | 165/399 [00:00<00:00, 309.86it/s]Loading weights:  56%|█████▌    | 222/399 [00:00<00:00, 386.23it/s]Loading weights:  66%|██████▌   | 263/399 [00:00<00:00, 336.24it/s]Loading weights:  82%|████████▏ | 329/399 [00:00<00:00, 414.08it/s]Loading weights:  93%|█████████▎| 373/399 [00:01<00:00, 408.68it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 357.77it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Evaluating generic PPL with adapter...
+Evaluating base generic PPL...
+  Generic PPL: 14.29 (base: 15.78, delta: -9.5%)
+  Selectivity: +0.573 (domain_gate=0.915, generic_gate=0.342)
+  Max per-layer selectivity: 0.657
+  [PASS] generic_ppl_delta: -9.477 (threshold: 5.0)
+  [PASS] selectivity: 0.573 (threshold: 0.1)
+  [PASS] no_gate_collapse: 0.657 (threshold: 0.05)
+
+Quality: 3/3
+VERDICT: ACCEPTED
+
+Result saved to /root/t6b-mogae/grove_adapters_v2/bbc_dave/validation_result.json
+  → bbc_dave: ACCEPTED
+
+============================================================
+  Validating cuisine_eve
+============================================================
+=== Validating adapter: /root/t6b-mogae/grove_adapters_v2/cuisine_eve ===
+
+--- Structural Checks ---
+  [PASS] file_exists:adapter.pt: /root/t6b-mogae/grove_adapters_v2/cuisine_eve/adapter.pt
+  [PASS] file_exists:manifest.json: /root/t6b-mogae/grove_adapters_v2/cuisine_eve/manifest.json
+  [PASS] manifest_key:format_version: 0.1.0
+  [PASS] manifest_key:name: cuisine_eve
+  [PASS] manifest_key:contributor: eve
+  [PASS] manifest_key:domain: Dutch cuisine
+  [PASS] manifest_key:trunk_model: Qwen/Qwen3-8B
+  [PASS] manifest_key:architecture: {'type': 'delta_gated_scalar', 'rank': 8, 'expert_start': 12
+  [PASS] manifest_key:training: {'seed': 256, 'phase1_steps': 2000, 'phase1_lr': 0.0003, 'ph
+  [PASS] arch_key:type: delta_gated_scalar
+  [PASS] arch_key:rank: 8
+  [PASS] arch_key:expert_start: 12
+  [PASS] trunk_model_match: Qwen/Qwen3-8B (expected Qwen/Qwen3-8B)
+  [PASS] checkpoint_loadable: keys: ['adapter', 'gates', 'name', 'rank', 'expert_start', '
+  [PASS] ckpt_key:adapter: {'12.gate_lora.A': tensor([[-1.8799e-02,  5.5847e-
+  [PASS] ckpt_key:gates: {'12.linear.weight': tensor([[ 0.0062,  0.0060,  0
+  [PASS] ckpt_key:rank: 8
+  [PASS] ckpt_key:expert_start: 12
+
+Structural: 18/18
+
+--- Quality Checks ---
+Loading model for quality checks...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 13.03it/s]Loading weights:   9%|▉         | 37/399 [00:00<00:02, 169.55it/s]Loading weights:  22%|██▏       | 87/399 [00:00<00:01, 299.16it/s]Loading weights:  32%|███▏      | 126/399 [00:00<00:00, 330.26it/s]Loading weights:  43%|████▎     | 170/399 [00:00<00:00, 361.45it/s]Loading weights:  53%|█████▎    | 213/399 [00:00<00:00, 361.64it/s]Loading weights:  63%|██████▎   | 251/399 [00:00<00:00, 348.77it/s]Loading weights:  74%|███████▎  | 294/399 [00:00<00:00, 370.04it/s]Loading weights:  83%|████████▎ | 332/399 [00:01<00:00, 348.91it/s]Loading weights:  96%|█████████▌| 382/399 [00:01<00:00, 384.48it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 349.96it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Evaluating generic PPL with adapter...
+Evaluating base generic PPL...
+  Generic PPL: 14.12 (base: 15.78, delta: -10.5%)
+  Selectivity: +0.347 (domain_gate=0.883, generic_gate=0.537)
+  Max per-layer selectivity: 0.513
+  [PASS] generic_ppl_delta: -10.526 (threshold: 5.0)
+  [PASS] selectivity: 0.347 (threshold: 0.1)
+  [PASS] no_gate_collapse: 0.513 (threshold: 0.05)
+
+Quality: 3/3
+VERDICT: ACCEPTED
+
+Result saved to /root/t6b-mogae/grove_adapters_v2/cuisine_eve/validation_result.json
+  → cuisine_eve: ACCEPTED
+
+============================================================
+  Validating wingchun_frank
+============================================================
+=== Validating adapter: /root/t6b-mogae/grove_adapters_v2/wingchun_frank ===
+
+--- Structural Checks ---
+  [PASS] file_exists:adapter.pt: /root/t6b-mogae/grove_adapters_v2/wingchun_frank/adapter.pt
+  [PASS] file_exists:manifest.json: /root/t6b-mogae/grove_adapters_v2/wingchun_frank/manifest.js
+  [PASS] manifest_key:format_version: 0.1.0
+  [PASS] manifest_key:name: wingchun_frank
+  [PASS] manifest_key:contributor: frank
+  [PASS] manifest_key:domain: Wing Chun martial arts
+  [PASS] manifest_key:trunk_model: Qwen/Qwen3-8B
+  [PASS] manifest_key:architecture: {'type': 'delta_gated_scalar', 'rank': 16, 'expert_start': 1
+  [PASS] manifest_key:training: {'seed': 99, 'phase1_steps': 1500, 'phase1_lr': 0.0001, 'pha
+  [PASS] arch_key:type: delta_gated_scalar
+  [PASS] arch_key:rank: 16
+  [PASS] arch_key:expert_start: 12
+  [PASS] trunk_model_match: Qwen/Qwen3-8B (expected Qwen/Qwen3-8B)
+  [PASS] checkpoint_loadable: keys: ['adapter', 'gates', 'name', 'rank', 'expert_start', '
+  [PASS] ckpt_key:adapter: {'12.gate_lora.A': tensor([[ 0.0106, -0.0098, -0.0
+  [PASS] ckpt_key:gates: {'12.linear.weight': tensor([[-0.0094,  0.0232,  0
+  [PASS] ckpt_key:rank: 16
+  [PASS] ckpt_key:expert_start: 12
+
+Structural: 18/18
+
+--- Quality Checks ---
+Loading model for quality checks...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<00:59,  6.72it/s]Loading weights:   2%|▏         | 9/399 [00:00<00:09, 40.78it/s]Loading weights:  17%|█▋        | 69/399 [00:00<00:01, 260.70it/s]Loading weights:  32%|███▏      | 129/399 [00:00<00:00, 350.28it/s]Loading weights:  45%|████▍     | 178/399 [00:00<00:00, 393.01it/s]Loading weights:  55%|█████▍    | 219/399 [00:00<00:00, 355.87it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 305.89it/s]Loading weights:  90%|████████▉ | 358/399 [00:01<00:00, 441.16it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 365.61it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Evaluating generic PPL with adapter...
+Evaluating base generic PPL...
+  Generic PPL: 15.36 (base: 15.78, delta: -2.7%)
+  Selectivity: +0.718 (domain_gate=0.947, generic_gate=0.229)
+  Max per-layer selectivity: 0.298
+  [PASS] generic_ppl_delta: -2.703 (threshold: 5.0)
+  [PASS] selectivity: 0.718 (threshold: 0.1)
+  [PASS] no_gate_collapse: 0.298 (threshold: 0.05)
+
+Quality: 3/3
+VERDICT: ACCEPTED
+
+Result saved to /root/t6b-mogae/grove_adapters_v2/wingchun_frank/validation_result.json
+  → wingchun_frank: ACCEPTED
+
+Validated: 3/3
+  Registered: bbc_dave
+  Registered: cuisine_eve
+  Registered: wingchun_frank
+
+============================================================
+  Composing grove v2
+============================================================
+=== Composing grove from 3 adapters ===
+  bbc_dave (dave) — BBC news 2025 — rank 16
+  cuisine_eve (eve) — Dutch cuisine — rank 8
+  wingchun_frank (frank) — Wing Chun martial arts — rank 16
+
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 13.03it/s]Loading weights:  11%|█         | 43/399 [00:00<00:01, 181.57it/s]Loading weights:  19%|█▊        | 74/399 [00:00<00:01, 229.17it/s]Loading weights:  25%|██▍       | 99/399 [00:00<00:01, 227.37it/s]Loading weights:  42%|████▏     | 169/399 [00:00<00:00, 374.81it/s]Loading weights:  52%|█████▏    | 209/399 [00:00<00:00, 374.93it/s]Loading weights:  68%|██████▊   | 270/399 [00:00<00:00, 440.72it/s]Loading weights:  79%|███████▉  | 316/399 [00:00<00:00, 434.54it/s]Loading weights:  90%|█████████ | 361/399 [00:01<00:00, 405.45it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 360.82it/s]
+Loading bbc_dave...
+Loading cuisine_eve...
+Loading wingchun_frank...
+  bbc_dave: 900 domain texts from /tmp/bbc_2025_clean.jsonl
+  cuisine_eve: 873 domain texts from /tmp/dutch_cuisine_clean.jsonl
+  wingchun_frank: 27 domain texts from /root/t6b-mogae/data/wing-chun-data.jsonl
+
+=== JOINT GATE TRAINING (1500 steps, 3 adapters) ===
+  Step 0/1500 | lm=1.8984 | bbc_dave | bbc_dave=0.658 | cuisine_eve=0.189 | wingchun_frank=0.021
+  Step 200/1500 | lm=1.5938 | bbc_dave | bbc_dave=0.954 | cuisine_eve=0.016 | wingchun_frank=0.005
+  Step 400/1500 | lm=1.9531 | bbc_dave | bbc_dave=0.915 | cuisine_eve=0.040 | wingchun_frank=0.009
+  Step 600/1500 | lm=1.2344 | bbc_dave | bbc_dave=0.979 | cuisine_eve=0.006 | wingchun_frank=0.002
+  Step 800/1500 | lm=0.3984 | bbc_dave | bbc_dave=0.950 | cuisine_eve=0.022 | wingchun_frank=0.007
+  Step 1000/1500 | lm=0.4316 | bbc_dave | bbc_dave=0.973 | cuisine_eve=0.010 | wingchun_frank=0.006
+  Step 1200/1500 | lm=1.2578 | bbc_dave | bbc_dave=0.952 | cuisine_eve=0.027 | wingchun_frank=0.006
+  Step 1400/1500 | lm=1.4531 | bbc_dave | bbc_dave=0.988 | cuisine_eve=0.004 | wingchun_frank=0.002
+
+=== EVALUATION ===
+  bbc_dave domain: PPL=11.01 | bbc_dave=0.974 | cuisine_eve=0.011 | wingchun_frank=0.004
+  cuisine_eve domain: PPL=10.94 | bbc_dave=0.009 | cuisine_eve=0.975 | wingchun_frank=0.003
+  wingchun_frank domain: PPL=1.38 | bbc_dave=0.070 | cuisine_eve=0.082 | wingchun_frank=0.822
+  Generic: PPL=15.49 | bbc_dave=0.290 | cuisine_eve=0.410 | wingchun_frank=0.049
+  Base bbc_dave: PPL=12.74
+  Base cuisine_eve: PPL=11.86
+  Base wingchun_frank: PPL=14.32
+  Base generic: PPL=18.47
+
+=== M_ij MATRIX (diagonal dominance check) ===
+
+Domain               Base PPL   Grove PPL  Delta      bbc_dave  cuisine_  wingchun
+------------------------------------------------------------------------------
+bbc_dave             12.74      11.01        -13.6%     0.974     0.011     0.004
+cuisine_eve          11.86      10.94         -7.7%     0.009     0.975     0.003
+wingchun_frank       14.32      1.38         -90.3%     0.070     0.082     0.822
+generic              18.47      15.49        -16.2%     0.290     0.410     0.049
+
+=== SUCCESS CRITERIA ===
+  [PASS] bbc_dave diagonal dominant: 0.974 (threshold: 0.29049957275390625)
+  [PASS] cuisine_eve diagonal dominant: 0.975 (threshold: 0.41024337768554686)
+  [PASS] wingchun_frank diagonal dominant: 0.822 (threshold: 0.04935588518778483)
+  [PASS] bbc_dave leak on cuisine_eve: 0.009 (threshold: 0.1)
+  [PASS] bbc_dave leak on wingchun_frank: 0.070 (threshold: 0.1)
+  [PASS] cuisine_eve leak on bbc_dave: 0.011 (threshold: 0.1)
+  [PASS] cuisine_eve leak on wingchun_frank: 0.082 (threshold: 0.1)
+  [PASS] wingchun_frank leak on bbc_dave: 0.004 (threshold: 0.1)
+  [PASS] wingchun_frank leak on cuisine_eve: 0.003 (threshold: 0.1)
+  [PASS] generic PPL < +5%: -16.154 (threshold: 5.0)
+
+10/10 passed. VERDICT: SUCCESS
+
+Results saved to /root/t6b-mogae/grove_registry_v2/composition_result.json
+
+  COMPOSITION: SUCCESS (10/10)
+
+============================================================
+  MVP v2 SUMMARY
+============================================================
+Validated: 3/3
+Registered: 3
+Composition: SUCCESS (10/10)
+
+CHARTER: 2nd config SUCCESS → distributed training PLAUSIBLE → SUPPORTED
+Elapsed: 23.3 min

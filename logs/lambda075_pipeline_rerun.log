@@ -1,0 +1,36 @@
+============================================================
+Lambda=0.75 Pipeline: P1+P2 only (5K steps). No P3 — P2b is optimal.
+  Phase 1 (2a): 2000 steps, tier-0 only, λ_tc=0.75
+  Phase 2 (2b): 3000 steps, tier-0+1, λ_tc=0.375
+  Phase 3 (2c): 0 steps, ALL tiers, λ_tc=0.05
+  Total: 5000 steps, 200M tokens
+============================================================
+
+Loading model...
+Loading weights:   0%|          | 0/179 [00:00<?, ?it/s]Loading weights:   2%|▏         | 4/179 [00:00<00:11, 15.79it/s]Loading weights:   8%|▊         | 15/179 [00:00<00:03, 48.50it/s]Loading weights:  15%|█▍        | 26/179 [00:00<00:02, 68.37it/s]Loading weights:  21%|██        | 37/179 [00:00<00:01, 80.38it/s]Loading weights:  27%|██▋       | 49/179 [00:00<00:01, 76.29it/s]Loading weights:  40%|███▉      | 71/179 [00:00<00:01, 98.45it/s]Loading weights:  52%|█████▏    | 93/179 [00:01<00:00, 111.08it/s]Loading weights:  64%|██████▍   | 115/179 [00:01<00:00, 121.18it/s]Loading weights:  77%|███████▋  | 137/179 [00:01<00:00, 128.08it/s]Loading weights:  89%|████████▉ | 159/179 [00:01<00:00, 133.26it/s]Loading weights: 100%|██████████| 179/179 [00:01<00:00, 111.93it/s]
+Model loaded in 4.4s
+
+Patching routers with learnable biases...
+Patched 16 routers
+Phase 1: 32 gradient hooks (tier-0 only)
+
+Streaming C4 dataset (200M tokens)...
+  Tokenized 80M tokens...
+  Tokenized 160M tokens...
+Got 195313 chunks (200M tok) in 262s
+Train: 185547 chunks, Eval: 9766 chunks
+
+Setting up optimizer...
+
+Starting training (5000 total steps)...
+
+--- Epoch 1 (step 0/5000) ---
+[P1] Step 100/5000 | task=2.6659 slot=-0.4961 ratio=0.2870 tcost=0.5384 total=3.0477 | bias: t0=+0.411 t1=+0.113 t2=-0.402 | ETA: 0.9h
+[P1] Step 200/5000 | task=2.7079 slot=-0.5000 ratio=0.2336 tcost=0.4779 total=3.0437 | bias: t0=+0.532 t1=+0.206 t2=-0.663 | ETA: 0.9h
+[P1] Step 300/5000 | task=2.7281 slot=-0.5003 ratio=0.2742 tcost=0.4513 total=3.0444 | bias: t0=+0.631 t1=+0.259 t2=-0.885 | ETA: 0.9h
+[P1] Step 400/5000 | task=2.7351 slot=-0.5016 ratio=0.1826 tcost=0.4334 total=3.0369 | bias: t0=+0.680 t1=+0.313 t2=-1.051 | ETA: 0.8h
+[P1] Step 500/5000 | task=2.7229 slot=-0.5025 ratio=0.2018 tcost=0.4242 total=3.0180 | bias: t0=+0.754 t1=+0.347 t2=-1.209 | ETA: 0.8h
+
+--- [P1] Eval at step 500 ---
+  ppl=15.78 gini=0.3471 t0=0.4410 t1=0.2904 t2=0.2686 miss=0.2897 wall=6min
+[P1] Step 600/5000 | task=2.7374 slot=-0.5029 ratio=0.1697 tcost=0.4127 total=3.0235 | bias: t0=+0.799 t1=+0.371 t2=-1.335 | ETA: 0.8h

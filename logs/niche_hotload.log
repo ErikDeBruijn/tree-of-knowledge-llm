@@ -1,0 +1,27 @@
+Loading model...
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  18%|█▊        | 56/311 [00:00<00:00, 556.89it/s]Loading weights:  57%|█████▋    | 177/311 [00:00<00:00, 923.07it/s]Loading weights:  97%|█████████▋| 301/311 [00:00<00:00, 1064.69it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 1001.21it/s]
+The tied weights mapping and config for this model specifies to tie model.embed_tokens.weight to lm_head.weight, but both are present in the checkpoints, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning
+Loading curriculum...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+=== BASELINE (all experts) ===
+  niche: PPL=9.11 (5110 tokens)
+  general: PPL=14.31 (5108 tokens)
+
+=== REMOVE NICHE EXPERT (E0) ===
+  niche: PPL=9.11 (5110 tokens)
+  general: PPL=14.31 (5108 tokens)
+
+=== REMOVE GENERAL EXPERT (E1) ===
+  niche: PPL=9.11 (5110 tokens)
+  general: PPL=14.31 (5108 tokens)
+
+=== RESULTS ===
+Remove E0 (niche): niche PPL +0.00, general PPL +0.00
+Remove E1 (general): niche PPL +0.00, general PPL +0.00
+
+Selectivity ratio E0 (niche/general damage): 0.00x
+Selectivity ratio E1 (general/niche damage): 0.00x
+
+VERDICT: FAIL — damage is uniform
+Saved to results/niche_hotload_validation.json

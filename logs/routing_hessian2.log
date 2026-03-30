@@ -1,0 +1,141 @@
+[13:11:33] ======================================================================
+[13:11:33] ROUTING HESSIAN EIGENSPECTRUM ANALYSIS (Lanczos + Soft Routing)
+[13:11:33] Question: Is uniform routing a basin or saddle point?
+[13:11:33] ======================================================================
+[13:11:34] Loading tokenizer...
+[13:11:35] Loading base model in float32 on cuda:0...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.40it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.12it/s]
+[13:11:36] Loading Phase 3 checkpoint...
+[13:11:36] Loaded checkpoint: phase=3, step=48828
+[13:11:36] Tree: {18: {'num_experts': 2, 'ranks': [4, 4]}, 19: {'num_experts': 2, 'ranks': [4, 4]}, 20: {'num_experts': 2, 'ranks': [4, 4]}, 21: {'num_experts': 2, 'ranks': [4, 4]}, 22: {'num_experts': 2, 'ranks': [4, 4]}, 23: {'num_experts': 2, 'ranks': [4, 4]}, 24: {'num_experts': 2, 'ranks': [4, 4]}, 25: {'num_experts': 2, 'ranks': [4, 4]}, 26: {'num_experts': 2, 'ranks': [4, 4]}, 27: {'num_experts': 2, 'ranks': [4, 4]}}
+[13:11:36] 
+============================================================
+[13:11:36] FINDING 0: Hard argmax routing is non-differentiable
+[13:11:36] The LM loss gradient w.r.t. router weights is exactly zero.
+[13:11:36] The optimizer has NO gradient signal for routing decisions.
+[13:11:36] This alone explains why routing stays uniform.
+[13:11:36] ============================================================
+[13:11:36] Loading C4 validation data (10000 tokens)...
+[13:11:40] Collected 10240 tokens in 20 sequences
+[13:11:40] Loading C4 validation data (50000 tokens)...
+[13:11:41] Collected 50176 tokens in 98 sequences
+[13:11:41] Layer 18: router [2, 2048], 4096 params
+[13:11:41] Layer 19: router [2, 2048], 4096 params
+[13:11:41] Layer 20: router [2, 2048], 4096 params
+[13:11:41] Layer 21: router [2, 2048], 4096 params
+[13:11:41] Layer 22: router [2, 2048], 4096 params
+[13:11:41] Layer 23: router [2, 2048], 4096 params
+[13:11:41] Layer 24: router [2, 2048], 4096 params
+[13:11:41] Layer 25: router [2, 2048], 4096 params
+[13:11:41] Layer 26: router [2, 2048], 4096 params
+[13:11:41] Layer 27: router [2, 2048], 4096 params
+[13:11:41] 
+Total router params: 40960
+[13:11:41] 
+============================================================
+[13:11:41] PHASE 1: Soft-routing gradient check
+[13:11:41] If gradient is non-zero, the loss landscape HAS curvature
+[13:11:41] ============================================================
+[13:11:41] 
+Layer 18: computing soft-routing gradient...
+[13:11:43]   Soft-routing loss: 3.0236
+[13:11:43]   Gradient norm: 6.115749e-03
+[13:11:43]   Gradient max:  1.114361e-03
+[13:11:43]   Gradient exists — loss landscape has slope at this point
+[13:11:43] 
+Layer 22: computing soft-routing gradient...
+[13:11:44]   Soft-routing loss: 3.0237
+[13:11:44]   Gradient norm: 2.774155e-03
+[13:11:44]   Gradient max:  3.972824e-04
+[13:11:44]   Gradient exists — loss landscape has slope at this point
+[13:11:44] 
+Layer 27: computing soft-routing gradient...
+[13:11:46]   Soft-routing loss: 3.0238
+[13:11:46]   Gradient norm: 6.725821e-03
+[13:11:46]   Gradient max:  1.541051e-03
+[13:11:46]   Gradient exists — loss landscape has slope at this point
+[13:11:46] 
+============================================================
+[13:11:46] PHASE 2: Lanczos eigenspectrum (soft routing)
+[13:11:46] ============================================================
+[13:11:46] 
+==================================================
+[13:11:46] LAYER 18: Lanczos eigenspectrum
+[13:11:46] ==================================================
+[13:11:46]   Running Lanczos with 150 iterations for 4096 params...
+[13:11:49]     Gradient norm (soft routing): 6.115751e-03
+[13:13:07]     Iter 25: eigenvalue range [-5.000438e-02, 1.313604e-01], neg=11
+[13:14:30]     Iter 50: eigenvalue range [-5.000438e-02, 1.313604e-01], neg=23
+[13:15:54]     Iter 75: eigenvalue range [-5.000438e-02, 1.313604e-01], neg=35
+[13:17:18]     Iter 100: eigenvalue range [-5.000438e-02, 1.313604e-01], neg=47
+[13:18:41]     Iter 125: eigenvalue range [-5.000438e-02, 1.313604e-01], neg=59
+[13:20:05]     Iter 150: eigenvalue range [-5.000438e-02, 1.313604e-01], neg=71
+[13:20:06]   Lanczos done in 500.4s
+[13:20:06]   SADDLE — 71 negative Ritz values (most negative: -5.000438e-02)
+[13:20:06]   Eigenvalue range: [-5.000438e-02, 1.313604e-01]
+[13:20:06]   Negative Ritz values: 71
+[13:20:06]   Gradient norm: 6.115751e-03
+[13:20:06] 
+==================================================
+[13:20:06] LAYER 22: Lanczos eigenspectrum
+[13:20:06] ==================================================
+[13:20:06]   Running Lanczos with 150 iterations for 4096 params...
+[13:20:09]     Gradient norm (soft routing): 2.774155e-03
+[13:21:14]     Iter 25: eigenvalue range [-6.204129e-02, 8.443511e-02], neg=12
+[13:22:21]     Iter 50: eigenvalue range [-6.204129e-02, 8.443511e-02], neg=24
+[13:23:29]     Iter 75: eigenvalue range [-6.204129e-02, 8.443511e-02], neg=36
+[13:24:37]     Iter 100: eigenvalue range [-6.204129e-02, 8.443511e-02], neg=48
+[13:25:45]     Iter 125: eigenvalue range [-6.204129e-02, 8.443511e-02], neg=60
+[13:26:53]     Iter 150: eigenvalue range [-6.204129e-02, 8.443511e-02], neg=73
+[13:26:54]   Lanczos done in 407.6s
+[13:26:54]   SADDLE — 73 negative Ritz values (most negative: -6.204129e-02)
+[13:26:54]   Eigenvalue range: [-6.204129e-02, 8.443511e-02]
+[13:26:54]   Negative Ritz values: 73
+[13:26:54]   Gradient norm: 2.774155e-03
+[13:26:54] 
+==================================================
+[13:26:54] LAYER 27: Lanczos eigenspectrum
+[13:26:54] ==================================================
+[13:26:54]   Running Lanczos with 150 iterations for 4096 params...
+[13:26:56]     Gradient norm (soft routing): 6.725821e-03
+[13:27:41]     Iter 25: eigenvalue range [-2.977123e-01, 1.583511e-01], neg=12
+[13:28:29]     Iter 50: eigenvalue range [-2.977123e-01, 1.583511e-01], neg=23
+[13:29:16]     Iter 75: eigenvalue range [-2.977123e-01, 1.583511e-01], neg=36
+[13:30:04]     Iter 100: eigenvalue range [-2.977123e-01, 1.583511e-01], neg=48
+[13:30:52]     Iter 125: eigenvalue range [-2.977123e-01, 1.583511e-01], neg=60
+[13:31:40]     Iter 150: eigenvalue range [-2.977123e-01, 1.583511e-01], neg=72
+[13:31:41]   Lanczos done in 286.7s
+[13:31:41]   SADDLE — 72 negative Ritz values (most negative: -2.977123e-01)
+[13:31:41]   Eigenvalue range: [-2.977123e-01, 1.583511e-01]
+[13:31:41]   Negative Ritz values: 72
+[13:31:41]   Gradient norm: 6.725821e-03
+[13:31:41] 
+============================================================
+[13:31:41] PHASE 3: Selectivity gradient analysis
+[13:31:41] ============================================================
+[13:31:41] 
+Layer 18: selectivity gradient...
+[13:31:48]   Selectivity (var p0): 0.213515
+[13:31:48]   Grad norm: 0.055457
+[13:31:48]   Routing: e0=0.495, e1=0.505
+[13:31:48]   HAS_SIGNAL — selectivity gradient norm = 0.055457
+[13:31:48] 
+Layer 22: selectivity gradient...
+[13:31:55]   Selectivity (var p0): 0.235247
+[13:31:55]   Grad norm: 0.029850
+[13:31:55]   Routing: e0=0.505, e1=0.495
+[13:31:55]   HAS_SIGNAL — selectivity gradient norm = 0.029850
+[13:31:55] 
+Layer 27: selectivity gradient...
+[13:32:02]   Selectivity (var p0): 0.238527
+[13:32:02]   Grad norm: 0.037623
+[13:32:02]   Routing: e0=0.501, e1=0.499
+[13:32:02]   HAS_SIGNAL — selectivity gradient norm = 0.037623
+[13:32:02] 
+Results saved to /root/t6b-mogae/results/routing_hessian.json
+[13:32:02] 
+======================================================================
+[13:32:02] VERDICT: ROOT CAUSE IDENTIFIED: Hard argmax routing provides zero gradient. The router weights are completely invisible to the optimizer. Landscape analysis (soft surrogate): SADDLE — Negative eigenvalues exist in all layers. The soft-routing loss landscape has escape directions from uniform routing.
+[13:32:02] ======================================================================
+[13:32:02] Total time: 1229.4s

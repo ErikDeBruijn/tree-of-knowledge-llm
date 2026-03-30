@@ -1,0 +1,177 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:31, 12.60it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 158.14it/s]Loading weights:  19%|█▉        | 75/399 [00:00<00:01, 255.45it/s]Loading weights:  27%|██▋       | 109/399 [00:00<00:01, 269.49it/s]Loading weights:  36%|███▌      | 142/399 [00:00<00:00, 276.61it/s]Loading weights:  48%|████▊     | 193/399 [00:00<00:00, 329.19it/s]Loading weights:  62%|██████▏   | 246/399 [00:00<00:00, 367.69it/s]Loading weights:  72%|███████▏  | 286/399 [00:00<00:00, 362.07it/s]Loading weights:  81%|████████  | 323/399 [00:01<00:00, 345.02it/s]Loading weights:  93%|█████████▎| 373/399 [00:01<00:00, 380.44it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 331.14it/s]
+Loaded in 3s
+GROWTH+RANKUP: start 2 experts rank-4, L12
+Trainable: 6,488,064
+Training 25000 steps...
+Step 0/25000|loss=2.6406|tau=1.000|exp=2 r=4|LT:E0=2.48 E1=2.48
+Step 500/25000|loss=2.4844|tau=0.975|exp=2 r=4|LT:E0=1.92 E1=2.28
+Step 1000/25000|loss=1.8906|tau=0.950|exp=2 r=4|LT:E0=1.82 E1=2.26
+Step 1500/25000|loss=3.2812|tau=0.925|exp=2 r=4|LT:E0=1.75 E1=2.41
+Step 2000/25000|loss=3.2188|tau=0.900|exp=2 r=4|LT:E0=1.66 E1=2.31
+Step 2500/25000|loss=2.9219|tau=0.875|exp=2 r=4|LT:E0=1.70 E1=2.47
+
+*** SPLIT: E1 → E1+E2 (LT=2.34, rank=4) ***
+Step 3000/25000|loss=2.5625|tau=0.850|exp=3 r=4|LT:E0=1.70 E1=2.34 E2=2.34
+Step 3500/25000|loss=3.7812|tau=0.825|exp=3 r=4|LT:E0=1.90 E1=2.55 E2=2.36
+Step 4000/25000|loss=2.4688|tau=0.800|exp=3 r=4|LT:E0=1.73 E1=2.43 E2=2.15
+Step 4500/25000|loss=3.2969|tau=0.775|exp=3 r=4|LT:E0=1.90 E1=2.50 E2=2.20
+
+*** RANK UP ALL: 4 → 8 ***
+Step 5000/25000|loss=3.0000|tau=0.750|exp=3 r=8|LT:E0=1.96 E1=2.55 E2=2.31
+  Eval PPL=13.81
+Step 5500/25000|loss=2.5156|tau=0.725|exp=3 r=8|LT:E0=1.74 E1=2.38 E2=2.15
+
+*** SPLIT: E1 → E1+E3 (LT=2.44, rank=8) ***
+Step 6000/25000|loss=3.0469|tau=0.700|exp=4 r=8|LT:E0=1.85 E1=2.44 E2=2.15 E3=2.44
+Step 6500/25000|loss=3.3125|tau=0.675|exp=4 r=8|LT:E0=1.95 E1=2.45 E2=2.27 E3=2.02
+Step 7000/25000|loss=2.2188|tau=0.650|exp=4 r=8|LT:E0=1.94 E1=2.51 E2=2.19 E3=2.00
+Step 7500/25000|loss=2.7812|tau=0.625|exp=4 r=8|LT:E0=1.69 E1=2.52 E2=2.20 E3=1.98
+Step 8000/25000|loss=3.1094|tau=0.600|exp=4 r=8|LT:E0=1.81 E1=2.36 E2=2.14 E3=1.84
+Step 8500/25000|loss=2.0469|tau=0.575|exp=4 r=8|LT:E0=1.88 E1=2.47 E2=2.29 E3=2.01
+
+*** SPLIT: E1 → E1+E4 (LT=2.51, rank=8) ***
+Step 9000/25000|loss=2.4688|tau=0.550|exp=5 r=8|LT:E0=1.86 E1=2.51 E2=2.21 E3=1.97 E4=2.51
+Step 9500/25000|loss=2.2812|tau=0.525|exp=5 r=8|LT:E0=1.92 E1=2.38 E2=2.13 E3=1.78 E4=2.58
+
+*** RANK UP ALL: 8 → 16 ***
+Step 10000/25000|loss=4.8438|tau=0.500|exp=5 r=16|LT:E0=2.01 E1=2.34 E2=2.14 E3=1.87 E4=2.58
+  Eval PPL=6.72
+Step 10500/25000|loss=2.4688|tau=0.475|exp=5 r=16|LT:E0=1.81 E1=2.53 E2=2.11 E3=1.70 E4=2.66
+Step 11000/25000|loss=2.0938|tau=0.450|exp=5 r=16|LT:E0=1.40 E1=2.42 E2=2.08 E3=1.77 E4=2.64
+Step 11500/25000|loss=2.7031|tau=0.425|exp=5 r=16|LT:E0=1.98 E1=2.31 E2=2.09 E3=1.87 E4=2.57
+
+*** SPLIT: E4 → E4+E5 (LT=2.63, rank=16) ***
+Step 12000/25000|loss=3.0469|tau=0.400|exp=6 r=16|LT:E0=1.52 E1=2.44 E2=2.10 E3=1.91 E4=2.63 E5=2.63
+Step 12500/25000|loss=2.5938|tau=0.375|exp=6 r=16|LT:E0=2.11 E1=2.36 E2=2.10 E3=1.87 E4=2.61 E5=2.68
+Step 13000/25000|loss=2.9062|tau=0.350|exp=6 r=16|LT:E0=1.83 E1=2.28 E2=2.02 E3=1.63 E4=2.59 E5=2.63
+Step 13500/25000|loss=2.9531|tau=0.325|exp=6 r=16|LT:E0=2.12 E1=2.41 E2=2.15 E3=1.77 E4=2.61 E5=2.70
+Step 14000/25000|loss=2.7969|tau=0.300|exp=6 r=16|LT:E0=1.64 E1=2.45 E2=2.08 E3=1.79 E4=2.77 E5=2.79
+Step 14500/25000|loss=2.6094|tau=0.275|exp=6 r=16|LT:E0=1.58 E1=2.41 E2=2.04 E3=1.85 E4=2.59 E5=2.65
+
+*** SPLIT: E5 → E5+E6 (LT=2.72, rank=16) ***
+
+*** RANK UP ALL: 16 → 32 ***
+Step 15000/25000|loss=2.7500|tau=0.250|exp=7 r=32|LT:E0=1.69 E1=2.33 E2=1.96 E3=1.74 E4=2.69 E5=2.72 E6=2.72
+  Eval PPL=77.00
+Step 15500/25000|loss=3.0156|tau=0.225|exp=7 r=32|LT:E0=1.33 E1=2.23 E2=1.97 E3=1.66 E4=2.51 E5=2.54 E6=2.64
+Step 16000/25000|loss=2.7500|tau=0.200|exp=7 r=32|LT:E0=1.58 E1=2.29 E2=2.00 E3=1.71 E4=2.50 E5=2.88 E6=2.65
+Step 16500/25000|loss=2.8906|tau=0.175|exp=7 r=32|LT:E0=1.75 E1=2.24 E2=2.02 E3=1.68 E4=2.63 E5=2.83 E6=2.71
+Step 17000/25000|loss=2.9688|tau=0.150|exp=7 r=32|LT:E0=1.43 E1=2.29 E2=2.03 E3=1.71 E4=2.67 E5=2.61 E6=2.68
+Step 17500/25000|loss=2.1875|tau=0.125|exp=7 r=32|LT:E0=1.67 E1=2.28 E2=2.08 E3=1.73 E4=2.62 E5=2.72 E6=2.68
+
+*** SPLIT: E5 → E5+E7 (LT=2.61, rank=32) ***
+Step 18000/25000|loss=2.0156|tau=0.100|exp=8 r=32|LT:E0=2.27 E1=2.17 E2=1.90 E3=1.61 E4=2.38 E5=2.61 E6=2.46 E7=2.61
+Step 18500/25000|loss=2.6250|tau=0.100|exp=8 r=32|LT:E0=1.68 E1=2.46 E2=2.19 E3=1.87 E4=2.68 E5=2.66 E6=2.68 E7=2.84
+Step 19000/25000|loss=2.2500|tau=0.100|exp=8 r=32|LT:E0=1.85 E1=2.38 E2=2.06 E3=1.67 E4=2.66 E5=2.68 E6=2.56 E7=2.64
+Step 19500/25000|loss=2.7500|tau=0.100|exp=8 r=32|LT:E0=1.19 E1=2.18 E2=2.02 E3=1.60 E4=2.63 E5=2.70 E6=2.73 E7=2.78
+
+*** RANK UP ALL: 32 → 64 ***
+Step 20000/25000|loss=2.9375|tau=0.100|exp=8 r=64|LT:E0=1.32 E1=2.36 E2=1.96 E3=1.71 E4=2.60 E5=2.74 E6=2.74 E7=2.87
+  Eval PPL=9.19
+Step 20500/25000|loss=3.1719|tau=0.100|exp=8 r=64|LT:E0=1.51 E1=2.37 E2=2.06 E3=1.77 E4=2.60 E5=2.60 E6=2.59 E7=2.79
+Step 21000/25000|loss=1.9141|tau=0.100|exp=8 r=64|LT:E0=1.93 E1=2.24 E2=2.01 E3=1.72 E4=2.60 E5=2.62 E6=2.65 E7=2.84
+Step 21500/25000|loss=2.4375|tau=0.100|exp=8 r=64|LT:E0=1.86 E1=2.45 E2=2.11 E3=1.76 E4=2.63 E5=2.73 E6=2.77 E7=2.74
+Step 22000/25000|loss=2.6562|tau=0.100|exp=8 r=64|LT:E0=1.73 E1=2.16 E2=1.89 E3=1.68 E4=2.53 E5=2.71 E6=2.73 E7=2.51
+Step 22500/25000|loss=2.4531|tau=0.100|exp=8 r=64|LT:E0=1.25 E1=2.37 E2=1.91 E3=1.66 E4=2.62 E5=2.62 E6=2.49 E7=2.65
+Step 23000/25000|loss=2.3906|tau=0.100|exp=8 r=64|LT:E0=1.75 E1=2.26 E2=2.09 E3=1.64 E4=2.63 E5=2.71 E6=2.68 E7=2.70
+Step 23500/25000|loss=2.2031|tau=0.100|exp=8 r=64|LT:E0=2.35 E1=2.39 E2=2.06 E3=1.80 E4=2.57 E5=2.69 E6=2.80 E7=2.74
+Step 24000/25000|loss=2.8125|tau=0.100|exp=8 r=64|LT:E0=1.65 E1=2.29 E2=1.98 E3=1.70 E4=2.59 E5=2.60 E6=2.68 E7=2.83
+Step 24500/25000|loss=3.1875|tau=0.100|exp=8 r=64|LT:E0=1.90 E1=2.52 E2=2.07 E3=1.71 E4=2.65 E5=2.69 E6=2.77 E7=2.76
+
+Saved. Final: 8 experts, rank=64
+Events: [
+  {
+    "step": 3000,
+    "event": "split",
+    "from": 1,
+    "to": 2,
+    "n_experts": 3,
+    "learntropy": 2.3350069874263277,
+    "rank": 4
+  },
+  {
+    "step": 5000,
+    "event": "rank_up",
+    "new_rank": 8,
+    "n_experts": 3
+  },
+  {
+    "step": 6000,
+    "event": "split",
+    "from": 1,
+    "to": 3,
+    "n_experts": 4,
+    "learntropy": 2.4449718921484886,
+    "rank": 8
+  },
+  {
+    "step": 9000,
+    "event": "split",
+    "from": 1,
+    "to": 4,
+    "n_experts": 5,
+    "learntropy": 2.5087051945266157,
+    "rank": 8
+  },
+  {
+    "step": 10000,
+    "event": "rank_up",
+    "new_rank": 16,
+    "n_experts": 5
+  },
+  {
+    "step": 12000,
+    "event": "split",
+    "from": 4,
+    "to": 5,
+    "n_experts": 6,
+    "learntropy": 2.6318633091991694,
+    "rank": 16
+  },
+  {
+    "step": 15000,
+    "event": "split",
+    "from": 5,
+    "to": 6,
+    "n_experts": 7,
+    "learntropy": 2.7249211029411096,
+    "rank": 16
+  },
+  {
+    "step": 15000,
+    "event": "rank_up",
+    "new_rank": 32,
+    "n_experts": 7
+  },
+  {
+    "step": 18000,
+    "event": "split",
+    "from": 5,
+    "to": 7,
+    "n_experts": 8,
+    "learntropy": 2.6083338591952168,
+    "rank": 32
+  },
+  {
+    "step": 20000,
+    "event": "rank_up",
+    "new_rank": 64,
+    "n_experts": 8
+  }
+]
+
+=== M_ij ABLATION (8 experts, rank=64) ===
+Baseline: {'medical': '14.0', 'code': '18.2', 'legal': '15.7', 'news': '12.1', 'conversational': '31.5'}
+No E0: medical=+7.46 code=+10.65 legal=+9.54 news=+7.52 conversational=+26.66|CV=0.5862
+No E1: medical=+0.54 code=+0.90 legal=+1.19 news=+0.66 conversational=+1.20|CV=0.3022
+No E2: medical=+7.86 code=+11.47 legal=+7.73 news=+7.33 conversational=+17.91|CV=0.3836
+No E3: medical=+12.08 code=+16.27 legal=+15.31 news=+11.58 conversational=+26.69|CV=0.3332
+No E4: medical=+0.82 code=+0.87 legal=+0.87 news=+1.00 conversational=+1.29|CV=0.1762
+No E5: medical=+0.33 code=+0.46 legal=+0.65 news=+0.54 conversational=+0.92|CV=0.3411
+No E6: medical=+2.08 code=+3.25 legal=+3.36 news=+3.31 conversational=+4.33|CV=0.2184
+No E7: medical=+3.53 code=+4.60 legal=+4.10 news=+3.91 conversational=+7.30|CV=0.2880
+
+Overall M_ij CV: 1.0799, Active: 8/8
+Done.

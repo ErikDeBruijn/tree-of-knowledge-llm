@@ -1,0 +1,122 @@
+[2026-03-27 18:46:08] ======================================================================
+[2026-03-27 18:46:08] TOP-2 ROUTING ABLATION MATRIX M_ij — 4 Experts x 5 Domains
+[2026-03-27 18:46:08] ======================================================================
+[2026-03-27 18:46:08] Device: cuda:1
+[2026-03-27 18:46:08] Checkpoint: /root/t6b-mogae/checkpoints/top2_routing/top2_final.pt
+[2026-03-27 18:46:08] Samples per domain: 200
+[2026-03-27 18:46:08] Architecture: 4 experts, top-2 routing
+[2026-03-27 18:46:08] GPU cuda:1: NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition
+[2026-03-27 18:46:08] GPU 1 memory: 102.0 GB
+[2026-03-27 18:46:08] Collecting 200 samples per domain from C4...
+[2026-03-27 18:46:11]   conversational: 200 samples (checked 549)
+[2026-03-27 18:46:11]   code: 200 samples (checked 706)
+[2026-03-27 18:46:11]   news: 200 samples (checked 1069)
+[2026-03-27 18:46:11]   medical: 200 samples (checked 1230)
+[2026-03-27 18:46:11]   legal: 200 samples (checked 1528)
+[2026-03-27 18:46:11]   Final medical: 200 samples
+[2026-03-27 18:46:11]   Final code: 200 samples
+[2026-03-27 18:46:11]   Final legal: 200 samples
+[2026-03-27 18:46:11]   Final news: 200 samples
+[2026-03-27 18:46:11]   Final conversational: 200 samples
+[2026-03-27 18:46:12] Loading Qwen/Qwen3-1.7B...
+[2026-03-27 18:46:14] Base model loaded in 6.4s
+[2026-03-27 18:46:14] Loading checkpoint...
+[2026-03-27 18:46:14]   Step: 24414, Tau: 0.1
+[2026-03-27 18:46:14]   Tree: {18: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 19: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 20: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 21: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 22: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 23: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 24: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 25: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 26: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}, 27: {'num_experts': 4, 'ranks': [4, 4, 4, 4]}}
+[2026-03-27 18:46:14]   Forking layers loaded (Top2GumbelRouter architecture)
+[2026-03-27 18:46:14]   Params per expert: {'expert_0': 655360, 'expert_1': 655360, 'expert_2': 655360, 'expert_3': 655360}
+[2026-03-27 18:46:14] 
+--- Config: all_active ---
+[2026-03-27 18:46:18]   medical: PPL = 16.63
+[2026-03-27 18:46:21]   code: PPL = 17.81
+[2026-03-27 18:46:24]   legal: PPL = 16.22
+[2026-03-27 18:46:28]   news: PPL = 17.32
+[2026-03-27 18:46:31]   conversational: PPL = 19.91
+[2026-03-27 18:46:31] 
+--- Config: expert0_disabled ---
+[2026-03-27 18:46:34]   medical: PPL = 16.87
+[2026-03-27 18:46:38]   code: PPL = 18.11
+[2026-03-27 18:46:41]   legal: PPL = 16.49
+[2026-03-27 18:46:44]   news: PPL = 17.61
+[2026-03-27 18:46:48]   conversational: PPL = 20.30
+[2026-03-27 18:46:48] 
+--- Config: expert1_disabled ---
+[2026-03-27 18:46:51]   medical: PPL = 16.84
+[2026-03-27 18:46:54]   code: PPL = 18.06
+[2026-03-27 18:46:58]   legal: PPL = 16.49
+[2026-03-27 18:47:01]   news: PPL = 17.57
+[2026-03-27 18:47:04]   conversational: PPL = 20.25
+[2026-03-27 18:47:04] 
+--- Config: expert2_disabled ---
+[2026-03-27 18:47:08]   medical: PPL = 17.20
+[2026-03-27 18:47:11]   code: PPL = 18.40
+[2026-03-27 18:47:14]   legal: PPL = 16.73
+[2026-03-27 18:47:18]   news: PPL = 17.87
+[2026-03-27 18:47:21]   conversational: PPL = 20.62
+[2026-03-27 18:47:21] 
+--- Config: expert3_disabled ---
+[2026-03-27 18:47:24]   medical: PPL = 17.10
+[2026-03-27 18:47:28]   code: PPL = 18.39
+[2026-03-27 18:47:31]   legal: PPL = 16.68
+[2026-03-27 18:47:34]   news: PPL = 17.82
+[2026-03-27 18:47:38]   conversational: PPL = 20.59
+[2026-03-27 18:47:38] 
+======================================================================
+[2026-03-27 18:47:38] ABLATION MATRIX M_ij = PPL(without expert j) - PPL(baseline)
+[2026-03-27 18:47:38] ======================================================================
+[2026-03-27 18:47:38] Domain           |    M[d,E0] |    M[d,E1] |    M[d,E2] |    M[d,E3]
+[2026-03-27 18:47:38] ------------------------------------------------------------------------
+[2026-03-27 18:47:38] medical          |      0.242 |      0.218 |      0.575 |      0.470
+[2026-03-27 18:47:38] code             |      0.302 |      0.257 |      0.592 |      0.578
+[2026-03-27 18:47:38] legal            |      0.272 |      0.274 |      0.508 |      0.463
+[2026-03-27 18:47:38] news             |      0.293 |      0.251 |      0.556 |      0.503
+[2026-03-27 18:47:38] conversational   |      0.385 |      0.334 |      0.705 |      0.677
+[2026-03-27 18:47:38] 
+======================================================================
+[2026-03-27 18:47:38] DERIVED METRICS
+[2026-03-27 18:47:38] ======================================================================
+[2026-03-27 18:47:38] Expert 0 impact: mean=0.299, std=0.048, range=[0.242, 0.385]
+[2026-03-27 18:47:38] Expert 1 impact: mean=0.267, std=0.038, range=[0.218, 0.334]
+[2026-03-27 18:47:38] Expert 2 impact: mean=0.587, std=0.065, range=[0.508, 0.705]
+[2026-03-27 18:47:38] Expert 3 impact: mean=0.538, std=0.080, range=[0.463, 0.677]
+[2026-03-27 18:47:38] 
+--- Diagonal Dominance ---
+[2026-03-27 18:47:38]   Expert 0: strongest on 'conversational' (M=0.385, mean_others=0.278, dominance=0.108)
+[2026-03-27 18:47:38]   Expert 1: strongest on 'conversational' (M=0.334, mean_others=0.250, dominance=0.084)
+[2026-03-27 18:47:38]   Expert 2: strongest on 'conversational' (M=0.705, mean_others=0.558, dominance=0.148)
+[2026-03-27 18:47:38]   Expert 3: strongest on 'conversational' (M=0.677, mean_others=0.504, dominance=0.173)
+[2026-03-27 18:47:38] 
+Diagonality (CV of impact across domains):
+[2026-03-27 18:47:38]   expert_0: CV=0.1598 -> moderate
+[2026-03-27 18:47:38]   expert_1: CV=0.1431 -> moderate
+[2026-03-27 18:47:38]   expert_2: CV=0.1115 -> moderate
+[2026-03-27 18:47:38]   expert_3: CV=0.1493 -> moderate
+[2026-03-27 18:47:38] 
+Domain-level CV (how unequal is expert contribution per domain):
+[2026-03-27 18:47:38]   medical: CV=0.4015
+[2026-03-27 18:47:38]   code: CV=0.3553
+[2026-03-27 18:47:38]   legal: CV=0.2834
+[2026-03-27 18:47:38]   news: CV=0.3262
+[2026-03-27 18:47:38]   conversational: CV=0.3182
+[2026-03-27 18:47:38] 
+======================================================================
+[2026-03-27 18:47:38] COMPARISON WITH GUMBEL (2-expert, top-1)
+[2026-03-27 18:47:38] ======================================================================
+[2026-03-27 18:47:38]   Gumbel (2-exp, top-1) mean CV: 0.1178
+[2026-03-27 18:47:38]   Top-2  (4-exp, top-2) mean CV: 0.1409
+[2026-03-27 18:47:38]   Delta CV: +0.0231
+[2026-03-27 18:47:38]   -> Similar causal locality (delta < 0.05)
+[2026-03-27 18:47:38]   Fork_trunk18 (hard argmax) mean CV: 0.1109
+[2026-03-27 18:47:38]   Top-2  (4-exp, top-2)       mean CV: 0.1409
+[2026-03-27 18:47:38] 
+Results saved to /root/t6b-mogae/results/top2_ablation_matrix.json
+[2026-03-27 18:47:38] Total time: 90.1s
+[2026-03-27 18:47:38] 
+======================================================================
+[2026-03-27 18:47:38] SUMMARY
+[2026-03-27 18:47:38] ======================================================================
+[2026-03-27 18:47:38] Mean |M_ij|: 0.423 PPL points
+[2026-03-27 18:47:38] Mean CV across experts: 0.1409
+[2026-03-27 18:47:38] Max CV: 0.1598
+[2026-03-27 18:47:38] Experts with CV > 0.2: 0/4
+[2026-03-27 18:47:38] RESULT: PARTIAL — some structure but limited domain selectivity

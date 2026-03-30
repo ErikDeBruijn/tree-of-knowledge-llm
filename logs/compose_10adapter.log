@@ -1,0 +1,196 @@
+=== Composing grove from 10 adapters ===
+  bbc_alice (alice) — BBC news 2025 — rank 16
+  cuisine_bob (bob) — Dutch cuisine — rank 16
+  wingchun_carol (carol) — Wing Chun martial arts — rank 8
+  physics (science_v2) — physics — rank 16
+  biology (science_v2) — biology — rank 16
+  chemistry (science_v2) — chemistry — rank 16
+  mathematics (science_v2) — mathematics — rank 16
+  computer_science (science_v2) — computer_science — rank 16
+  medicine (science_v2) — medicine — rank 16
+  ai_ml (ai_researcher) — AI and machine learning — rank 16
+
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:41,  9.54it/s]Loading weights:   7%|▋         | 26/399 [00:00<00:03, 102.45it/s]Loading weights:  14%|█▍        | 57/399 [00:00<00:01, 177.80it/s]Loading weights:  22%|██▏       | 87/399 [00:00<00:01, 198.81it/s]Loading weights:  32%|███▏      | 126/399 [00:00<00:01, 251.01it/s]Loading weights:  39%|███▊      | 154/399 [00:00<00:00, 252.84it/s]Loading weights:  45%|████▌     | 181/399 [00:00<00:00, 254.53it/s]Loading weights:  54%|█████▍    | 215/399 [00:00<00:00, 270.64it/s]Loading weights:  61%|██████    | 243/399 [00:01<00:00, 269.28it/s]Loading weights:  68%|██████▊   | 271/399 [00:01<00:00, 268.95it/s]Loading weights:  77%|███████▋  | 309/399 [00:01<00:00, 300.65it/s]Loading weights:  85%|████████▌ | 340/399 [00:01<00:00, 294.77it/s]Loading weights:  93%|█████████▎| 370/399 [00:01<00:00, 296.03it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 254.58it/s]
+Loading bbc_alice...
+Loading cuisine_bob...
+Loading wingchun_carol...
+Loading physics...
+Loading biology...
+Loading chemistry...
+Loading mathematics...
+Loading computer_science...
+Loading medicine...
+Loading ai_ml...
+  bbc_alice: 900 domain texts from /tmp/bbc_2025_clean.jsonl
+  cuisine_bob: 873 domain texts from /tmp/dutch_cuisine_clean.jsonl
+  wingchun_carol: 27 domain texts from /root/t6b-mogae/data/wing-chun-data.jsonl
+  physics: 500 domain texts from /root/t6b-mogae/data/science_v2/physics.jsonl
+  biology: 500 domain texts from /root/t6b-mogae/data/science_v2/biology.jsonl
+  chemistry: 500 domain texts from /root/t6b-mogae/data/science_v2/chemistry.jsonl
+  mathematics: 500 domain texts from /root/t6b-mogae/data/science_v2/mathematics.jsonl
+  computer_science: 500 domain texts from /root/t6b-mogae/data/science_v2/computer_science.jsonl
+  medicine: 500 domain texts from /root/t6b-mogae/data/science_v2/medicine.jsonl
+  ai_ml: 500 domain texts from /root/t6b-mogae/data/science_v2/ai_ml_papers.jsonl
+
+=== JOINT GATE TRAINING (2000 steps, 10 adapters) ===
+  Step 0/2000 | lm=1.9531 | bbc_alice | bbc_alice=0.528 | cuisine_bob=0.224 | wingchun_carol=0.017 | physics=0.023 | biology=0.014 | chemistry=0.036 | mathematics=0.027 | computer_science=0.026 | medicine=0.029 | ai_ml=0.007
+  Step 200/2000 | lm=0.0417 | wingchun_carol | bbc_alice=0.005 | cuisine_bob=0.006 | wingchun_carol=0.940 | physics=0.009 | biology=0.004 | chemistry=0.007 | mathematics=0.003 | computer_science=0.004 | medicine=0.004 | ai_ml=0.008
+  Step 400/2000 | lm=0.8633 | biology | bbc_alice=0.053 | cuisine_bob=0.086 | wingchun_carol=0.014 | physics=0.059 | biology=0.551 | chemistry=0.043 | mathematics=0.030 | computer_science=0.058 | medicine=0.043 | ai_ml=0.034
+  Step 600/2000 | lm=1.9844 | mathematics | bbc_alice=0.020 | cuisine_bob=0.021 | wingchun_carol=0.004 | physics=0.402 | biology=0.098 | chemistry=0.033 | mathematics=0.335 | computer_science=0.037 | medicine=0.013 | ai_ml=0.020
+  Step 800/2000 | lm=0.9219 | medicine | bbc_alice=0.018 | cuisine_bob=0.071 | wingchun_carol=0.005 | physics=0.020 | biology=0.059 | chemistry=0.027 | mathematics=0.020 | computer_science=0.022 | medicine=0.647 | ai_ml=0.073
+  Step 1000/2000 | lm=2.9531 | generic | bbc_alice=0.065 | cuisine_bob=0.273 | wingchun_carol=0.018 | physics=0.020 | biology=0.016 | chemistry=0.033 | mathematics=0.026 | computer_science=0.118 | medicine=0.009 | ai_ml=0.052
+  Step 1200/2000 | lm=2.1406 | cuisine_bob | bbc_alice=0.007 | cuisine_bob=0.924 | wingchun_carol=0.001 | physics=0.006 | biology=0.024 | chemistry=0.006 | mathematics=0.006 | computer_science=0.003 | medicine=0.003 | ai_ml=0.003
+  Step 1400/2000 | lm=0.9062 | physics | bbc_alice=0.011 | cuisine_bob=0.006 | wingchun_carol=0.003 | physics=0.879 | biology=0.021 | chemistry=0.040 | mathematics=0.009 | computer_science=0.005 | medicine=0.003 | ai_ml=0.011
+  Step 1600/2000 | lm=1.0859 | chemistry | bbc_alice=0.017 | cuisine_bob=0.044 | wingchun_carol=0.011 | physics=0.027 | biology=0.040 | chemistry=0.495 | mathematics=0.105 | computer_science=0.041 | medicine=0.144 | ai_ml=0.008
+  Step 1800/2000 | lm=0.1079 | computer_science | bbc_alice=0.001 | cuisine_bob=0.002 | wingchun_carol=0.001 | physics=0.001 | biology=0.001 | chemistry=0.003 | mathematics=0.004 | computer_science=0.981 | medicine=0.001 | ai_ml=0.002
+
+=== EVALUATION ===
+  bbc_alice domain: PPL=11.63 | bbc_alice=0.903 | cuisine_bob=0.019 | wingchun_carol=0.005 | physics=0.007 | biology=0.007 | chemistry=0.005 | mathematics=0.006 | computer_science=0.006 | medicine=0.019 | ai_ml=0.006
+  cuisine_bob domain: PPL=10.79 | bbc_alice=0.006 | cuisine_bob=0.952 | wingchun_carol=0.002 | physics=0.003 | biology=0.003 | chemistry=0.005 | mathematics=0.003 | computer_science=0.003 | medicine=0.004 | ai_ml=0.005
+  wingchun_carol domain: PPL=1.44 | bbc_alice=0.046 | cuisine_bob=0.027 | wingchun_carol=0.820 | physics=0.014 | biology=0.014 | chemistry=0.011 | mathematics=0.011 | computer_science=0.014 | medicine=0.009 | ai_ml=0.016
+  physics domain: PPL=14.36 | bbc_alice=0.030 | cuisine_bob=0.027 | wingchun_carol=0.004 | physics=0.650 | biology=0.018 | chemistry=0.118 | mathematics=0.042 | computer_science=0.049 | medicine=0.036 | ai_ml=0.010
+  biology domain: PPL=14.55 | bbc_alice=0.036 | cuisine_bob=0.051 | wingchun_carol=0.006 | physics=0.060 | biology=0.553 | chemistry=0.068 | mathematics=0.034 | computer_science=0.028 | medicine=0.131 | ai_ml=0.011
+  chemistry domain: PPL=15.30 | bbc_alice=0.023 | cuisine_bob=0.060 | wingchun_carol=0.006 | physics=0.155 | biology=0.157 | chemistry=0.327 | mathematics=0.041 | computer_science=0.050 | medicine=0.146 | ai_ml=0.011
+  mathematics domain: PPL=12.71 | bbc_alice=0.019 | cuisine_bob=0.025 | wingchun_carol=0.004 | physics=0.048 | biology=0.037 | chemistry=0.045 | mathematics=0.708 | computer_science=0.064 | medicine=0.019 | ai_ml=0.013
+  computer_science domain: PPL=14.37 | bbc_alice=0.019 | cuisine_bob=0.046 | wingchun_carol=0.004 | physics=0.036 | biology=0.028 | chemistry=0.034 | mathematics=0.106 | computer_science=0.649 | medicine=0.039 | ai_ml=0.017
+  medicine domain: PPL=11.59 | bbc_alice=0.023 | cuisine_bob=0.054 | wingchun_carol=0.004 | physics=0.016 | biology=0.049 | chemistry=0.055 | mathematics=0.017 | computer_science=0.018 | medicine=0.736 | ai_ml=0.007
+  ai_ml domain: PPL=15.69 | bbc_alice=0.005 | cuisine_bob=0.010 | wingchun_carol=0.002 | physics=0.010 | biology=0.004 | chemistry=0.006 | mathematics=0.011 | computer_science=0.011 | medicine=0.003 | ai_ml=0.933
+  Generic: PPL=15.84 | bbc_alice=0.127 | cuisine_bob=0.253 | wingchun_carol=0.022 | physics=0.050 | biology=0.042 | chemistry=0.054 | mathematics=0.058 | computer_science=0.057 | medicine=0.086 | ai_ml=0.037
+  Base bbc_alice: PPL=12.74
+  Base cuisine_bob: PPL=11.86
+  Base wingchun_carol: PPL=14.32
+  Base physics: PPL=8.76
+  Base biology: PPL=9.35
+  Base chemistry: PPL=9.71
+  Base mathematics: PPL=8.23
+  Base computer_science: PPL=9.38
+  Base medicine: PPL=7.82
+  Base ai_ml: PPL=8.42
+  Base generic: PPL=18.47
+
+=== M_ij MATRIX (diagonal dominance check) ===
+
+Domain               Base PPL   Grove PPL  Delta      bbc_alic  cuisine_  wingchun   physics   biology  chemistr  mathemat  computer  medicine     ai_ml
+----------------------------------------------------------------------------------------------------------------------------------------------------
+bbc_alice            12.74      11.63         -8.7%     0.903     0.019     0.005     0.007     0.007     0.005     0.006     0.006     0.019     0.006
+cuisine_bob          11.86      10.79         -9.0%     0.006     0.952     0.002     0.003     0.003     0.005     0.003     0.003     0.004     0.005
+wingchun_carol       14.32      1.44         -89.9%     0.046     0.027     0.820     0.014     0.014     0.011     0.011     0.014     0.009     0.016
+physics              8.76       14.36        +63.9%     0.030     0.027     0.004     0.650     0.018     0.118     0.042     0.049     0.036     0.010
+biology              9.35       14.55        +55.6%     0.036     0.051     0.006     0.060     0.553     0.068     0.034     0.028     0.131     0.011
+chemistry            9.71       15.30        +57.5%     0.023     0.060     0.006     0.155     0.157     0.327     0.041     0.050     0.146     0.011
+mathematics          8.23       12.71        +54.4%     0.019     0.025     0.004     0.048     0.037     0.045     0.708     0.064     0.019     0.013
+computer_science     9.38       14.37        +53.1%     0.019     0.046     0.004     0.036     0.028     0.034     0.106     0.649     0.039     0.017
+medicine             7.82       11.59        +48.1%     0.023     0.054     0.004     0.016     0.049     0.055     0.017     0.018     0.736     0.007
+ai_ml                8.42       15.69        +86.3%     0.005     0.010     0.002     0.010     0.004     0.006     0.011     0.011     0.003     0.933
+generic              18.47      15.84        -14.2%     0.127     0.253     0.022     0.050     0.042     0.054     0.058     0.057     0.086     0.037
+
+=== SUCCESS CRITERIA ===
+  [PASS] bbc_alice diagonal dominant: 0.903 (threshold: 0.12711601893107097)
+  [PASS] cuisine_bob diagonal dominant: 0.952 (threshold: 0.2526536687215169)
+  [PASS] wingchun_carol diagonal dominant: 0.820 (threshold: 0.02248603430110961)
+  [PASS] physics diagonal dominant: 0.650 (threshold: 0.1546159638298882)
+  [PASS] biology diagonal dominant: 0.553 (threshold: 0.15733443498611446)
+  [PASS] chemistry diagonal dominant: 0.327 (threshold: 0.11786837048000758)
+  [PASS] mathematics diagonal dominant: 0.708 (threshold: 0.1062149445215861)
+  [PASS] computer_science diagonal dominant: 0.649 (threshold: 0.06381198366483053)
+  [PASS] medicine diagonal dominant: 0.736 (threshold: 0.1455967194504208)
+  [PASS] ai_ml diagonal dominant: 0.933 (threshold: 0.03692726016044617)
+  [PASS] bbc_alice leak on cuisine_bob: 0.006 (threshold: 0.1)
+  [PASS] bbc_alice leak on wingchun_carol: 0.046 (threshold: 0.1)
+  [PASS] bbc_alice leak on physics: 0.030 (threshold: 0.1)
+  [PASS] bbc_alice leak on biology: 0.036 (threshold: 0.1)
+  [PASS] bbc_alice leak on chemistry: 0.023 (threshold: 0.1)
+  [PASS] bbc_alice leak on mathematics: 0.019 (threshold: 0.1)
+  [PASS] bbc_alice leak on computer_science: 0.019 (threshold: 0.1)
+  [PASS] bbc_alice leak on medicine: 0.023 (threshold: 0.1)
+  [PASS] bbc_alice leak on ai_ml: 0.005 (threshold: 0.1)
+  [PASS] cuisine_bob leak on bbc_alice: 0.019 (threshold: 0.1)
+  [PASS] cuisine_bob leak on wingchun_carol: 0.027 (threshold: 0.1)
+  [PASS] cuisine_bob leak on physics: 0.027 (threshold: 0.1)
+  [PASS] cuisine_bob leak on biology: 0.051 (threshold: 0.1)
+  [PASS] cuisine_bob leak on chemistry: 0.060 (threshold: 0.1)
+  [PASS] cuisine_bob leak on mathematics: 0.025 (threshold: 0.1)
+  [PASS] cuisine_bob leak on computer_science: 0.046 (threshold: 0.1)
+  [PASS] cuisine_bob leak on medicine: 0.054 (threshold: 0.1)
+  [PASS] cuisine_bob leak on ai_ml: 0.010 (threshold: 0.1)
+  [PASS] wingchun_carol leak on bbc_alice: 0.005 (threshold: 0.1)
+  [PASS] wingchun_carol leak on cuisine_bob: 0.002 (threshold: 0.1)
+  [PASS] wingchun_carol leak on physics: 0.004 (threshold: 0.1)
+  [PASS] wingchun_carol leak on biology: 0.006 (threshold: 0.1)
+  [PASS] wingchun_carol leak on chemistry: 0.006 (threshold: 0.1)
+  [PASS] wingchun_carol leak on mathematics: 0.004 (threshold: 0.1)
+  [PASS] wingchun_carol leak on computer_science: 0.004 (threshold: 0.1)
+  [PASS] wingchun_carol leak on medicine: 0.004 (threshold: 0.1)
+  [PASS] wingchun_carol leak on ai_ml: 0.002 (threshold: 0.1)
+  [PASS] physics leak on bbc_alice: 0.007 (threshold: 0.1)
+  [PASS] physics leak on cuisine_bob: 0.003 (threshold: 0.1)
+  [PASS] physics leak on wingchun_carol: 0.014 (threshold: 0.1)
+  [PASS] physics leak on biology: 0.060 (threshold: 0.1)
+  [FAIL] physics leak on chemistry: 0.155 (threshold: 0.1)
+  [PASS] physics leak on mathematics: 0.048 (threshold: 0.1)
+  [PASS] physics leak on computer_science: 0.036 (threshold: 0.1)
+  [PASS] physics leak on medicine: 0.016 (threshold: 0.1)
+  [PASS] physics leak on ai_ml: 0.010 (threshold: 0.1)
+  [PASS] biology leak on bbc_alice: 0.007 (threshold: 0.1)
+  [PASS] biology leak on cuisine_bob: 0.003 (threshold: 0.1)
+  [PASS] biology leak on wingchun_carol: 0.014 (threshold: 0.1)
+  [PASS] biology leak on physics: 0.018 (threshold: 0.1)
+  [FAIL] biology leak on chemistry: 0.157 (threshold: 0.1)
+  [PASS] biology leak on mathematics: 0.037 (threshold: 0.1)
+  [PASS] biology leak on computer_science: 0.028 (threshold: 0.1)
+  [PASS] biology leak on medicine: 0.049 (threshold: 0.1)
+  [PASS] biology leak on ai_ml: 0.004 (threshold: 0.1)
+  [PASS] chemistry leak on bbc_alice: 0.005 (threshold: 0.1)
+  [PASS] chemistry leak on cuisine_bob: 0.005 (threshold: 0.1)
+  [PASS] chemistry leak on wingchun_carol: 0.011 (threshold: 0.1)
+  [FAIL] chemistry leak on physics: 0.118 (threshold: 0.1)
+  [PASS] chemistry leak on biology: 0.068 (threshold: 0.1)
+  [PASS] chemistry leak on mathematics: 0.045 (threshold: 0.1)
+  [PASS] chemistry leak on computer_science: 0.034 (threshold: 0.1)
+  [PASS] chemistry leak on medicine: 0.055 (threshold: 0.1)
+  [PASS] chemistry leak on ai_ml: 0.006 (threshold: 0.1)
+  [PASS] mathematics leak on bbc_alice: 0.006 (threshold: 0.1)
+  [PASS] mathematics leak on cuisine_bob: 0.003 (threshold: 0.1)
+  [PASS] mathematics leak on wingchun_carol: 0.011 (threshold: 0.1)
+  [PASS] mathematics leak on physics: 0.042 (threshold: 0.1)
+  [PASS] mathematics leak on biology: 0.034 (threshold: 0.1)
+  [PASS] mathematics leak on chemistry: 0.041 (threshold: 0.1)
+  [FAIL] mathematics leak on computer_science: 0.106 (threshold: 0.1)
+  [PASS] mathematics leak on medicine: 0.017 (threshold: 0.1)
+  [PASS] mathematics leak on ai_ml: 0.011 (threshold: 0.1)
+  [PASS] computer_science leak on bbc_alice: 0.006 (threshold: 0.1)
+  [PASS] computer_science leak on cuisine_bob: 0.003 (threshold: 0.1)
+  [PASS] computer_science leak on wingchun_carol: 0.014 (threshold: 0.1)
+  [PASS] computer_science leak on physics: 0.049 (threshold: 0.1)
+  [PASS] computer_science leak on biology: 0.028 (threshold: 0.1)
+  [PASS] computer_science leak on chemistry: 0.050 (threshold: 0.1)
+  [PASS] computer_science leak on mathematics: 0.064 (threshold: 0.1)
+  [PASS] computer_science leak on medicine: 0.018 (threshold: 0.1)
+  [PASS] computer_science leak on ai_ml: 0.011 (threshold: 0.1)
+  [PASS] medicine leak on bbc_alice: 0.019 (threshold: 0.1)
+  [PASS] medicine leak on cuisine_bob: 0.004 (threshold: 0.1)
+  [PASS] medicine leak on wingchun_carol: 0.009 (threshold: 0.1)
+  [PASS] medicine leak on physics: 0.036 (threshold: 0.1)
+  [FAIL] medicine leak on biology: 0.131 (threshold: 0.1)
+  [FAIL] medicine leak on chemistry: 0.146 (threshold: 0.1)
+  [PASS] medicine leak on mathematics: 0.019 (threshold: 0.1)
+  [PASS] medicine leak on computer_science: 0.039 (threshold: 0.1)
+  [PASS] medicine leak on ai_ml: 0.003 (threshold: 0.1)
+  [PASS] ai_ml leak on bbc_alice: 0.006 (threshold: 0.1)
+  [PASS] ai_ml leak on cuisine_bob: 0.005 (threshold: 0.1)
+  [PASS] ai_ml leak on wingchun_carol: 0.016 (threshold: 0.1)
+  [PASS] ai_ml leak on physics: 0.010 (threshold: 0.1)
+  [PASS] ai_ml leak on biology: 0.011 (threshold: 0.1)
+  [PASS] ai_ml leak on chemistry: 0.011 (threshold: 0.1)
+  [PASS] ai_ml leak on mathematics: 0.013 (threshold: 0.1)
+  [PASS] ai_ml leak on computer_science: 0.017 (threshold: 0.1)
+  [PASS] ai_ml leak on medicine: 0.007 (threshold: 0.1)
+  [PASS] generic PPL < +5%: -14.222 (threshold: 5.0)
+
+95/101 passed. VERDICT: FAIL
+
+Results saved to /root/t6b-mogae/grove_registry_full/composition_result.json
+Joint-trained gates saved to /root/t6b-mogae/grove_registry_full/joint_gates/
+t_gates/

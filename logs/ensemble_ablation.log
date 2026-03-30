@@ -1,0 +1,149 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:28,  4.50it/s]Loading weights:   3%|▎         | 10/399 [00:00<00:19, 20.31it/s]Loading weights:  17%|█▋        | 68/399 [00:00<00:02, 142.96it/s]Loading weights:  37%|███▋      | 147/399 [00:00<00:00, 293.97it/s]Loading weights:  50%|████▉     | 198/399 [00:00<00:00, 306.58it/s]Loading weights:  61%|██████    | 243/399 [00:01<00:00, 254.04it/s]Loading weights:  76%|███████▌  | 302/399 [00:01<00:00, 320.43it/s]Loading weights:  90%|████████▉ | 358/399 [00:01<00:00, 372.66it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 271.75it/s]
+Loaded 10 adapters: ['bbc_alice', 'cuisine_bob', 'wingchun_carol', 'physics', 'biology', 'chemistry', 'mathematics', 'computer_science', 'medicine', 'ai_ml']
+
+======================================================================
+ENSEMBLE ABLATION INFERENCE TEST
+======================================================================
+
+======================================================================
+Q1: What is the relationship between entropy in thermodynamics and information theory?
+======================================================================
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+[ALL ADAPTERS]:  How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy
+
+[BASE ONLY]:  How does the concept of entropy in thermodynamics relate to the second law of thermodynamics? What is the significance of the second law of thermodynamics in the context of information theory? How do
+
+[WITHOUT physics]:  Is there a well defined mathematical model for this?
+Yes. It was Shannon who basically invented information theory, and he was heavily influenced by   ← CHANGED
+
+--- Q1 Summary ---
+  Consensus: NO
+  Answer depends on: ['physics']
+
+======================================================================
+Q2: How does CRISPR-Cas9 work at the molecular level?
+======================================================================
+
+[ALL ADAPTERS]:  Bacteria have been using CRISPR-Cas9 to defend themselves against viruses for millions of years. When a bacterium encounters a virus, a fragment of the virus's genetic material is incorporated into t
+
+[BASE ONLY]:  CRISPR-Cas9 is a powerful gene-editing tool that allows scientists to make precise changes to DNA. Here's a step-by-step explanation of how it works at the molecular level:
+
+1. **Guide RNA (gRNA) Des
+
+[WITHOUT cuisine_bob]:  Bacteria employ a powerful gene editing tool called CRISPR-Cas9 to defend themselves against viral infection. This system uses a nuclease enzyme call  ← CHANGED
+
+[WITHOUT wingchun_carol]:  Bacteria use the CRISPR-Cas9 system to defend against viral infection. When a bacterium is infected by a virus, a fragment of the virus's genome is i  ← CHANGED
+
+[WITHOUT physics]:  Bacteria use the CRISPR-Cas9 system to defend against viral infection. When a bacterium is infected by a virus, a fragment of the virus's genome is i  ← CHANGED
+
+[WITHOUT biology]: CRISPR-Cas9 is a powerful tool in genetic engineering that allows scientists to edit DNA with high precision. The system is derived from a natural def  ← CHANGED
+
+[WITHOUT mathematics]:  Bacteria have been using a powerful gene editing tool for millions of years to defend themselves against viruses. This tool, called CRISPR-Cas9, is n  ← CHANGED
+
+[WITHOUT medicine]:  Bacteria employ a powerful gene editing tool called CRISPR-Cas9 to defend themselves against viral infection. The system is able to precisely target   ← CHANGED
+
+[WITHOUT ai_ml]:  Bacteria use the CRISPR-Cas9 system to defend against viruses. When a bacterium encounters a virus, it incorporates a piece of the virus's DNA into i  ← CHANGED
+
+--- Q2 Summary ---
+  Consensus: NO
+  Answer depends on: ['cuisine_bob', 'wingchun_carol', 'physics', 'biology', 'mathematics', 'medicine', 'ai_ml']
+
+======================================================================
+Q3: Explain the difference between supervised and unsupervised learning.
+======================================================================
+
+[ALL ADAPTERS]:  Give 2 examples of each. (4 marks)
+Supervised learning uses training data that is labelled, meaning the correct answer is known. The algorithm learns to predict the correct answer by finding patterns
+
+[BASE ONLY]:  Give an example of each. Also, explain the difference between classification and regression. Give an example of each. Finally, explain the difference between a training set, validation set, and test 
+
+[WITHOUT bbc_alice]:  Give 2 examples of each. | Study.com
+Tech and Engineering
+Explain the difference between supervised and unsupervised learning. Give 2 examples of eac  ← CHANGED
+
+[WITHOUT wingchun_carol]:  Give 2 examples of each.
+Supervised learning involves the use of training data that is categorized or labeled in advance. The goal of supervised lear  ← CHANGED
+
+[WITHOUT physics]:  Give 2 examples of each. (4 marks)
+Describe the difference between classification and regression. (2 marks)
+Explain what a confusion matrix is. (2 ma  ← CHANGED
+
+[WITHOUT biology]:  Give 2 examples of each.
+Supervised learning involves the use of training data that is labeled, meaning that the correct output is known. The algorit  ← CHANGED
+
+[WITHOUT chemistry]:  Give 2 examples of each. | Study.com
+Business
+Explain the difference between supervised and unsupervised learning. Give 2 examples of each.
+Question:  ← CHANGED
+
+[WITHOUT mathematics]:  Give 3 examples of each.
+Supervised learning makes use of known inputs and known expected outputs. Basically, the algorithm learns a mapping between   ← CHANGED
+
+[WITHOUT computer_science]:  Give an example of each. | Study.com
+Tech and Innovation
+Explain the difference between supervised and unsupervised learning. Give an example of each  ← CHANGED
+
+[WITHOUT ai_ml]:  Give 2 examples of each.
+Supervised learning involves the use of training data that is labeled, meaning that the correct answers are already known. T  ← CHANGED
+
+--- Q3 Summary ---
+  Consensus: NO
+  Answer depends on: ['bbc_alice', 'wingchun_carol', 'physics', 'biology', 'chemistry', 'mathematics', 'computer_science', 'ai_ml']
+
+======================================================================
+Q4: What causes antibiotic resistance in bacteria?
+======================================================================
+
+[ALL ADAPTERS]:  Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic in three main ways: On a genet
+
+[BASE ONLY]:  What are the consequences of antibiotic resistance? How can antibiotic resistance be prevented or reduced? What are the key points to remember about antibiotic resistance? What is the role of the Wor
+
+[WITHOUT bbc_alice]:  Antibiotic resistance is a natural process that occurs when bacteria change in response to the use of antibiotics. Bacteria can become resistant to a  ← CHANGED
+
+[WITHOUT biology]:  Antibiotic resistance is a growing problem in the world today. The overuse and misuse of antibiotics in recent years has caused many bacteria to beco  ← CHANGED
+
+[WITHOUT medicine]:  How can we prevent antibiotic resistance?
+Antibiotic resistance in bacteria is caused by the overuse and misuse of antibiotics. When antibiotics are   ← CHANGED
+
+--- Q4 Summary ---
+  Consensus: NO
+  Answer depends on: ['bbc_alice', 'biology', 'medicine']
+
+======================================================================
+Q5: How does a neural network learn through backpropagation?
+======================================================================
+
+[ALL ADAPTERS]:  - Quora
+How does a neural network learn through backpropagation?
+Ad by The Penny Hoarder
+Should you leave more than $1,000 in a checking account?
+You've done it. You're interested in learning more ab
+
+[BASE ONLY]:  Can you explain the process step by step, including the role of the loss function and the gradient descent algorithm? Also, how does the chain rule apply in this context? Backpropagation is a crucial
+
+[WITHOUT ai_ml]:  I've been reading about neural networks and I understand the basic concept of using an input layer, one or more hidden layers and an output layer to   ← CHANGED
+
+--- Q5 Summary ---
+  Consensus: NO
+  Answer depends on: ['ai_ml']
+
+======================================================================
+OVERALL SUMMARY
+======================================================================
+Consensus: 0/5 questions
+Adapter-dependent answers: 5/5
+  Q: What is the relationship between entropy in thermodynamics a...
+     Depends on: ['physics']
+  Q: How does CRISPR-Cas9 work at the molecular level?...
+     Depends on: ['cuisine_bob', 'wingchun_carol', 'physics', 'biology', 'mathematics', 'medicine', 'ai_ml']
+  Q: Explain the difference between supervised and unsupervised l...
+     Depends on: ['bbc_alice', 'wingchun_carol', 'physics', 'biology', 'chemistry', 'mathematics', 'computer_science', 'ai_ml']
+  Q: What causes antibiotic resistance in bacteria?...
+     Depends on: ['bbc_alice', 'biology', 'medicine']
+  Q: How does a neural network learn through backpropagation?...
+     Depends on: ['ai_ml']
+
+Saved to results/ensemble_ablation.json

@@ -1,0 +1,136 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:31, 12.48it/s]Loading weights:  12%|█▏        | 48/399 [00:00<00:01, 211.33it/s]Loading weights:  23%|██▎       | 93/399 [00:00<00:01, 291.30it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 290.59it/s]Loading weights:  39%|███▉      | 156/399 [00:00<00:00, 296.14it/s]Loading weights:  56%|█████▌    | 224/399 [00:00<00:00, 398.14it/s]Loading weights:  66%|██████▋   | 265/399 [00:00<00:00, 395.95it/s]Loading weights:  76%|███████▋  | 305/399 [00:00<00:00, 361.82it/s]Loading weights:  92%|█████████▏| 367/399 [00:01<00:00, 433.14it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 358.17it/s]
+Loaded in 3s, 16.4GB
+Layers: 36, hidden: 4096, inter: 12288
+Expert layers: 24-35
+Trainable: 6,488,064 params (6.5M)
+Loading C4...
+Training 10000 steps...
+'The read operation timed out' thrown while requesting GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00000-of-01024.json.gz
+Retrying in 1s [Retry 1/5].
+Step 0/10000 | loss=3.1406 | tau=1.000 | route=[0.21,0.79]
+Step 100/10000 | loss=2.6719 | tau=0.988 | route=[0.26,0.74]
+Step 200/10000 | loss=3.0000 | tau=0.975 | route=[0.28,0.72]
+Step 300/10000 | loss=2.4688 | tau=0.963 | route=[0.25,0.75]
+Step 400/10000 | loss=2.6250 | tau=0.950 | route=[0.20,0.80]
+Step 500/10000 | loss=2.8750 | tau=0.938 | route=[0.27,0.73]
+Step 600/10000 | loss=2.8750 | tau=0.925 | route=[0.27,0.73]
+Step 700/10000 | loss=2.6406 | tau=0.912 | route=[0.25,0.75]
+Step 800/10000 | loss=2.0469 | tau=0.900 | route=[0.22,0.78]
+Step 900/10000 | loss=2.7812 | tau=0.887 | route=[0.25,0.75]
+Step 1000/10000 | loss=2.7344 | tau=0.875 | route=[0.25,0.75]
+  Eval PPL=16.12 CosSim=-0.0647
+Step 1100/10000 | loss=2.9844 | tau=0.863 | route=[0.24,0.76]
+Step 1200/10000 | loss=2.7969 | tau=0.850 | route=[0.23,0.77]
+Step 1300/10000 | loss=2.9375 | tau=0.838 | route=[0.24,0.76]
+Step 1400/10000 | loss=2.4219 | tau=0.825 | route=[0.21,0.79]
+Step 1500/10000 | loss=3.6562 | tau=0.812 | route=[0.26,0.74]
+Step 1600/10000 | loss=2.5156 | tau=0.800 | route=[0.25,0.75]
+Step 1700/10000 | loss=2.7344 | tau=0.787 | route=[0.25,0.75]
+Step 1800/10000 | loss=3.0312 | tau=0.775 | route=[0.24,0.76]
+Step 1900/10000 | loss=2.9375 | tau=0.762 | route=[0.26,0.74]
+Step 2000/10000 | loss=3.3906 | tau=0.750 | route=[0.23,0.77]
+  Eval PPL=27.00 CosSim=-0.0665
+Step 2100/10000 | loss=2.3750 | tau=0.738 | route=[0.26,0.74]
+Step 2200/10000 | loss=2.8906 | tau=0.725 | route=[0.22,0.78]
+Step 2300/10000 | loss=2.9688 | tau=0.713 | route=[0.28,0.72]
+Step 2400/10000 | loss=4.1250 | tau=0.700 | route=[0.26,0.74]
+Step 2500/10000 | loss=3.2188 | tau=0.688 | route=[0.27,0.73]
+Step 2600/10000 | loss=3.0469 | tau=0.675 | route=[0.24,0.76]
+Step 2700/10000 | loss=2.6719 | tau=0.662 | route=[0.30,0.70]
+Step 2800/10000 | loss=2.6875 | tau=0.650 | route=[0.23,0.77]
+Step 2900/10000 | loss=2.9375 | tau=0.637 | route=[0.25,0.75]
+Step 3000/10000 | loss=2.9375 | tau=0.625 | route=[0.28,0.72]
+  Eval PPL=23.50 CosSim=-0.0656
+Step 3100/10000 | loss=3.3125 | tau=0.613 | route=[0.23,0.77]
+Step 3200/10000 | loss=3.1562 | tau=0.600 | route=[0.24,0.76]
+Step 3300/10000 | loss=2.9062 | tau=0.588 | route=[0.26,0.74]
+Step 3400/10000 | loss=2.3594 | tau=0.575 | route=[0.28,0.72]
+Step 3500/10000 | loss=2.8750 | tau=0.562 | route=[0.22,0.78]
+Step 3600/10000 | loss=3.2969 | tau=0.550 | route=[0.25,0.75]
+Step 3700/10000 | loss=2.7812 | tau=0.537 | route=[0.21,0.79]
+Step 3800/10000 | loss=2.2812 | tau=0.525 | route=[0.27,0.73]
+Step 3900/10000 | loss=3.6250 | tau=0.512 | route=[0.25,0.75]
+Step 4000/10000 | loss=2.8125 | tau=0.500 | route=[0.27,0.73]
+  Eval PPL=27.50 CosSim=-0.0653
+Step 4100/10000 | loss=3.1875 | tau=0.488 | route=[0.27,0.73]
+Step 4200/10000 | loss=1.8203 | tau=0.475 | route=[0.27,0.73]
+Step 4300/10000 | loss=2.8594 | tau=0.463 | route=[0.22,0.78]
+Step 4400/10000 | loss=2.9375 | tau=0.450 | route=[0.24,0.76]
+Step 4500/10000 | loss=2.6406 | tau=0.438 | route=[0.25,0.75]
+Step 4600/10000 | loss=2.1562 | tau=0.425 | route=[0.22,0.78]
+Step 4700/10000 | loss=2.6406 | tau=0.412 | route=[0.27,0.73]
+Step 4800/10000 | loss=3.0000 | tau=0.400 | route=[0.29,0.71]
+Step 4900/10000 | loss=2.6562 | tau=0.387 | route=[0.27,0.73]
+Step 5000/10000 | loss=2.3750 | tau=0.375 | route=[0.30,0.70]
+  Eval PPL=16.38 CosSim=-0.0647
+Step 5100/10000 | loss=3.2031 | tau=0.363 | route=[0.29,0.71]
+Step 5200/10000 | loss=1.6484 | tau=0.350 | route=[0.24,0.76]
+Step 5300/10000 | loss=2.5938 | tau=0.338 | route=[0.27,0.73]
+Step 5400/10000 | loss=3.0781 | tau=0.325 | route=[0.28,0.72]
+Step 5500/10000 | loss=2.7500 | tau=0.312 | route=[0.25,0.75]
+Step 5600/10000 | loss=3.1562 | tau=0.300 | route=[0.31,0.69]
+Step 5700/10000 | loss=3.1875 | tau=0.287 | route=[0.25,0.75]
+Step 5800/10000 | loss=2.3750 | tau=0.275 | route=[0.29,0.71]
+Step 5900/10000 | loss=1.6641 | tau=0.262 | route=[0.25,0.75]
+Step 6000/10000 | loss=2.4688 | tau=0.250 | route=[0.26,0.74]
+  Eval PPL=21.75 CosSim=-0.0634
+Step 6100/10000 | loss=3.2656 | tau=0.238 | route=[0.25,0.75]
+Step 6200/10000 | loss=3.1094 | tau=0.225 | route=[0.25,0.75]
+Step 6300/10000 | loss=2.5938 | tau=0.213 | route=[0.27,0.73]
+Step 6400/10000 | loss=2.5781 | tau=0.200 | route=[0.23,0.77]
+Step 6500/10000 | loss=2.5156 | tau=0.188 | route=[0.24,0.76]
+Step 6600/10000 | loss=3.1250 | tau=0.175 | route=[0.27,0.73]
+Step 6700/10000 | loss=2.8281 | tau=0.162 | route=[0.27,0.73]
+Step 6800/10000 | loss=3.1250 | tau=0.150 | route=[0.26,0.74]
+Step 6900/10000 | loss=2.7812 | tau=0.137 | route=[0.25,0.75]
+Step 7000/10000 | loss=2.5781 | tau=0.125 | route=[0.24,0.76]
+  Eval PPL=14.69 CosSim=-0.0628
+Step 7100/10000 | loss=2.6562 | tau=0.113 | route=[0.24,0.76]
+Step 7200/10000 | loss=2.9688 | tau=0.100 | route=[0.23,0.77]
+Step 7300/10000 | loss=2.6875 | tau=0.100 | route=[0.25,0.75]
+Step 7400/10000 | loss=3.2812 | tau=0.100 | route=[0.26,0.74]
+Step 7500/10000 | loss=2.7031 | tau=0.100 | route=[0.26,0.74]
+Step 7600/10000 | loss=3.0625 | tau=0.100 | route=[0.23,0.77]
+Step 7700/10000 | loss=2.6406 | tau=0.100 | route=[0.25,0.75]
+Step 7800/10000 | loss=2.6250 | tau=0.100 | route=[0.25,0.75]
+Step 7900/10000 | loss=2.7188 | tau=0.100 | route=[0.28,0.72]
+Step 8000/10000 | loss=2.7969 | tau=0.100 | route=[0.22,0.78]
+  Eval PPL=11.62 CosSim=-0.0627
+Step 8100/10000 | loss=2.8438 | tau=0.100 | route=[0.27,0.73]
+Step 8200/10000 | loss=3.3438 | tau=0.100 | route=[0.21,0.79]
+Step 8300/10000 | loss=2.8281 | tau=0.100 | route=[0.28,0.72]
+Step 8400/10000 | loss=2.8125 | tau=0.100 | route=[0.26,0.74]
+Step 8500/10000 | loss=3.1094 | tau=0.100 | route=[0.25,0.75]
+Step 8600/10000 | loss=2.9375 | tau=0.100 | route=[0.23,0.77]
+Step 8700/10000 | loss=3.6250 | tau=0.100 | route=[0.25,0.75]
+Step 8800/10000 | loss=3.2031 | tau=0.100 | route=[0.24,0.76]
+Step 8900/10000 | loss=2.7188 | tau=0.100 | route=[0.20,0.80]
+Step 9000/10000 | loss=2.5938 | tau=0.100 | route=[0.26,0.74]
+  Eval PPL=12.00 CosSim=-0.0624
+Step 9100/10000 | loss=1.8125 | tau=0.100 | route=[0.29,0.71]
+Step 9200/10000 | loss=1.9141 | tau=0.100 | route=[0.26,0.74]
+Step 9300/10000 | loss=2.4531 | tau=0.100 | route=[0.28,0.72]
+Step 9400/10000 | loss=2.8750 | tau=0.100 | route=[0.25,0.75]
+Step 9500/10000 | loss=2.5000 | tau=0.100 | route=[0.26,0.74]
+Step 9600/10000 | loss=2.1719 | tau=0.100 | route=[0.27,0.73]
+Step 9700/10000 | loss=2.8750 | tau=0.100 | route=[0.26,0.74]
+Step 9800/10000 | loss=2.4062 | tau=0.100 | route=[0.27,0.73]
+Step 9900/10000 | loss=2.6406 | tau=0.100 | route=[0.25,0.75]
+
+=== M_ij ABLATION ===
+Baseline: {'medical': '14.7', 'code': '17.8', 'legal': '16.6', 'news': '10.9', 'conversational': '31.6'}
+No E0: {'medical': '16.4', 'code': '19.8', 'legal': '19.1', 'news': '12.2', 'conversational': '36.2'}
+No E1: {'medical': '15.4', 'code': '18.6', 'legal': '17.8', 'news': '11.2', 'conversational': '33.8'}
+
+M_ij (delta PPL):
+  medical: E0=1.69 E1=0.69
+  code: E0=2.00 E1=0.88
+  legal: E0=2.50 E1=1.12
+  news: E0=1.25 E1=0.31
+  conversational: E0=4.62 E1=2.12
+CV(e0): 0.4887
+CV(e1): 0.5957
+
+Done. Saved to results/qwen8b_mij.json

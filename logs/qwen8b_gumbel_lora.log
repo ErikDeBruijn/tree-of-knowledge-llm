@@ -1,0 +1,79 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:30, 12.94it/s]Loading weights:   8%|▊         | 31/399 [00:00<00:03, 118.52it/s]Loading weights:  26%|██▋       | 105/399 [00:00<00:00, 334.13it/s]Loading weights:  36%|███▌      | 144/399 [00:00<00:00, 340.69it/s]Loading weights:  48%|████▊     | 192/399 [00:00<00:00, 382.04it/s]Loading weights:  58%|█████▊    | 233/399 [00:00<00:00, 373.94it/s]Loading weights:  69%|██████▉   | 276/399 [00:00<00:00, 378.68it/s]Loading weights:  80%|███████▉  | 319/399 [00:00<00:00, 385.42it/s]Loading weights:  91%|█████████ | 364/399 [00:01<00:00, 341.70it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 357.08it/s]
+Loaded in 3s, 16.4GB
+Layers: 36, hidden: 4096, inter: 12288
+Expert layers: 24-35
+Trainable: 3,244,032 params (3.2M)
+Loading C4...
+Training 5000 steps...
+Step 0/5000 | loss=2.6406 | tau=1.000 | route=[0.46,0.54]
+Step 100/5000 | loss=2.6406 | tau=0.975 | route=[0.53,0.47]
+Step 200/5000 | loss=2.8906 | tau=0.950 | route=[0.47,0.53]
+Step 300/5000 | loss=2.4219 | tau=0.925 | route=[0.50,0.50]
+Step 400/5000 | loss=2.5781 | tau=0.900 | route=[0.47,0.53]
+Step 500/5000 | loss=2.8594 | tau=0.875 | route=[0.50,0.50]
+Step 600/5000 | loss=2.8750 | tau=0.850 | route=[0.50,0.50]
+Step 700/5000 | loss=2.6250 | tau=0.825 | route=[0.51,0.49]
+Step 800/5000 | loss=2.0469 | tau=0.800 | route=[0.51,0.49]
+Step 900/5000 | loss=2.7812 | tau=0.775 | route=[0.46,0.54]
+Step 1000/5000 | loss=2.7344 | tau=0.750 | route=[0.50,0.50]
+  Eval PPL=16.12 CosSim=0.0267
+Step 1100/5000 | loss=2.9844 | tau=0.725 | route=[0.52,0.48]
+Step 1200/5000 | loss=2.7969 | tau=0.700 | route=[0.47,0.53]
+Step 1300/5000 | loss=2.9375 | tau=0.675 | route=[0.48,0.52]
+Step 1400/5000 | loss=2.4062 | tau=0.650 | route=[0.49,0.51]
+Step 1500/5000 | loss=3.6406 | tau=0.625 | route=[0.54,0.46]
+Step 1600/5000 | loss=2.5156 | tau=0.600 | route=[0.50,0.50]
+Step 1700/5000 | loss=2.7188 | tau=0.575 | route=[0.48,0.52]
+Step 1800/5000 | loss=3.0312 | tau=0.550 | route=[0.52,0.48]
+Step 1900/5000 | loss=2.9375 | tau=0.525 | route=[0.54,0.46]
+Step 2000/5000 | loss=3.3750 | tau=0.500 | route=[0.50,0.50]
+  Eval PPL=26.62 CosSim=0.0286
+Step 2100/5000 | loss=2.3750 | tau=0.475 | route=[0.49,0.51]
+Step 2200/5000 | loss=2.8750 | tau=0.450 | route=[0.50,0.50]
+Step 2300/5000 | loss=2.9688 | tau=0.425 | route=[0.46,0.54]
+Step 2400/5000 | loss=4.1250 | tau=0.400 | route=[0.49,0.51]
+Step 2500/5000 | loss=3.2031 | tau=0.375 | route=[0.48,0.52]
+Step 2600/5000 | loss=3.0469 | tau=0.350 | route=[0.51,0.49]
+Step 2700/5000 | loss=2.6719 | tau=0.325 | route=[0.50,0.50]
+Step 2800/5000 | loss=2.7031 | tau=0.300 | route=[0.47,0.53]
+Step 2900/5000 | loss=2.9375 | tau=0.275 | route=[0.43,0.57]
+Step 3000/5000 | loss=2.9531 | tau=0.250 | route=[0.51,0.49]
+  Eval PPL=23.50 CosSim=0.0295
+Step 3100/5000 | loss=3.3125 | tau=0.225 | route=[0.54,0.46]
+Step 3200/5000 | loss=3.1562 | tau=0.200 | route=[0.46,0.54]
+Step 3300/5000 | loss=2.9062 | tau=0.175 | route=[0.50,0.50]
+Step 3400/5000 | loss=2.3438 | tau=0.150 | route=[0.47,0.53]
+Step 3500/5000 | loss=2.8750 | tau=0.125 | route=[0.47,0.53]
+Step 3600/5000 | loss=3.2812 | tau=0.100 | route=[0.49,0.51]
+Step 3700/5000 | loss=2.7812 | tau=0.100 | route=[0.45,0.55]
+Step 3800/5000 | loss=2.2812 | tau=0.100 | route=[0.50,0.50]
+Step 3900/5000 | loss=3.6250 | tau=0.100 | route=[0.47,0.53]
+Step 4000/5000 | loss=2.8125 | tau=0.100 | route=[0.49,0.51]
+  Eval PPL=27.00 CosSim=0.0279
+Step 4100/5000 | loss=3.1719 | tau=0.100 | route=[0.48,0.52]
+Step 4200/5000 | loss=1.7969 | tau=0.100 | route=[0.53,0.47]
+Step 4300/5000 | loss=2.8438 | tau=0.100 | route=[0.47,0.53]
+Step 4400/5000 | loss=2.9375 | tau=0.100 | route=[0.47,0.53]
+Step 4500/5000 | loss=2.6406 | tau=0.100 | route=[0.48,0.52]
+Step 4600/5000 | loss=2.1406 | tau=0.100 | route=[0.48,0.52]
+Step 4700/5000 | loss=2.6250 | tau=0.100 | route=[0.49,0.51]
+Step 4800/5000 | loss=3.0000 | tau=0.100 | route=[0.52,0.48]
+Step 4900/5000 | loss=2.6406 | tau=0.100 | route=[0.47,0.53]
+
+=== M_ij ABLATION ===
+Baseline: {'medical': '14.7', 'code': '17.8', 'legal': '16.6', 'news': '10.9', 'conversational': '31.6'}
+No E0: {'medical': '16.9', 'code': '20.4', 'legal': '19.8', 'news': '12.6', 'conversational': '38.0'}
+No E1: {'medical': '15.2', 'code': '18.2', 'legal': '17.5', 'news': '11.1', 'conversational': '33.0'}
+
+M_ij (delta PPL):
+  medical: E0=2.19 E1=0.50
+  code: E0=2.62 E1=0.50
+  legal: E0=3.12 E1=0.88
+  news: E0=1.62 E1=0.12
+  conversational: E0=6.38 E1=1.38
+CV(e0): 0.5235
+CV(e1): 0.6264
+
+Done. Saved to results/qwen8b_mij.json
