@@ -929,6 +929,17 @@ We identify four limitations that bound our current claims:
           learntropy function that models net learning value---closer to
           Wozniak's~\cite{wozniak2018learntropy} definition---may be needed
           for effective curriculum-driven forking.
+    \item \textbf{Hallucination risk remains.} The gate-based ``I don't know''
+          detection (Section~\ref{sec:delta-gating}) distinguishes in-domain from
+          out-of-domain text (2.25--4.11$\times$ ratio for high-selectivity
+          adapters), but this is \emph{domain membership}, not \emph{factual
+          correctness}. An adapter can confidently generate domain-appropriate
+          but factually wrong text. The long tail of crystallized knowledge that
+          community-contributed adapters aim to cover should reduce the frequency
+          of hallucination (the model hallucinates less when it has actual
+          knowledge), but it does not eliminate confident errors within covered
+          domains. Detecting and preventing within-domain hallucination remains
+          an open problem that requires mechanisms beyond gate activation.
 \end{enumerate}
 
 % ============================================================================
