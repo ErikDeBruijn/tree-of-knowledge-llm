@@ -29,6 +29,10 @@ The biggest structural gap is: demo is single-adapter, paper describes grove.
 - Gate bias sensitivity: SUPPORTED. 4 values (-1.0 to -4.0), selectivity 0.607-0.632. Not a magic number.
 - IDK detection: gate differential 2.25x (known 0.78 vs unknown 0.35). Promoted SPECULATIVE → PLAUSIBLE.
 
+**Cycle 5** (2026-03-30):
+- Softmax dual gates: fixes cuisine leakage (0.49→0.18) but dampens primary gate (0.79→0.66). PARTIAL (3/5 criteria).
+- IDK cross-domain: BBC adapter on cuisine text gate=0.305 (2.57x ratio). 3 unknown domain types all <0.40. Strengthened.
+
 ## What's running
 - GPU 0: Free
 - GPU 1: Hotplug demo server (http://ollama.local:8000/)
@@ -54,18 +58,23 @@ The paper describes a grove with multiple experts trained together.
 The demo is a single LoRA adapter with a gate. These are architecturally
 different. Known problem #3/#4/#5 in HONEST_STATUS.
 
-## Remaining evidence gaps (cycle 4 targets)
+## Remaining evidence gaps (cycle 5 targets)
 
-No PLAUSIBLE claims remain. All have been promoted to SUPPORTED or FALSIFIED.
-Remaining gaps are structural (demo ≠ grove) and SPECULATIVE claims.
+3 PLAUSIBLE claims remain:
+1. Gate bias init robustness (4 values, all pass — arguably SUPPORTED already)
+2. Two-adapter composition (cuisine gate leaks, PPL +6%)
+3. IDK detection (BBC 2.25x, cuisine 1.86x — directionally consistent but cuisine doesn't meet threshold)
+
+4 SPECULATIVE claims (theoretical, no experiments feasible without major eng):
+- Distributed training, proof-of-work, tiered storage, variable-depth forest
 
 ## What needs to happen next (ordered by evidence value)
 
-1. **Test L1 vs alternatives** for gate sparsity (promote or falsify PLAUSIBLE #1)
-2. **Replicate generic PPL improvement** with controlled eval (promote PLAUSIBLE #2)
-3. **Build** automated eval suite (#6 in known problems)
-4. **Grove architecture parity** — multi-adapter demo with routing (#3/#4/#5)
-5. **Hyperparameter sensitivity** — are magic numbers fragile?
+1. **Promote gate bias** to SUPPORTED (it already meets criteria — 4/4 pass)
+2. **Fix two-adapter composition** — test softmax-normalized dual gates (single variable)
+3. **Replicate IDK** with a 3rd domain to strengthen or weaken the claim
+4. **Build** automated eval suite (#6 in known problems)
+5. **Grove architecture parity** — multi-adapter demo with routing (#3/#4/#5)
 
 ## Hyperparameters that are magic numbers (not optimized)
 

@@ -1292,23 +1292,27 @@ initialization.
 
 \paragraph{Gate as ``I don't know'' detector.}
 A domain adapter's gate naturally discriminates between in-domain, out-of-domain,
-and generic text. When the BBC news adapter encounters topics it was not trained
-on (physics, programming, medical, sports), the mean gate activation is 0.348---
-nearly identical to generic C4 text (0.302) and well below in-domain activation
-(0.783). The known/unknown ratio of 2.25$\times$ is substantially stronger than
-the 1.25$\times$ learntropy gap reported earlier, because the gate is trained
-specifically to discriminate its domain from non-domain. This suggests that
-``I don't know'' detection requires no additional signal: the existing gate
-\emph{is} the detector. (Single observation, 1~adapter---not yet replicated.)
+and generic text. The BBC news adapter produces gate activation of 0.783 on
+in-domain text but only 0.348 on mixed unknown topics (physics, programming,
+medical, sports), 0.305 on cuisine text (a second unknown domain), and 0.302 on
+generic C4. All three out-of-domain types yield gate $<0.40$, with known/unknown
+ratios of 2.25--2.59$\times$---substantially stronger than the 1.25$\times$
+learntropy gap reported earlier. This suggests that ``I don't know'' detection
+requires no additional signal: the existing gate \emph{is} the detector.
+However, the effect is adapter-dependent: the cuisine adapter shows weaker
+discrimination (1.86$\times$), likely because food-related text overlaps more
+with generic language than news does.
 
 \paragraph{Limitation: independently trained gates do not fully compose.}
 When two adapters (BBC news + Dutch cuisine) are loaded simultaneously with
-independent gates, each gate is highest on its own domain. However, the
-cuisine gate fires at 0.49 on BBC text (above the 0.40 ideal threshold),
-adding a small interference cost ($+5.9\%$ and $+6.8\%$ PPL vs.\ single
-adapter). Independently trained gates partially compose but may require
-joint training or cross-adapter normalization for clean multi-adapter
-deployment.
+independent gates, the cuisine gate fires at 0.49 on BBC text, adding
+interference ($+5.9\%$ and $+6.8\%$ PPL vs.\ single adapter). Softmax
+normalization across gates reduces cross-gate leakage (cuisine gate on BBC:
+$0.49 \to 0.18$) and cuisine PPL cost ($+6.8\% \to +1.8\%$), but dampens
+the primary gate ($0.79 \to 0.66$) and leaves BBC PPL at $+4.7\%$.
+Normalization is a significant improvement but does not fully resolve the
+composition problem. Joint gate training or a learned router may be needed
+for clean multi-adapter deployment.
 
 % ============================================================================
 \section{Conclusion}
