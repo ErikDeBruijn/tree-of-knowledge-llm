@@ -62,10 +62,19 @@ This creates four problems:
       for every query, not just to train. A hospital that wants medical
       expertise must either pay for a larger, slower model or accept a
       general one.
-\item \textbf{Memory is the bottleneck.} The DRAM needed to hold these
-      models has more than doubled in price over the past year. A 70B model
-      requires 140\,GB of memory at half precision---more than most hardware
-      can provide.
+\item \textbf{Knowledge density is the bottleneck.} Quantization (GGUF,
+      AWQ) reduces memory requirements---an 8B model can fit in 4\,GB---but
+      at the cost of accuracy, and constrained devices (phones, edge,
+      embedded) remain memory-limited even with aggressive quantization.
+      Yet even where memory is sufficient, the knowledge problem remains:
+      8 billion parameters encode a fixed fraction of human knowledge.
+      Quantization compresses the container; it does not expand what fits
+      inside. Adding new knowledge still requires growing the model or
+      retraining it. Moreover, quantization trades accuracy for
+      memory---aggressive quantization degrades quality. Adapters soften
+      this trade-off: a quantized trunk retains reasoning while
+      full-precision adapters restore accuracy where it matters. The two
+      techniques are complementary, not competing.
 \item \textbf{Knowledge is centralized.} Only organizations with massive
       compute budgets can train frontier models. The rest of the world
       consumes what those labs choose to produce. Domain experts---doctors,
@@ -156,7 +165,7 @@ Forest of Knowledge proposes the alternative:
 Training & One lab, thousands of GPUs & Community, commodity hardware \\
 Knowledge & Baked into parameters & Hot-pluggable adapters \\
 Adding expertise & Retrain the model & Train one adapter (KB-scale) \\
-Memory & All in expensive DRAM & Trunk in DRAM, rest on flash \\
+Memory & Fixed per model (quantizable) & Trunk (quantized) + adapters on flash \\
 Cost scaling & Linear in model size & Sub-linear (adapters are tiny) \\
 Governance & Lab decides what to learn & Community decides \\
 \bottomrule
@@ -237,11 +246,14 @@ the medical specialist is loaded. Legal, code, and conversational experts
 remain on flash, consuming zero energy. Training new specialists requires
 only adapter-scale compute, not full-model retraining.
 
-\paragraph{DRAM crisis mitigation.}
-DRAM prices have more than doubled in the past year. Forest of Knowledge
-sidesteps this: the bulk of knowledge lives on cheap flash, not expensive
-DRAM. The trunk occupies a fixed DRAM footprint regardless of how many
-specialists exist.
+\paragraph{Memory efficiency.}
+The trunk occupies a fixed DRAM footprint regardless of how many specialists
+exist. The bulk of crystallized knowledge lives on cheap flash storage, not
+expensive DRAM. Combined with trunk quantization (which reduces the trunk's
+memory footprint further), the total system can host thousands of domain
+adapters while fitting in consumer-grade hardware. Quantization and adapters
+are multiplicatively efficient: a 4-bit trunk in 4\,GB + 100 adapters on
+flash = vast knowledge on modest hardware.
 
 % ============================================================================
 \section{Key Results}
