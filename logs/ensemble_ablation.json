@@ -1,0 +1,355 @@
+{
+  "questions": [
+    {
+      "question": "What is the relationship between entropy in thermodynamics and information theory?",
+      "runs": [
+        {
+          "config": "all",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in"
+        },
+        {
+          "config": "base_only",
+          "answer": " How does the concept of entropy in thermodynamics relate to the second law of thermodynamics? What is the significance of the second law of thermodynamics in the context of information theory? How does the concept of entropy in information theory relate to the concept of uncertainty? What is the ro"
+        },
+        {
+          "config": "without_bbc_alice",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        },
+        {
+          "config": "without_cuisine_bob",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        },
+        {
+          "config": "without_wingchun_carol",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        },
+        {
+          "config": "without_physics",
+          "answer": " Is there a well defined mathematical model for this?\nYes. It was Shannon who basically invented information theory, and he was heavily influenced by statistical mechanics. He used the term entropy in his information theory papers, and the two concepts are pretty much the same thing. The difference ",
+          "changed": true
+        },
+        {
+          "config": "without_biology",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        },
+        {
+          "config": "without_chemistry",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics and information theory share a deep co",
+          "changed": false
+        },
+        {
+          "config": "without_mathematics",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        },
+        {
+          "config": "without_computer_science",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        },
+        {
+          "config": "without_medicine",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        },
+        {
+          "config": "without_ai_ml",
+          "answer": " How does the second law of thermodynamics relate to information? What is the significance of the Landauer's principle in the context of thermodynamics and information? How does the concept of entropy apply to the universe as a whole?\n\nEntropy in thermodynamics measures the disorder or randomness in",
+          "changed": false
+        }
+      ],
+      "consensus": false,
+      "adapter_dependent": [
+        "physics"
+      ]
+    },
+    {
+      "question": "How does CRISPR-Cas9 work at the molecular level?",
+      "runs": [
+        {
+          "config": "all",
+          "answer": " Bacteria have been using CRISPR-Cas9 to defend themselves against viruses for millions of years. When a bacterium encounters a virus, a fragment of the virus's genetic material is incorporated into the bacterium's genome. This sequence is then transcribed into RNA, which is used by the Cas9 enzyme "
+        },
+        {
+          "config": "base_only",
+          "answer": " CRISPR-Cas9 is a powerful gene-editing tool that allows scientists to make precise changes to DNA. Here's a step-by-step explanation of how it works at the molecular level:\n\n1. **Guide RNA (gRNA) Design**: The process begins with designing a guide RNA (gRNA) that is complementary to the target DNA "
+        },
+        {
+          "config": "without_bbc_alice",
+          "answer": " Bacteria have been using CRISPR-Cas9 to defend themselves against viruses for millions of years. When a bacterium encounters a virus, a fragment of the virus's genetic material is incorporated into the bacterium's genome. This sequence is then transcribed into RNA, which is used by the Cas9 enzyme ",
+          "changed": false
+        },
+        {
+          "config": "without_cuisine_bob",
+          "answer": " Bacteria employ a powerful gene editing tool called CRISPR-Cas9 to defend themselves against viral infection. This system uses a nuclease enzyme called Cas9, which can cut DNA, and a library of short RNA sequences that recognize specific viral genomes. When a virus infects a bacterium, fragments of",
+          "changed": true
+        },
+        {
+          "config": "without_wingchun_carol",
+          "answer": " Bacteria use the CRISPR-Cas9 system to defend against viral infection. When a bacterium is infected by a virus, a fragment of the virus's genome is incorporated into the bacterium's CRISPR array. This array is then transcribed into RNA, which becomes a template for the production of Cas9 proteins. ",
+          "changed": true
+        },
+        {
+          "config": "without_physics",
+          "answer": " Bacteria use the CRISPR-Cas9 system to defend against viral infection. When a bacterium is infected by a virus, a fragment of the virus's genome is incorporated into the bacterium's CRISPR array. This array is then transcribed into RNA, which becomes a guide for the Cas9 enzyme. The RNA guide binds",
+          "changed": true
+        },
+        {
+          "config": "without_biology",
+          "answer": "CRISPR-Cas9 is a powerful tool in genetic engineering that allows scientists to edit DNA with high precision. The system is derived from a natural defense mechanism found in bacteria, which uses Cas9 (a type of enzyme called an endonuclease) to cut the DNA of invading viruses. Scientists have adapte",
+          "changed": true
+        },
+        {
+          "config": "without_chemistry",
+          "answer": " Bacteria have been using CRISPR-Cas9 to defend themselves against viruses for millions of years. When a bacterium encounters a virus, a fragment of the virus's genetic material is incorporated into the bacterium's genome. This sequence is then transcribed into RNA, which guides a protein called Cas",
+          "changed": false
+        },
+        {
+          "config": "without_mathematics",
+          "answer": " Bacteria have been using a powerful gene editing tool for millions of years to defend themselves against viruses. This tool, called CRISPR-Cas9, is now being harnessed by scientists to precisely edit DNA in many organisms, including humans.\nIn this animation, you will follow the basic steps of the ",
+          "changed": true
+        },
+        {
+          "config": "without_computer_science",
+          "answer": " Bacteria have been using CRISPR-Cas9 to defend themselves against viruses for millions of years. When a bacterium encounters a virus, a fragment of the virus's DNA is inserted into the bacterium's genome. This fragment is then transcribed into RNA, which is used by the Cas9 enzyme to recognize and ",
+          "changed": false
+        },
+        {
+          "config": "without_medicine",
+          "answer": " Bacteria employ a powerful gene editing tool called CRISPR-Cas9 to defend themselves against viral infection. The system is able to precisely target and destroy specific sequences of DNA. Scientists have harnessed this system to precisely edit genes in a variety of organisms, including humans.\nThe ",
+          "changed": true
+        },
+        {
+          "config": "without_ai_ml",
+          "answer": " Bacteria use the CRISPR-Cas9 system to defend against viruses. When a bacterium encounters a virus, it incorporates a piece of the virus's DNA into its CRISPR array. This array is then transcribed into RNA, which is used by the Cas9 enzyme to find and destroy the virus. In this way, the bacterium h",
+          "changed": true
+        }
+      ],
+      "consensus": false,
+      "adapter_dependent": [
+        "cuisine_bob",
+        "wingchun_carol",
+        "physics",
+        "biology",
+        "mathematics",
+        "medicine",
+        "ai_ml"
+      ]
+    },
+    {
+      "question": "Explain the difference between supervised and unsupervised learning.",
+      "runs": [
+        {
+          "config": "all",
+          "answer": " Give 2 examples of each. (4 marks)\nSupervised learning uses training data that is labelled, meaning the correct answer is known. The algorithm learns to predict the correct answer by finding patterns in the training data. Examples: Predicting house prices based on area, number of bedrooms etc. Dete"
+        },
+        {
+          "config": "base_only",
+          "answer": " Give an example of each. Also, explain the difference between classification and regression. Give an example of each. Finally, explain the difference between a training set, validation set, and test set. What is the purpose of each? Additionally, explain the difference between a model and a hypothe"
+        },
+        {
+          "config": "without_bbc_alice",
+          "answer": " Give 2 examples of each. | Study.com\nTech and Engineering\nExplain the difference between supervised and unsupervised learning. Give 2 examples of each.\nQuestion:\nExplain the difference between supervised and unsupervised learning. Give 2 examples of each.\nSupervised Machine Learning:\nSupervised mac",
+          "changed": true
+        },
+        {
+          "config": "without_cuisine_bob",
+          "answer": " Give 2 examples of each. (4 marks)\nSupervised learning uses training data that is labelled, meaning the correct answer is already known. The algorithm learns to predict the correct answer by finding patterns in the training data. Examples: Predicting house prices based on area, number of bedrooms e",
+          "changed": false
+        },
+        {
+          "config": "without_wingchun_carol",
+          "answer": " Give 2 examples of each.\nSupervised learning involves the use of training data that is categorized or labeled in advance. The goal of supervised learning is to build a model that can accurately predict the category or label of new, unseen data. Supervised learning algorithms learn from the training",
+          "changed": true
+        },
+        {
+          "config": "without_physics",
+          "answer": " Give 2 examples of each. (4 marks)\nDescribe the difference between classification and regression. (2 marks)\nExplain what a confusion matrix is. (2 marks)\nExplain the purpose of cross-validation. (2 marks)\nExplain the difference between bias and variance. (2 marks)\nExplain the difference between bag",
+          "changed": true
+        },
+        {
+          "config": "without_biology",
+          "answer": " Give 2 examples of each.\nSupervised learning involves the use of training data that is labeled, meaning that the correct output is known. The algorithm learns to map inputs to outputs by identifying patterns in the data. Common examples of supervised learning include classification and regression t",
+          "changed": true
+        },
+        {
+          "config": "without_chemistry",
+          "answer": " Give 2 examples of each. | Study.com\nBusiness\nExplain the difference between supervised and unsupervised learning. Give 2 examples of each.\nQuestion:\nExplain the difference between supervised and unsupervised learning. Give 2 examples of each.\nSupervised Machine Learning:\nSupervised machine learnin",
+          "changed": true
+        },
+        {
+          "config": "without_mathematics",
+          "answer": " Give 3 examples of each.\nSupervised learning makes use of known inputs and known expected outputs. Basically, the algorithm learns a mapping between the input data and the correct output. Supervised learning requires that the correct answers are known so that the algorithm can learn from its errors",
+          "changed": true
+        },
+        {
+          "config": "without_computer_science",
+          "answer": " Give an example of each. | Study.com\nTech and Innovation\nExplain the difference between supervised and unsupervised learning. Give an example of each.\nQuestion:\nExplain the difference between supervised and unsupervised learning. Give an example of each.\nMachine Learning:\nMachine learning is a bran",
+          "changed": true
+        },
+        {
+          "config": "without_medicine",
+          "answer": " Give 2 examples of each. (4 marks)\nSupervised learning uses training data that is labelled, meaning the correct answer is already known. The algorithm learns to predict the correct answer by identifying patterns in the training data. Examples include predicting house prices based on features like s",
+          "changed": false
+        },
+        {
+          "config": "without_ai_ml",
+          "answer": " Give 2 examples of each.\nSupervised learning involves the use of training data that is labeled, meaning that the correct answers are already known. The algorithm learns to predict the correct answers by identifying patterns in the data. Examples of supervised learning include classification and reg",
+          "changed": true
+        }
+      ],
+      "consensus": false,
+      "adapter_dependent": [
+        "bbc_alice",
+        "wingchun_carol",
+        "physics",
+        "biology",
+        "chemistry",
+        "mathematics",
+        "computer_science",
+        "ai_ml"
+      ]
+    },
+    {
+      "question": "What causes antibiotic resistance in bacteria?",
+      "runs": [
+        {
+          "config": "all",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic in three main ways: On a genetic level, bacteria can become resistant by mutation, by acquiring resistance genes from other bacter"
+        },
+        {
+          "config": "base_only",
+          "answer": " What are the consequences of antibiotic resistance? How can antibiotic resistance be prevented or reduced? What are the key points to remember about antibiotic resistance? What is the role of the World Health Organization (WHO) in combating antibiotic resistance? What is the role of the European Un"
+        },
+        {
+          "config": "without_bbc_alice",
+          "answer": " Antibiotic resistance is a natural process that occurs when bacteria change in response to the use of antibiotics. Bacteria can become resistant to antibiotics in a number of ways, including:\n- Mutation: Spontaneous changes in bacteria can result in resistance to antibiotics.\n- Gene transfer: Bacte",
+          "changed": true
+        },
+        {
+          "config": "without_cuisine_bob",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic by three major mechanisms: (1) mutations in genes that encode antibiotic targets, (2) mutations in genes that encode proteins resp",
+          "changed": false
+        },
+        {
+          "config": "without_wingchun_carol",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic in a number of ways:\n- By mutation. Spontaneous changes in the bacteria's DNA can result in resistance to an antibiotic.\n- By plas",
+          "changed": false
+        },
+        {
+          "config": "without_physics",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic in a number of ways:\n- By mutation. Spontaneous changes in the bacteria's DNA can result in resistance to an antibiotic.\n- By acqu",
+          "changed": false
+        },
+        {
+          "config": "without_biology",
+          "answer": " Antibiotic resistance is a growing problem in the world today. The overuse and misuse of antibiotics in recent years has caused many bacteria to become resistant to the antibiotics that were once effective in killing them. This means that antibiotics that once were able to kill bacteria are now ine",
+          "changed": true
+        },
+        {
+          "config": "without_chemistry",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Resistance can develop in two ways: either through mutation in the bacteria's DNA or through genes that are transferred from other bacteria.\nAntibiotic resistance is a growing p",
+          "changed": false
+        },
+        {
+          "config": "without_mathematics",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic by three main mechanisms: (1) mutations in their DNA that alter the target of the antibiotic, (2) production of enzymes that inact",
+          "changed": false
+        },
+        {
+          "config": "without_computer_science",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic in a number of ways:\n- By mutation. Spontaneous changes in the bacteria's DNA can result in resistance to an antibiotic.\n- By acqu",
+          "changed": false
+        },
+        {
+          "config": "without_medicine",
+          "answer": " How can we prevent antibiotic resistance?\nAntibiotic resistance in bacteria is caused by the overuse and misuse of antibiotics. When antibiotics are used too frequently or inappropriately, bacteria have the opportunity to develop mutations that allow them to survive and multiply despite the presenc",
+          "changed": true
+        },
+        {
+          "config": "without_ai_ml",
+          "answer": " Antibiotic resistance is a naturally occurring phenomenon in which bacteria change in response to the use of antibiotics. Bacteria can become resistant to an antibiotic in a number of ways:\n- By mutation. Spontaneous changes in the bacteria's DNA can result in resistance to an antibiotic.\n- By acqu",
+          "changed": false
+        }
+      ],
+      "consensus": false,
+      "adapter_dependent": [
+        "bbc_alice",
+        "biology",
+        "medicine"
+      ]
+    },
+    {
+      "question": "How does a neural network learn through backpropagation?",
+      "runs": [
+        {
+          "config": "all",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've done it. You're interested in learning more about personal finance. A great place to start is this free book.\nDownload the book now\n3 Answers\nBest"
+        },
+        {
+          "config": "base_only",
+          "answer": " Can you explain the process step by step, including the role of the loss function and the gradient descent algorithm? Also, how does the chain rule apply in this context? Backpropagation is a crucial algorithm in training neural networks, and it's based on the concept of gradient descent. Let me br"
+        },
+        {
+          "config": "without_bbc_alice",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou might want to lock your money in a CD. You can get some very high interest rates.\nLearn More\n2 Answers\nBest\nQuora User\n, PhD in CS, AI researcher, au",
+          "changed": false
+        },
+        {
+          "config": "without_cuisine_bob",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've done it. You're interested in learning more about personal finance. A great place to start is this free book.\nDownload the book now\n3 Answers\nBest",
+          "changed": false
+        },
+        {
+          "config": "without_wingchun_carol",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've done it. You're interested in learning more about personal finance. A great place to start is this free book.\nDownload the book now\n3 Answers\nBest",
+          "changed": false
+        },
+        {
+          "config": "without_physics",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've been told that you need to put your money in a tax-advantaged account. Let's understand why.\n3 Answers\nBest\nQuora User\n, PhD student in CS, workin",
+          "changed": false
+        },
+        {
+          "config": "without_biology",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've done it. You're interested in learning more about personal finance. A great place to start is this free book.\nDownload the book now\n3 Answers\nBest",
+          "changed": false
+        },
+        {
+          "config": "without_chemistry",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've done it. You're interested in learning more about personal finance. A great place to start is this free book.\nDownload the book now\n3 Answers\nBest",
+          "changed": false
+        },
+        {
+          "config": "without_mathematics",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've done it. You're interested in learning more about personal finance. Great, you're in the right place.\nLearn More\n2 Answers\nBest\nQuora User\n, Data ",
+          "changed": false
+        },
+        {
+          "config": "without_computer_science",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou might think that putting your money in a high-interest savings account is a good idea. But there's a catch.\nLearn More\n3 Answers\nBest\nQuora User\n, st",
+          "changed": false
+        },
+        {
+          "config": "without_medicine",
+          "answer": " - Quora\nHow does a neural network learn through backpropagation?\nAd by The Penny Hoarder\nShould you leave more than $1,000 in a checking account?\nYou've done it. You're interested in learning more about personal finance. A great place to start is this free book.\nDownload the book now\n2 Answers\nBest",
+          "changed": false
+        },
+        {
+          "config": "without_ai_ml",
+          "answer": " I've been reading about neural networks and I understand the basic concept of using an input layer, one or more hidden layers and an output layer to make predictions. I also understand how the network makes a prediction by taking the weighted sum of the inputs, passing this sum through an activatio",
+          "changed": true
+        }
+      ],
+      "consensus": false,
+      "adapter_dependent": [
+        "ai_ml"
+      ]
+    }
+  ],
+  "consensus_rate": 0.0
+}
