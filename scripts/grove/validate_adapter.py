@@ -171,13 +171,59 @@ def quality_checks(adapter_dir, device="cuda:0"):
     base_generic_ppl = float(np.exp(total_loss / total_tokens)) if total_tokens > 0 else float('inf')
     generic_delta_pct = (adapter_generic_ppl - base_generic_ppl) / base_generic_ppl * 100
 
-    # Get self-reported domain gate from validation.json
-    val_path = os.path.join(adapter_dir, "validation.json")
-    domain_gate = 0.5
-    if os.path.exists(val_path):
-        with open(val_path) as f:
-            val = json.load(f)
-        domain_gate = val.get("domain_gate", 0.5)
+    # Measure domain gate independently (not from self-report)
+    # Use the adapter's own training data if available via manifest
+    domain_gate = generic_gate_mean  # default: no selectivity
+    manifest_path = os.path.join(adapter_dir, "manifest.json")
+    domain_data_path = None
+    if os.path.exists(manifest_path):
+        with open(manifest_path) as f:
+            mf = json.load(f)
+        domain_data_path = mf.get("training", {}).get("domain_data_path")
+
+    if domain_data_path and os.path.exists(domain_data_path):
+        print("Measuring domain gate independently...")
+        import json as json_mod
+        with open(domain_data_path) as f:
+            domain_texts_val = [json_mod.loads(l)["text"] for l in f][-30:]
+
+        # Re-install adapter hooks for domain eval
+        for l in range(expert_start, NL):
+            layer = model.model.layers[l]
+            def mh_dom(li, om):
+                def hook(hs):
+                    sl = str(li); B, T, D = hs.shape; flat = hs.reshape(B*T, D)
+                    base_out = om(hs).reshape(B*T, -1)
+                    adapter_out = adapter[sl](flat, om)
+                    delta = adapter_out - base_out
+                    gate = gates[sl].gate_sigmoid(flat)
+                    gate_log.append(gate.mean().item())
+                    return (base_out + gate * delta).reshape(B, T, -1)
+                return HookModule(hook)
+            layer.mlp = mh_dom(l, orig[l])
+
+        domain_gates_measured = []
+        for text in domain_texts_val:
+            gate_log.clear()
+            ids = tok(text, return_tensors="pt", max_length=512, truncation=True).input_ids.to(device)
+            if ids.size(1) < 2: continue
+            with torch.no_grad(): model(input_ids=ids)
+            if gate_log: domain_gates_measured.append(np.mean(gate_log))
+
+        domain_gate = float(np.mean(domain_gates_measured)) if domain_gates_measured else generic_gate_mean
+        print(f"  Domain gate (measured): {domain_gate:.3f}")
+
+        # Restore base
+        for l in range(expert_start, NL):
+            model.model.layers[l].mlp = orig[l]
+    else:
+        # Fallback to self-reported
+        val_path = os.path.join(adapter_dir, "validation.json")
+        if os.path.exists(val_path):
+            with open(val_path) as f:
+                val = json.load(f)
+            domain_gate = val.get("domain_gate", 0.5)
+        print(f"  Domain gate (self-reported): {domain_gate:.3f}")
 
     selectivity = domain_gate - generic_gate_mean
 

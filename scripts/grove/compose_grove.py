@@ -380,6 +380,15 @@ def main():
         json.dump(results, f, indent=2)
     print(f"\nResults saved to {out_path}")
 
+    # Save joint-trained gates as checkpoint for each adapter
+    grove_gates_dir = os.path.join(args.registry_dir, "joint_gates")
+    os.makedirs(grove_gates_dir, exist_ok=True)
+    for name in adapter_names:
+        _, gts, _ = all_adapters[name]
+        gate_path = os.path.join(grove_gates_dir, f"{name}_gates.pt")
+        torch.save({k: v.cpu() for k, v in gts.state_dict().items()}, gate_path)
+    print(f"Joint-trained gates saved to {grove_gates_dir}/")
+
 
 if __name__ == "__main__":
     main()

@@ -132,6 +132,8 @@ def main():
             return HookModule(hook)
         layer.mlp = mh(l, orig[l])
 
+    training_log = []  # Per-step trajectory for debugging
+
     opt1 = torch.optim.AdamW(adapter.parameters(), lr=args.phase1_lr)
     for step in range(args.phase1_steps):
         model.train(); adapter.train()
@@ -148,7 +150,8 @@ def main():
         loss.backward()
         torch.nn.utils.clip_grad_norm_(adapter.parameters(), 1.0)
         opt1.step()
-        if step % 500 == 0:
+        if step % 200 == 0:
+            training_log.append({"phase": 1, "step": step, "loss": loss.item()})
             print(f"  Step {step}/{args.phase1_steps} | loss={loss.item():.4f}")
 
     # Freeze adapter
@@ -210,9 +213,14 @@ def main():
         torch.nn.utils.clip_grad_norm_(gates.parameters(), 1.0)
         opt2.step()
 
-        if step % 300 == 0:
+        if step % 200 == 0:
             d_g = np.mean(domain_gates[-50:]) if domain_gates else 0
             g_g = np.mean(generic_gates[-50:]) if generic_gates else 0
+            training_log.append({
+                "phase": 2, "step": step, "lm_loss": lm_loss.item(),
+                "domain_gate": float(d_g), "generic_gate": float(g_g),
+                "selectivity": float(d_g - g_g),
+            })
             print(f"  Step {step}/{args.phase2_steps} | lm={lm_loss.item():.4f} | "
                   f"domain={d_g:.3f} generic={g_g:.3f} sel={d_g - g_g:+.3f}")
 
@@ -253,9 +261,16 @@ def main():
     domain_delta = (domain_ppl - base_domain_ppl) / base_domain_ppl * 100
     generic_delta = (generic_ppl - base_generic_ppl) / base_generic_ppl * 100
 
+    # Per-layer gate profile
+    per_layer_profile = {}
+    for l in range(args.expert_start, NL):
+        vals = gate_values[str(l)][-100:]
+        per_layer_profile[str(l)] = float(np.mean(vals)) if vals else 0.0
+
     print(f"\nSelectivity: {selectivity:+.3f}")
     print(f"Domain PPL: {domain_ppl:.2f} ({domain_delta:+.1f}% vs base)")
     print(f"Generic PPL: {generic_ppl:.2f} ({generic_delta:+.1f}% vs base)")
+    print(f"Per-layer gate range: [{min(per_layer_profile.values()):.3f} - {max(per_layer_profile.values()):.3f}]")
 
     # ═══ SAVE PACKAGE ═══
     os.makedirs(args.output_dir, exist_ok=True)
@@ -292,6 +307,7 @@ def main():
             "l1_lambda": args.l1_lambda,
             "domain_data_sha256": data_sha,
             "domain_data_samples": len(all_texts),
+            "domain_data_path": os.path.abspath(args.domain_data),
         },
     }
     with open(os.path.join(args.output_dir, "manifest.json"), "w") as f:
@@ -309,13 +325,18 @@ def main():
         "generic_ppl": generic_ppl,
         "base_generic_ppl": base_generic_ppl,
         "generic_ppl_delta_pct": generic_delta,
+        "per_layer_gate_profile": per_layer_profile,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     with open(os.path.join(args.output_dir, "validation.json"), "w") as f:
         json.dump(validation, f, indent=2)
 
+    # training_log.json — trajectory for debugging/reproducibility
+    with open(os.path.join(args.output_dir, "training_log.json"), "w") as f:
+        json.dump(training_log, f, indent=2)
+
     print(f"\nPackage saved to {args.output_dir}/")
-    print(f"  adapter.pt, manifest.json, validation.json")
+    print(f"  adapter.pt, manifest.json, validation.json, training_log.json")
     print("Done.")
 
 

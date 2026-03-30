@@ -1,0 +1,5 @@
+torch>=2.0
+transformers>=4.40
+datasets
+numpy
+lm-eval  # optional, for benchmark_grove.py
