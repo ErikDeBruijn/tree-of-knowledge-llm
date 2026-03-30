@@ -33,6 +33,13 @@ The biggest structural gap is: demo is single-adapter, paper describes grove.
 - Softmax dual gates: fixes cuisine leakage (0.49→0.18) but dampens primary gate (0.79→0.66). PARTIAL (3/5 criteria).
 - IDK cross-domain: BBC adapter on cuisine text gate=0.305 (2.57x ratio). 3 unknown domain types all <0.40. Strengthened.
 
+**Distributed MVP** (2026-03-30):
+- 3 contributors (Alice/BBC, Bob/cuisine, Carol/wingchun), different seeds+hyperparameters
+- Train → validate → register → compose: 10/10 SUCCESS
+- Diagonal dominance: BBC 0.966, cuisine 0.980, wingchun 0.799
+- All cross-gate leakage <0.10, all domain PPLs improve vs base
+- Promoted "distributed training" SPECULATIVE → PLAUSIBLE
+
 **Cycle 6** (2026-03-30):
 - Joint gate fine-tuning: 7/7 SUCCESS. Cross-leakage 0.034/0.011. Primary gates 0.82/0.85. Both domain PPLs -50%+ vs base. SUPPORTED.
 
