@@ -1,0 +1,237 @@
+{
+  "experiment": "cache_miss_detection",
+  "covered": [
+    {
+      "domain": "physics",
+      "query": "Explain the photoelectric effect and its significance.",
+      "max_gate": 0.6936848958333334,
+      "max_adapter": "physics",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "physics",
+      "query": "What is the Heisenberg uncertainty principle?",
+      "max_gate": 0.5042317708333334,
+      "max_adapter": "physics",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "biology",
+      "query": "Describe the process of mitosis in eukaryotic cells.",
+      "max_gate": 0.522705078125,
+      "max_adapter": "biology",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "biology",
+      "query": "How does natural selection drive evolution?",
+      "max_gate": 0.53076171875,
+      "max_adapter": "biology",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "chemistry",
+      "query": "What happens during an oxidation-reduction reaction?",
+      "max_gate": 0.4969889322916667,
+      "max_adapter": "chemistry",
+      "classified_as": "UNCERTAIN"
+    },
+    {
+      "domain": "chemistry",
+      "query": "Explain the difference between ionic and covalent bonds.",
+      "max_gate": 0.4755859375,
+      "max_adapter": "chemistry",
+      "classified_as": "UNCERTAIN"
+    },
+    {
+      "domain": "mathematics",
+      "query": "Prove that the square root of 2 is irrational.",
+      "max_gate": 0.8347981770833334,
+      "max_adapter": "mathematics",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "mathematics",
+      "query": "What is the fundamental theorem of calculus?",
+      "max_gate": 0.5345052083333334,
+      "max_adapter": "mathematics",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "computer_science",
+      "query": "Explain how a hash table handles collisions.",
+      "max_gate": 0.5877278645833334,
+      "max_adapter": "computer_science",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "computer_science",
+      "query": "What is the time complexity of merge sort?",
+      "max_gate": 0.4935709635416667,
+      "max_adapter": "computer_science",
+      "classified_as": "UNCERTAIN"
+    },
+    {
+      "domain": "medicine",
+      "query": "What are the risk factors for type 2 diabetes?",
+      "max_gate": 0.6690266927083334,
+      "max_adapter": "medicine",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "medicine",
+      "query": "How do beta-blockers work in treating hypertension?",
+      "max_gate": 0.5825602213541666,
+      "max_adapter": "medicine",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "ai_ml",
+      "query": "Explain the attention mechanism in transformer models.",
+      "max_gate": 0.2467211882273356,
+      "max_adapter": "computer_science",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "ai_ml",
+      "query": "What is the vanishing gradient problem in deep learning?",
+      "max_gate": 0.3154500325520833,
+      "max_adapter": "ai_ml",
+      "classified_as": "UNCERTAIN"
+    },
+    {
+      "domain": "bbc_news",
+      "query": "What happened with UK energy policy in recent years?",
+      "max_gate": 0.5740559895833334,
+      "max_adapter": "bbc_alice",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "cuisine",
+      "query": "How do you make a traditional Dutch stamppot?",
+      "max_gate": 0.4810384114583333,
+      "max_adapter": "cuisine_bob",
+      "classified_as": "UNCERTAIN"
+    }
+  ],
+  "uncovered": [
+    {
+      "domain": "law",
+      "query": "What is the difference between civil law and common law?",
+      "max_gate": 0.17787679036458334,
+      "max_adapter": "mathematics",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "law",
+      "query": "Explain the concept of habeas corpus.",
+      "max_gate": 0.17987060546875,
+      "max_adapter": "computer_science",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "economics",
+      "query": "What causes inflation in a market economy?",
+      "max_gate": 0.13653691609700522,
+      "max_adapter": "cuisine_bob",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "economics",
+      "query": "Explain the law of supply and demand.",
+      "max_gate": 0.16182454427083334,
+      "max_adapter": "physics",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "history",
+      "query": "What were the main causes of World War I?",
+      "max_gate": 0.12280782063802083,
+      "max_adapter": "cuisine_bob",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "history",
+      "query": "Describe the fall of the Roman Empire.",
+      "max_gate": 0.15428797403971353,
+      "max_adapter": "cuisine_bob",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "art",
+      "query": "What is the difference between impressionism and expressionism?",
+      "max_gate": 0.20088704427083334,
+      "max_adapter": "mathematics",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "art",
+      "query": "Who painted the Sistine Chapel ceiling?",
+      "max_gate": 0.17724736531575522,
+      "max_adapter": "cuisine_bob",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "music",
+      "query": "Explain the structure of a sonata.",
+      "max_gate": 0.3263753255208333,
+      "max_adapter": "chemistry",
+      "classified_as": "UNCERTAIN"
+    },
+    {
+      "domain": "music",
+      "query": "What is the difference between major and minor keys?",
+      "max_gate": 0.19617716471354166,
+      "max_adapter": "mathematics",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "geography",
+      "query": "What causes tectonic plate movement?",
+      "max_gate": 0.53759765625,
+      "max_adapter": "physics",
+      "classified_as": "COVERED"
+    },
+    {
+      "domain": "geography",
+      "query": "Describe the water cycle.",
+      "max_gate": 0.2542894681294759,
+      "max_adapter": "chemistry",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "psychology",
+      "query": "What is cognitive dissonance?",
+      "max_gate": 0.3951212565104167,
+      "max_adapter": "medicine",
+      "classified_as": "UNCERTAIN"
+    },
+    {
+      "domain": "psychology",
+      "query": "Explain Maslow's hierarchy of needs.",
+      "max_gate": 0.19358062744140625,
+      "max_adapter": "chemistry",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "philosophy",
+      "query": "What is the trolley problem in ethics?",
+      "max_gate": 0.20770263671875,
+      "max_adapter": "mathematics",
+      "classified_as": "MISS"
+    },
+    {
+      "domain": "philosophy",
+      "query": "Explain Kant's categorical imperative.",
+      "max_gate": 0.20013427734375,
+      "max_adapter": "physics",
+      "classified_as": "MISS"
+    }
+  ],
+  "metrics": {
+    "covered_correct_pct": 62.5,
+    "miss_rate_pct": 81.25,
+    "false_cover_rate_pct": 6.25
+  },
+  "verdict": "success"
+}
