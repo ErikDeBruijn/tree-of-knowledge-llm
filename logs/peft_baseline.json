@@ -1,0 +1,26 @@
+{
+  "experiment": "peft_lora_baseline",
+  "base": {
+    "domain_ppl": 12.641294717646483,
+    "generic_ppl": 15.78489197014673
+  },
+  "peft_lora": {
+    "domain_ppl": 12.636351153136902,
+    "generic_ppl": 19.81749607701207
+  },
+  "deltas": {
+    "domain_pct": -0.03910647303143961,
+    "generic_pct": 25.54723918600157
+  },
+  "config": {
+    "rank": 16,
+    "steps": 2000,
+    "seed": 42,
+    "layers": "12-35",
+    "target_modules": [
+      "gate_proj",
+      "up_proj"
+    ],
+    "alpha": 16
+  }
+}
