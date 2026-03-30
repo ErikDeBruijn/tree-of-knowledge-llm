@@ -38,7 +38,7 @@ Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 - Two-adapter simultaneous gating (cycle 4, 2026-03-30): BBC gate discriminates well (0.786 on BBC, 0.298 on generic, 0.328 on cuisine). Cuisine gate leaks (0.874 on cuisine but 0.489 on BBC, 0.458 on generic — above 0.4 threshold). Domain PPL degrades +5.9%/+6.8% vs single-adapter (above 5% threshold). Generic PPL neutral. Independently trained gates partially compose but the cross-adapter interference is non-negligible. NOT SUPPORTED — needs joint gate training or gate normalization to achieve clean composition.
 
 ### PLAUSIBLE (cont.)
-- "I don't know" detection via gate differential (cycle 4c, 2026-03-30): Known domain gate 0.783, unknown topics (physics/code/medical/sports) gate 0.348, generic 0.302. Known/Unknown ratio 2.25x (vs previous learntropy-only test: 1.25x). Gate drops to generic-level on unseen topics. Single observation, 1 adapter, needs replication with cuisine adapter and more unknown domains. Promoted from SPECULATIVE.
+- "I don't know" detection via gate differential (cycle 4c, 2026-03-30): BBC adapter: known 0.783, unknown 0.348, generic 0.302, ratio 2.25x. Cuisine adapter: known 0.873, unknown 0.470, generic 0.463, ratio 1.86x. BBC adapter discriminates well (unknown ≈ generic); cuisine adapter is weaker (unknown above 0.40 threshold). The IDK signal is adapter-dependent — stronger when domain text is distinctive (news), weaker when domain text overlaps with generic (food). PLAUSIBLE (2 adapters tested, directionally consistent, but cuisine doesn't meet threshold).
 
 ### SPECULATIVE (theoretical, not experimentally validated)
 - Distributed community training paradigm
