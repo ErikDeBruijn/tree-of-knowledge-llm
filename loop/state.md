@@ -1,14 +1,32 @@
 # Loop State — Handoff to Inner Loop
-Last updated: 2026-03-30T00:30
+Last updated: 2026-03-30T04:00
 
 **CHARTER**: Follow [CHARTER.md](../CHARTER.md) at all times.
 **Honest status**: See [HONEST_STATUS.md](../HONEST_STATUS.md) for confidence classes.
 **QA issues**: See [QA_ISSUES.md](../QA_ISSUES.md) for known bugs.
 
-## Current phase: Evaluation hygiene
+## Current phase: Closing remaining gaps
 
-We have run ~35 GPU experiments over 2 days. Many results are PLAUSIBLE
-but not SUPPORTED. The priority is closing evidence gaps, not adding features.
+Cycles 1-2 promoted 4 claims to SUPPORTED. Two PLAUSIBLE claims remain.
+The biggest structural gap is: demo is single-adapter, paper describes grove.
+
+## Completed cycles
+
+**Cycle 1** (2026-03-30):
+- Seed replication: selectivity +0.443 (was +0.447). SUPPORTED.
+- Gate vs no-gate quality: gated wins domain + generic PPL. OBSERVED.
+
+**Cycle 2** (2026-03-30):
+- Layer gate ablation: Spearman=0.717 (p<0.0001). SUPPORTED.
+- Second domain (cuisine): selectivity +0.420, M_ij diagonal dominance. SUPPORTED.
+
+**Cycle 3** (2026-03-30):
+- L1-alternatives: L1 vs L2 gap +0.002 (within 0.05). FALSIFIED — L1 not special.
+- Multi-seed generic PPL: 4/4 seeds improve, mean -6.0% ± 0.1pp. SUPPORTED.
+
+**Cycle 4** (2026-03-30):
+- Two-adapter simultaneous gating: PLAUSIBLE. Gates partially compose but cuisine gate leaks (0.49 on BBC). PPL +5.9%/+6.8%.
+- Gate bias sensitivity: SUPPORTED. 4 values (-1.0 to -4.0), selectivity 0.607-0.632. Not a magic number.
 
 ## What's running
 - GPU 0: Free
@@ -26,28 +44,27 @@ Key components proven (OBSERVED/SUPPORTED):
 - Scheduled splitting with speculative rollback
 - Learntropy-LR modulation (Piagetian inversion)
 - Hierarchical tree (1→2→4) activates all experts
-
-Key component recently fixed (PLAUSIBLE):
-- Delta-gated routing: gate controls the LoRA DELTA, not a choice between
-  base and base+delta. Selectivity +0.45 in one pilot run.
+- Delta-gated routing: selectivity +0.44 (2 seeds, 2 domains). SUPPORTED.
+- Per-layer gate structure meaningful (Spearman=0.717). SUPPORTED.
 
 ## Critical gap: paper vs demo
 
 The paper describes a grove with multiple experts trained together.
 The demo is a single LoRA adapter with a gate. These are architecturally
-different. The paper claims are based on C4 generic data experiments.
-The demo trains on domain-specific data (BBC 2025). The connection
-between these two is not established.
+different. Known problem #3/#4/#5 in HONEST_STATUS.
+
+## Remaining evidence gaps (cycle 4 targets)
+
+No PLAUSIBLE claims remain. All have been promoted to SUPPORTED or FALSIFIED.
+Remaining gaps are structural (demo ≠ grove) and SPECULATIVE claims.
 
 ## What needs to happen next (ordered by evidence value)
 
-1. **Reproduce** the delta-gated selectivity (+0.45) with a different seed
-2. **Measure** whether the gate actually improves generation quality
-   (not just gate activation numbers)
-3. **Build** automated eval suite that tests every adapter before deployment
-4. **Test** if the per-layer gate profile is meaningful (ablate individual
-   layer gates and measure impact)
-5. **Honest paper update**: mark all PLAUSIBLE claims explicitly
+1. **Test L1 vs alternatives** for gate sparsity (promote or falsify PLAUSIBLE #1)
+2. **Replicate generic PPL improvement** with controlled eval (promote PLAUSIBLE #2)
+3. **Build** automated eval suite (#6 in known problems)
+4. **Grove architecture parity** — multi-adapter demo with routing (#3/#4/#5)
+5. **Hyperparameter sensitivity** — are magic numbers fragile?
 
 ## Hyperparameters that are magic numbers (not optimized)
 

@@ -1,6 +1,6 @@
 # Honest Status — CHARTER-compliant assessment
 
-Last updated: 2026-03-30 (layer gate ablation complete)
+Last updated: 2026-03-30 (cycle 3 complete — sparsity mechanism + multi-seed)
 
 ## Confidence classes (per CHARTER)
 
@@ -25,11 +25,17 @@ Last updated: 2026-03-30 (layer gate ablation complete)
 - Per-layer gate profile reflects meaningful structure (layer gate ablation, 2026-03-30): Zeroing individual layer gates produces non-uniform PPL impact. Spearman(gate_magnitude, ΔPPL_domain) = 0.717 (p=8.0e-05). Top-3 overlap 2/3 (L14,L34,L35 by magnitude vs L13,L14,L35 by PPL impact). L30 (lowest gate 0.127) causes only +0.35% domain PPL change; L35 (highest gate 0.993) causes +4.91%. Generic PPL correlation is weak (Spearman=0.21, p=0.33), confirming gates are domain-specific. Promoted from PLAUSIBLE.
 
 ### SUPPORTED (cont.)
-- Domain selectivity generalizes across domains: cuisine adapter selectivity +0.42 (BBC +0.45), domain PPL -64%, generic PPL -14%. Same hyperparameters, different data. 2 domains tested.
+- Domain selectivity generalizes across domains (second-domain-generalization, 2026-03-30): Cuisine adapter selectivity +0.420 (BBC +0.482). Domain PPL: cuisine -64.2%, BBC -73.5%. Generic PPL: cuisine -13.7%, BBC -12.1%. M_ij 2x2 cross-eval shows diagonal dominance: BBC adapter on BBC -73.5%, on cuisine -4.5%; cuisine adapter on cuisine -64.2%, on BBC -13.7%. Each adapter strongly improves its own domain and modestly/not the other. Same hyperparameters, different data, 2 domains tested. Promoted from PLAUSIBLE.
+
+### SUPPORTED (cont.)
+- Gated adapter robustly improves generic PPL below baseline (cycle 3 multi-seed, 2026-03-30): 4/4 seeds show improvement with mean -6.0% ± 0.1pp (seeds 42/256/1337/7). Generic PPL range: 16.07-16.12 vs base 17.12. Remarkably low variance. Promoted from PLAUSIBLE.
+
+### FALSIFIED (experimentally tested, hypothesis rejected)
+- ~~L1 sparsity is the right mechanism~~ → FALSIFIED (cycle 3, 2026-03-30): L1 vs L2 vs Dropout at same seed. L1 selectivity +0.614, L2 selectivity +0.612 (gap +0.002, within 0.05 equivalence threshold). Domain PPL: L1 -17.2%, L2 -17.4%, Dropout -20.3%. Generic PPL: all three within 0.1pp. L1 and L2 are functionally identical. Dropout has lower selectivity (+0.525) but better domain PPL. Conclusion: any sparsity pressure works; L1 is not special. Paper must say "sparsity pressure" not "L1 sparsity."
 
 ### PLAUSIBLE (single observation, not replicated or controlled)
-- L1 sparsity is the right mechanism (not tested against alternatives)
-- Gated adapter improves generic PPL below baseline — original: 16.86 vs 18.66 base (-9.6%), seed=137: 20.83 vs 23.69 base (-12.1%). Replicated in direction (both show improvement), but magnitude varies. Could be regularization effect of gating.
+- Gate bias init is not a magic number (cycle 4, 2026-03-30): 4 values tested (-1.0 to -4.0, 10x sigmoid range). Selectivity range +0.607 to +0.632 (spread 0.025). Domain PPL -17.1% to -17.3%. Generic PPL -5.9% to -6.0%. All well above success thresholds. The mechanism is robust to initialization. SUPPORTED (addresses known problem #2).
+- Two-adapter simultaneous gating (cycle 4, 2026-03-30): BBC gate discriminates well (0.786 on BBC, 0.298 on generic, 0.328 on cuisine). Cuisine gate leaks (0.874 on cuisine but 0.489 on BBC, 0.458 on generic — above 0.4 threshold). Domain PPL degrades +5.9%/+6.8% vs single-adapter (above 5% threshold). Generic PPL neutral. Independently trained gates partially compose but the cross-adapter interference is non-negligible. NOT SUPPORTED — needs joint gate training or gate normalization to achieve clean composition.
 
 ### SPECULATIVE (theoretical, not experimentally validated)
 - "I don't know" detection via learntropy gap (tested: weak signal, 1.25x)
@@ -39,7 +45,7 @@ Last updated: 2026-03-30 (layer gate ablation complete)
 - Variable-depth forest with different fork points per knowledge type
 
 ## Known problems NOT yet fixed
-1. ~~Generic gate at 0.32 causes generation degradation on non-domain text~~ Gate vs no-gate eval (2026-03-30) shows gated adapter *improves* generic PPL by 9.6% vs base. Ungated adapter degrades it by 33.9%. However: only one eval run, needs replication.
+1. ~~Generic gate at 0.32 causes generation degradation on non-domain text~~ Gate vs no-gate eval (2026-03-30) shows gated adapter *improves* generic PPL by 6.0% vs base (4-seed mean, std 0.1pp). SUPPORTED.
 2. All hyperparameters are magic numbers (L1 lambda, bias init, gate LR)
 3. Demo is single-adapter, not grove architecture
 4. Stacked LoRA paths (tree+pair+leaf) not implemented in demo
@@ -61,7 +67,7 @@ Last updated: 2026-03-30 (layer gate ablation complete)
 | Causal locality at 8B | Observed (M_ij ablation) | Clean, replicated |
 | Learntropy-driven splits | Scheduled, not learntropy-triggered | Open problem, speculative split helps |
 | Hot-pluggable adapters | Works (39ms load) | Single adapter, no router in production |
-| Domain-selective routing | Delta-gated shows +0.45 selectivity (replicated with seed=137: +0.443); quality eval confirms 7/7 category wins | Replicated (2 seeds). SUPPORTED. |
+| Domain-selective routing | Delta-gated selectivity +0.621 ± 0.009 (4 seeds); 2 domains; sparsity mechanism not load-bearing (L1≈L2); generic PPL -6.0% ± 0.1pp | Replicated (4 seeds, 2 domains, 3 sparsity types). SUPPORTED. |
 | Community distributed training | Not demonstrated | Entirely speculative |
 | Tiered storage | Not demonstrated | Theoretical only |
 | "I don't know" detection | Tested, weak signal (1.25x) | Hypothesis, not supported |

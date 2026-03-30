@@ -45,7 +45,7 @@ signal for \emph{when} to fork (bimodal learntropy), \emph{where} to fork
 (per-layer divergence), and \emph{how fast} to learn (per-expert learning
 rate modulation).
 
-Across 50+ experiments on Qwen3-1.7B and Qwen3-8B, we establish five
+Across 50+ experiments on Qwen3-1.7B and Qwen3-8B, we establish six
 findings. First, \emph{causal locality}---selective ablation damage, not
 weight orthogonality---is the correct metric for modularity, and requires
 sufficient model scale ($M_{ij}$ CV 0.16 at 1.7B vs.\ 0.50--0.67 at 8B).
@@ -62,7 +62,9 @@ reproduced), reducing perplexity by 22.8\% compared to the base model.
 Fifth, when combined with learntropy-driven rank increases, the system
 autonomously discovers the optimal rank (4$\to$64) through 4 doublings,
 converging to the empirical peak of the rank-selectivity curve without
-explicit guidance.
+explicit guidance. Sixth, a per-layer \emph{delta gate} on single domain
+adapters produces robust domain selectivity ($+0.621 \pm 0.009$, 4~seeds)
+while improving generic perplexity by 6\%, enabling hot-pluggable deployment.
 
 The framework separates fluid intelligence (shared trunk) from crystallized
 knowledge (expert overrides) through an inheritance mechanism: each expert
@@ -1224,6 +1226,80 @@ The tree hierarchy produces differentiation through shared-weight
 constraints, not through selective routing.
 
 % ============================================================================
+\section{Domain-Selective Gating: Single-Adapter Deployment}
+\label{sec:delta-gating}
+
+The multi-expert experiments in Section~\ref{sec:8b} use C4 generic data with
+simultaneously-trained experts. A separate question is whether a \emph{single}
+domain-specific adapter can be gated to activate selectively---high on
+in-domain text, low on out-of-domain. This is the deployment mechanism for
+hot-pluggable adapters: a gate that turns on when the adapter is relevant and
+off when it is not.
+
+\paragraph{Architecture.}
+A per-layer scalar gate $g_l$ controls the adapter delta:
+\begin{equation}
+    y = f_{\text{base}}(x) + \sigma(g_l(x)) \cdot \bigl(f_{\text{adapter}}(x) - f_{\text{base}}(x)\bigr)
+\end{equation}
+where $g_l$ is a learned linear projection with bias initialized to $-2.0$
+($\sigma(-2) \approx 0.12$, starting near OFF). Training is two-phase: (1)~train
+the adapter on domain data with gate disabled, then (2)~freeze the adapter and
+train only the gates on a 50/50 mix of domain and generic data. A sparsity
+penalty on gate activations pushes gates toward zero by default.
+
+\paragraph{Selectivity is robust (4 seeds).}
+Across 4 random seeds (42, 256, 1337, 7), the gate consistently differentiates
+domain from generic text: mean selectivity (domain gate $-$ generic gate)
+$+0.621 \pm 0.009$. Domain gates converge to 0.94--0.96, generic gates to
+0.28--0.34. The variance across seeds is remarkably low.
+
+\paragraph{Generic text improves.}
+Counterintuitively, the gated adapter \emph{improves} generic (non-domain)
+perplexity by $-6.0\% \pm 0.1\text{pp}$ relative to the base model (4 seeds,
+all improving). The gate acts as a soft regularizer: by selectively applying
+the adapter delta, it provides a small benefit even on text the adapter was not
+trained on.
+
+\paragraph{Per-layer gate structure is meaningful.}
+Zeroing individual layer gates produces non-uniform PPL impact. The correlation
+between gate magnitude and domain PPL impact is strong (Spearman $\rho = 0.717$,
+$p = 8.0 \times 10^{-5}$), while the correlation with generic PPL impact is
+weak ($\rho = 0.21$, $p = 0.33$), confirming that gates are domain-specific.
+The highest-gate layer (L35, gate 0.993) causes $+4.91\%$ domain PPL when
+ablated; the lowest (L30, gate 0.127) causes only $+0.35\%$.
+
+\paragraph{Cross-domain generalization.}
+The same architecture and hyperparameters produce domain-selective gating on a
+second, unrelated domain (Dutch cuisine): selectivity $+0.420$, domain PPL
+$-64.2\%$. A 2$\times$2 cross-evaluation matrix shows diagonal dominance:
+each adapter strongly improves its own domain (BBC $-73.5\%$, cuisine $-64.2\%$)
+and modestly or not the other (BBC adapter on cuisine $-4.5\%$, cuisine adapter
+on BBC $-13.7\%$).
+
+\paragraph{Sparsity mechanism is not load-bearing.}
+L1 and L2 penalties produce identical selectivity (gap $+0.002$) and PPL
+($-17.2\%$ vs.\ $-17.4\%$). Dropout on gate activations produces lower
+selectivity ($+0.525$) but better domain PPL ($-20.3\%$). The choice of
+sparsity mechanism does not materially affect the outcome; any pressure toward
+gate sparsity is sufficient.
+
+\paragraph{Gate initialization is not fragile.}
+The gate bias init controls the starting point on the sigmoid curve
+($\sigma(-1) = 0.27$ to $\sigma(-4) = 0.018$). Across a 10$\times$ range
+of initial gate activation ($-1.0$ to $-4.0$), selectivity varies only 0.025
+($+0.607$ to $+0.632$) and PPL varies $<$0.2\%. The mechanism is robust to
+initialization.
+
+\paragraph{Limitation: independently trained gates do not fully compose.}
+When two adapters (BBC news + Dutch cuisine) are loaded simultaneously with
+independent gates, each gate is highest on its own domain. However, the
+cuisine gate fires at 0.49 on BBC text (above the 0.40 ideal threshold),
+adding a small interference cost ($+5.9\%$ and $+6.8\%$ PPL vs.\ single
+adapter). Independently trained gates partially compose but may require
+joint training or cross-adapter normalization for clean multi-adapter
+deployment.
+
+% ============================================================================
 \section{Conclusion}
 
 We set out to separate fluid intelligence from crystallized knowledge using
@@ -1267,6 +1343,17 @@ empirical peak of the rank-selectivity curve without explicit guidance.
 Domain selectivity peaks at rank-64 (1.6\% of hidden dimension) and
 \emph{declines} at higher ranks as overcapacity eliminates specialization
 pressure.
+
+\textbf{6.~Domain-selective gating for deployment.} A per-layer scalar gate
+on the adapter delta activates selectively: domain gate 0.94--0.96, generic
+gate 0.28--0.34, selectivity $+0.621 \pm 0.009$ (4 seeds). The gated adapter
+improves generic perplexity by $-6.0\% \pm 0.1\text{pp}$ relative to the base
+model. Per-layer gate magnitudes correlate strongly with domain PPL impact
+(Spearman $\rho = 0.717$, $p < 10^{-4}$) but not with generic PPL
+($\rho = 0.21$, $p = 0.33$). The mechanism generalizes across domains (2
+domains tested, same hyperparameters) and is robust to the choice of sparsity
+penalty (L1 $\approx$ L2, gap $+0.002$).
+(Section~\ref{sec:delta-gating})
 
 \subsection{From Tree to Forest}
 
