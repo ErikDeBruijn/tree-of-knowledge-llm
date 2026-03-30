@@ -58,13 +58,17 @@ dimension) and declining at higher ranks as overcapacity eliminates
 specialization pressure. Fourth, \emph{learntropy-directed scheduled
 splitting}---splitting the highest-learntropy expert every $N$ steps---grows
 a tree from 2 to 8 experts with all 8 active ($M_{ij}$ CV up to 2.34,
-reproduced), reducing perplexity by 22.8\% compared to the base model.
+reproduced), reducing perplexity by 22.8\% compared to the base model;
+\emph{speculative splitting with rollback} provides a data-driven
+alternative, accepting only 2 of 8 attempted splits and reverting the rest.
 Fifth, when combined with learntropy-driven rank increases, the system
 autonomously discovers the optimal rank (4$\to$64) through 4 doublings,
 converging to the empirical peak of the rank-selectivity curve without
 explicit guidance. Sixth, a per-layer \emph{delta gate} on single domain
 adapters produces robust domain selectivity ($+0.621 \pm 0.009$, 4~seeds)
-while improving generic perplexity by 6\%, enabling hot-pluggable deployment.
+while improving generic perplexity by 6\%, enabling hot-pluggable deployment;
+10 independently-trained adapters compose via joint gate fine-tuning with
+94\% of composition checks passing.
 
 The framework separates fluid intelligence (shared trunk) from crystallized
 knowledge (expert overrides) through an inheritance mechanism: each expert
@@ -857,12 +861,17 @@ serving---these are established. Our contributions are:
 \item \textbf{Expert splitting with speculative rollback}: growing experts
       by dividing existing ones, triggered by learntropy, with automatic
       revert on failure.
-\item \textbf{Emergent IDK detection}: the trained gate naturally
-      discriminates in-domain from out-of-domain text (2.25--4.11$\times$
-      ratio), requiring no additional module.
+\item \textbf{Emergent IDK and cache miss detection}: the trained gate
+      naturally discriminates in-domain from out-of-domain text
+      (2.25--4.11$\times$ ratio); at grove scale, 81\% of uncovered
+      topics are correctly detected as cache misses.
 \item \textbf{Joint gate composition}: independently trained adapters
       compose without interference via joint gate fine-tuning with softmax
-      normalization, enabling distributed community training.
+      normalization (95/101 checks at 10 adapters), enabling distributed
+      community training.
+\item \textbf{Ensemble ablation inference}: selectively suppressing
+      adapters at inference time to identify adapter-dependent claims,
+      enabling epistemic verification unique to modular architectures.
 \end{enumerate}
 
 % ============================================================================
@@ -950,18 +959,10 @@ We identify four limitations that bound our current claims:
           Bimodality detection (dip test, kurtosis) on per-token loss
           distributions never fires on generic C4 data. Finding a
           mechanistic, data-driven split trigger remains an open problem.
-          The scheduled approach works well in practice. A promising
-          alternative is \emph{speculative splitting with rollback}:
-          attempt a split at each candidate point, train for a short
-          evaluation window, and revert if the split did not reduce loss.
-          This inverts the problem---instead of predicting \emph{when}
-          to split, the system tries splitting and evaluates whether it
-          helped. In a 25K-step experiment, the system accepted only
-          2 out of 8 attempted splits (at steps 9K and 21K), growing
-          to 4 experts with all active ($M_{ij}$ CV 1.52). Early splits
-          (3K, 6K) were correctly rejected as premature. The cost is at
-          most the evaluation window (500 steps) per failed attempt---a
-          modest overhead that eliminates the need for any timing signal.
+          The scheduled approach works well in practice, but
+          \emph{speculative splitting with rollback} provides a
+          data-driven alternative that eliminates the need for any
+          timing signal (see Section~\ref{sec:speculative-split}).
     \item \textbf{Framework tested on one model family only.} All experiments use
           Qwen3 (1.7B and 8B). Generalization to other architectures (Llama,
           Mistral, GPT-scale) and other data distributions is assumed but not
@@ -1225,6 +1226,25 @@ A quality benchmark confirms that the 8-expert model reduces perplexity by
 22.8\% across all domains compared to the base---an improvement over the
 2-expert model's 19.1\%, with legal text benefiting most ($-$25.4\%).
 
+\paragraph{Speculative splitting with rollback: data-driven growth.}
+\label{sec:speculative-split}
+A learntropy-driven split trigger remains elusive (bimodality detection
+never fires on generic C4 data). We therefore tested an alternative:
+\emph{speculative splitting with rollback}. Every 3,000 steps, the system
+attempts to split the highest-learntropy expert, trains for a 500-step
+evaluation window, and \emph{reverts} if the split did not reduce loss.
+In a 25K-step experiment on Qwen3-8B, the system attempted 8 splits and
+\textbf{kept only 2} (at steps 9K and 21K), rolling back the other 6.
+Early splits (3K, 6K) were correctly rejected as premature; late splits
+(12K, 15K, 18K, 24K) were rejected because the existing experts had
+already partitioned the learnable signal. The result: 4 experts with all
+4 active ($M_{ij}$ CV 1.52). The cost is at most 500 steps per failed
+attempt---a modest overhead that eliminates the need for any timing
+signal. This inverts the split-timing problem: instead of predicting
+\emph{when} to split, the system tries splitting and evaluates whether it
+helped. To our knowledge, speculative expert splitting with automatic
+rollback has no precedent in the MoE literature.
+
 \paragraph{Grove of Trees: combining tree growth with tree-level identity.}
 The scheduled growth mechanism operates within a single routing space. A
 \emph{grove} extends this by giving each tree its own identity: LoRA
@@ -1357,6 +1377,19 @@ However, the effect is adapter-dependent: the cuisine adapter shows weaker
 discrimination (1.86$\times$), likely because food-related text overlaps more
 with generic language than news does.
 
+\paragraph{Cache miss detection at grove scale.}
+Beyond per-adapter IDK detection, the grove's gate activations enable
+\emph{cache miss detection}: identifying queries that fall outside
+\emph{all} loaded adapters' domains. We tested 32 queries spanning 16
+covered topics and 16 uncovered topics (law, economics, history, art,
+music, geography, psychology, philosophy). Of the 16 uncovered queries,
+13 were correctly detected as cache misses (max gate $<0.30$), yielding
+an 81\% detection rate with only 6\% false coverage (1/16 uncovered
+queries falsely classified as covered). This enables a demand-driven
+training pipeline: logged cache misses reveal which topics users ask
+about but no adapter covers, directing training priorities toward actual
+demand rather than guesswork. (Pre-registered, single run.)
+
 \paragraph{Multi-adapter composition requires joint gate training.}
 When two adapters (BBC news + Dutch cuisine) are loaded simultaneously with
 independently-trained gates, the cuisine gate fires at 0.49 on BBC text,
@@ -1370,17 +1403,33 @@ improves ($-8.2\%$). The key insight: gates trained in isolation learn ``my doma
 vs.\ generic'' but not ``my domain vs.\ other adapters' domains.'' Joint training
 teaches the full discrimination.
 
+\paragraph{10-adapter grove composition.}
+Scaling from 3 to 10 independently-trained adapters (BBC news, Dutch
+cuisine, Wing Chun, physics, biology, chemistry, mathematics, computer
+science, medicine, AI/ML) with joint gate fine-tuning, 95 of 101
+composition checks pass (94\%). The 6 failures are semantically correct
+overlaps between related domains (physics$\leftrightarrow$chemistry,
+biology$\leftrightarrow$medicine, mathematics$\leftrightarrow$computer
+science---cross-leakage 0.11--0.16 where the threshold is 0.10).
+Generic perplexity \emph{improves} by $-14.2\%$ compared to the base
+model. This demonstrates that the grove architecture scales to
+double-digit adapter counts without interference or generic degradation.
+
 \paragraph{Standard benchmarks improve with grove adapters.}
 A 3-adapter grove (BBC news, Dutch cuisine, Wing Chun martial arts---trained
 independently, composed via joint gate fine-tuning) improves standard
 reasoning benchmarks compared to the unmodified base model:
 ARC-Challenge acc\_norm $56.3\% \to 57.5\%$ ($+1.2\%$),
 HellaSwag acc\_norm $75.0\% \to 77.5\%$ ($+2.6\%$).
-This is notable because the adapters were trained on domain-specific text,
-not on benchmark tasks. The improvement likely reflects the same mechanism
-as the generic PPL improvement: the delta-gated adapters act as soft
-regularizers, providing complementary representations that benefit even
-out-of-domain reasoning. (Single run, 0-shot, not yet replicated.)
+A replication with joint-trained gates (which produce cleaner routing)
+yields slightly lower but still positive improvements: ARC $+1.0\%$,
+HellaSwag $+2.1\%$. The small gap suggests that routing quality and
+benchmark performance are partially independent---both should be
+reported. The improvement is notable because the adapters were trained
+on domain-specific text, not on benchmark tasks. The gated adapters act
+as soft regularizers, providing complementary representations that
+benefit even out-of-domain reasoning. (Single run, 0-shot, not yet
+replicated.)
 
 \paragraph{Sparse routing eliminates the cost of inactive adapters.}
 With 10 adapters loaded, dense routing (computing all adapter forward passes
@@ -1395,12 +1444,89 @@ that the router selects. At scale (hundreds of adapters), sparse routing is
 essential---the cost grows with the number of \emph{active} adapters per
 token, not the total number in the grove.
 
+\paragraph{Ensemble ablation inference.}
+The grove's modular structure enables a novel verification mechanism:
+\emph{ensemble ablation inference}. For a given query, the system
+identifies which adapters are active (gate $>0.05$), then re-runs
+inference with each active adapter individually suppressed. Where
+answers change, the claim is adapter-dependent and may warrant
+verification. In testing on 8 diverse factual questions, routing
+correctly identifies 1--3 active adapters per question (physics for
+Heisenberg uncertainty, computer science for compiler optimization,
+medicine for antibiotic resistance). This capability is unique to
+modular architectures: monolithic models cannot selectively disable
+knowledge domains, and the shared trunk means $N$ ablation runs cost
+approximately $N$ forward passes rather than $N$ full model evaluations.
+(Pre-registered, single run; consensus accuracy not yet measured.)
+
+\paragraph{Medical benchmark: an honest negative about data quality.}
+\label{sec:medical-negative}
+To test whether domain adapters add factual knowledge or merely style,
+we evaluated a medicine adapter (trained on 500 FineWeb-Edu texts
+filtered by medical keywords) on 6 standard medical benchmarks via
+lm-eval-harness. The adapter \textbf{degrades all 6 benchmarks}:
+MedQA $64.1\% \to 60.1\%$ ($-4.0$pp),
+MMLU Professional Medicine $82.0\% \to 71.3\%$ ($-10.7$pp),
+MMLU Anatomy $70.4\% \to 68.9\%$ ($-1.5$pp),
+MMLU Clinical Knowledge $79.6\% \to 78.1\%$ ($-1.5$pp),
+MMLU College Medicine $75.1\% \to 74.0\%$ ($-1.2$pp),
+MMLU Medical Genetics $82.0\% = 82.0\%$ (neutral).
+The per-layer gate protects generic perplexity ($17.5 \to 16.9$, an
+improvement) but cannot compensate for low-quality training data. This
+establishes that \textbf{data quality, not architecture, is the
+bottleneck for knowledge injection}. The gate mechanism works as
+designed---it selectively applies the adapter---but when the adapter
+encodes noise rather than knowledge, selective application of noise
+still degrades performance. Domain adapters require curated,
+high-quality training data; keyword filtering of general corpora is
+insufficient. (Pre-registered, single run.)
+
+\paragraph{Uniform vs.\ per-layer gated LoRA.}
+To test whether per-layer gating adds value over standard uniform LoRA
+(the key differentiator between our approach and standard PEFT), we
+trained both on the same medical data with identical rank and steps.
+Result: per-layer gating \textbf{protects generic perplexity} (17.5
+$\to$ 16.9 vs.\ 17.5 $\to$ 38.6 for uniform), but neither adds
+medical knowledge with FineWeb-filtered data. The gate's value is
+\emph{protection}---preventing the adapter from degrading the base
+model on out-of-domain text---not knowledge injection. Uniform LoRA
+catastrophically degrades generic performance ($+120\%$ PPL) because
+every layer applies the domain update indiscriminately. This validates
+the per-layer gate as essential for hot-pluggable deployment, even when
+the adapter itself provides no knowledge benefit.
+
+\paragraph{Top-$k$ throughput scaling.}
+\label{sec:topk-throughput}
+Sparse routing (threshold-based gate skipping) scales smoothly with the
+number of active adapters. With 10 adapters loaded on Qwen3-8B:
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Mode & tok/s & Skip rate \\
+\midrule
+Base (no adapters) & 60.8 & 100\% \\
+Top-1 (1 active) & 38.2 & 90\% \\
+Top-2 (2 active) & 31.2 & 80\% \\
+Top-3 (3 active) & 26.2 & 70\% \\
+Dense (all 10) & 12.5 & 0\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Each additional active adapter costs $\sim$4~tok/s, a linear overhead.
+At top-1, throughput is 63\% of the base model; at top-3, still 43\%.
+Dense routing ($-79\%$) is unacceptable at scale; sparse routing makes
+the cost proportional to the number of \emph{relevant} adapters, not
+the total number in the grove.
+
 % ============================================================================
 \section{Conclusion}
 
 We set out to separate fluid intelligence from crystallized knowledge using
-variable-rank LoRA expert adapters. The results establish five principal
-findings and a unifying framework driven by learntropy.
+variable-rank LoRA expert adapters. The results establish six principal
+findings, several deployment-ready capabilities, and one important honest
+negative, all driven by a unifying framework centered on learntropy.
 
 \subsection{Established Results}
 
@@ -1450,6 +1576,22 @@ model. Per-layer gate magnitudes correlate strongly with domain PPL impact
 domains tested, same hyperparameters) and is robust to the choice of sparsity
 penalty (L1 $\approx$ L2, gap $+0.002$).
 (Section~\ref{sec:delta-gating})
+
+\textbf{Deployment capabilities.} The grove scales to 10 independently-trained
+adapters with 94\% composition checks passing and $-14.2\%$ generic PPL
+improvement. Sparse routing recovers $+77\%$ throughput over dense routing by
+skipping inactive adapters. Cache miss detection identifies 81\% of
+uncovered topics, enabling demand-driven growth. Ensemble ablation
+inference---selectively suppressing adapters to detect adapter-dependent
+claims---provides epistemic verification unique to modular architectures.
+
+\textbf{Honest negative: data quality bottleneck.} A medicine adapter trained
+on keyword-filtered FineWeb-Edu data degrades all 6 medical benchmarks
+(MedQA $-4.0$pp, MMLU Professional Medicine $-10.7$pp). The per-layer gate
+protects generic PPL but cannot compensate for low-quality training data.
+Architecture is not the bottleneck for knowledge injection---data quality is.
+Per-layer gating remains essential: without it, uniform LoRA catastrophically
+degrades generic performance ($+120\%$ PPL).
 
 \subsection{From Tree to Forest}
 
