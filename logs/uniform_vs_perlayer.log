@@ -1,0 +1,57 @@
+=== UNIFORM vs PER-LAYER GATED LoRA ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<00:51,  7.68it/s]Loading weights:   1%|          | 2/399 [00:00<01:47,  3.71it/s]Loading weights:   5%|▌         | 21/399 [00:00<00:07, 47.90it/s]Loading weights:  13%|█▎        | 50/399 [00:00<00:03, 96.19it/s]Loading weights:  22%|██▏       | 87/399 [00:00<00:02, 154.45it/s]Loading weights:  40%|████      | 160/399 [00:00<00:00, 294.24it/s]Loading weights:  49%|████▉     | 197/399 [00:01<00:00, 301.95it/s]Loading weights:  59%|█████▉    | 236/399 [00:01<00:00, 322.36it/s]Loading weights:  70%|██████▉   | 279/399 [00:01<00:00, 349.18it/s]Loading weights:  79%|███████▉  | 317/399 [00:01<00:00, 355.92it/s]Loading weights:  89%|████████▉ | 355/399 [00:01<00:00, 350.34it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 249.23it/s]
+
+--- BASELINE (no adapter) ---
+  Base style PPL: 7.39
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+  Base knowledge: 12/20 (60%)
+  Base generic PPL: 17.49
+
+============================================================
+  CONDITION: A: Uniform LoRA (no gate)
+============================================================
+
+  Phase 1: Adapter training (2000 steps)
+    Step 0/2000 | loss=2.4219
+    Step 500/2000 | loss=1.0703
+    Step 1000/2000 | loss=1.2578
+    Step 1500/2000 | loss=0.8047
+  Uniform style PPL: 14.60
+  Uniform knowledge: 12/20 (60%)
+  Uniform generic PPL: 38.59
+
+============================================================
+  CONDITION: B: Per-layer gated LoRA
+============================================================
+
+  Phase 1: Adapter training (2000 steps)
+    Step 0/2000 | loss=2.4219
+    Step 500/2000 | loss=1.0625
+    Step 1000/2000 | loss=1.2656
+    Step 1500/2000 | loss=0.8008
+
+  Phase 2: Gate training (1500 steps)
+    Step 0/1500
+    Step 500/1500
+    Step 1000/1500
+  Gated style PPL: 13.06
+  Gated knowledge: 10/20 (50%)
+  Gated generic PPL: 16.92
+
+============================================================
+COMPARISON
+============================================================
+Metric                    Base       Uniform    Gated     
+-------------------------------------------------------
+Style PPL                 7.39       14.60      13.06     
+Knowledge (%)             60         60         50        
+Generic PPL               17.49      38.59      16.92     
+
+Style difference: 10.6% (threshold: within 5%)
+Knowledge difference: -10pp (threshold: >10pp for gated win)
+
+VERDICT: Inconclusive (knowledge diff -10pp, style diff 10.6%)
+
+Saved to /root/t6b-mogae/results/uniform_vs_perlayer.json

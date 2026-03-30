@@ -1,0 +1,24 @@
+{
+  "experiment": "uniform_vs_perlayer_gated",
+  "base": {
+    "style_ppl": 7.39063442686491,
+    "knowledge_pct": 60.0,
+    "generic_ppl": 17.491426145837817
+  },
+  "uniform": {
+    "style_ppl": 14.599539568616988,
+    "knowledge_pct": 60.0,
+    "generic_ppl": 38.592309730216805
+  },
+  "gated": {
+    "style_ppl": 13.056643916510174,
+    "knowledge_pct": 50.0,
+    "generic_ppl": 16.920680798058886
+  },
+  "diffs": {
+    "style_pct": 10.568111719244943,
+    "knowledge_pp": -10.0
+  },
+  "verdict": "inconclusive",
+  "timestamp": "2026-03-31T00:18:50"
+}
