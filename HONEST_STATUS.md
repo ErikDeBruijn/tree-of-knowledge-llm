@@ -74,3 +74,14 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 | Grove architecture | 10-adapter grove, 95/101 checks | Operational |
 | Ensemble ablation | OBSERVED (5/5 adapter-dependent) | New capability |
 | Demand-driven growth | PLAUSIBLE (Step 1: 81% cache miss detection) | Steps 2-4 pending |
+
+### OBSERVED (cont.)
+- PEFT LoRA baseline (2026-03-31): Standard HuggingFace PEFT LoRA (post-nonlinearity, rank-16, layers 12-35, BBC data) degrades generic PPL +25.5% and adds 0% domain improvement. Our gated approach on same data: generic -6%, domain -17%. Per-layer gate is genuinely better than standard PEFT LoRA.
+
+## Potential solutions not yet tested
+- **RandLoRA** (arXiv 2502.00987): full-rank updates via random bases + learned scaling, closes gap between LoRA and full fine-tuning. Potential escape if LoRA rank is a representational bottleneck.
+- **Better learntropy signal**: Current implementation uses raw cross-entropy. Wozniak's learntropy theory suggests surprise-relative-to-current-knowledge (not absolute difficulty) is the right signal. Research in progress.
+- **Better training data**: DCLM, PubMed, arXiv, Wikipedia recent edits instead of FineWeb keyword-filtered.
+
+### OBSERVED (cont.)
+- Medical benchmark base vs adapter (2026-03-31, official benchmarks): Medicine adapter (FineWeb-Edu keyword-filtered, 500 texts) DEGRADES all 6 medical benchmarks. MedQA: 64.1%→60.1% (-4pp). MMLU Professional Medicine: 82.0%→71.3% (-10.7pp). Medical Genetics: neutral (82.0%=82.0%). Per-layer gate protects generic PPL but cannot compensate for low-quality training data. Data quality, not architecture, is the bottleneck for knowledge injection.
