@@ -1,0 +1,28 @@
+{
+  "medqa_4options": {
+    "acc,none": 0.600942655145326,
+    "acc_stderr,none": 0.013730634744297098,
+    "acc_norm,none": 0.600942655145326,
+    "acc_norm_stderr,none": 0.013730634744297098
+  },
+  "mmlu_anatomy": {
+    "acc,none": 0.6888888888888889,
+    "acc_stderr,none": 0.039992628766177166
+  },
+  "mmlu_clinical_knowledge": {
+    "acc,none": 0.7811320754716982,
+    "acc_stderr,none": 0.025447863825108594
+  },
+  "mmlu_college_medicine": {
+    "acc,none": 0.7398843930635838,
+    "acc_stderr,none": 0.03345036916788986
+  },
+  "mmlu_medical_genetics": {
+    "acc,none": 0.82,
+    "acc_stderr,none": 0.03861229196653691
+  },
+  "mmlu_professional_medicine": {
+    "acc,none": 0.7132352941176471,
+    "acc_stderr,none": 0.027472274473233842
+  }
+}
