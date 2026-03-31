@@ -37,6 +37,10 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 - Standard PEFT LoRA degrades generic PPL (2026-03-31, 2 configs): Without gate: +25.5% to +31.7%. With output-level gate: +2.9%. Our per-layer gate: -6%. Gate-based protection is robust across LoRA implementations (custom Expert and standard PEFT). Even a naive output gate reduces degradation 11x.
 - Uniform vs gated grove on ARC/HellaSwag (2026-03-31): Uniform grove 58.3/78.8, gated grove 57.5/77.5, base 56.3/75.0. Both improve over base. Uniform slightly higher on benchmarks but destroys generic PPL. Trade-off: benchmark score vs protection.
 
+### SUPPORTED (cont.)
+- Learntropy-guided training recipe (2026-03-31, 3 conditions): Early-stop 500 steps + gate 1500 steps wins both dimensions. Domain -32.1%, generic -12.1%. Ungated 500: domain -32.1%, generic -8.7%. Gated 2000+1500: domain -20.1%, generic -4.8%. Gate adds 3.4pp generic protection on top of early stopping. Standard 2000-step training overtrains without gate.
+- Learning speed signal finds Goldilocks zone (2026-03-31): Domain peaks at step 2000, generic speed negative at step 250. Goldilocks zone: 300-2950 steps. Net learning value peaks in middle phase. Detects overfitting 50 steps before relative surprise.
+
 ### OBSERVED (cont.)
 - Learntropy relative surprise (L_expert - L_base) differs from raw CE (2026-03-31): Correlation 0.64 (not equivalent). Detects overfitting onset at step 1600 (generic relative surprise drops sharply). Raw CE separates domain/generic better (Cohen's d -1.22 vs -0.89). Potential use: early stopping signal, not routing signal.
 
