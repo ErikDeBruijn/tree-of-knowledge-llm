@@ -1,0 +1,98 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:37, 10.56it/s]Loading weights:   8%|▊         | 32/399 [00:00<00:02, 133.82it/s]Loading weights:  16%|█▌        | 64/399 [00:00<00:01, 195.62it/s]Loading weights:  27%|██▋       | 108/399 [00:00<00:01, 272.03it/s]Loading weights:  37%|███▋      | 147/399 [00:00<00:00, 306.89it/s]Loading weights:  45%|████▌     | 180/399 [00:00<00:00, 304.92it/s]Loading weights:  54%|█████▍    | 215/399 [00:00<00:00, 305.68it/s]Loading weights:  62%|██████▏   | 248/399 [00:00<00:00, 307.84it/s]Loading weights:  73%|███████▎  | 290/399 [00:01<00:00, 322.24it/s]Loading weights:  81%|████████  | 323/399 [00:01<00:00, 300.49it/s]Loading weights:  89%|████████▉ | 355/399 [00:01<00:00, 297.98it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 298.40it/s]
+
+=== Measuring per-layer gate values ===
+Gate values per layer:
+  L12: 0.9639
+  L13: 0.9461
+  L14: 0.9760
+  L15: 0.9322
+  L16: 0.9430
+  L17: 0.7712
+  L18: 0.9275
+  L19: 0.9008
+  L20: 0.9635
+  L21: 0.9137
+  L22: 0.9313
+  L23: 0.9656
+  L24: 0.9125
+  L25: 0.9178
+  L26: 0.9756
+  L27: 0.9369
+  L28: 0.9887
+  L29: 0.9689
+  L30: 0.9611
+  L31: 0.9449
+  L32: 0.9590
+  L33: 0.8771
+  L34: 0.9607
+  L35: 0.9943
+
+=== Measuring per-layer relative surprise ===
+  L12: adapter-only PPL=11.78, base=12.51, delta=-5.81%
+  L13: adapter-only PPL=11.76, base=12.51, delta=-6.02%
+  L14: adapter-only PPL=11.85, base=12.51, delta=-5.29%
+  L15: adapter-only PPL=11.82, base=12.51, delta=-5.50%
+  L16: adapter-only PPL=11.80, base=12.51, delta=-5.66%
+  L17: adapter-only PPL=11.89, base=12.51, delta=-4.93%
+  L18: adapter-only PPL=12.07, base=12.51, delta=-3.55%
+  L19: adapter-only PPL=12.37, base=12.51, delta=-1.08%
+  L20: adapter-only PPL=12.04, base=12.51, delta=-3.72%
+  L21: adapter-only PPL=12.24, base=12.51, delta=-2.14%
+  L22: adapter-only PPL=12.37, base=12.51, delta=-1.09%
+  L23: adapter-only PPL=12.38, base=12.51, delta=-1.02%
+  L24: adapter-only PPL=12.39, base=12.51, delta=-0.96%
+  L25: adapter-only PPL=12.08, base=12.51, delta=-3.44%
+  L26: adapter-only PPL=12.21, base=12.51, delta=-2.36%
+  L27: adapter-only PPL=12.26, base=12.51, delta=-1.96%
+  L28: adapter-only PPL=12.26, base=12.51, delta=-2.00%
+  L29: adapter-only PPL=12.23, base=12.51, delta=-2.24%
+  L30: adapter-only PPL=12.25, base=12.51, delta=-2.11%
+  L31: adapter-only PPL=12.30, base=12.51, delta=-1.66%
+  L32: adapter-only PPL=12.12, base=12.51, delta=-3.08%
+  L33: adapter-only PPL=12.30, base=12.51, delta=-1.64%
+  L34: adapter-only PPL=11.70, base=12.51, delta=-6.49%
+  L35: adapter-only PPL=11.58, base=12.51, delta=-7.39%
+
+============================================================
+PIAGET VALIDATION: Gate vs Per-Layer Learntropy
+============================================================
+
+Spearman correlation: ρ = -0.3191 (p = 1.2851e-01)
+Pearson correlation:  r = -0.1156 (p = 5.9055e-01)
+
+Expected: NEGATIVE correlation (high gate = adapter helps more = more negative delta)
+VERDICT: NO CORRELATION — gate and learntropy are independent
+
+Top 5 highest-gate layers: [35, 28, 14, 26, 29]
+Top 5 most-helpful layers: [35, 34, 13, 12, 16]
+
+Layer    Gate       Adapter Δ PPL%  Piaget regime       
+-----------------------------------------------------
+L12     0.9639     -5.81           accommodation       
+L13     0.9461     -6.02           accommodation       
+L14     0.9760     -5.29           accommodation       
+L15     0.9322     -5.50           accommodation       
+L16     0.9430     -5.66           accommodation       
+L17     0.7712     -4.93           accommodation       
+L18     0.9275     -3.55           accommodation       
+L19     0.9008     -1.08           accommodation       
+L20     0.9635     -3.72           accommodation       
+L21     0.9137     -2.14           accommodation       
+L22     0.9313     -1.09           accommodation       
+L23     0.9656     -1.02           accommodation       
+L24     0.9125     -0.96           accommodation       
+L25     0.9178     -3.44           accommodation       
+L26     0.9756     -2.36           accommodation       
+L27     0.9369     -1.96           accommodation       
+L28     0.9887     -2.00           accommodation       
+L29     0.9689     -2.24           accommodation       
+L30     0.9611     -2.11           accommodation       
+L31     0.9449     -1.66           accommodation       
+L32     0.9590     -3.08           accommodation       
+L33     0.8771     -1.64           accommodation       
+L34     0.9607     -6.49           accommodation       
+L35     0.9943     -7.39           accommodation       
+
+Saved to results/piaget_gate_learntropy.json
