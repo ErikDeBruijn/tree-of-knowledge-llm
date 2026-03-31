@@ -329,6 +329,25 @@ productive training window---and overfitting onset, providing a
 principled early-stopping criterion that does not require a held-out
 validation set.
 
+A unique property of the hot-pluggable adapter architecture is that the
+frozen base model is always available as a \emph{reference point}. This
+enables a \emph{relative} learntropy formulation:
+$\mathcal{L}_{\text{rel}}(t) = \mathcal{L}_{\text{expert}}(t) -
+\mathcal{L}_{\text{base}}(t)$, measuring not absolute difficulty but
+how much the adapter helps or hurts on each token. In standard
+fine-tuning, the base weights are overwritten---no reference exists.
+In our architecture, relative learntropy is always computable and
+connects directly to Piaget: tokens where $\mathcal{L}_{\text{rel}} < 0$
+are in the accommodation zone (the adapter provides knowledge the trunk
+lacks); tokens where $\mathcal{L}_{\text{rel}} \approx 0$ are in the
+assimilation zone (the trunk suffices); tokens where
+$\mathcal{L}_{\text{rel}} > 0$ represent negative learntropy in
+Wozniak's sense (the adapter \emph{harms} performance---the learning
+attempt should be suppressed).
+% TODO: Replace raw CE with relative learntropy for LR modulation,
+% split timing, and curriculum weighting in 8B experiments.
+% Pre-registered: relative-learntropy-8b-grove.md
+
 Bimodality detection (below) partially recovers
 Wozniak's distinction between productive and unproductive difficulty
 by identifying when an expert's loss distribution contains both
@@ -1680,6 +1699,19 @@ skipping inactive adapters. Cache miss detection identifies 81\% of
 uncovered topics, enabling demand-driven growth. Ensemble ablation
 inference---selectively suppressing adapters to detect adapter-dependent
 claims---provides epistemic verification unique to modular architectures.
+
+\textbf{The frozen base as epistemic reference.} A property unique to
+hot-pluggable adapter architectures: the base model is always available
+for comparison. This enables \emph{relative learntropy}
+($\mathcal{L}_{\text{expert}} - \mathcal{L}_{\text{base}}$), measuring
+not absolute token difficulty but how much the adapter helps or hurts---a
+learner-relative signal in Wozniak's sense. Standard fine-tuning
+overwrites the base weights, destroying this reference. In our
+architecture, the Piagetian regime of each layer is directly measurable:
+assimilation (adapter $\approx$ base), accommodation (adapter $\ll$ base),
+or interference (adapter $>$ base, Wozniak's negative learntropy).
+% TODO: Report Piaget gate--learntropy correlation when experiment completes.
+% TODO: Report 8B grove results with relative learntropy for LR/split/curriculum.
 
 \textbf{Honest negative: data quality bottleneck.} A medicine adapter trained
 on keyword-filtered FineWeb-Edu data degrades all 6 medical benchmarks
