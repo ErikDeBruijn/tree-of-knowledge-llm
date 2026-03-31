@@ -1,0 +1,20 @@
+{
+  "experiment": "recipe_replication_cuisine",
+  "domain": "cuisine",
+  "base": {
+    "domain": 12.237920681470158,
+    "generic": 15.252903541850225
+  },
+  "ungated_500": {
+    "domain": 9.542658790215892,
+    "generic": 13.33510143496492
+  },
+  "gated_2000_1500": {
+    "domain": 11.224815909194371,
+    "generic": 14.109385404716434
+  },
+  "gated_500_1500": {
+    "domain": 9.500946551722423,
+    "generic": 13.271604508388313
+  }
+}

@@ -1,0 +1,43 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:40,  9.69it/s]Loading weights:   8%|▊         | 30/399 [00:00<00:03, 116.32it/s]Loading weights:  15%|█▌        | 60/399 [00:00<00:01, 178.48it/s]Loading weights:  29%|██▊       | 114/399 [00:00<00:01, 280.71it/s]Loading weights:  36%|███▋      | 145/399 [00:00<00:00, 284.32it/s]Loading weights:  45%|████▌     | 181/399 [00:00<00:00, 302.16it/s]Loading weights:  53%|█████▎    | 213/399 [00:00<00:00, 287.17it/s]Loading weights:  62%|██████▏   | 247/399 [00:00<00:00, 295.47it/s]Loading weights:  70%|██████▉   | 278/399 [00:01<00:00, 291.86it/s]Loading weights:  79%|███████▉  | 317/399 [00:01<00:00, 316.00it/s]Loading weights:  88%|████████▊ | 353/399 [00:01<00:00, 311.42it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 282.65it/s]
+
+=== BASE ===
+  Base domain (cuisine): PPL=12.24
+  Base generic: PPL=15.25
+
+=== A: Ungated, 500 steps ===
+  A domain: PPL=9.54
+  A generic: PPL=13.34
+
+=== B: Gated, 2000+1500 steps ===
+  P1 step 0
+  P1 step 500
+  P1 step 1000
+  P1 step 1500
+  P2 step 0
+  P2 step 500
+  P2 step 1000
+  B domain: PPL=11.22
+  B generic: PPL=14.11
+
+=== C: Gated, 500+1500 steps (optimal) ===
+  P2 step 0
+  P2 step 500
+  P2 step 1000
+  C domain: PPL=9.50
+  C generic: PPL=13.27
+
+=================================================================
+CUISINE REPLICATION: Gate vs Early-Stop vs Both
+=================================================================
+Config                              Domain PPL   Generic PPL  D Δ      G Δ     
+-----------------------------------------------------------------
+Base                                12.24        15.25        —        —       
+A: Ungated, 500 steps               9.54         13.34        -22.0%  -12.6%
+B: Gated, 2000+1500 steps           11.22        14.11        -8.3%  -7.5%
+C: Gated, 500+1500 steps            9.50         13.27        -22.4%  -13.0%
+
+BBC reference: C was domain -32.1%, generic -12.1%
+Cuisine:       C is  domain -22.4%, generic -13.0%
+
+Saved to results/recipe_replication_cuisine.json
