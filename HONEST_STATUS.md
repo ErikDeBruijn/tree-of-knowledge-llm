@@ -43,6 +43,12 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 
 ### OBSERVED (cont.)
 - Learntropy relative surprise (L_expert - L_base) differs from raw CE (2026-03-31): Correlation 0.64 (not equivalent). Detects overfitting onset at step 1600 (generic relative surprise drops sharply). Raw CE separates domain/generic better (Cohen's d -1.22 vs -0.89). Potential use: early stopping signal, not routing signal.
+- Relative surprise as gate training signal = null result (2026-03-31): identical to raw CE on both domain and generic PPL. Gate already implicitly captures the relative signal.
+- Learntropy curriculum v2 works WITHOUT gate (2026-03-31): Wozniak inverted-U token weighting (temp=0.5, clamp [0.5,2.0]). Domain -11.0% vs +13.5% standard. Generic +0.1% vs +17.0%. But curriculum + gate is REDUNDANT — gate alone is better (domain -22.4% vs -12.3%). Gate and curriculum solve the same problem.
+
+### FALSIFIED (cont.)
+- Learntropy curriculum v1 (aggressive weighting, temp=3.0): PPL explodes to 500M. Soft weighting essential.
+- Combining curriculum + gate doesn't stack: gate alone (-22.4% domain, -6.1% generic) beats curriculum+gate (-12.3% domain, -0.8% generic).
 
 ### PLAUSIBLE (single observation, not replicated)
 - Learntropy-weighted gate training marginally improves baseline (sel 0.807 vs 0.801, leak 0.094 vs 0.101)
