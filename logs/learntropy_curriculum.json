@@ -1,0 +1,15 @@
+{
+  "experiment": "learntropy_curriculum",
+  "base": {
+    "domain": 12.641294717646483,
+    "generic": 15.340923728441682
+  },
+  "standard": {
+    "domain": 14.334480464900045,
+    "generic": 17.90914166125334
+  },
+  "curriculum": {
+    "domain": 521309167.3511387,
+    "generic": 71044.99019706387
+  }
+}

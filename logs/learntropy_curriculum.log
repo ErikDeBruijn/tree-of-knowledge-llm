@@ -1,0 +1,41 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:36, 10.95it/s]Loading weights:   9%|▉         | 37/399 [00:00<00:02, 142.46it/s]Loading weights:  23%|██▎       | 92/399 [00:00<00:01, 249.25it/s]Loading weights:  35%|███▍      | 138/399 [00:00<00:00, 312.45it/s]Loading weights:  43%|████▎     | 172/399 [00:00<00:00, 312.00it/s]Loading weights:  53%|█████▎    | 212/399 [00:00<00:00, 334.35it/s]Loading weights:  62%|██████▏   | 247/399 [00:00<00:00, 333.43it/s]Loading weights:  73%|███████▎  | 290/399 [00:00<00:00, 360.95it/s]Loading weights:  82%|████████▏ | 328/399 [00:01<00:00, 303.81it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 324.72it/s]
+Precomputing base model per-token losses...
+  Cached 200 texts
+
+=== BASE ===
+  Base domain: PPL=12.64
+  Base generic: PPL=15.34
+
+=== Standard (uniform weight) (500 steps) ===
+  Step 0/500 | loss=2.6250
+  Step 100/500 | loss=2.5000
+  Step 200/500 | loss=2.0625
+  Step 300/500 | loss=2.2812
+  Step 400/500 | loss=1.5547
+  Standard (uniform weight) domain: PPL=14.33
+  Standard (uniform weight) generic: PPL=17.91
+
+=== Curriculum (learntropy-weighted) (500 steps) ===
+  Step 0/500 | loss=2.6250 | mean_weight=1.000
+  Step 100/500 | loss=0.1035 | mean_weight=0.999
+  Step 200/500 | loss=0.0481 | mean_weight=0.881
+  Step 300/500 | loss=0.0042 | mean_weight=0.344
+  Step 400/500 | loss=0.0019 | mean_weight=0.094
+  Curriculum (learntropy-weighted) domain: PPL=521309167.35
+  Curriculum (learntropy-weighted) generic: PPL=71044.99
+  Curriculum: 21% tokens weighted > 0.5
+
+============================================================
+COMPARISON: Standard vs Learntropy Curriculum
+============================================================
+Config                              Domain PPL   Generic PPL  D Δ      G Δ     
+------------------------------------------------------------
+Base                                12.64        15.34        —        —       
+Standard (500 steps)                14.33        17.91        +13.4%  +16.7%
+Curriculum (500 steps)              521309167.35 71044.99     +4123858879.6%  +463007.6%
+
+VERDICT: Mixed — domain +3636749544.5%, generic +396596.8%
+
+Saved to results/learntropy_curriculum.json
