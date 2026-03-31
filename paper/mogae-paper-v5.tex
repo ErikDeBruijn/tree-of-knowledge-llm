@@ -907,6 +907,22 @@ evaluates for $N$ steps, and reverts if loss does not improve. To our
 knowledge, expert splitting and speculative rollback have no precedent in
 the MoE literature.
 
+\paragraph{Selective training and compression progress.}
+Rho-1~\cite{rho1_2024} shows that scoring tokens by
+$\mathcal{L}_{\text{train}} - \mathcal{L}_{\text{reference}}$ and training
+only on high-scoring tokens achieves 30\% improvement with 3\% of pretraining
+data on math tasks. Our architecture is uniquely suited to this: the frozen
+base model IS the reference model, always available for comparison. In standard
+fine-tuning, the reference is destroyed when weights are overwritten. In our
+framework, $\mathcal{L}_{\text{expert}}(t) - \mathcal{L}_{\text{base}}(t)$
+is computed for free during every forward pass---no additional model needed.
+Schmidhuber's \emph{compression progress}~\cite{schmidhuber2008} further
+refines this: the reward is not current prediction error but its
+\emph{first derivative}---how fast the model's predictions improve. Our
+learning speed signal ($-d/dt[\text{EMA}(\mathcal{L})]$, Section~\ref{sec:delta-gating})
+implements this directly and identifies the productive training window
+(Goldilocks zone) where compression progress is positive.
+
 \paragraph{What is novel in this work.}
 We do not claim novelty for LoRA adapters, frozen trunks, or multi-adapter
 serving---these are established. Our contributions are:
@@ -1940,6 +1956,10 @@ Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
 \bibitem{l2r2026} L2R: Low-Rank Lipschitz-Controlled Routing. \textit{arXiv:2601.21349}, 2026.
 \bibitem{shannon1948} C. E. Shannon. A Mathematical Theory of Communication. \textit{Bell System Technical Journal}, 27(3):379--423, 1948.
 \bibitem{hartigan1985dip} J. A. Hartigan, P. M. Hartigan. The Dip Test of Unimodality. \textit{Annals of Statistics}, 13(1):70--84, 1985.
+
+\bibitem{rho1_2024} Z. Lin et al. Rho-1: Not All Tokens Are What You Need. \textit{arXiv:2404.07965}, 2024.
+
+\bibitem{schmidhuber2008} J. Schmidhuber. Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes. \textit{arXiv:0812.4360}, 2008.
 \bibitem{piaget1952} J. Piaget. \textit{The Origins of Intelligence in Children}. International Universities Press, 1952.
 \bibitem{vygotsky1978} L. S. Vygotsky. \textit{Mind in Society: The Development of Higher Psychological Processes}. Harvard University Press, 1978.
 \bibitem{wozniak2018learntropy} P. A. Wozniak. Learntropy. \textit{SuperMemo Guru}, 2018. \url{https://supermemo.guru/wiki/Learntropy}.
