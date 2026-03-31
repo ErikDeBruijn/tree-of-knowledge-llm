@@ -1,0 +1,18 @@
+{
+  "experiment": "peft_lora_with_output_gate",
+  "base": {
+    "domain_ppl": 12.641294717646483,
+    "generic_ppl": 15.252903541850225
+  },
+  "peft_no_gate": {
+    "domain_ppl": 12.579198569975638,
+    "generic_ppl": 20.090129416456627,
+    "generic_delta_pct": 31.713475806978263
+  },
+  "peft_with_gate": {
+    "domain_ppl": 12.390341871255728,
+    "generic_ppl": 15.697177446679587,
+    "generic_delta_pct": 2.9127169368794856
+  },
+  "gate_bias": -2.0
+}

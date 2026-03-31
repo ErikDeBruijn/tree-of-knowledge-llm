@@ -1,0 +1,41 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:36, 10.95it/s]Loading weights:  10%|▉         | 38/399 [00:00<00:02, 159.68it/s]Loading weights:  21%|██        | 82/399 [00:00<00:01, 259.31it/s]Loading weights:  31%|███       | 123/399 [00:00<00:00, 310.62it/s]Loading weights:  40%|███▉      | 158/399 [00:00<00:00, 313.95it/s]Loading weights:  49%|████▉     | 195/399 [00:00<00:00, 329.84it/s]Loading weights:  58%|█████▊    | 230/399 [00:00<00:00, 335.14it/s]Loading weights:  66%|██████▋   | 265/399 [00:00<00:00, 319.56it/s]Loading weights:  75%|███████▌  | 300/399 [00:01<00:00, 318.92it/s]Loading weights:  89%|████████▉ | 356/399 [00:01<00:00, 374.85it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 323.00it/s]
+
+=== BASE MODEL ===
+  Base domain: PPL=12.64
+  Base generic: PPL=15.25
+
+=== Phase 1: PEFT LoRA training ===
+trainable params: 12,582,912 || all params: 8,203,318,272 || trainable%: 0.1534
+  Step 0/2000 | loss=2.6250
+  Step 500/2000 | loss=2.2969
+  Step 1000/2000 | loss=1.5938
+  Step 1500/2000 | loss=2.0000
+
+=== After Phase 1 (PEFT LoRA, no gate) ===
+  Phase1 domain: PPL=12.58
+  Phase1 generic: PPL=20.09
+
+=== Phase 2: Output-level gate training ===
+  Step 0/1500 | loss=2.3906 | gate=0.119
+  Step 500/1500 | loss=0.1060 | gate=0.119
+  Step 1000/1500 | loss=2.0312 | gate=0.119
+
+=== PEFT LoRA + Gate RESULTS ===
+  Gated domain: PPL=12.39
+  Gated generic: PPL=15.70
+
+============================================================
+FULL COMPARISON
+============================================================
+Config                         Domain PPL      Generic PPL    
+------------------------------------------------------------
+Base (no adapter)              12.64           15.25          
+PEFT LoRA (no gate)            12.58           20.09          
+PEFT LoRA + output gate        12.39           15.70          
+
+Generic PPL delta: no gate +31.7%, with gate +2.9%
+Gate learned bias: -2.000 (sigmoid=0.119)
+
+Saved to results/peft_with_gate.json
