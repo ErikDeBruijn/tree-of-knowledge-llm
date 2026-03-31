@@ -1,0 +1,94 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:35, 11.08it/s]Loading weights:   8%|▊         | 32/399 [00:00<00:02, 137.74it/s]Loading weights:  17%|█▋        | 66/399 [00:00<00:01, 178.84it/s]Loading weights:  34%|███▍      | 136/399 [00:00<00:00, 313.36it/s]Loading weights:  44%|████▍     | 177/399 [00:00<00:00, 340.55it/s]Loading weights:  53%|█████▎    | 213/399 [00:00<00:00, 345.70it/s]Loading weights:  62%|██████▏   | 249/399 [00:00<00:00, 335.84it/s]Loading weights:  73%|███████▎  | 292/399 [00:00<00:00, 360.50it/s]Loading weights:  84%|████████▎ | 334/399 [00:01<00:00, 374.52it/s]Loading weights:  94%|█████████▍| 376/399 [00:01<00:00, 374.72it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 322.88it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Precomputing base losses...
+  Base domain: PPL=12.64
+  Base generic: PPL=15.25
+
+==================================================
+  1. None
+  gate=False early_stop=False curriculum=False
+==================================================
+  Phase 1: 500 steps
+    1. None domain: PPL=14.34
+    1. None generic: PPL=18.41
+
+==================================================
+  2. Gate only
+  gate=True early_stop=False curriculum=False
+==================================================
+  Phase 1: 500 steps
+    2. Gate only domain: PPL=9.82
+    2. Gate only generic: PPL=14.30
+
+==================================================
+  3. Early stop only
+  gate=False early_stop=True curriculum=False
+==================================================
+  Early stop at step 900
+  Phase 1: 901 steps
+    3. Early stop only domain: PPL=23.98
+    3. Early stop only generic: PPL=24.98
+
+==================================================
+  4. Curriculum only
+  gate=False early_stop=False curriculum=True
+==================================================
+  Phase 1: 500 steps
+    4. Curriculum only domain: PPL=11.11
+    4. Curriculum only generic: PPL=15.31
+
+==================================================
+  5. Gate + early stop
+  gate=True early_stop=True curriculum=False
+==================================================
+  Early stop at step 900
+  Phase 1: 901 steps
+    5. Gate + early stop domain: PPL=10.33
+    5. Gate + early stop generic: PPL=14.67
+
+==================================================
+  6. Gate + curriculum
+  gate=True early_stop=False curriculum=True
+==================================================
+  Phase 1: 500 steps
+    6. Gate + curriculum domain: PPL=11.03
+    6. Gate + curriculum generic: PPL=15.11
+
+==================================================
+  7. Early stop + curriculum
+  gate=False early_stop=True curriculum=True
+==================================================
+  Early stop at step 400
+  Phase 1: 401 steps
+    7. Early stop + curriculum domain: PPL=11.13
+    7. Early stop + curriculum generic: PPL=15.24
+
+==================================================
+  8. All three
+  gate=True early_stop=True curriculum=True
+==================================================
+  Early stop at step 400
+  Phase 1: 401 steps
+    8. All three domain: PPL=11.27
+    8. All three generic: PPL=15.18
+
+================================================================================
+ALL 8 COMBINATIONS
+================================================================================
+Condition                      Steps    Domain     Generic    D Δ      G Δ     
+--------------------------------------------------------------------------
+Base                           —        12.64      15.25      —        —       
+1. None                        500      14.34      18.41      +13.5%  +20.7%
+2. Gate only                   500      9.82       14.30      -22.3%  -6.2%
+3. Early stop only             901      23.98      24.98      +89.7%  +63.8%
+4. Curriculum only             500      11.11      15.31      -12.1%  +0.4%
+5. Gate + early stop           901      10.33      14.67      -18.3%  -3.8%
+6. Gate + curriculum           500      11.03      15.11      -12.7%  -1.0%
+7. Early stop + curriculum     401      11.13      15.24      -11.9%  -0.1%
+8. All three                   401      11.27      15.18      -10.8%  -0.5%
+
+Best generic PPL: 2. Gate only
+Best domain PPL: 2. Gate only
+
+Saved to results/all_combinations.json
