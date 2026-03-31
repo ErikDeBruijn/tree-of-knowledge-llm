@@ -1,0 +1,57 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.66it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 137.66it/s]Loading weights:  16%|█▌        | 64/399 [00:00<00:01, 193.70it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 319.32it/s]Loading weights:  41%|████      | 164/399 [00:00<00:00, 340.73it/s]Loading weights:  50%|█████     | 200/399 [00:00<00:00, 279.67it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 348.26it/s]Loading weights:  76%|███████▌  | 304/399 [00:01<00:00, 366.35it/s]Loading weights:  86%|████████▌ | 343/399 [00:01<00:00, 363.17it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 327.07it/s]
+
+=== BASELINE (no adapter) ===
+  Base domain: PPL=12.64
+  Base generic: PPL=15.78
+
+=== GATED (no layer skipping) ===
+  Gated domain: PPL=11.07
+  Gated generic: PPL=14.55
+
+=== GATE DISTRIBUTION ===
+  L12: gate=0.1192
+  L13: gate=0.1208
+  L14: gate=0.1221
+  L15: gate=0.1211
+  L16: gate=0.1187
+  L17: gate=0.1211
+  L18: gate=0.1208
+  L19: gate=0.1202
+  L20: gate=0.1170
+  L21: gate=0.1182
+  L22: gate=0.1182
+  L23: gate=0.1179
+  L24: gate=0.1185
+  L25: gate=0.1183
+  L26: gate=0.1172
+  L27: gate=0.1201
+  L28: gate=0.1179
+  L29: gate=0.1180
+  L30: gate=0.1176
+  L31: gate=0.1180
+  L32: gate=0.1180
+  L33: gate=0.1167
+  L34: gate=0.1181
+  L35: gate=0.1183
+
+======================================================================
+LAYER SKIPPING SWEEP
+======================================================================
+Threshold    Dom PPL    Gen PPL    D Δ      G Δ      Skip%    tok/s   
+------------------------------------------------------------------
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+T=0.0        11.07      14.55      -12.5%  -7.8%  0%   42.7
+T=0.05       11.07      24.08      -12.5%  +52.5%  10%   46.4
+T=0.1        11.07      35.33      -12.5%  +123.8%  15%   47.1
+T=0.15       11.07      49.92      -12.5%  +216.2%  18%   50.5
+T=0.2        11.07      68.84      -12.5%  +336.1%  20%   50.2
+T=0.3        11.07      136.97     -12.5%  +767.7%  24%   56.4
+T=0.5        11.07      873.41     -12.4%  +5433.2%  32%   58.9
+
+=== BEST THRESHOLD (< 5% degradation) ===
+  T=0.0: skip 0% layers, 42.7 tok/s, domain -12.5%, generic -7.8%
+
+Saved to results/layer_skipping.json
