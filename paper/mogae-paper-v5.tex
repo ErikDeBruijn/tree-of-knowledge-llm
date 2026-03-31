@@ -41,7 +41,7 @@ factual knowledge (\emph{crystallized intelligence}) in shared parameters.
 We separate them using variable-rank LoRA expert adapters on FFN layers,
 routed by Gumbel-softmax, and propose \emph{learntropy}---per-token
 cross-entropy weighted by routing contribution---as the unified control
-signal for \emph{when} to fork (bimodal learntropy), \emph{where} to fork
+signal for \emph{when} to fork (speculative splitting with rollback), \emph{where} to fork
 (per-layer divergence), and \emph{how fast} to learn (per-expert learning
 rate modulation).
 
@@ -348,26 +348,35 @@ attempt should be suppressed).
 % split timing, and curriculum weighting in 8B experiments.
 % Pre-registered: relative-learntropy-8b-grove.md
 
-Bimodality detection (below) partially recovers
-Wozniak's distinction between productive and unproductive difficulty
-by identifying when an expert's loss distribution contains both
-learnable and unlearnable populations.
-
 We use learntropy as a \emph{diagnostic signal for the learning system itself}: not only as a training objective but as an instrument that determines when structural change is needed. This reflects Shannon's insight that information content drives the allocation of representational resources~\cite{shannon1948}---and Piaget's observation that prediction failure (accommodation) triggers the creation of new cognitive structure~\cite{piaget1952}.
 
-When an expert's learntropy distribution is bimodal---some tokens easy, others hard---the expert must either adapt or divide. Following biological cells, we distinguish two responses:
+Our original hypothesis was that bimodal learntropy distributions would
+signal when an expert needs to split: some tokens easy, others hard,
+indicating the expert serves two populations. In practice, bimodality
+detection (Hartigan's dip test, kurtosis) never fires on generic C4
+data---the loss distributions are unimodal with heavy tails, not cleanly
+bimodal. We therefore replaced bimodality-triggered splitting with
+\emph{speculative splitting with rollback}
+(Section~\ref{sec:speculative-split}): attempt a split on schedule,
+evaluate for $N$ steps, and revert if it did not help. This inverts
+the problem---instead of predicting \emph{when} to split, the system
+tries and evaluates. The bimodal framing remains theoretically
+motivated but is not the operational mechanism.
+
+When an expert's capacity is insufficient, it must either adapt or divide. Following biological cells, we distinguish two responses:
 
 \textbf{Gene expression (rank increase).} The expert first attempts to handle both populations by increasing its rank---activating more parameters, like a cell expressing additional genes to handle a broader range of signals. This is the cheaper response: no routing overhead, no data partitioning.
 
-\textbf{Mitosis (expert split).} If rank increase does not resolve the bimodality, the expert undergoes \emph{mitosis}: it divides into two daughter experts, each inheriting the parent's weights plus a small random perturbation. Like biological daughter cells, they start genetically identical but \emph{differentiate} through exposure to different environments (data partitions) and explicit pressure to diverge (contrastive loss). The procedure:
+\textbf{Mitosis (expert split).} If rank increase is insufficient, the expert undergoes \emph{mitosis}: it divides into two daughter experts, each inheriting the parent's weights plus a small random perturbation. Like biological daughter cells, they start genetically identical but \emph{differentiate} through exposure to different environments (data partitions) and explicit pressure to diverge (contrastive loss). The operational procedure is \emph{speculative splitting with rollback}:
 \begin{enumerate}
-    \item Score each expert's tokens by learntropy.
-    \item Test for bimodality (Hartigan's dip test).
-    \item If bimodal and rank increase insufficient: duplicate the LoRA adapter.
-          Each daughter inherits parent weights plus perturbation, starting at rank-1.
-    \item Daughter experts \emph{differentiate} through their data environment and contrastive loss (Section~\ref{sec:contrastive}).
+    \item Identify the split candidate: the expert with the highest learntropy (most struggling).
+    \item Checkpoint the current state.
+    \item Duplicate the LoRA adapter with small perturbation.
+    \item Train both daughters for an evaluation window ($\sim$500 steps).
+    \item If loss improves: accept the split. If not: rollback to checkpoint.
+    \item Daughters \emph{differentiate} through their data environment and contrastive loss (Section~\ref{sec:contrastive}).
 \end{enumerate}
-The decision to divide is triggered by an information-theoretic signal, not a schedule---analogous to how cell division is triggered by growth signals, not a timer.
+In a 25K-step experiment, the system accepted 2 out of 8 attempted splits (at steps 9K and 21K), growing to 4 experts with all active ($M_{ij}$ CV 1.52). Early splits (3K, 6K) were correctly rejected as premature (Section~\ref{sec:speculative-split}).
 
 \subsection{Variable Rank as Accommodation}
 
@@ -992,24 +1001,19 @@ We identify four limitations that bound our current claims:
           Hessian analysis (Section~\ref{sec:hessian}) shows the LM loss
           \emph{does} encode selective routing directions; sufficient model
           capacity is required to exploit them.
-    \item \textbf{Split timing is scheduled, not learntropy-driven.}
-          The paper's theoretical framework positions learntropy as the
-          signal for \emph{when} to split. In practice, all successful
-          multi-expert experiments use a fixed schedule (split every $N$
-          steps). Three candidate signals were tested retroactively:
-          intra-expert loss variance (ILV), router margin bimodality,
-          and learntropy trend (slope). All three correctly predict
-          \emph{which} expert should split (the one with highest
-          learntropy), but none provides a sharp \emph{when} signal---all
-          experts' learntropy trends downward simultaneously, with no
-          clear plateau or divergence preceding scheduled split points.
-          Bimodality detection (dip test, kurtosis) on per-token loss
-          distributions never fires on generic C4 data. Finding a
-          mechanistic, data-driven split trigger remains an open problem.
-          The scheduled approach works well in practice, but
-          \emph{speculative splitting with rollback} provides a
-          data-driven alternative that eliminates the need for any
-          timing signal (see Section~\ref{sec:speculative-split}).
+    \item \textbf{Split timing relies on speculative rollback, not prediction.}
+          Our original hypothesis was that bimodal learntropy distributions
+          would signal when to split. In practice, bimodality detection
+          (Hartigan's dip test, kurtosis) never fires on generic C4 data.
+          Three candidate signals (ILV, router margin bimodality, learntropy
+          slope) correctly predict \emph{which} expert should split but not
+          \emph{when}. The operational solution is speculative splitting with
+          rollback (Section~\ref{sec:speculative-split}): attempt a split on
+          schedule, evaluate, revert if unhelpful. This works (2/8 accepted,
+          6 rolled back) but is reactive rather than predictive. A principled
+          split trigger remains an open problem---relative learntropy
+          ($\mathcal{L}_{\text{expert}} - \mathcal{L}_{\text{base}}$) is a
+          candidate but has not yet been tested for this purpose.
     \item \textbf{Framework tested on one model family only.} All experiments use
           Qwen3 (1.7B and 8B). Generalization to other architectures (Llama,
           Mistral, GPT-scale) and other data distributions is assumed but not
@@ -1750,8 +1754,9 @@ The learntropy signal---per-token cross-entropy weighted by routing
 contribution---drives all adaptation decisions:
 
 \begin{enumerate}[nosep,leftmargin=1em]
-\item \textbf{When to fork}: bimodal learntropy = the expert's schema no
-      longer fits a single distribution.
+\item \textbf{When to fork}: the highest-learntropy expert is the split
+      candidate. Speculative splitting with rollback evaluates whether the
+      split actually helps---accepting 2/8 attempts in practice.
 \item \textbf{Where to fork}: per-layer learntropy divergence identifies the
       optimal fork boundary for each knowledge type.
 \item \textbf{How fast to learn}: per-expert learntropy modulates learning
