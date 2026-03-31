@@ -1,0 +1,831 @@
+% Grove of Knowledge v6 --- clean publication skeleton
+% Pilot results preserved as comments (% PILOT: ...)
+% [TBD] marks cells awaiting publication experiments
+
+\documentclass{article}
+\usepackage[preprint,nonatbib]{neurips_2024}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\newcommand{\grove}{Grove of Knowledge}
+
+\title{Grove of Knowledge: Self-Organizing Expert Trees for the \\ Long Tail of Language Model Knowledge}
+
+\author{
+  Erik de Bruijn \\
+  Independent Researcher \\
+  \texttt{erik@erikdebruijn.nl}
+}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+Language models encode all knowledge---from common syntax to rare domain
+terminology---in shared parameters. Adding knowledge means adding
+parameters, and therefore inference cost. We propose the \grove{}: a
+frozen base model augmented with hot-pluggable, per-layer gated LoRA
+adapters that grow where needed and cost nothing when inactive.
+
+The frozen base serves as a permanent epistemic reference: because its
+weights never change, we can always measure what an adapter adds by
+comparing expert loss to base loss on any token. This \emph{relative
+learntropy}---closely related to Schmidhuber's compression
+progress---becomes the unified signal for \emph{what} to learn (token
+selection), \emph{when} to stop (Goldilocks zone detection), and
+\emph{where} to grow (adapter spawning).
+
+A per-layer delta gate controls each adapter's contribution:
+$y = f_{\text{base}}(x) + \sigma(g_l) \cdot (f_{\text{adapter}}(x) -
+f_{\text{base}}(x))$, initialized near OFF ($\sigma(-2) \approx 0.12$).
+The gate learns from data which layers need adaptation and which should
+pass through unchanged, protecting generic capability while injecting
+domain knowledge. On Qwen3-8B, standard PEFT LoRA degrades generic
+perplexity by 25--32\%; our gated approach \emph{improves} it by 6\%.
+Ten independently-trained adapters compose via joint gate fine-tuning
+with 94\% of composition checks passing.
+
+The grove builds its own curriculum: scoring candidate data by expected
+compression progress, routing to the adapter with highest learning
+potential, and spawning new adapters when existing ones plateau. The
+result is a self-organizing knowledge system where the long tail of
+domain knowledge lives in lightweight, composable specialists---each
+measured in kilobytes---while the shared trunk preserves general
+reasoning ability intact.
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Knowledge in language models follows a power-law distribution. A small
+core of common patterns (syntax, high-frequency facts, conversational
+conventions) accounts for the majority of token predictions, while a
+long tail of specialized knowledge (rare medical conditions, niche
+programming APIs, regional legal codes) accounts for the majority of
+\emph{distinct} knowledge. Current models embed both in shared
+parameters. The only way to know more is to be larger.
+
+This coupling between knowledge breadth and model size creates a
+practical problem: every domain a model covers increases its inference
+cost for \emph{all} queries, including those that need none of that
+domain knowledge. Retrieval-augmented generation sidesteps parameter
+growth but adds context tokens. Tool use adds generation tokens. Both
+increase per-query latency proportional to the knowledge accessed.
+
+We propose an alternative: place the long tail in separately-loadable
+adapters whose inference cost is \emph{zero} until activated. The dense
+base model handles general reasoning and is always resident in memory.
+Domain knowledge lives in lightweight LoRA adapters (4\,KB--256\,KB
+each) that merge into the forward pass on demand. Adding a thousand
+specialists does not slow a single generic query.
+
+The key insight enabling this architecture is that a \emph{frozen} base
+model is not merely a computational convenience---it is an epistemic
+reference point. Because the base weights never change, we can always
+compute what any adapter adds: the difference between expert loss and
+base loss on any token is a direct measure of the adapter's knowledge
+contribution. This relative signal---which we connect to Schmidhuber's
+compression progress~\cite{schmidhuber2008} and Wozniak's
+learntropy~\cite{wozniak2018learntropy}---drives all adaptation
+decisions in the grove.
+
+A per-layer delta gate protects the base model's generic capability.
+Rather than applying adapter modifications uniformly (as in standard PEFT
+LoRA, which degrades generic perplexity by 25--32\%), the gate learns
+from data which layers need domain-specific overrides and which should
+pass through unchanged. The result: domain knowledge injection with
+simultaneous \emph{improvement} of generic perplexity.
+
+\paragraph{Contributions.}
+\begin{enumerate}[nosep,leftmargin=1.5em]
+\item \textbf{Relative learntropy as a learning signal.} We formalize
+      the frozen base as an epistemic reference, enabling a
+      compression-progress signal that drives token selection, training
+      duration, and adapter spawning (Section~\ref{sec:learning}).
+\item \textbf{Per-layer delta gates.} A learned gate per layer controls
+      adapter contribution, protecting generic capability while enabling
+      selective knowledge injection. Standard PEFT degrades generic PPL
+      by 25--32\%; gated adapters improve it by 6\%
+      (Section~\ref{sec:architecture}).
+\item \textbf{Self-organizing grove growth.} Adapters spawn, split, and
+      prune based on compression progress signals, building their own
+      curriculum from a multi-domain data pool
+      (Section~\ref{sec:learning}).
+\item \textbf{Composable multi-adapter deployment.} Ten
+      independently-trained adapters compose via joint gate fine-tuning,
+      with 94\% of composition checks passing and 77\% throughput gain
+      from sparse routing (Section~\ref{sec:architecture}).
+\item \textbf{Knowledge PPL as an evaluation metric.} Splitting
+      evaluation tokens by base-model surprisal reveals that adapters
+      improve knowledge-token perplexity by 64.9\%, a gain hidden by
+      uniform PPL (Section~\ref{sec:architecture}).
+\end{enumerate}
+
+% ============================================================================
+\section{Learning by Active Compression}
+\label{sec:learning}
+
+Before describing the architecture, we describe how the grove learns.
+The central claim is that the frozen base model transforms adapter
+training from passive parameter fitting into active, directed
+compression---and that this active learning is more naturally described
+as compression progress than as loss minimization.
+
+% ----------------------------------------------------------------------------
+\subsection{Compression Progress as the Learning Signal}
+\label{sec:compression-progress}
+
+Schmidhuber~\cite{schmidhuber2008} argues that curiosity---the
+intrinsic motivation to learn---is driven not by prediction error itself,
+but by \emph{improvement in prediction}: the first derivative of the
+learner's compression ability. A TV showing static has high prediction
+error but zero compression progress; it is maximally surprising yet
+completely uninteresting. A well-paced lecture has moderate prediction
+error but high compression progress; it is the productive zone.
+
+This distinction is critical for adapter training. Raw cross-entropy
+loss measures how badly the model predicts a token, but it does not
+distinguish between tokens that are \emph{productively hard} (the model
+can learn from them) and tokens that are \emph{irreducibly hard} (noise,
+out-of-distribution artifacts, or patterns beyond the adapter's
+capacity). Training on all high-loss tokens equally wastes gradient
+budget on the irreducible portion.
+
+Wozniak's learntropy~\cite{wozniak2018learntropy} captures this
+distinction from a cognitive science perspective: learntropy is the
+\emph{attractiveness} of a signal for a specific learner at a specific
+moment. It depends on the learner's prior knowledge, can go negative
+(when the learning attempt causes interference), and follows an
+inverted-U relationship with signal difficulty---the Goldilocks
+zone~\cite{vygotsky1978}.
+
+We operationalize this insight in the adapter training loop. Learntropy
+in our framework is \emph{not} raw cross-entropy. It is the rate at
+which an adapter's compression ability improves on a given data stream,
+measured relative to the frozen base.
+
+% ----------------------------------------------------------------------------
+\subsection{Relative Learntropy: Unique to Frozen-Base Architectures}
+\label{sec:relative-learntropy}
+
+Standard fine-tuning overwrites the base model's weights, destroying the
+reference point needed to measure what has been learned. In our
+architecture, the base model is frozen: its loss on any token is always
+available. This enables a \emph{relative} learning signal.
+
+For a token $t$ in context $c$, the base model produces loss
+$\ell_{\text{base}}(t) = -\log P_{\text{base}}(t \mid c)$ and the
+adapter-augmented model produces
+$\ell_{\text{expert}}(t) = -\log P_{\text{expert}}(t \mid c)$.
+The relative learntropy of token $t$ for expert $e$ is:
+\begin{equation}
+\label{eq:relative-learntropy}
+    \Delta\ell(t, e) = \ell_{\text{expert}}(t) - \ell_{\text{base}}(t)
+\end{equation}
+This measures what the adapter adds (or subtracts) relative to the
+base. Negative $\Delta\ell$ means the adapter has learned something the
+base does not know. Positive $\Delta\ell$ means the adapter is making
+things worse---a signal to stop training on this token type.
+
+The connection to Rho-1~\cite{rho1_2024} is direct. Rho-1 scores each
+pretraining token by the gap between a training model's loss and a
+reference model's loss, training only on tokens where the gap exceeds a
+threshold. They achieve 30\% absolute improvement on math benchmarks
+using only 3\% of pretraining tokens. Our architecture provides the same
+signal for free: the frozen base \emph{is} the reference model, and the
+gap is computable at every training step without additional forward
+passes (the base forward pass is already needed for the gated
+architecture).
+
+% PILOT: Relative surprise (L_expert - L_base) correlation with raw CE: 0.64 (not equivalent)
+% PILOT: Detects overfitting onset at step 1600 (generic relative surprise drops sharply)
+
+The first derivative of relative learntropy over training steps---how
+fast the adapter is improving on this data---is Schmidhuber's
+compression progress applied to the adapter:
+\begin{equation}
+\label{eq:compression-progress}
+    \text{CP}(e, \mathcal{D}, s) =
+    -\frac{d}{ds} \mathbb{E}_{t \in \mathcal{D}}
+    \bigl[\Delta\ell(t, e)\bigr]
+\end{equation}
+Positive compression progress means the adapter is actively learning
+from data $\mathcal{D}$ at step $s$. Zero compression progress means it
+has plateaued---either it has extracted all learnable information (mastery)
+or the data is beyond its capacity (noise). Negative compression
+progress means it is forgetting.
+
+% PILOT: Learning speed signal finds Goldilocks zone at steps 300-2950
+% PILOT: Detects overfitting 50 steps before relative surprise
+
+% ----------------------------------------------------------------------------
+\subsection{The Active Learning Cycle}
+\label{sec:active-cycle}
+
+The grove uses compression progress to build its own curriculum:
+
+\begin{enumerate}[nosep,leftmargin=1.5em]
+\item \textbf{Score.} For each candidate data stream $\mathcal{D}_k$
+      and each adapter $e_i$, estimate compression progress
+      $\text{CP}(e_i, \mathcal{D}_k)$ from recent training history.
+\item \textbf{Route.} Assign $\mathcal{D}_k$ to the adapter with
+      highest compression progress on that stream. If no adapter has
+      positive compression progress, flag the stream for new adapter
+      creation.
+\item \textbf{Train.} Train the selected adapter for $N$ steps on
+      $\mathcal{D}_k$.
+\item \textbf{Evaluate.} Measure: did compression progress occur?
+      If yes, continue. If compression progress is zero or negative
+      for $M$ consecutive evaluations, stop training on this stream.
+\item \textbf{Grow.} If a flagged stream accumulates sufficient
+      evidence of reducible loss (high $\Delta\ell$ that is decreasing
+      over a probe window), spawn a new adapter.
+\end{enumerate}
+
+% PILOT: Active selection beats random by 6.4pp on primary domain
+% PILOT: Goldilocks zone found at steps 300-2950
+% PILOT: Knowledge PPL -64.9% on knowledge tokens, +11.5% on style tokens
+
+This cycle is not yet tested at scale (Section~\ref{sec:limitations}),
+but pilot experiments demonstrate its components individually: active
+token selection outperforms random by 6.4 percentage points on primary
+domain perplexity, and the Goldilocks zone (the window of productive
+training steps) is detectable from the compression progress signal.
+
+% ============================================================================
+\section{Architecture}
+\label{sec:architecture}
+
+This section describes the machinery that enables Section~\ref{sec:learning}.
+The architecture has three components: per-layer delta gates, a tree
+structure for organizing adapters, and growth mechanics for expanding the
+grove.
+
+% ----------------------------------------------------------------------------
+\subsection{Per-Layer Delta Gate}
+\label{sec:delta-gate}
+
+Each adapter layer is controlled by a scalar gate $g_l$ that modulates
+the adapter's contribution:
+\begin{equation}
+\label{eq:delta-gate}
+    y = f_{\text{base}}(x) + \sigma(g_l(x)) \cdot
+    \bigl(f_{\text{adapter}}(x) - f_{\text{base}}(x)\bigr)
+\end{equation}
+where $g_l$ is a learned linear projection with bias initialized to
+$-2.0$ ($\sigma(-2) \approx 0.12$, starting near OFF). The gate
+operates on the \emph{delta}---the difference between adapter and base
+output---not on the adapter output directly.
+
+Training is two-phase:
+\begin{enumerate}[nosep,leftmargin=1.5em]
+\item \textbf{Adapter phase} ($\sim$500 steps): Train LoRA weights on
+      domain data with gates frozen at initialization.
+\item \textbf{Gate phase} ($\sim$1500 steps): Freeze LoRA weights, train
+      gates on mixed domain + generic data. Gates learn which layers
+      need adaptation for this domain.
+\end{enumerate}
+
+% PILOT: Learntropy-guided recipe: 500+1500 wins both dimensions
+% PILOT: Domain -32.1%, generic -12.1%
+% PILOT: Gate adds 3.4pp generic protection on top of early stopping
+
+The gate provides a Piagetian interpretation~\cite{piaget1952}: low gate
+values indicate \emph{assimilation} (the base model's representation is
+sufficient; the adapter acts as a lens redirecting existing computation)
+while high gate values indicate \emph{accommodation} (the adapter
+overrides the base with structurally new computation). Per-layer gate
+magnitudes correlate with domain PPL impact (Spearman $\rho = 0.717$,
+$p = 8 \times 10^{-5}$).
+
+The protection effect is robust: standard PEFT LoRA (without gating)
+degrades generic perplexity by 25--32\%, while our gated approach
+improves it by 6\%. Even a naive output-level gate reduces degradation
+by 11$\times$ (from +25\% to +2.9\%), but per-layer gating is strictly
+superior.
+
+% PILOT: PEFT LoRA degrades generic PPL +25-32%, gated -6-13%
+% PILOT: Gate bias init robust: 4 values (-1 to -4), selectivity 0.607-0.632
+% PILOT: 8 gate combinations tested, per-layer delta gate best on both dimensions
+
+% ----------------------------------------------------------------------------
+\subsection{Tree Structure}
+\label{sec:tree-structure}
+
+Adapters are organized as a tree rooted at the base model. Each adapter
+applies LoRA modifications to FFN layers (\texttt{gate\_proj} and
+\texttt{up\_proj}), targeting the layers where domain-specific knowledge
+lives~\cite{geva2021transformer}. Attention layers remain shared,
+preserving general reasoning.
+
+On Qwen3-8B (36 layers), we partition adapter layers into two functional
+zones:
+\begin{itemize}[nosep,leftmargin=1.5em]
+\item \textbf{Identity layers (L0--11):} ``Who am I''---style, register,
+      formatting conventions. Low-rank adapters suffice (lens-like).
+\item \textbf{Expert layers (L12--35):} ``What do I know''---domain
+      facts, specialized vocabulary, technical patterns. Higher-rank
+      adapters encode genuinely new knowledge (crystal-like).
+\end{itemize}
+
+Sub-experts are created by splitting: when an adapter's compression
+progress stalls on a data stream it was previously learning from, the
+adapter is a candidate for splitting into two children that can
+specialize further.
+
+% ----------------------------------------------------------------------------
+\subsection{Growth Mechanics}
+\label{sec:growth}
+
+\paragraph{Speculative splitting with rollback.}
+When the compression progress signal suggests a split, we create a
+child adapter and train it for a probe window. If the child achieves
+positive compression progress that the parent could not, the split is
+accepted. Otherwise, it is rolled back. In pilot experiments, 2 of 8
+attempted splits were accepted and 6 were rolled back---the system
+is conservative by design.
+
+% PILOT: Speculative split: 2/8 kept, 6 rolled back (one run)
+% PILOT: 8-expert tree: all 8 active, M_ij CV up to 2.34
+
+\paragraph{Joint gate training for multi-adapter composition.}
+When multiple adapters are deployed simultaneously, their gates are
+fine-tuned jointly on mixed data. This resolves conflicts (two adapters
+claiming the same layer) and enables cooperative specialization. Ten
+independently-trained adapters compose via this mechanism with 94\% of
+composition checks passing; the 6\% of failures are semantically
+justified overlaps (physics$\leftrightarrow$chemistry,
+biology$\leftrightarrow$medicine).
+
+\paragraph{Sparse routing.}
+At inference time, the router identifies which adapters are relevant
+(gate activations above threshold) and skips all others. This yields
+77\% throughput improvement over dense evaluation (22.1 vs.\ 12.5 tok/s
+generation with 10 adapters). The base model alone runs at 60.8 tok/s;
+sparse routing with adapters reaches 26.2 tok/s.
+
+% PILOT: 10-adapter grove: 95/101 composition checks, generic PPL -14.2%
+% PILOT: Sparse routing: +77% throughput vs dense (22.1 vs 12.5 tok/s)
+
+% ----------------------------------------------------------------------------
+\subsection{Knowledge PPL as Evaluation Metric}
+\label{sec:knowledge-ppl}
+
+Uniform perplexity underestimates knowledge injection. An adapter that
+dramatically improves prediction of rare domain terms while slightly
+degrading common tokens will show a modest uniform PPL change, because
+common tokens dominate the average.
+
+We split evaluation tokens by base-model surprisal into two populations:
+\begin{itemize}[nosep,leftmargin=1.5em]
+\item \textbf{Knowledge tokens}: tokens where $\ell_{\text{base}}(t)$
+      exceeds the median---the tokens the base model finds surprising.
+      These are where domain knowledge lives.
+\item \textbf{Style tokens}: tokens where $\ell_{\text{base}}(t)$ is
+      below the median---predictable tokens that reflect formatting,
+      syntax, and common patterns.
+\end{itemize}
+
+% PILOT: Knowledge PPL -64.9% on knowledge tokens, +11.5% on style tokens
+
+Pilot results show the adapter improves knowledge-token perplexity by
+64.9\% while increasing style-token perplexity by 11.5\%. Uniform PPL
+averages these into a modest improvement, hiding the large knowledge
+gain.
+
+% ============================================================================
+\section{Experiments}
+\label{sec:experiments}
+
+All experiments use Qwen3-8B (36 layers, 8.2B parameters) as the base
+model. Adapters use LoRA on FFN layers 12--35 (rank-16 unless stated
+otherwise). We report means $\pm$ 95\% confidence intervals across seeds.
+
+% PLACEHOLDER: Experiment sections below describe what will be measured.
+% Tables contain [TBD] cells to be filled by publication experiment scripts.
+
+% ----------------------------------------------------------------------------
+\subsection{E1: Gate Protection}
+\label{sec:e1}
+
+\textbf{Hypothesis.} Per-layer delta gates protect generic capability
+during domain adaptation, unlike standard PEFT LoRA which uniformly
+applies adapter modifications.
+
+\textbf{Setup.} Three conditions: (1) base model (no adapter),
+(2) standard PEFT LoRA (rank-16, layers 12--35, no gate),
+(3) gated adapter (same rank and layers, per-layer delta gate with
+two-phase training). Training data: PubMed 50K documents. Evaluation:
+MMLU, ARC-Challenge, HellaSwag, MedQA; plus domain PPL and generic PPL
+on held-out C4. Seeds: 5.
+
+% PILOT: PEFT +25-32% generic degradation, gated -6-13%
+% PILOT: 4 seeds, consistent across LoRA implementations (custom Expert and standard PEFT)
+% PILOT: Even naive output gate reduces degradation 11x (from +25% to +2.9%)
+
+\begin{table}[h]
+\centering
+\caption{E1: Generic capability preservation during domain adaptation.
+Mean $\pm$ 95\% CI across 5 seeds.}
+\label{tab:e1}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Condition & Generic PPL $\Delta$ & MMLU & ARC-C & HellaSwag & MedQA \\
+\midrule
+Base (no adapter) & --- & [TBD] & [TBD] & [TBD] & [TBD] \\
+PEFT LoRA          & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+Gated adapter      & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{E2: Multi-Adapter Composition}
+\label{sec:e2}
+
+\textbf{Hypothesis.} Independently-trained gated adapters compose
+without catastrophic interference when gates are jointly fine-tuned.
+
+\textbf{Setup.} Train 5 adapters independently on PubMed, The Stack
+(Python), ArXiv (physics), ArXiv (CS), and BBC News. Deploy all 5
+simultaneously with joint gate fine-tuning. Evaluate per-domain PPL,
+cross-domain interference (PPL on domain $i$ with only adapter $j$
+active), and generic PPL. Seeds: 3.
+
+% PILOT: 10-adapter 95/101 checks, ARC +1%, HellaSwag +2.1%
+% PILOT: Generic PPL -14.2% with 10 adapters
+% PILOT: 6 failures are semantically justified overlaps
+
+\begin{table}[h]
+\centering
+\caption{E2: Multi-adapter composition. Per-domain PPL improvement and
+cross-domain interference. Mean $\pm$ 95\% CI across 3 seeds.}
+\label{tab:e2}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Domain & Own adapter $\Delta$PPL & Best other $\Delta$PPL & Interference & Generic $\Delta$PPL \\
+\midrule
+PubMed     & [TBD] & [TBD] & [TBD] & [TBD] \\
+Stack (Py) & [TBD] & [TBD] & [TBD] & [TBD] \\
+ArXiv (ph) & [TBD] & [TBD] & [TBD] & [TBD] \\
+ArXiv (CS) & [TBD] & [TBD] & [TBD] & [TBD] \\
+BBC News   & [TBD] & [TBD] & [TBD] & [TBD] \\
+\midrule
+Combined   & [TBD] & --- & [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{E3: Data Quality Ablation}
+\label{sec:e3}
+
+\textbf{Hypothesis.} Data quality, not architecture, is the bottleneck
+for knowledge injection. The gate protects generic capability regardless
+of data quality, but domain improvement requires curated data.
+
+\textbf{Setup.} Train gated adapters on four medical data sources of
+varying quality: (1) PubMed abstracts (curated), (2) FineWeb-Edu
+keyword-filtered medical texts, (3) Wikipedia medical articles,
+(4) Reddit medical discussions. Evaluate on MedQA and generic PPL.
+Seeds: 3.
+
+% PILOT: FineWeb keyword-filtered -> MedQA -4pp (degrades)
+% PILOT: Curated BBC -> domain -17%, but keyword BBC -> much worse
+% PILOT: Gate protects generic PPL regardless of data quality
+
+\begin{table}[h]
+\centering
+\caption{E3: Data quality ablation for medical domain. MedQA accuracy
+and generic PPL change. Mean $\pm$ 95\% CI across 3 seeds.}
+\label{tab:e3}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Data source & MedQA $\Delta$ & Generic PPL $\Delta$ \\
+\midrule
+PubMed abstracts      & [TBD] & [TBD] \\
+FineWeb-Edu filtered  & [TBD] & [TBD] \\
+Wikipedia medical     & [TBD] & [TBD] \\
+Reddit medical        & [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{E4: Gate Component Ablation}
+\label{sec:e4}
+
+\textbf{Hypothesis.} The per-layer delta gate is the critical component;
+alternative gating strategies (output-level gate, uniform gate, no gate)
+are inferior on at least one of generic PPL or domain PPL.
+
+\textbf{Setup.} Six conditions: (1) no gate (standard LoRA),
+(2) output-level scalar gate, (3) per-layer uniform gate (same value
+all layers), (4) per-layer delta gate (ours), (5) per-layer gate
+without delta (gates adapter output, not delta), (6) per-layer delta
+gate with L1 sparsity. All use rank-16 on PubMed. Seeds: 3.
+
+% PILOT: 8 combinations tested, per-layer delta gate best on both dimensions
+% PILOT: L1 not special: L1 ~ L2, any sparsity pressure works
+
+\begin{table}[h]
+\centering
+\caption{E4: Gate component ablation. Domain and generic PPL change
+relative to base. Mean $\pm$ 95\% CI across 3 seeds.}
+\label{tab:e4}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Gate configuration & Domain PPL $\Delta$ & Generic PPL $\Delta$ \\
+\midrule
+No gate (standard LoRA)     & [TBD] & [TBD] \\
+Output-level scalar         & [TBD] & [TBD] \\
+Per-layer uniform           & [TBD] & [TBD] \\
+Per-layer delta (ours)      & [TBD] & [TBD] \\
+Per-layer non-delta         & [TBD] & [TBD] \\
+Per-layer delta + L1        & [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{E5: Active Learning Comparison}
+\label{sec:e5}
+
+\textbf{Hypothesis.} Active data selection by compression progress
+outperforms random selection, and the combination of active selection
+with gated adapters is strictly better than either alone.
+
+\textbf{Setup.} Three conditions: (1) random batch selection + no gate,
+(2) active selection (by compression progress) + no gate,
+(3) active selection + gated adapter. Data pool: PubMed + Stack + ArXiv.
+Evaluation: primary domain PPL and generic PPL after matched compute
+budget. Seeds: 3.
+
+% PILOT: Active+gates generic -3.9% vs random +7.5%
+% PILOT: Active selection beats random by 6.4pp on primary domain
+
+\begin{table}[h]
+\centering
+\caption{E5: Active learning comparison. PPL change after matched
+compute budget. Mean $\pm$ 95\% CI across 3 seeds.}
+\label{tab:e5}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Condition & Domain PPL $\Delta$ & Generic PPL $\Delta$ \\
+\midrule
+Random + no gate       & [TBD] & [TBD] \\
+Active + no gate       & [TBD] & [TBD] \\
+Active + gated (ours)  & [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{E6: Adapter Rank Pruning}
+\label{sec:e6}
+
+\textbf{Hypothesis.} Post-training SVD truncation of adapter weights
+reveals per-layer rank requirements. Layers where rank-4 matches rank-16
+quality can be pruned to 4$\times$ less compute, analogous to biological
+synaptic pruning: assimilation layers (Piaget's lens) need low rank,
+accommodation layers (crystal) need high rank.
+
+\textbf{Setup.} Train a rank-16 gated adapter on PubMed. For each of
+layers 12--35, truncate via SVD to rank-8, rank-4, rank-2, rank-1.
+Measure per-layer PPL impact of truncation. Report the rank-quality
+curve and identify which layers are rank-compressible. Seeds: 3.
+
+% PILOT: Rank-selectivity curve peaks at rank-64 for 8B experiments
+% PILOT: 5 data points at rank-64 on Qwen3-8B L12
+
+\begin{table}[h]
+\centering
+\caption{E6: Rank pruning. Per-layer PPL impact of SVD truncation from
+rank-16. Showing 6 representative layers. Mean $\pm$ 95\% CI across 3 seeds.}
+\label{tab:e6}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Layer & Rank-8 $\Delta$ & Rank-4 $\Delta$ & Rank-2 $\Delta$ & Rank-1 $\Delta$ & Gate mag. \\
+\midrule
+L14 & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+L18 & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+L22 & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+L26 & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+L30 & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+L34 & [TBD] & [TBD] & [TBD] & [TBD] & [TBD] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Selective training on tokens.}
+Rho-1~\cite{rho1_2024} demonstrated that training on only 3\% of
+pretraining tokens---selected by excess loss over a reference
+model---improves math reasoning by 30\% absolute. DSIR~\citep{xie2023dsir}
+achieves expert-curation-level performance via importance resampling in
+n-gram feature space. Both are offline, static selection methods. Our
+architecture enables \emph{online} selection: the adapter's own
+compression progress determines what to learn next, continuously
+adapting as the adapter's knowledge changes. The frozen base provides
+the reference model that Rho-1 requires, without needing a separate
+model.
+
+\paragraph{Compression progress and curiosity.}
+Schmidhuber~\cite{schmidhuber2008} formalized curiosity as the first
+derivative of compression ability, arguing that agents should seek data
+that maximizes their rate of learning---not data that maximizes surprise.
+Pathak et al.~\cite{pathak2017icm} operationalized this in RL with the
+Intrinsic Curiosity Module, filtering prediction error through a learned
+feature space to separate learnable variation from noise. Our relative
+learntropy (Equation~\ref{eq:relative-learntropy}) implements a similar
+filter: the base model's loss provides the noise floor, and the excess
+is the learnable signal.
+
+\paragraph{LoRA and parameter-efficient fine-tuning.}
+Hu et al.~\cite{hu2022lora} showed that fine-tuning updates lie in a
+low-rank subspace. Biderman et al.~\cite{biderman2024lora} found that
+LoRA learns less than full fine-tuning but also forgets less---a
+trade-off that our gating mechanism exploits. We extend standard LoRA
+with per-layer delta gating: rather than applying all adapter layers
+uniformly, the gate learns selective activation from data. HydraLoRA~\cite{hydralora2024} uses asymmetric adapters for multi-task
+learning; MoLoRA~\cite{molora2026} adds per-token routing. Our delta
+gate operates at a different level: per-layer, per-adapter, controlling
+\emph{whether} to apply the adapter at each layer rather than
+\emph{which} adapter to apply.
+
+\paragraph{Mixture-of-Experts.}
+Standard MoE architectures~\cite{mixtral2024,deepseek2024moe,deepseekv3}
+route tokens to experts via learned gates with load-balancing losses.
+This produces functional specialization (structure vs.\ content) but
+resists domain specialization~\cite{standing2026,openmoe2024,domaindriver2026}.
+DeepSeek-V3~\cite{deepseekv3} introduces shared always-on experts
+alongside routed specialists---a design our trunk-adapter split
+mirrors, with the frozen base as the permanent shared expert.
+DynMoE~\cite{l2r2026} allows dynamic expert count; our speculative
+splitting with rollback achieves similar flexibility while being
+data-driven rather than architecture-driven.
+
+\paragraph{Layer efficiency.}
+Recent work shows that many transformer layers are redundant: ShortGPT
+removes up to 25\% of layers with minimal quality loss; Mixture-of-Depths
+(MoD) routes tokens to skip layers dynamically. Our per-layer gate
+discovers a similar structure from data: layers with near-zero gate
+activation contribute nothing for a given domain and could be skipped
+entirely.
+
+% ============================================================================
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{Single model family.}
+All experiments use Qwen3-8B. The delta gate mechanism is
+architecture-agnostic (it requires only FFN layers with residual
+connections), but we have not validated on other model families.
+Generalization to Llama, Mistral, or encoder-decoder architectures
+remains untested.
+
+\paragraph{Data quality is the bottleneck.}
+The gate protects generic capability regardless of training data quality,
+but domain improvement requires high-quality, curated data. Pilot
+experiments show that keyword-filtered web data (FineWeb-Edu)
+\emph{degrades} medical benchmarks by 4--10 percentage points despite
+the gate's protection. Architecture cannot compensate for data.
+
+\paragraph{Hallucination risk.}
+The delta gate detects \emph{domain membership}---whether the input
+matches the adapter's training distribution---not \emph{factual
+correctness}. An adapter confidently activated on a medical query may
+still hallucinate. The gate is a necessary but not sufficient
+condition for reliable domain knowledge.
+
+\paragraph{Active learning not yet tested at scale.}
+The compression progress signal and active learning cycle
+(Section~\ref{sec:active-cycle}) have been validated in components (token
+selection, Goldilocks zone detection) but not as an integrated pipeline
+on large data pools. Scaling from pilot experiments (500 documents) to
+publication-scale data (50K+ documents) may reveal new failure modes.
+
+\paragraph{No negative results from scaled experiments yet.}
+The pilot results in this paper come from experiments on 500--5000
+documents. We report them honestly as pilots, not as definitive findings.
+The publication experiments (Section~\ref{sec:experiments}) will provide
+the necessary statistical power.
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We have presented the \grove{}, a framework for placing the long tail
+of language model knowledge in self-organizing, hot-pluggable adapters.
+Three insights drive the design:
+
+\begin{enumerate}[nosep,leftmargin=1.5em]
+\item \textbf{The frozen base as epistemic reference.} By never modifying
+      base weights, we gain a permanent reference point for measuring
+      what any adapter has learned. This is not a constraint---it is the
+      key enabler of relative learntropy, compression progress tracking,
+      and the active learning cycle.
+\item \textbf{Per-layer delta gates as regime selectors.} The gate
+      implements a Piagetian spectrum from assimilation (base sufficient,
+      gate near zero) to accommodation (adapter overrides base, gate
+      near one). This protects generic capability while enabling
+      selective knowledge injection---a trade-off that standard PEFT
+      LoRA cannot achieve.
+\item \textbf{Knowledge PPL reveals what uniform PPL hides.} Splitting
+      evaluation by base-model surprisal shows that adapters improve
+      knowledge-token perplexity by 64.9\%, a gain that uniform PPL
+      averages away.
+\end{enumerate}
+
+The grove is designed for community-scale growth: each adapter trains
+independently on commodity hardware, requiring only the frozen base and
+a domain-specific data stream. Contributors add specialists without
+retraining the core. The long tail of human knowledge is long---no
+single organization can curate it all. A self-organizing, composable
+system of lightweight specialists may be the natural structure for
+capturing it.
+
+\paragraph{Future directions.}
+Three extensions follow naturally: (1)~\emph{layer skipping}---layers
+with near-zero gate activation can be skipped entirely at inference time,
+connecting to Mixture-of-Depths research; (2)~\emph{curious
+adapters}---using compression progress not just for token selection but
+for autonomous exploration of new data domains; and (3)~\emph{scaled
+active learning}---validating the full active learning cycle on large,
+diverse data pools where the grove must discover its own curriculum
+without human curation.
+
+% ============================================================================
+\begin{thebibliography}{99}
+
+\bibitem{hu2022lora} E. Hu et al. LoRA: Low-Rank Adaptation of Large Language Models. \textit{ICLR}, 2022.
+
+\bibitem{geva2021transformer} M. Geva, R. Schuster, J. Berant, O. Levy. Transformer Feed-Forward Layers Are Key-Value Memories. \textit{EMNLP}, 2021.
+
+\bibitem{li2018intrinsic} C. Li et al. Measuring the Intrinsic Dimension of Objective Landscapes. \textit{ICLR}, 2018.
+
+\bibitem{aghajanyan2021intrinsic} A. Aghajanyan et al. Intrinsic Dimensionality Explains the Effectiveness of Language Model Fine-Tuning. \textit{ACL}, 2021.
+
+\bibitem{komatsuzaki2023sparse} A. Komatsuzaki et al. Sparse Upcycling. \textit{arXiv:2212.05055}, 2023.
+
+\bibitem{bena2025modularity} G. B\'{e}na, D. Goodman. Dynamics of Specialization Under Resource Constraints. \textit{Nature Communications}, 2025.
+
+\bibitem{l2r2026} L2R: Low-Rank Lipschitz-Controlled Routing. \textit{arXiv:2601.21349}, 2026.
+
+\bibitem{shannon1948} C. E. Shannon. A Mathematical Theory of Communication. \textit{Bell System Technical Journal}, 27(3):379--423, 1948.
+
+\bibitem{hartigan1985dip} J. A. Hartigan, P. M. Hartigan. The Dip Test of Unimodality. \textit{Annals of Statistics}, 13(1):70--84, 1985.
+
+\bibitem{rho1_2024} Z. Lin et al. Rho-1: Not All Tokens Are What You Need. \textit{arXiv:2404.07965}, 2024.
+
+\bibitem{schmidhuber2008} J. Schmidhuber. Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes. \textit{arXiv:0812.4360}, 2008.
+
+\bibitem{piaget1952} J. Piaget. \textit{The Origins of Intelligence in Children}. International Universities Press, 1952.
+
+\bibitem{vygotsky1978} L. S. Vygotsky. \textit{Mind in Society: The Development of Higher Psychological Processes}. Harvard University Press, 1978.
+
+\bibitem{wozniak2018learntropy} P. A. Wozniak. Learntropy. \textit{SuperMemo Guru}, 2018. \url{https://supermemo.guru/wiki/Learntropy}.
+
+\bibitem{standing2026} The Illusion of Specialization: Standing Committee in Mixture-of-Experts. \textit{arXiv:2601.03425}, 2026.
+
+\bibitem{deepseek2024moe} X. Dai et al. DeepSeekMoE: Towards Ultimate Expert Specialization. \textit{ACL}, 2024.
+
+\bibitem{deepseekv3} DeepSeek-AI. DeepSeek-V3 Technical Report. \textit{arXiv:2412.19437}, 2024.
+
+\bibitem{hydralora2024} T. Tian et al. HydraLoRA: An Asymmetric LoRA Architecture for Efficient Fine-Tuning. \textit{NeurIPS}, 2024.
+
+\bibitem{molora2026} MoLoRA: Composable Specialization via Per-Token Adapter Routing. \textit{arXiv:2603.15965}, 2026.
+
+\bibitem{openmoe2024} F. Xue et al. OpenMoE: An Early Effort on Open Mixture-of-Experts Language Models. \textit{ICML}, 2024.
+
+\bibitem{mixtral2024} A. Jiang et al. Mixtral of Experts. \textit{arXiv:2401.04088}, 2024.
+
+\bibitem{domaindriver2026} What Gets Activated: Uncovering Domain and Driver Experts in MoE Language Models. \textit{arXiv:2601.10159}, 2026.
+
+\bibitem{jang2017gumbel} E. Jang, S. Gu, B. Poole. Categorical Reparameterization with Gumbel-Softmax. \textit{ICLR}, 2017.
+
+\bibitem{biderman2024lora} S. Biderman et al. LoRA Learns Less and Forgets Less. \textit{TMLR}, 2024.
+
+\bibitem{pathak2017icm} D. Pathak et al. Curiosity-driven Exploration by Self-Supervised Prediction. \textit{ICML}, 2017.
+
+\bibitem{xie2023dsir} S. M. Xie et al. Data Selection with Importance Resampling. \textit{NeurIPS}, 2023.
+
+\end{thebibliography}
+
+\end{document}
