@@ -1,0 +1,41 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:39, 10.15it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:02, 155.24it/s]Loading weights:  20%|██        | 80/399 [00:00<00:01, 244.26it/s]Loading weights:  29%|██▉       | 115/399 [00:00<00:01, 270.14it/s]Loading weights:  40%|███▉      | 159/399 [00:00<00:00, 323.47it/s]Loading weights:  51%|█████     | 202/399 [00:00<00:00, 350.13it/s]Loading weights:  60%|█████▉    | 239/399 [00:00<00:00, 334.54it/s]Loading weights:  70%|██████▉   | 279/399 [00:00<00:00, 350.63it/s]Loading weights:  79%|███████▉  | 316/399 [00:01<00:00, 348.74it/s]Loading weights:  89%|████████▊ | 354/399 [00:01<00:00, 339.99it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 314.13it/s]
+
+=== BASE ===
+  Base domain: PPL=12.64
+  Base generic: PPL=15.25
+
+=== CONDITION A: Ungated, 500 steps ===
+  A domain (ungated 500): PPL=8.59
+  A generic (ungated 500): PPL=13.93
+
+=== CONDITION B: Gated, 2000+1500 steps ===
+  Phase 1 step 0/2000 | loss=2.6250
+  Phase 1 step 500/2000 | loss=2.2969
+  Phase 1 step 1000/2000 | loss=1.5938
+  Phase 1 step 1500/2000 | loss=2.0312
+  Phase 2 step 0/1500
+  Phase 2 step 500/1500
+  Phase 2 step 1000/1500
+  B domain (gated 2000+1500): PPL=10.11
+  B generic (gated 2000+1500): PPL=14.52
+
+=== CONDITION C: Gated, 500+1500 steps (best of both) ===
+  Phase 2 step 0/1500
+  Phase 2 step 500/1500
+  Phase 2 step 1000/1500
+  C domain (gated 500+1500): PPL=8.58
+  C generic (gated 500+1500): PPL=13.41
+
+=================================================================
+FAIR COMPARISON: Gate vs Early-Stop vs Both
+=================================================================
+Config                              Domain PPL   Generic PPL  D Δ      G Δ     
+-----------------------------------------------------------------
+Base                                12.64        15.25        —        —       
+A: Ungated, 500 steps               8.59         13.93        -32.1%  -8.7%
+B: Gated, 2000+1500 steps           10.11        14.52        -20.1%  -4.8%
+C: Gated, 500+1500 steps            8.58         13.41        -32.1%  -12.1%
+
+Saved to results/gated_vs_early_stop.json
