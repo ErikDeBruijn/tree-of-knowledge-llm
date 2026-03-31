@@ -1,0 +1,48 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.55it/s]Loading weights:   6%|▌         | 23/399 [00:00<00:04, 92.18it/s]Loading weights:  16%|█▌        | 64/399 [00:00<00:01, 175.57it/s]Loading weights:  33%|███▎      | 130/399 [00:00<00:00, 294.13it/s]Loading weights:  40%|████      | 161/399 [00:00<00:00, 243.88it/s]Loading weights:  58%|█████▊    | 230/399 [00:00<00:00, 312.58it/s]Loading weights:  78%|███████▊  | 313/399 [00:01<00:00, 433.31it/s]Loading weights:  91%|█████████ | 362/399 [00:01<00:00, 399.48it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 326.89it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Gate values: early(L12-20)=0.119  mid(L21-27)=0.119  late(L28-35)=0.119
+
+=== BASE MODEL ===
+  Base domain: PPL=12.64
+  Base generic: PPL=15.78
+
+=== ALL LAYERS (L12-L35) ===
+  All domain: PPL=11.07
+  All generic: PPL=14.55
+
+=== EARLY ONLY (L12-L20) — 'Lens' ===
+  Early domain: PPL=11.91
+  Early generic: PPL=15.51
+
+=== LATE ONLY (L28-L35) — 'Crystal' ===
+  Late domain: PPL=10.84
+  Late generic: PPL=14.63
+
+=== MID ONLY (L21-L27) ===
+  Mid domain: PPL=11.97
+  Mid generic: PPL=15.73
+
+=== EARLY + LATE (skip mid) ===
+  Early+Late domain: PPL=10.36
+  Early+Late generic: PPL=14.50
+
+======================================================================
+LENS vs CRYSTAL ANALYSIS
+======================================================================
+Config                         Dom PPL    Gen PPL    Dom Δ      Gen Δ      Gate    
+------------------------------------------------------------------------------
+Base                           12.64      15.78      —          —          —       
+All layers (L12-35)            11.07      14.55      -12.5%    -7.8%    0.119   
+Early (L12-20) 'Lens'          11.91      15.51      -5.8%    -1.7%    0.119   
+Mid (L21-27)                   11.97      15.73      -5.3%    -0.4%    0.119   
+Late (L28-35) 'Crystal'        10.84      14.63      -14.2%    -7.3%    0.119   
+Early+Late (skip mid)          10.36      14.50      -18.0%    -8.1%    —       
+
+Interpretation:
+  Early layers contribute 46% of domain improvement, 22% of generic improvement
+  Late layers contribute 114% of domain improvement, 94% of generic improvement
+
+  MIXED: No clean lens/crystal separation
+
+Saved to results/lens_crystal_split.json

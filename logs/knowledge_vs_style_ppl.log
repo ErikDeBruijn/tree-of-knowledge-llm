@@ -1,0 +1,55 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.62it/s]Loading weights:   8%|▊         | 30/399 [00:00<00:03, 121.44it/s]Loading weights:  16%|█▋        | 65/399 [00:00<00:01, 205.95it/s]Loading weights:  30%|██▉       | 118/399 [00:00<00:00, 298.56it/s]Loading weights:  41%|████      | 164/399 [00:00<00:00, 345.96it/s]Loading weights:  51%|█████     | 203/399 [00:00<00:00, 358.39it/s]Loading weights:  60%|██████    | 241/399 [00:00<00:00, 352.28it/s]Loading weights:  70%|██████▉   | 279/399 [00:00<00:00, 350.67it/s]Loading weights:  81%|████████  | 323/399 [00:01<00:00, 355.67it/s]Loading weights:  92%|█████████▏| 368/399 [00:01<00:00, 372.31it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 327.11it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Computing base model losses on domain text...
+Computing adapter losses on domain text...
+Computing base + adapter losses on generic text...
+
+Median base surprisal on domain text: 1.305
+Percentiles: p25=0.135, p50=1.305, p75=3.906
+
+======================================================================
+KNOWLEDGE PPL vs STYLE PPL
+======================================================================
+
+--- DOMAIN TEXT (BBC) ---
+  (Style tokens = base already knows, Knowledge tokens = base doesn't know)
+  All tokens                          n=18161    base_PPL=12.65    adpt_PPL=11.06    Δ=-12.6%  rel_surp=-0.1345
+  Style (base surprisal < p25)        n=4540     base_PPL=1.03     adpt_PPL=1.14     Δ=+11.5%  rel_surp=+0.1086
+  Mid (p25-p75)                       n=9109     base_PPL=4.67     adpt_PPL=5.68     Δ=+21.8%  rel_surp=+0.1970
+  Knowledge (base surprisal > p75)    n=4512     base_PPL=1188.43  adpt_PPL=416.62   Δ=-64.9%  rel_surp=-1.0482
+
+--- GENERIC TEXT (C4) ---
+  All tokens                          n=13487    base_PPL=15.78    adpt_PPL=14.54    Δ=-7.9%  rel_surp=-0.0820
+  Style (< p25)                       n=3372     base_PPL=1.05     adpt_PPL=1.09     Δ=+4.6%  rel_surp=+0.0451
+  Knowledge (> p75)                   n=3366     base_PPL=1639.12  adpt_PPL=1012.82  Δ=-38.2%  rel_surp=-0.4814
+
+--- KEY QUESTION ---
+  Domain knowledge tokens: adapter Δ = -64.9%
+  Domain style tokens:     adapter Δ = +11.5%
+  → Adapter improves KNOWLEDGE tokens more than style tokens
+  → This is real knowledge injection, not just style transfer
+
+--- EXAMPLE KNOWLEDGE TOKENS (high base surprisal, adapter helps) ---
+  'amas' base=14.38 adpt=7.38 Δ=-7.00
+  ' '' base=5.41 adpt=4.03 Δ=-1.38
+  ' BBC' base=4.72 adpt=0.01 Δ=-4.71
+  ' at' base=12.62 adpt=9.06 Δ=-3.56
+  ' Mohammad' base=9.44 adpt=6.62 Δ=-2.81
+  ' Sin' base=12.19 adpt=0.14 Δ=-12.05
+  ' a' base=4.16 adpt=3.36 Δ=-0.80
+  ' chapter' base=11.38 adpt=9.81 Δ=-1.56
+  ' elite' base=13.88 adpt=10.75 Δ=-3.12
+  ' ' base=5.66 adpt=1.43 Δ=-4.23
+  ' Sin' base=4.91 adpt=2.61 Δ=-2.30
+  ' follows' base=5.75 adpt=3.19 Δ=-2.56
+  ' killings' base=6.56 adpt=5.75 Δ=-0.81
+  ' central' base=6.84 adpt=6.22 Δ=-0.62
+  ' who' base=7.69 adpt=6.53 Δ=-1.16
+  ' sat' base=8.19 adpt=7.12 Δ=-1.06
+  ' what' base=4.81 adpt=2.98 Δ=-1.83
+  ' came' base=7.53 adpt=5.34 Δ=-2.19
+  ' Sin' base=7.25 adpt=5.75 Δ=-1.50
+  ' his' base=6.50 adpt=4.69 Δ=-1.81
+
+Saved to results/knowledge_vs_style_ppl.json
