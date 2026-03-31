@@ -1,0 +1,13 @@
+{
+  "experiment": "learntropy_early_stopping",
+  "stop_step": 2650,
+  "max_steps": 4000,
+  "base": {
+    "domain_ppl": 12.641294717646483,
+    "generic_ppl": 15.252903541850225
+  },
+  "at_stop": {
+    "domain_ppl": 12.206409928793292,
+    "generic_ppl": 21.462773350967044
+  }
+}
