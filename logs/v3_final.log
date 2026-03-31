@@ -1,0 +1,65 @@
+Loading data...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  bbc: 180 train texts
+  cuisine: 180 train texts
+  physics: 180 train texts
+============================================================
+PHASE 1: A (GPU 0) + B (GPU 1) parallel
+============================================================
+
+[cuda:0] === A_random ===
+
+[cuda:1] === B_active ===
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s][A
+Loading weights:   1%|          | 2/399 [00:00<00:51,  7.70it/s][ALoading weights:   1%|          | 2/399 [00:00<00:51,  7.68it/s]Loading weights:   5%|▌         | 21/399 [00:00<00:05, 71.92it/s]
+Loading weights:   6%|▌         | 23/399 [00:00<00:04, 78.53it/s][ALoading weights:  12%|█▏        | 48/399 [00:00<00:02, 136.07it/s]
+Loading weights:  12%|█▏        | 48/399 [00:00<00:02, 134.11it/s][A
+Loading weights:  18%|█▊        | 72/399 [00:00<00:02, 154.21it/s][ALoading weights:  17%|█▋        | 69/399 [00:00<00:02, 145.38it/s]
+Loading weights:  26%|██▋       | 105/399 [00:00<00:01, 200.87it/s][ALoading weights:  26%|██▋       | 105/399 [00:00<00:01, 204.42it/s]
+Loading weights:  32%|███▏      | 128/399 [00:00<00:01, 209.25it/s][ALoading weights:  33%|███▎      | 130/399 [00:00<00:01, 217.60it/s]Loading weights:  39%|███▊      | 154/399 [00:00<00:01, 223.88it/s]
+Loading weights:  38%|███▊      | 151/399 [00:00<00:01, 205.85it/s][ALoading weights:  45%|████▌     | 180/399 [00:01<00:00, 229.73it/s]
+Loading weights:  45%|████▌     | 181/399 [00:01<00:00, 228.86it/s][ALoading weights:  51%|█████     | 204/399 [00:01<00:00, 222.87it/s]
+Loading weights:  51%|█████▏    | 205/399 [00:01<00:00, 227.94it/s][A
+Loading weights:  57%|█████▋    | 229/399 [00:01<00:00, 229.91it/s][ALoading weights:  58%|█████▊    | 232/399 [00:01<00:00, 214.39it/s]Loading weights:  64%|██████▍   | 256/399 [00:01<00:00, 217.87it/s]
+Loading weights:  63%|██████▎   | 253/399 [00:01<00:00, 191.46it/s][ALoading weights:  73%|███████▎  | 291/399 [00:01<00:00, 247.02it/s]
+Loading weights:  75%|███████▍  | 298/399 [00:01<00:00, 254.63it/s][ALoading weights:  79%|███████▉  | 317/399 [00:01<00:00, 248.12it/s]
+Loading weights:  82%|████████▏ | 326/399 [00:01<00:00, 237.70it/s][ALoading weights:  86%|████████▋ | 345/399 [00:01<00:00, 252.86it/s]
+Loading weights:  89%|████████▉ | 356/399 [00:01<00:00, 250.14it/s][ALoading weights:  93%|█████████▎| 371/399 [00:01<00:00, 247.09it/s]
+Loading weights:  96%|█████████▌| 383/399 [00:01<00:00, 243.40it/s][ALoading weights: 100%|██████████| 399/399 [00:01<00:00, 209.73it/s]
+Loading weights: 100%|██████████| 399/399 [00:01<00:00, 204.21it/s]
+  [cuda:1] Base: bbc=12.4 cuisine=14.8 physics=7.8 generic=16.4
+  [cuda:0] Base: bbc=12.4 cuisine=14.8 physics=7.8 generic=16.4
+  [cuda:0] Cycle 0/30 | physics
+  [cuda:1] Cycle 0/30 | bbc
+  [cuda:0] Cycle 10/30 | bbc
+  [cuda:1] Cycle 10/30 | cuisine
+  [cuda:0] Cycle 20/30 | physics
+  [cuda:1] Cycle 20/30 | cuisine
+  [cuda:0] A_random: bbc=7.2 cuisine=17.5 physics=10.1 generic=17.6
+  [cuda:1] B_active: bbc=7.6 cuisine=18.8 physics=10.6 generic=18.8
+
+A+B complete.
+
+============================================================
+PHASE 2: C = B + joint gate training (GPU 0)
+============================================================
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:35, 11.18it/s]Loading weights:   8%|▊         | 30/399 [00:00<00:03, 117.75it/s]Loading weights:  18%|█▊        | 72/399 [00:00<00:01, 207.35it/s]Loading weights:  34%|███▍      | 135/399 [00:00<00:00, 333.98it/s]Loading weights:  43%|████▎     | 172/399 [00:00<00:00, 263.23it/s]Loading weights:  59%|█████▉    | 237/399 [00:00<00:00, 359.43it/s]Loading weights:  70%|██████▉   | 279/399 [00:01<00:00, 317.49it/s]Loading weights:  85%|████████▌ | 340/399 [00:01<00:00, 376.59it/s]Loading weights:  96%|█████████▌| 382/399 [00:01<00:00, 383.04it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 323.33it/s]
+Joint gate training (1500 steps)...
+  Gate step 0/1500
+  Gate step 500/1500
+  Gate step 1000/1500
+
+======================================================================
+FINAL: Random vs Active vs Active+Gates (BBC/Cuisine/Physics)
+======================================================================
+Domain       Base     A:Rnd    B:Act    C:Act+Gate A Δ      B Δ      C Δ     
+----------------------------------------------------------------------
+bbc          12.40    7.21     7.64     7.34       -41.8%  -38.4%  -40.8%
+cuisine      14.75    17.53    18.75    18.39      +18.8%  +27.1%  +24.7%
+physics      7.81     10.10    10.61    9.70       +29.3%  +35.8%  +24.1%
+generic      16.37    17.60    18.81    15.72      +7.5%  +14.9%  -3.9%
+
+Selections: A={'physics': 12, 'bbc': 7, 'cuisine': 11}  B={'bbc': 9, 'cuisine': 10, 'physics': 11}
+
+Saved to results/v3_final.json
