@@ -1,0 +1,64 @@
+{
+  "base": {
+    "domain": 12.641294717646483,
+    "generic": 15.252903541850225
+  },
+  "conditions": {
+    "1. None": {
+      "domain": 14.346469889303325,
+      "generic": 18.399335520138774,
+      "steps": 500,
+      "domain_delta": 13.488928228819164,
+      "generic_delta": 20.62841327000798
+    },
+    "2. Gate only": {
+      "domain": 9.816272211033166,
+      "generic": 14.316898836609765,
+      "steps": 500,
+      "domain_delta": -22.347572536773125,
+      "generic_delta": -6.136567393036303
+    },
+    "3. Early stop only": {
+      "domain": 42.885256885394966,
+      "generic": 39.46714530356939,
+      "steps": 1601,
+      "domain_delta": 239.2473464409444,
+      "generic_delta": 158.7516874756418
+    },
+    "4. Curriculum only": {
+      "domain": 11.005956647476921,
+      "generic": 15.253749955765946,
+      "steps": 500,
+      "domain_delta": -12.936476102299304,
+      "generic_delta": 0.005549198638791215
+    },
+    "5. Gate + early stop": {
+      "domain": 10.51564580586708,
+      "generic": 14.741760540569961,
+      "steps": 1551,
+      "domain_delta": -16.815120280457705,
+      "generic_delta": -3.3511193450991974
+    },
+    "6. Gate + curriculum": {
+      "domain": 11.1252652733952,
+      "generic": 15.150131359861232,
+      "steps": 500,
+      "domain_delta": -11.992675419037553,
+      "generic_delta": -0.6737876608673946
+    },
+    "7. Early stop + curriculum": {
+      "domain": 20.578823988304592,
+      "generic": 21.591329978688254,
+      "steps": 1651,
+      "domain_delta": 62.7904771461249,
+      "generic_delta": 41.555540028473544
+    },
+    "8. All three": {
+      "domain": 11.060900407756623,
+      "generic": 15.158275607122505,
+      "steps": 1651,
+      "domain_delta": -12.501838974481979,
+      "generic_delta": -0.6203929269472156
+    }
+  }
+}
