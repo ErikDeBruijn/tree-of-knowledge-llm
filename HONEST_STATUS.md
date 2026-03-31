@@ -33,6 +33,13 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 - E2E benchmark: ARC +1.0-1.2%, HellaSwag +2.1-2.6% (2 gate configs, both above base)
 - Vast.ai training: adapter trained on external GPU (RTX 3090 Spain), selectivity +0.663, identical to local
 
+### SUPPORTED (cont.)
+- Standard PEFT LoRA degrades generic PPL (2026-03-31, 2 configs): Without gate: +25.5% to +31.7%. With output-level gate: +2.9%. Our per-layer gate: -6%. Gate-based protection is robust across LoRA implementations (custom Expert and standard PEFT). Even a naive output gate reduces degradation 11x.
+- Uniform vs gated grove on ARC/HellaSwag (2026-03-31): Uniform grove 58.3/78.8, gated grove 57.5/77.5, base 56.3/75.0. Both improve over base. Uniform slightly higher on benchmarks but destroys generic PPL. Trade-off: benchmark score vs protection.
+
+### OBSERVED (cont.)
+- Learntropy relative surprise (L_expert - L_base) differs from raw CE (2026-03-31): Correlation 0.64 (not equivalent). Detects overfitting onset at step 1600 (generic relative surprise drops sharply). Raw CE separates domain/generic better (Cohen's d -1.22 vs -0.89). Potential use: early stopping signal, not routing signal.
+
 ### PLAUSIBLE (single observation, not replicated)
 - Learntropy-weighted gate training marginally improves baseline (sel 0.807 vs 0.801, leak 0.094 vs 0.101)
 - Cache miss detection: 81% of uncovered topics correctly detected (13/16), 6% false coverage (1/16)
