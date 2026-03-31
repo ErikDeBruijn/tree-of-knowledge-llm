@@ -1,0 +1,41 @@
+Loading Qwen/Qwen3-8B...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:16,  5.18it/s]Loading weights:   5%|▌         | 20/399 [00:00<00:04, 83.16it/s]Loading weights:  16%|█▋        | 65/399 [00:00<00:01, 217.56it/s]Loading weights:  26%|██▋       | 105/399 [00:00<00:01, 249.79it/s]Loading weights:  37%|███▋      | 149/399 [00:00<00:00, 301.18it/s]Loading weights:  46%|████▌     | 182/399 [00:00<00:00, 303.35it/s]Loading weights:  55%|█████▍    | 219/399 [00:00<00:00, 290.41it/s]Loading weights:  72%|███████▏  | 289/399 [00:01<00:00, 380.40it/s]Loading weights:  82%|████████▏ | 328/399 [00:01<00:00, 377.03it/s]Loading weights:  95%|█████████▌| 380/399 [00:01<00:00, 413.61it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 319.08it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Precomputing base model per-token losses...
+  Cached 200 texts
+
+=== BASE ===
+  Base domain: PPL=12.64
+  Base generic: PPL=15.34
+
+=== Standard (uniform weight) (500 steps) ===
+  Step 0/500 | loss=2.6250
+  Step 100/500 | loss=2.5000
+  Step 200/500 | loss=2.0625
+  Step 300/500 | loss=2.2812
+  Step 400/500 | loss=1.5547
+  Standard (uniform weight) domain: PPL=14.35
+  Standard (uniform weight) generic: PPL=17.95
+
+=== Curriculum (learntropy-weighted) (500 steps) ===
+  Step 0/500 | loss=1.3125 | mean_weight=0.500
+  Step 100/500 | loss=1.4297 | mean_weight=0.505
+  Step 200/500 | loss=1.3438 | mean_weight=0.510
+  Step 300/500 | loss=1.4375 | mean_weight=0.520
+  Step 400/500 | loss=1.3047 | mean_weight=0.527
+  Curriculum (learntropy-weighted) domain: PPL=11.25
+  Curriculum (learntropy-weighted) generic: PPL=15.36
+  Curriculum: 42% tokens weighted > 0.5
+
+============================================================
+COMPARISON: Standard vs Learntropy Curriculum
+============================================================
+Config                              Domain PPL   Generic PPL  D Δ      G Δ     
+------------------------------------------------------------
+Base                                12.64        15.34        —        —       
+Standard (500 steps)                14.35        17.95        +13.5%  +17.0%
+Curriculum (500 steps)              11.25        15.36        -11.0%  +0.1%
+
+VERDICT: Curriculum IMPROVES generic PPL without hurting domain
+
+Saved to results/learntropy_curriculum.json
