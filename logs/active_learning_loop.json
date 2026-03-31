@@ -1,0 +1,504 @@
+{
+  "experiment": "active_learning_loop",
+  "n_cycles": 30,
+  "batch_steps": 50,
+  "history": [
+    {
+      "cycle": 0,
+      "selected": "bbc",
+      "scores": {
+        "bbc": 0.0,
+        "cuisine": 0.0,
+        "wingchun": 0.0
+      },
+      "adjusted_scores": {
+        "bbc": 0.0,
+        "cuisine": 0.0,
+        "wingchun": 0.0
+      },
+      "compression_progress": 0.371875,
+      "train_loss": 2.2703125
+    },
+    {
+      "cycle": 1,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -0.4734375,
+        "cuisine": -0.165625,
+        "wingchun": -0.203125
+      },
+      "adjusted_scores": {
+        "bbc": -0.23671875,
+        "cuisine": -0.0828125,
+        "wingchun": -0.1015625
+      },
+      "compression_progress": 0.22187500000000002,
+      "train_loss": 2.584375
+    },
+    {
+      "cycle": 2,
+      "selected": "wingchun",
+      "scores": {
+        "bbc": -0.415625,
+        "cuisine": -0.365625,
+        "wingchun": -0.209375
+      },
+      "adjusted_scores": {
+        "bbc": -0.23148437500000002,
+        "cuisine": -0.19109374999999998,
+        "wingchun": -0.11484375
+      },
+      "compression_progress": 2.1094970703125,
+      "train_loss": 1.301220703125
+    },
+    {
+      "cycle": 3,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -0.1296875,
+        "cuisine": 0.0375,
+        "wingchun": -2.4188720703125
+      },
+      "adjusted_scores": {
+        "bbc": -0.1069296875,
+        "cuisine": 0.0375,
+        "wingchun": -1.22904541015625
+      },
+      "compression_progress": 0.5921875,
+      "train_loss": 2.28859375
+    },
+    {
+      "cycle": 4,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.378125,
+        "cuisine": -0.496875,
+        "wingchun": -2.248046875
+      },
+      "adjusted_scores": {
+        "bbc": -0.23342421875,
+        "cuisine": -0.2697234375,
+        "wingchun": -1.262615478515625
+      },
+      "compression_progress": 0.11406250000000001,
+      "train_loss": 2.18703125
+    },
+    {
+      "cycle": 5,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -0.5546875,
+        "cuisine": -0.4453125,
+        "wingchun": -2.17578125
+      },
+      "adjusted_scores": {
+        "bbc": -0.336175546875,
+        "cuisine": -0.26665734375,
+        "wingchun": -1.3250258056640625
+      },
+      "compression_progress": -0.003124999999999989,
+      "train_loss": 2.18390625
+    },
+    {
+      "cycle": 6,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -0.571875,
+        "cuisine": -0.3375,
+        "wingchun": -2.190625
+      },
+      "adjusted_scores": {
+        "bbc": -0.36662049218750004,
+        "cuisine": -0.230616609375,
+        "wingchun": -1.4175232250976562
+      },
+      "compression_progress": 0.12656249999999997,
+      "train_loss": 2.1072265625
+    },
+    {
+      "cycle": 7,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.5015625,
+        "cuisine": -0.690625,
+        "wingchun": -2.040234375
+      },
+      "adjusted_scores": {
+        "bbc": -0.35198969296875005,
+        "cuisine": -0.4178674484375,
+        "wingchun": -1.4196380900878904
+      },
+      "compression_progress": 0.5984375000000001,
+      "train_loss": 2.0334375
+    },
+    {
+      "cycle": 8,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -0.4390625,
+        "cuisine": -0.459375,
+        "wingchun": -2.03125
+      },
+      "adjusted_scores": {
+        "bbc": -0.335696973671875,
+        "cuisine": -0.32951820359374995,
+        "wingchun": -1.4772055310791015
+      },
+      "compression_progress": 0.8253906249999999,
+      "train_loss": 1.84330078125
+    },
+    {
+      "cycle": 9,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -0.9796875,
+        "cuisine": -0.9921875,
+        "wingchun": -2.03125
+      },
+      "adjusted_scores": {
+        "bbc": -0.6163460263046875,
+        "cuisine": -0.6089101332343749,
+        "wingchun": -1.5326099779711915
+      },
+      "compression_progress": -0.021874999999999978,
+      "train_loss": 1.739990234375
+    },
+    {
+      "cycle": 10,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -0.75625,
+        "cuisine": -0.5890625,
+        "wingchun": -1.910546875
+      },
+      "adjusted_scores": {
+        "bbc": -0.5409614236742187,
+        "cuisine": -0.4456753699109375,
+        "wingchun": -1.5221224176740722
+      },
+      "compression_progress": 0.0234375,
+      "train_loss": 1.53134765625
+    },
+    {
+      "cycle": 11,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.7515625,
+        "cuisine": -1.4140625,
+        "wingchun": -1.829296875
+      },
+      "adjusted_scores": {
+        "bbc": -0.5601465313067969,
+        "cuisine": -0.8725140829198437,
+        "wingchun": -1.5203398634066652
+      },
+      "compression_progress": 0.16171875000000002,
+      "train_loss": 1.770703125
+    },
+    {
+      "cycle": 12,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.7203125,
+        "cuisine": -1.28515625,
+        "wingchun": -1.70234375
+      },
+      "adjusted_scores": {
+        "bbc": -0.5636631281761172,
+        "cuisine": -0.8622157996278593,
+        "wingchun": -1.4877590020659985
+      },
+      "compression_progress": 0.5923828125,
+      "train_loss": 1.695
+    },
+    {
+      "cycle": 13,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.5015625,
+        "cuisine": -0.741015625,
+        "wingchun": -1.812109375
+      },
+      "adjusted_scores": {
+        "bbc": -0.46995306535850545,
+        "cuisine": -0.6324395321650733,
+        "wingchun": -1.5641002893593985
+      },
+      "compression_progress": 1.550390625,
+      "train_loss": 1.51861328125
+    },
+    {
+      "cycle": 14,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.80703125,
+        "cuisine": -1.40859375,
+        "wingchun": -1.7140625
+      },
+      "adjusted_scores": {
+        "bbc": -0.625848383822655,
+        "cuisine": -0.9770862039485662,
+        "wingchun": -1.5398777604234588
+      },
+      "compression_progress": 1.1194335937500002,
+      "train_loss": 1.297998046875
+    },
+    {
+      "cycle": 15,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.7109375,
+        "cuisine": -0.993359375,
+        "wingchun": -1.57421875
+      },
+      "adjusted_scores": {
+        "bbc": -0.5959197954403894,
+        "cuisine": -0.8126197710537095,
+        "wingchun": -1.4873743593811128
+      },
+      "compression_progress": 1.01875,
+      "train_loss": 1.4134375
+    },
+    {
+      "cycle": 16,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.50234375,
+        "cuisine": -1.06796875,
+        "wingchun": -1.42578125
+      },
+      "adjusted_scores": {
+        "bbc": -1.0031246908963505,
+        "cuisine": -0.8679984189483385,
+        "wingchun": -1.4218400484430016
+      },
+      "compression_progress": 0.28437500000000004,
+      "train_loss": 1.72421875
+    },
+    {
+      "cycle": 17,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.50869140625,
+        "cuisine": -0.89375,
+        "wingchun": -1.378125
+      },
+      "adjusted_scores": {
+        "bbc": -1.0562204249317155,
+        "cuisine": -0.8008860770535047,
+        "wingchun": -1.378125
+      },
+      "compression_progress": 0.3671875,
+      "train_loss": 1.468701171875
+    },
+    {
+      "cycle": 18,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.539453125,
+        "cuisine": -1.2921875,
+        "wingchun": -1.44453125
+      },
+      "adjusted_scores": {
+        "bbc": -1.116848382438544,
+        "cuisine": -1.0093912193481542,
+        "wingchun": -1.4295810642388314
+      },
+      "compression_progress": -0.06982421875,
+      "train_loss": 1.33646728515625
+    },
+    {
+      "cycle": 19,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -1.5611328125,
+        "cuisine": -1.658203125,
+        "wingchun": -1.40234375
+      },
+      "adjusted_scores": {
+        "bbc": -1.1699487004446896,
+        "cuisine": -1.2206786599133388,
+        "wingchun": -1.40234375
+      },
+      "compression_progress": -0.0021484374999998224,
+      "train_loss": 1.207646484375
+    },
+    {
+      "cycle": 20,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.2953125,
+        "cuisine": -0.8265625,
+        "wingchun": -1.415625
+      },
+      "adjusted_scores": {
+        "bbc": -1.0761569554002206,
+        "cuisine": -0.8265625,
+        "wingchun": -1.415625
+      },
+      "compression_progress": 1.138671875,
+      "train_loss": 1.404521484375
+    },
+    {
+      "cycle": 21,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.5228515625,
+        "cuisine": -1.1447265625,
+        "wingchun": -1.50703125
+      },
+      "adjusted_scores": {
+        "bbc": -1.2118420411101987,
+        "cuisine": -1.0054879957798044,
+        "wingchun": -1.461538814580108
+      },
+      "compression_progress": 0.6251953125,
+      "train_loss": 1.3128515625
+    },
+    {
+      "cycle": 22,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -1.184765625,
+        "cuisine": -2.00546875,
+        "wingchun": -1.43828125
+      },
+      "adjusted_scores": {
+        "bbc": -1.0739000244991788,
+        "cuisine": -1.449782946201824,
+        "wingchun": -1.4317130581220971
+      },
+      "compression_progress": -0.115234375,
+      "train_loss": 0.9916064453125
+    },
+    {
+      "cycle": 23,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -1.33515625,
+        "cuisine": -1.746875,
+        "wingchun": -1.1671875
+      },
+      "adjusted_scores": {
+        "bbc": -1.1601818970492608,
+        "cuisine": -1.3760546515816414,
+        "wingchun": -1.1671875
+      },
+      "compression_progress": 0.49833984374999996,
+      "train_loss": 1.04244140625
+    },
+    {
+      "cycle": 24,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.540625,
+        "cuisine": -1.18125,
+        "wingchun": -1.32421875
+      },
+      "adjusted_scores": {
+        "bbc": -1.2804137073443347,
+        "cuisine": -1.1303241864234774,
+        "wingchun": -1.32421875
+      },
+      "compression_progress": 0.8972656250000002,
+      "train_loss": 1.2002197265625
+    },
+    {
+      "cycle": 25,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.6771484375,
+        "cuisine": -1.6505859375,
+        "wingchun": -1.38671875
+      },
+      "adjusted_scores": {
+        "bbc": -1.3746965553599013,
+        "cuisine": -1.3700847365311297,
+        "wingchun": -1.38671875
+      },
+      "compression_progress": 0.011474609375,
+      "train_loss": 0.952939453125
+    },
+    {
+      "cycle": 26,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -0.7140625,
+        "cuisine": -1.9205078125,
+        "wingchun": -1.196875
+      },
+      "adjusted_scores": {
+        "bbc": -0.7140625,
+        "cuisine": -1.5330957941280166,
+        "wingchun": -1.196875
+      },
+      "compression_progress": 1.0980468749999999,
+      "train_loss": 1.0978515625
+    },
+    {
+      "cycle": 27,
+      "selected": "wingchun",
+      "scores": {
+        "bbc": -2.174609375,
+        "cuisine": -1.87314453125,
+        "wingchun": -1.28515625
+      },
+      "adjusted_scores": {
+        "bbc": -1.6327385848415201,
+        "cuisine": -1.548155355340215,
+        "wingchun": -1.28515625
+      },
+      "compression_progress": 1.28470458984375,
+      "train_loss": 0.2692889404296875
+    },
+    {
+      "cycle": 28,
+      "selected": "cuisine",
+      "scores": {
+        "bbc": -1.64638671875,
+        "cuisine": -1.284765625,
+        "wingchun": -2.660400390625
+      },
+      "adjusted_scores": {
+        "bbc": -1.422814335732368,
+        "cuisine": -1.284765625,
+        "wingchun": -2.0121915927589655
+      },
+      "compression_progress": 0.32421875,
+      "train_loss": 0.7051513671875
+    },
+    {
+      "cycle": 29,
+      "selected": "bbc",
+      "scores": {
+        "bbc": -1.783203125,
+        "cuisine": -1.98896484375,
+        "wingchun": -2.4280517578125
+      },
+      "adjusted_scores": {
+        "bbc": -1.5135797771591313,
+        "cuisine": -1.638394509700574,
+        "wingchun": -1.9608381561393187
+      },
+      "compression_progress": -0.056933593749999956,
+      "train_loss": 0.6855712890625
+    }
+  ],
+  "base_ppls": {
+    "bbc": 12.396772035418978,
+    "cuisine": 14.752731787366967,
+    "wingchun": 14.632989006077262,
+    "generic": 16.216118552909535
+  },
+  "adapter_ppls": {
+    "bbc": 9.274666064669733,
+    "cuisine": 30.77823639174726,
+    "wingchun": 30.72827155992515,
+    "generic": 23.543572534607755
+  },
+  "selection_counts": {
+    "bbc": 13,
+    "cuisine": 15,
+    "wingchun": 2
+  }
+}

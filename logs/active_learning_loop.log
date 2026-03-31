@@ -1,0 +1,65 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 1/399 [00:00<01:12,  5.46it/s]Loading weights:   5%|▍         | 19/399 [00:00<00:05, 73.89it/s]Loading weights:  19%|█▉        | 75/399 [00:00<00:01, 245.07it/s]Loading weights:  32%|███▏      | 126/399 [00:00<00:00, 324.36it/s]Loading weights:  41%|████      | 163/399 [00:00<00:00, 312.19it/s]Loading weights:  51%|█████     | 204/399 [00:00<00:00, 339.29it/s]Loading weights:  60%|██████    | 240/399 [00:00<00:00, 340.80it/s]Loading weights:  70%|██████▉   | 279/399 [00:00<00:00, 352.10it/s]Loading weights:  80%|███████▉  | 318/399 [00:01<00:00, 338.77it/s]Loading weights:  90%|█████████ | 360/399 [00:01<00:00, 349.90it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 319.26it/s]
+Loading data pool...
+  bbc: 200 texts
+  cuisine: 200 texts
+  wingchun: 27 texts
+  generic: 100 texts
+
+============================================================
+ACTIVE LEARNING LOOP
+============================================================
+Cycle  0/30 | selected=bbc        | scores: bbc=+0.000 | cuisine=+0.000 | wingchun=+0.000 | progress=+0.3719 | train_loss=2.270
+Cycle  1/30 | selected=cuisine    | scores: bbc=-0.473 | cuisine=-0.166 | wingchun=-0.203 | progress=+0.2219 | train_loss=2.584
+Cycle  2/30 | selected=wingchun   | scores: bbc=-0.416 | cuisine=-0.366 | wingchun=-0.209 | progress=+2.1095 | train_loss=1.301
+Cycle  3/30 | selected=cuisine    | scores: bbc=-0.130 | cuisine=+0.037 | wingchun=-2.419 | progress=+0.5922 | train_loss=2.289
+Cycle  4/30 | selected=bbc        | scores: bbc=-0.378 | cuisine=-0.497 | wingchun=-2.248 | progress=+0.1141 | train_loss=2.187
+Cycle  5/30 | selected=cuisine    | scores: bbc=-0.555 | cuisine=-0.445 | wingchun=-2.176 | progress=-0.0031 | train_loss=2.184
+Cycle  6/30 | selected=cuisine    | scores: bbc=-0.572 | cuisine=-0.338 | wingchun=-2.191 | progress=+0.1266 | train_loss=2.107
+Cycle  7/30 | selected=bbc        | scores: bbc=-0.502 | cuisine=-0.691 | wingchun=-2.040 | progress=+0.5984 | train_loss=2.033
+Cycle  8/30 | selected=cuisine    | scores: bbc=-0.439 | cuisine=-0.459 | wingchun=-2.031 | progress=+0.8254 | train_loss=1.843
+Cycle  9/30 | selected=cuisine    | scores: bbc=-0.980 | cuisine=-0.992 | wingchun=-2.031 | progress=-0.0219 | train_loss=1.740
+Cycle 10/30 | selected=cuisine    | scores: bbc=-0.756 | cuisine=-0.589 | wingchun=-1.911 | progress=+0.0234 | train_loss=1.531
+Cycle 11/30 | selected=bbc        | scores: bbc=-0.752 | cuisine=-1.414 | wingchun=-1.829 | progress=+0.1617 | train_loss=1.771
+Cycle 12/30 | selected=bbc        | scores: bbc=-0.720 | cuisine=-1.285 | wingchun=-1.702 | progress=+0.5924 | train_loss=1.695
+Cycle 13/30 | selected=bbc        | scores: bbc=-0.502 | cuisine=-0.741 | wingchun=-1.812 | progress=+1.5504 | train_loss=1.519
+Cycle 14/30 | selected=bbc        | scores: bbc=-0.807 | cuisine=-1.409 | wingchun=-1.714 | progress=+1.1194 | train_loss=1.298
+Cycle 15/30 | selected=bbc        | scores: bbc=-0.711 | cuisine=-0.993 | wingchun=-1.574 | progress=+1.0188 | train_loss=1.413
+Cycle 16/30 | selected=cuisine    | scores: bbc=-1.502 | cuisine=-1.068 | wingchun=-1.426 | progress=+0.2844 | train_loss=1.724
+Cycle 17/30 | selected=cuisine    | scores: bbc=-1.509 | cuisine=-0.894 | wingchun=-1.378 | progress=+0.3672 | train_loss=1.469
+Cycle 18/30 | selected=cuisine    | scores: bbc=-1.539 | cuisine=-1.292 | wingchun=-1.445 | progress=-0.0698 | train_loss=1.336
+Cycle 19/30 | selected=bbc        | scores: bbc=-1.561 | cuisine=-1.658 | wingchun=-1.402 | progress=-0.0021 | train_loss=1.208
+Cycle 20/30 | selected=cuisine    | scores: bbc=-1.295 | cuisine=-0.827 | wingchun=-1.416 | progress=+1.1387 | train_loss=1.405
+Cycle 21/30 | selected=cuisine    | scores: bbc=-1.523 | cuisine=-1.145 | wingchun=-1.507 | progress=+0.6252 | train_loss=1.313
+Cycle 22/30 | selected=bbc        | scores: bbc=-1.185 | cuisine=-2.005 | wingchun=-1.438 | progress=-0.1152 | train_loss=0.992
+Cycle 23/30 | selected=bbc        | scores: bbc=-1.335 | cuisine=-1.747 | wingchun=-1.167 | progress=+0.4983 | train_loss=1.042
+Cycle 24/30 | selected=cuisine    | scores: bbc=-1.541 | cuisine=-1.181 | wingchun=-1.324 | progress=+0.8973 | train_loss=1.200
+Cycle 25/30 | selected=cuisine    | scores: bbc=-1.677 | cuisine=-1.651 | wingchun=-1.387 | progress=+0.0115 | train_loss=0.953
+Cycle 26/30 | selected=bbc        | scores: bbc=-0.714 | cuisine=-1.921 | wingchun=-1.197 | progress=+1.0980 | train_loss=1.098
+Cycle 27/30 | selected=wingchun   | scores: bbc=-2.175 | cuisine=-1.873 | wingchun=-1.285 | progress=+1.2847 | train_loss=0.269
+Cycle 28/30 | selected=cuisine    | scores: bbc=-1.646 | cuisine=-1.285 | wingchun=-2.660 | progress=+0.3242 | train_loss=0.705
+Cycle 29/30 | selected=bbc        | scores: bbc=-1.783 | cuisine=-1.989 | wingchun=-2.428 | progress=-0.0569 | train_loss=0.686
+
+============================================================
+FINAL EVALUATION
+============================================================
+
+Domain          Base PPL   Adapter PPL  Delta     
+-----------------------------------------------
+bbc             12.40      9.27         -25.2%
+cuisine         14.75      30.78        +108.6%
+generic         16.22      23.54        +45.2%
+wingchun        14.63      30.73        +110.0%
+
+Domain selection distribution:
+  cuisine: 15/30 cycles (50%)
+  bbc: 13/30 cycles (43%)
+  wingchun: 2/30 cycles (7%)
+
+Mean compression progress per domain:
+  bbc: +0.5345 (n=13)
+  cuisine: +0.3562 (n=15)
+  wingchun: +1.6971 (n=2)
+
+Saved to results/active_learning_loop.json
