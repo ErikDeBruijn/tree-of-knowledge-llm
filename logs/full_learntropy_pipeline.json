@@ -1,0 +1,15 @@
+{
+  "experiment": "full_learntropy_pipeline",
+  "base": {
+    "domain": 12.641294717646483,
+    "generic": 15.252903541850225
+  },
+  "standard_gated": {
+    "domain": 9.806661683816088,
+    "generic": 14.32387979104715
+  },
+  "curriculum_gated": {
+    "domain": 11.083443809692405,
+    "generic": 15.127076250016568
+  }
+}
