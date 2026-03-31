@@ -1,0 +1,46 @@
+{
+  "experiment": "e1_gate_protection",
+  "seed": 1337,
+  "base": {
+    "domain_ppl": 9.642579325441334,
+    "generic_ppl": 16.47111309175118,
+    "benchmarks": {
+      "arc_challenge_acc,none": 0.5546075085324232,
+      "arc_challenge_acc_norm,none": 0.5631399317406144,
+      "hellaswag_acc,none": 0.5715992830113523,
+      "hellaswag_acc_norm,none": 0.749452300338578,
+      "medqa_4options_acc,none": 0.6410054988216811,
+      "medqa_4options_acc_norm,none": 0.6410054988216811,
+      "mmlu_clinical_knowledge_acc,none": 0.7962264150943397,
+      "mmlu_professional_medicine_acc,none": 0.8198529411764706
+    }
+  },
+  "peft": {
+    "domain_ppl": 6.412197651239823,
+    "generic_ppl": 14.50181278847806,
+    "benchmarks": {
+      "arc_challenge_acc,none": 0.5349829351535836,
+      "arc_challenge_acc_norm,none": 0.5452218430034129,
+      "hellaswag_acc,none": 0.5644293965345548,
+      "hellaswag_acc_norm,none": 0.7610037841067516,
+      "medqa_4options_acc,none": 0.624509033778476,
+      "medqa_4options_acc_norm,none": 0.624509033778476,
+      "mmlu_clinical_knowledge_acc,none": 0.8037735849056604,
+      "mmlu_professional_medicine_acc,none": 0.7794117647058824
+    }
+  },
+  "gated": {
+    "domain_ppl": 6.410248180902294,
+    "generic_ppl": 14.236945946283218,
+    "benchmarks": {
+      "arc_challenge_acc,none": 0.5477815699658704,
+      "arc_challenge_acc_norm,none": 0.5656996587030717,
+      "hellaswag_acc,none": 0.5697072296355308,
+      "hellaswag_acc_norm,none": 0.7636924915355506,
+      "medqa_4options_acc,none": 0.6252945797329144,
+      "medqa_4options_acc_norm,none": 0.6252945797329144,
+      "mmlu_clinical_knowledge_acc,none": 0.7962264150943397,
+      "mmlu_professional_medicine_acc,none": 0.7977941176470589
+    }
+  }
+}
