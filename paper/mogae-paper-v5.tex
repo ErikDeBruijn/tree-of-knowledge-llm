@@ -301,22 +301,38 @@ Total specialist parameters: 655K for 2 experts across 10 layers, versus
 
 \subsection{Learntropy-Driven Mitosis}
 
-% TODO: Learntropy definition is provisional. Wozniak (SuperMemo) independently
-% coined "learntropy" as the attractiveness of a signal to the learn drive —
-% a NET reward signal (reward minus decoding-failure penalty) that depends on
-% prior knowledge and can go negative. Our current definition (raw CE loss) is
-% a simplification: it does not distinguish "productively hard" (Wozniak's
-% positive learntropy) from "impossibly hard" (negative learntropy). Bimodality
-% detection partially recovers this distinction, but a proper learntropy
-% function should model net learning value, not raw difficulty. We are working
-% toward a definition closer to Wozniak's, operationalized as a loss function.
-% See: https://supermemo.guru/wiki/Learntropy
-%
 \textbf{Definition: Learntropy.} We use \emph{learntropy} to denote the per-token prediction difficulty experienced by a specific expert:
 \begin{equation}
 \mathcal{L}_{\text{learn}}(e_i, t) = -\log P(t \mid \text{context}, e_i)
 \end{equation}
-where $e_i$ is expert $i$ and $t$ is the predicted token. The term was independently coined by Wozniak~\cite{wozniak2018learntropy} to denote the attractiveness of a signal to the learn drive system---a net reward that depends on prior knowledge and can go negative when material exceeds the learner's capacity. Our operationalization as raw cross-entropy loss is a simplification: it measures difficulty but does not distinguish productive difficulty (material in the learner's zone of proximal development~\cite{vygotsky1978}) from noise. Bimodality detection (below) partially recovers this distinction by identifying when an expert's loss distribution contains both learnable and unlearnable populations.
+where $e_i$ is expert $i$ and $t$ is the predicted token. \textbf{We do
+not claim a new signal.} Learntropy in our current implementation is
+per-expert cross-entropy loss. The term was independently coined by
+Wozniak~\cite{wozniak2018learntropy} to denote the attractiveness of a
+signal to the learn drive system---a net reward that depends on prior
+knowledge and can go negative when material exceeds the learner's
+capacity. Wozniak's original learntropy is \emph{learner-relative}:
+surprise relative to what the model already knows. Our Hypothesis~1
+operationalization ($\mathcal{L}_{\text{expert}} - \mathcal{L}_{\text{base}}$)
+measures this and shows correlation $r = 0.64$ with raw CE---they are
+not equivalent; the learner-relative formulation captures residual
+difficulty beyond the base model's capacity.
+
+What we claim is that \emph{one existing signal} (loss) drives
+\emph{three decisions} that are normally handled separately: learning
+rate modulation (Section~\ref{sec:analysis}), split timing
+(Section~\ref{sec:speculative-split}), and training duration
+(Section~\ref{sec:delta-gating}). The \emph{unification} is the
+contribution, not the signal itself. In particular, learning speed
+($-d/dt[\text{EMA}(\mathcal{L})]$) detects the Goldilocks zone---the
+productive training window---and overfitting onset, providing a
+principled early-stopping criterion that does not require a held-out
+validation set.
+
+Bimodality detection (below) partially recovers
+Wozniak's distinction between productive and unproductive difficulty
+by identifying when an expert's loss distribution contains both
+learnable and unlearnable populations.
 
 We use learntropy as a \emph{diagnostic signal for the learning system itself}: not only as a training objective but as an instrument that determines when structural change is needed. This reflects Shannon's insight that information content drives the allocation of representational resources~\cite{shannon1948}---and Piaget's observation that prediction failure (accommodation) triggers the creation of new cognitive structure~\cite{piaget1952}.
 
@@ -793,6 +809,18 @@ specialization (shared A + routed B matrices) is viable, though it does not
 test causal modularity (hot-pluggability). MoLoRA~\cite{molora2026} validates
 per-token LoRA routing and composability independently.
 
+\paragraph{Fine-tuning degradation.}
+LoRA fine-tuning is known to degrade performance on tasks outside the
+fine-tuning domain---a manifestation of catastrophic
+forgetting~\cite{biderman2024lora}. Standard mitigations include
+regularization (EWC, L2-SP), replay buffers, or careful learning rate
+schedules. We observe $+25$--$32\%$ generic PPL degradation with
+standard PEFT LoRA and propose per-layer gating as a lightweight
+alternative: a learned gate that activates the adapter selectively,
+reducing degradation to $+2.9\%$ (output-level) or achieving net
+improvement ($-6\%$ to $-13\%$, per-layer) without requiring
+regularization or replay.
+
 \paragraph{Shared vs.\ routed experts.}
 DeepSeekMoE~\cite{deepseek2024moe} introduced \emph{shared expert isolation}:
 always-active experts absorb cross-domain knowledge, freeing routed experts to
@@ -967,12 +995,16 @@ We identify four limitations that bound our current claims:
           Qwen3 (1.7B and 8B). Generalization to other architectures (Llama,
           Mistral, GPT-scale) and other data distributions is assumed but not
           demonstrated.
-    \item \textbf{Learntropy definition is provisional.} Our use of raw
-          cross-entropy as a splitting signal does not distinguish productively
-          difficult tokens from noise (Section~\ref{sec:method}). A principled
-          learntropy function that models net learning value---closer to
-          Wozniak's~\cite{wozniak2018learntropy} definition---may be needed
-          for effective curriculum-driven forking.
+    \item \textbf{Learntropy definition is honest but limited.} Our current
+          learntropy is per-expert cross-entropy loss---a standard signal used
+          in a unified way. The learner-relative formulation
+          ($\mathcal{L}_{\text{expert}} - \mathcal{L}_{\text{base}}$, correlation
+          $r = 0.64$ with raw CE) and learning speed
+          ($-d/dt[\text{EMA}(\mathcal{L})]$) provide richer variants that we
+          use for training duration decisions but have not yet integrated into
+          split timing. A principled learntropy function that models net
+          learning value---closer to Wozniak's~\cite{wozniak2018learntropy}
+          definition---may improve curriculum-driven forking.
     \item \textbf{Hallucination risk remains.} The gate-based ``I don't know''
           detection (Section~\ref{sec:delta-gating}) distinguishes in-domain from
           out-of-domain text (2.25--4.11$\times$ ratio for high-selectivity
@@ -1350,6 +1382,37 @@ each adapter strongly improves its own domain (BBC $-73.5\%$, cuisine $-64.2\%$)
 and modestly or not the other (BBC adapter on cuisine $-4.5\%$, cuisine adapter
 on BBC $-13.7\%$).
 
+\paragraph{Learntropy-guided training recipe.}
+Raw cross-entropy loss serves as the current learntropy implementation.
+Used as learning speed ($-d/dt[\text{EMA}(\mathcal{L})]$), it identifies
+the \emph{Goldilocks zone}: the productive training window where the
+model is learning domain structure rather than memorizing or plateauing.
+Combined with per-layer gating, the optimal recipe is: learntropy-guided
+early stop at $\sim$500 adapter-training steps, followed by 1,500 steps
+of gate-only training. This matches ungated performance on domain PPL
+($-22\%$ to $-32\%$) while \emph{improving} generic PPL ($-12\%$ to
+$-13\%$ vs.\ base), compared to longer ungated training ($-8.7\%$ to
+$-12.6\%$ generic improvement) or longer gated training ($-4.8\%$ to
+$-7.5\%$).
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Configuration & Domain PPL & Generic PPL \\
+\midrule
+Ungated 500 steps & $-22\%$ to $-32\%$ & $-8.7\%$ to $-12.6\%$ \\
+Gated 2000+1500 & $-8\%$ to $-20\%$ & $-4.8\%$ to $-7.5\%$ \\
+\textbf{Gated 500+1500} & $\mathbf{-22\%}$ \textbf{to} $\mathbf{-32\%}$ & $\mathbf{-12\%}$ \textbf{to} $\mathbf{-13\%}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The mechanism: longer adapter training overfits to domain data,
+which the gate must then compensate for. Stopping adapter training at the
+learntropy-detected productive window preserves generality while
+capturing domain structure. Replicated on 2 domains (BBC news, Dutch
+cuisine). \emph{(Class~B: replicated, 2 domains.)}
+
 \paragraph{Sparsity mechanism is not load-bearing.}
 L1 and L2 penalties produce identical selectivity (gap $+0.002$) and PPL
 ($-17.2\%$ vs.\ $-17.4\%$). Dropout on gate activations produces lower
@@ -1494,6 +1557,19 @@ catastrophically degrades generic performance ($+120\%$ PPL) because
 every layer applies the domain update indiscriminately. This validates
 the per-layer gate as essential for hot-pluggable deployment, even when
 the adapter itself provides no knowledge benefit.
+
+\paragraph{Per-layer gating protects against standard LoRA degradation.}
+The generic-PPL degradation observed above is not specific to our custom
+Expert class---it affects standard HuggingFace PEFT LoRA equally.
+Ungated LoRA fine-tuning (standard PEFT, identical rank and data)
+degrades generic perplexity by $+25$--$32\%$. Our per-layer gate reduces
+this to $+2.9\%$ at the output level, and per-layer analysis shows
+$-6\%$ to $-13\%$ improvement on individual layers---meaning the gated
+adapter \emph{improves} the base model's representations at most layers
+while concentrating domain knowledge where it is needed. This positions
+per-layer gating as a general-purpose fix for LoRA fine-tuning
+degradation, independent of our Expert architecture.
+\emph{(Replicated on 2 domains: BBC news, Dutch cuisine; Class~B.)}
 
 \paragraph{Top-$k$ throughput scaling.}
 \label{sec:topk-throughput}
@@ -1823,6 +1899,7 @@ Tiered storage is not a compromise---it is invisible at \tok{} adapter sizes.
 \bibitem{monet2025} S. Park et al. Monet: Mixture of Monosemantic Experts for Transformers. \textit{ICLR}, 2025.
 \bibitem{idamoe2025} IDA-MoE: Input Domain Aware Mixture-of-Experts. \textit{arXiv:2510.16448}, 2025.
 \bibitem{jaderberg2017pbt} M. Jaderberg et al. Population Based Training of Neural Networks. \textit{arXiv:1711.09846}, 2017.
+\bibitem{biderman2024lora} S. Biderman et al. LoRA Learns Less and Forgets Less. \textit{TMLR}, 2024.
 \end{thebibliography}
 
 \end{document}
