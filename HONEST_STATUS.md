@@ -81,6 +81,7 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 ## Potential solutions not yet tested
 - **RandLoRA** (arXiv 2502.00987): full-rank updates via random bases + learned scaling, closes gap between LoRA and full fine-tuning. Potential escape if LoRA rank is a representational bottleneck.
 - **Better learntropy signal**: Current implementation uses raw cross-entropy. Wozniak's learntropy theory suggests surprise-relative-to-current-knowledge (not absolute difficulty) is the right signal. Research in progress.
+- **EDoRA** (arXiv 2501.12067): magnitude/directional weight decomposition with SVD-frozen low-rank matrices. Up to 30x fewer trainable params. Potential for even lighter adapters.
 - **Better training data**: DCLM, PubMed, arXiv, Wikipedia recent edits instead of FineWeb keyword-filtered.
 
 ### OBSERVED (cont.)
