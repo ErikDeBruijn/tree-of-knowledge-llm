@@ -235,24 +235,45 @@ progress means it is forgetting.
 \subsection{The Active Learning Cycle}
 \label{sec:active-cycle}
 
-The grove uses compression progress to build its own curriculum:
+A candidate data stream must pass through a two-stage funnel before
+the grove invests GPU time in training:
+
+\paragraph{Stage 1: Compressibility filter.} Is the data structured at
+all? A fast CPU-side check (e.g., gzip ratio, BPE tokenizer efficiency)
+rejects data that is genuinely random---encrypted blobs,
+\texttt{/dev/urandom}, corrupted files. This is a cost optimization, not
+an epistemic judgment: it prevents wasting GPU minutes on data that a
+gzip call could have filtered in microseconds. Structured data that the
+grove cannot currently learn from (e.g., Chinese text when no Chinese
+adapter exists) passes this stage---it has compressible structure, even
+if no current adapter can exploit it.
+
+\paragraph{Stage 2: Learntropy probe.} The real work. Train each
+candidate adapter for a short probe window ($\sim$100 steps) on the
+data and measure compression progress. This is inherently
+learner-relative: the same dataset may produce high learntropy for
+adapter $e_1$ (novel, learnable patterns) and zero learntropy for
+adapter $e_2$ (already mastered or beyond capacity). Data that no
+adapter can learn from is \emph{parked}---it is not discarded (it may
+become learnable when a new adapter is spawned or an existing one
+grows), but it does not consume training budget now.
+
+The grove then uses compression progress to build its own curriculum:
 
 \begin{enumerate}[nosep,leftmargin=1.5em]
-\item \textbf{Score.} For each candidate data stream $\mathcal{D}_k$
-      and each adapter $e_i$, estimate compression progress
-      $\text{CP}(e_i, \mathcal{D}_k)$ from recent training history.
+\item \textbf{Score.} For each data stream $\mathcal{D}_k$ that passed
+      the funnel, estimate compression progress
+      $\text{CP}(e_i, \mathcal{D}_k)$ for each adapter.
 \item \textbf{Route.} Assign $\mathcal{D}_k$ to the adapter with
-      highest compression progress on that stream. If no adapter has
-      positive compression progress, flag the stream for new adapter
-      creation.
-\item \textbf{Train.} Train the selected adapter for $N$ steps on
-      $\mathcal{D}_k$.
-\item \textbf{Evaluate.} Measure: did compression progress occur?
-      If yes, continue. If compression progress is zero or negative
-      for $M$ consecutive evaluations, stop training on this stream.
-\item \textbf{Grow.} If a flagged stream accumulates sufficient
-      evidence of reducible loss (high $\Delta\ell$ that is decreasing
-      over a probe window), spawn a new adapter.
+      highest compression progress. If no adapter has
+      positive CP, flag for new adapter creation.
+\item \textbf{Train.} Train the selected adapter for $N$ steps.
+\item \textbf{Evaluate.} Did compression progress occur?
+      If yes, continue. If CP is zero or negative
+      for $M$ consecutive evaluations, stop and switch streams.
+\item \textbf{Grow.} If a flagged stream shows reducible loss
+      (high $\Delta\ell$ that decreases over a probe), spawn a new
+      adapter.
 \end{enumerate}
 
 % PILOT: Active selection beats random by 6.4pp on primary domain
