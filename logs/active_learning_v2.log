@@ -1,0 +1,63 @@
+Loading Qwen/Qwen3-8B...
+Loading data pool...
+  bbc: 200 texts
+  cuisine: 200 texts
+  wingchun: 27 texts
+
+============================================================
+CONDITION A: Random selection, single adapter
+============================================================
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:41,  9.60it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:03, 110.99it/s]Loading weights:  18%|█▊        | 72/399 [00:00<00:01, 175.56it/s]Loading weights:  32%|███▏      | 129/399 [00:00<00:00, 273.51it/s]Loading weights:  49%|████▉     | 196/399 [00:00<00:00, 363.37it/s]Loading weights:  60%|██████    | 240/399 [00:00<00:00, 353.65it/s]Loading weights:  70%|██████▉   | 278/399 [00:01<00:00, 334.47it/s]Loading weights:  81%|████████▏ | 325/399 [00:01<00:00, 357.32it/s]Loading weights:  97%|█████████▋| 389/399 [00:01<00:00, 420.54it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 324.21it/s]
+  Cycle 0/30 | wingchun | loss=1.364
+  Cycle 10/30 | wingchun | loss=0.011
+  Cycle 20/30 | wingchun | loss=0.006
+
+============================================================
+CONDITION B: Active selection, single adapter
+============================================================
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:36, 10.92it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 138.10it/s]Loading weights:  21%|██        | 82/399 [00:00<00:01, 259.31it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 310.22it/s]Loading weights:  40%|███▉      | 159/399 [00:00<00:00, 298.19it/s]Loading weights:  48%|████▊     | 191/399 [00:00<00:00, 247.63it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 345.10it/s]Loading weights:  78%|███████▊  | 311/399 [00:01<00:00, 329.64it/s]Loading weights:  94%|█████████▍| 376/399 [00:01<00:00, 389.44it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 323.25it/s]
+  Cycle 0/30 | bbc | bbc=+0.00 cuisine=+0.00 wingchun=+0.00 | loss=2.270
+  Cycle 10/30 | bbc | bbc=-0.46 cuisine=-0.97 wingchun=-1.85 | loss=1.794
+  Cycle 20/30 | cuisine | bbc=-1.36 cuisine=-1.10 wingchun=-1.12 | loss=1.212
+
+============================================================
+CONDITION C: Active selection, GROVE (3 adapters)
+============================================================
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   3%|▎         | 10/399 [00:00<00:03, 99.55it/s]Loading weights:  15%|█▍        | 59/399 [00:00<00:01, 314.28it/s]Loading weights:  26%|██▌       | 104/399 [00:00<00:00, 366.93it/s]Loading weights:  35%|███▌      | 141/399 [00:00<00:00, 360.25it/s]Loading weights:  44%|████▍     | 177/399 [00:00<00:00, 336.76it/s]Loading weights:  54%|█████▍    | 217/399 [00:00<00:00, 325.30it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 357.95it/s]Loading weights:  76%|███████▋  | 305/399 [00:00<00:00, 348.49it/s]Loading weights:  89%|████████▉ | 356/399 [00:01<00:00, 390.00it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 364.20it/s]
+  Cycle 0/30 | adapter=bbc data=bbc | score=+0.000 | loss=2.343
+  Cycle 10/30 | adapter=bbc data=bbc | score=-1.008 | loss=1.714
+  Cycle 20/30 | adapter=bbc data=bbc | score=-0.823 | loss=1.303
+
+============================================================
+BASELINE (no adapter)
+============================================================
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.57it/s]Loading weights:   5%|▌         | 20/399 [00:00<00:04, 87.52it/s]Loading weights:  19%|█▊        | 74/399 [00:00<00:01, 240.93it/s]Loading weights:  29%|██▊       | 114/399 [00:00<00:01, 280.56it/s]Loading weights:  41%|████      | 162/399 [00:00<00:00, 318.46it/s]Loading weights:  52%|█████▏    | 206/399 [00:00<00:00, 326.61it/s]Loading weights:  64%|██████▍   | 257/399 [00:00<00:00, 370.01it/s]Loading weights:  75%|███████▍  | 299/399 [00:00<00:00, 363.10it/s]Loading weights:  84%|████████▍ | 336/399 [00:01<00:00, 345.07it/s]Loading weights:  97%|█████████▋| 389/399 [00:01<00:00, 393.79it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 326.02it/s]
+
+======================================================================
+COMPARISON: Random vs Active vs Grove
+======================================================================
+Domain       Base     A:Random   B:Active   C:Grove    A Δ      B Δ      C Δ     
+----------------------------------------------------------------------------
+bbc          12.40    7.30       6.71       7.70       -41.1%  -45.9%  -37.9%
+cuisine      14.75    14.18      19.33      26.07      -3.9%  +31.1%  +76.7%
+wingchun     14.63    22.38      22.38      19.92      +53.0%  +53.0%  +36.1%
+generic      18.22    21.40      21.61      20.96      +17.4%  +18.6%  +15.0%
+
+Selection distributions:
+  A:Random: bbc=13 cuisine=6 wingchun=11
+  B:Active: bbc=13 cuisine=15 wingchun=2
+  C:Grove: bbc=12 cuisine=17 wingchun=1
+
+Grove cross-domain (each adapter on all domains):
+  bbc adapter → bbc: 7.70 (-37.9%) ✓
+  bbc adapter → cuisine: 18.89 (+28.1%) ✗
+  bbc adapter → wingchun: 16.43 (+12.3%) ✗
+  cuisine adapter → bbc: 14.03 (+13.2%) ✗
+  cuisine adapter → cuisine: 26.07 (+76.7%) ✗
+  cuisine adapter → wingchun: 16.35 (+11.7%) ✗
+  wingchun adapter → bbc: 13.61 (+9.8%) ✗
+  wingchun adapter → cuisine: 15.50 (+5.0%) ✗
+  wingchun adapter → wingchun: 19.92 (+36.1%) ✗
+
+Saved to results/active_learning_v2.json
