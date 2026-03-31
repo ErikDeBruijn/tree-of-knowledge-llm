@@ -1,0 +1,40 @@
+Loading Qwen/Qwen3-8B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:38, 10.43it/s]Loading weights:  10%|▉         | 39/399 [00:00<00:02, 142.71it/s]Loading weights:  24%|██▎       | 94/399 [00:00<00:01, 280.97it/s]Loading weights:  34%|███▍      | 136/399 [00:00<00:00, 319.70it/s]Loading weights:  43%|████▎     | 172/399 [00:00<00:00, 299.48it/s]Loading weights:  51%|█████▏    | 205/399 [00:00<00:00, 287.06it/s]Loading weights:  65%|██████▍   | 259/399 [00:00<00:00, 346.30it/s]Loading weights:  75%|███████▍  | 299/399 [00:01<00:00, 359.88it/s]Loading weights:  85%|████████▌ | 340/399 [00:01<00:00, 359.13it/s]Loading weights:  98%|█████████▊| 390/399 [00:01<00:00, 394.58it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 321.51it/s]
+
+=== BASE ===
+  Base domain: PPL=12.64
+  Base generic: PPL=15.25
+
+=== Phase 1: Shared adapter (500 steps) ===
+
+=== Phase 2: Raw CE gate (1500 steps) ===
+  Step 0/1500 | loss=2.4688 | mean_gate=0.119
+  Step 500/1500 | loss=1.7188 | mean_gate=0.119
+  Step 1000/1500 | loss=2.2969 | mean_gate=0.119
+  Raw CE gate domain: PPL=8.58
+  Raw CE gate generic: PPL=13.40
+  Gate stats: min=0.119 max=0.119 mean=0.119
+
+=== Phase 2: Relative surprise gate (1500 steps) ===
+  Step 0/1500 | loss=-0.1562 | mean_gate=0.119
+  Step 500/1500 | loss=-0.9375 | mean_gate=0.119
+  Step 1000/1500 | loss=-0.6406 | mean_gate=0.119
+  Relative surprise gate domain: PPL=8.58
+  Relative surprise gate generic: PPL=13.42
+  Gate stats: min=0.119 max=0.119 mean=0.119
+
+============================================================
+COMPARISON: Raw CE vs Relative Surprise as gate signal
+============================================================
+Config                         Domain PPL   Generic PPL  D Δ      G Δ     
+------------------------------------------------------------
+Base                           12.64        15.25        —        —       
+Raw CE gate                    8.58         13.40        -32.1%  -12.1%
+Relative surprise gate         8.58         13.42        -32.1%  -12.0%
+
+Gate profiles:
+  CE gates: ['0.119', '0.119', '0.119', '0.119', '0.119']... mean=0.119
+  RS gates: ['0.119', '0.119', '0.119', '0.119', '0.119']... mean=0.119
+
+Saved to results/learntropy_gate_signal.json

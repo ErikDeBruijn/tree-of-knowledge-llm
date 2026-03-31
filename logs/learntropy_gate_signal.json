@@ -1,0 +1,17 @@
+{
+  "experiment": "learntropy_gate_signal",
+  "base": {
+    "domain": 12.641294717646483,
+    "generic": 15.252903541850225
+  },
+  "raw_ce_gate": {
+    "domain": 8.57779694272752,
+    "generic": 13.402661133113051,
+    "gate_mean": 0.119140625
+  },
+  "relative_surprise_gate": {
+    "domain": 8.584032997404066,
+    "generic": 13.424797616365334,
+    "gate_mean": 0.119140625
+  }
+}
