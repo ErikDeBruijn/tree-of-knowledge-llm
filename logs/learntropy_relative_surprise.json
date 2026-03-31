@@ -1,0 +1,15 @@
+{
+  "experiment": "learntropy_relative_surprise_phase1",
+  "correlation": 0.6358125880485213,
+  "cohens_d_raw": -1.2223242291972074,
+  "cohens_d_relative": -0.8942282743988409,
+  "kurtosis_raw": 2.1404113484388843,
+  "kurtosis_relative": 8.77176795996657,
+  "domain_means": {
+    "raw_ce_domain": 1.9938514291658853,
+    "raw_ce_generic": 2.631500655922039,
+    "rel_surp_domain": -0.6008661136713049,
+    "rel_surp_generic": -0.2792828744319247
+  },
+  "verdict": "different_but_not_better"
+}

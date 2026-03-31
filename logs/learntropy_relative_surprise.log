@@ -1,0 +1,50 @@
+Loading Qwen/Qwen3-8B on cuda:1...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:40,  9.87it/s]Loading weights:   6%|▋         | 25/399 [00:00<00:03, 99.35it/s]Loading weights:  18%|█▊        | 70/399 [00:00<00:01, 220.78it/s]Loading weights:  25%|██▍       | 98/399 [00:00<00:01, 218.19it/s]Loading weights:  37%|███▋      | 146/399 [00:00<00:00, 297.67it/s]Loading weights:  46%|████▌     | 183/399 [00:00<00:00, 297.28it/s]Loading weights:  57%|█████▋    | 226/399 [00:00<00:00, 331.75it/s]Loading weights:  65%|██████▌   | 261/399 [00:00<00:00, 333.31it/s]Loading weights:  75%|███████▌  | 300/399 [00:01<00:00, 336.00it/s]Loading weights:  85%|████████▌ | 340/399 [00:01<00:00, 313.01it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 298.78it/s]
+
+=== Phase 1: Adapter training with dual logging ===
+/root/t6b-venv/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/root/t6b-venv/lib/python3.12/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+  Step 0/2000 | raw_CE: dom=nan gen=2.500 | rel_surprise: dom=nan gen=0.0000
+  Step 200/2000 | raw_CE: dom=2.239 gen=2.791 | rel_surprise: dom=-0.3450 gen=-0.1769
+  Step 400/2000 | raw_CE: dom=2.169 gen=2.778 | rel_surprise: dom=-0.4127 gen=-0.1782
+  Step 600/2000 | raw_CE: dom=2.080 gen=2.723 | rel_surprise: dom=-0.4970 gen=-0.2054
+  Step 800/2000 | raw_CE: dom=2.153 gen=2.598 | rel_surprise: dom=-0.4277 gen=-0.1855
+  Step 1000/2000 | raw_CE: dom=2.090 gen=2.728 | rel_surprise: dom=-0.5434 gen=-0.1914
+  Step 1200/2000 | raw_CE: dom=1.870 gen=2.795 | rel_surprise: dom=-0.7408 gen=-0.1936
+  Step 1400/2000 | raw_CE: dom=1.938 gen=2.617 | rel_surprise: dom=-0.6767 gen=-0.2106
+  Step 1600/2000 | raw_CE: dom=1.930 gen=2.501 | rel_surprise: dom=-0.6094 gen=-0.3285
+  Step 1800/2000 | raw_CE: dom=1.875 gen=2.379 | rel_surprise: dom=-0.7239 gen=-0.5788
+
+============================================================
+ANALYSIS: Raw CE vs Relative Surprise
+============================================================
+
+1. Correlation(raw_CE, relative_surprise) = 0.6358
+   (>0.9 means they're equivalent, <0.9 means they measure different things)
+
+2. Domain vs Generic separation:
+   Raw CE:    domain=1.994±0.450  generic=2.632±0.585
+   Rel. surp: domain=-0.6009±0.4454  generic=-0.2793±0.2455
+   Cohen's d (domain vs generic): raw_CE=-1.222  rel_surprise=-0.894
+   (higher = better separation)
+
+3. Kurtosis (bimodality indicator, <0 suggests bimodal):
+   Raw CE: 2.140  Relative surprise: 8.772
+
+4. Trajectory (mean over 100-step windows):
+   Steps 0-100: domain_rel=-0.3007 generic_rel=-0.1491
+   Steps 400-500: domain_rel=-0.4503 generic_rel=-0.2129
+   Steps 800-900: domain_rel=-0.4748 generic_rel=-0.1961
+   Steps 1200-1300: domain_rel=-0.5882 generic_rel=-0.2397
+   Steps 1600-1700: domain_rel=-0.7490 generic_rel=-0.6336
+
+============================================================
+VERDICT
+============================================================
+Relative surprise DIFFERS from raw CE (corr=0.636)
+BUT separates domain/generic WORSE (d=-0.894 vs -1.222)
+
+Saved to results/learntropy_relative_surprise.json
