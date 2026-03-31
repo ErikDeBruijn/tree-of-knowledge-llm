@@ -1,0 +1,44 @@
+Loading Qwen/Qwen3-8B on cuda:0...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:34, 11.42it/s]Loading weights:   9%|▊         | 34/399 [00:00<00:02, 148.29it/s]Loading weights:  18%|█▊        | 73/399 [00:00<00:01, 225.21it/s]Loading weights:  31%|███▏      | 125/399 [00:00<00:00, 318.77it/s]Loading weights:  40%|████      | 160/399 [00:00<00:00, 310.42it/s]Loading weights:  50%|████▉     | 199/399 [00:00<00:00, 329.38it/s]Loading weights:  59%|█████▊    | 234/399 [00:00<00:00, 298.84it/s]Loading weights:  73%|███████▎  | 291/399 [00:00<00:00, 367.90it/s]Loading weights:  83%|████████▎ | 330/399 [00:01<00:00, 343.79it/s]Loading weights:  97%|█████████▋| 386/399 [00:01<00:00, 401.09it/s]Loading weights: 100%|██████████| 399/399 [00:01<00:00, 323.44it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+=== Training with learning speed tracking ===
+  Step 0/3000 | domain: loss=2.625 ema=2.625 speed=+0.0000 rel=+0.0000 | generic: loss=2.500 ema=2.500 speed=+0.0000 rel=+0.0000
+  Step 200/3000 | domain: loss=2.000 ema=2.498 speed=+0.0262 rel=-0.5625 | generic: loss=2.312 ema=2.582 speed=+0.0142 rel=-0.1875
+  Step 400/3000 | domain: loss=2.359 ema=2.427 speed=+0.0035 rel=-0.5156 | generic: loss=2.500 ema=2.588 speed=+0.0046 rel=-0.1719
+  Step 600/3000 | domain: loss=2.516 ema=2.358 speed=-0.0083 rel=-0.6875 | generic: loss=1.578 ema=2.651 speed=+0.0565 rel=-0.0859
+  Step 800/3000 | domain: loss=1.828 ema=2.288 speed=+0.0242 rel=-0.6562 | generic: loss=3.016 ema=2.731 speed=-0.0150 rel=-0.1250
+  Step 1000/3000 | domain: loss=1.406 ema=2.213 speed=+0.0425 rel=-0.7969 | generic: loss=2.703 ema=2.822 speed=+0.0063 rel=-0.0781
+  Step 1200/3000 | domain: loss=1.109 ema=2.010 speed=+0.0474 rel=-1.7969 | generic: loss=2.281 ema=2.822 speed=+0.0285 rel=-0.0312
+  Step 1400/3000 | domain: loss=1.648 ema=1.910 speed=+0.0138 rel=-1.1328 | generic: loss=3.328 ema=2.841 speed=-0.0257 rel=+0.1406
+  Step 1600/3000 | domain: loss=2.062 ema=1.882 speed=-0.0095 rel=-0.5781 | generic: loss=3.312 ema=2.934 speed=-0.0199 rel=+0.0156
+  Step 1800/3000 | domain: loss=0.762 ema=1.844 speed=+0.0569 rel=-2.4727 | generic: loss=3.391 ema=2.986 speed=-0.0213 rel=+0.0625
+  Step 2000/3000 | domain: loss=0.059 ema=1.648 speed=+0.0836 rel=-2.2383 | generic: loss=3.500 ema=3.006 speed=-0.0260 rel=+0.1875
+  Step 2200/3000 | domain: loss=0.676 ema=1.530 speed=+0.0449 rel=-2.2617 | generic: loss=3.406 ema=3.059 speed=-0.0183 rel=+0.2344
+  Step 2400/3000 | domain: loss=1.203 ema=1.460 speed=+0.0135 rel=-1.0156 | generic: loss=2.766 ema=3.065 speed=+0.0158 rel=+0.0938
+  Step 2600/3000 | domain: loss=1.734 ema=1.522 speed=-0.0112 rel=-0.8438 | generic: loss=2.625 ema=3.076 speed=+0.0237 rel=+0.2344
+  Step 2800/3000 | domain: loss=1.320 ema=1.502 speed=+0.0096 rel=-1.0703 | generic: loss=2.266 ema=3.008 speed=+0.0390 rel=+0.2188
+
+============================================================
+LEARNING SPEED ANALYSIS
+============================================================
+
+1. Domain learning speed peaks at step 2000 (speed=+0.0836)
+2. Generic speed goes negative at step 250 (overfitting begins)
+3. Goldilocks zone: steps 300 to 2950 (domain improving, generic stable)
+
+4. Net learning value by phase:
+   early (0-1000): domain_speed=+0.0185 generic_speed=-0.0164 net=+0.0021
+   middle (1000-2000): domain_speed=+0.0262 generic_speed=-0.0076 net=+0.0186
+   late (2000-3000): domain_speed=+0.0134 generic_speed=+0.0027 net=+0.0106
+
+5. Overfitting detection:
+   Learning speed: step 250
+   Relative surprise: step 300
+   Learning speed is EARLIER
+
+6. Final PPL:
+  Domain: PPL=12.61
+  Generic: PPL=20.62
+
+Saved to results/learntropy_learning_speed.json
