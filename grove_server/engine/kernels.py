@@ -346,15 +346,19 @@ if HAS_TRITON:
         row = tl.program_id(0)
         row_start = row * D
 
+        # Load first element to determine input dtype for casting back
+        first_val = tl.load(x_ptr + row_start)
+        in_dtype = first_val.dtype
+
         # --- RMSNorm ---
         # Accumulate sum of squares in fp32
         sum_sq = tl.zeros([1], dtype=tl.float32)
         for off in range(0, D, BLOCK_SIZE):
             cols = off + tl.arange(0, BLOCK_SIZE)
             mask = cols < D
-            x = tl.load(x_ptr + row_start + cols, mask=mask, other=0.0)
-            x_f32 = x.to(tl.float32)
-            sum_sq += tl.sum(x_f32 * x_f32)
+            xv = tl.load(x_ptr + row_start + cols, mask=mask, other=0.0)
+            xv_f32 = xv.to(tl.float32)
+            sum_sq += tl.sum(xv_f32 * xv_f32)
 
         rms = tl.rsqrt(sum_sq / D + eps)
 
@@ -363,14 +367,14 @@ if HAS_TRITON:
         for off in range(0, D, BLOCK_SIZE):
             cols = off + tl.arange(0, BLOCK_SIZE)
             mask = cols < D
-            x = tl.load(x_ptr + row_start + cols, mask=mask, other=0.0)
+            xv = tl.load(x_ptr + row_start + cols, mask=mask, other=0.0)
             w = tl.load(weight_ptr + cols, mask=mask, other=0.0)
             gw = tl.load(gate_w_ptr + cols, mask=mask, other=0.0)
 
-            normed = x.to(tl.float32) * rms * w.to(tl.float32)
+            normed = xv.to(tl.float32) * rms * w.to(tl.float32)
 
             # Store normed output
-            tl.store(normed_ptr + row_start + cols, normed.to(x.dtype), mask=mask)
+            tl.store(normed_ptr + row_start + cols, normed.to(in_dtype), mask=mask)
 
             # Accumulate gate dot product
             gate_acc += tl.sum(normed * gw.to(tl.float32))
@@ -378,7 +382,7 @@ if HAS_TRITON:
         # Add gate bias and store
         gb = tl.load(gate_b_ptr)
         gate_val = gate_acc + gb.to(tl.float32)
-        tl.store(gate_out_ptr + row, gate_val.to(x.dtype))
+        tl.store(gate_out_ptr + row, gate_val.to(in_dtype))
 
 
 def fused_rmsnorm_gate(
