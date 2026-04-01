@@ -37,7 +37,8 @@ if HAS_TRITON:
         adapter = tl.load(adapter_ptr + offsets, mask=mask)
         gate_raw = tl.load(gate_ptr + offsets, mask=mask)
 
-        gate = tl.sigmoid(gate_raw)
+        # Triton sigmoid requires fp32
+        gate = tl.sigmoid(gate_raw.to(tl.float32)).to(base.dtype)
         result = base + gate * adapter
         tl.store(out_ptr + offsets, result, mask=mask)
 
