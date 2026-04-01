@@ -38,17 +38,25 @@ on our hardware (2× RTX PRO 6000 Blackwell, sm_120).
 5. COMMIT — with benchmark results in commit message
 ```
 
-## Performance Targets (ordered by priority)
+## Performance Achieved
+
+| Technique | tok/s | vs HF | Status |
+|-----------|-------|-------|--------|
+| HF .generate() | 41 | 1.0× | Baseline |
+| Static KV cache | 67 | 1.6× | Done |
+| CUDA Graph | 77 | 1.9× | Done |
+| FP8 Direct | 87 | 2.1× | Done |
+| FP8 + 4-layer skip | 97 | 2.4× | Done |
+| FP8 + 4-skip + CUDA Graph | 128 | 3.1× | Done |
+| **FP8 + 8-skip + CUDA Graph** | **144** | **3.5×** | **Current best** |
+
+## Next Targets
 
 | Target | Expected tok/s | Technique | Status |
 |--------|---------------|-----------|--------|
-| BF16 baseline | 41 | HF generate | Done |
-| Static KV | 67 | Pre-allocated cache | Done |
-| CUDA Graph | 77 | Graph replay | Done |
-| FP8 direct GEMM | 150-200 | _scaled_mm in forward | In progress |
-| FP8 + CUDA Graph | 200-250 | Combined | Next |
-| Layer skip (4 blocks) | +11% | Conditional routing | Validated |
-| Multi-GPU pipeline | 2× | Pipeline parallel | Foundation done |
+| NVFP4 native | 230-300 | Blackwell FP4 tensor cores | Blocked (CUTLASS compile fail) |
+| Profile + optimize hot path | 160+ | Reduce Python overhead | Next |
+| Multi-GPU pipeline | 2× current | Pipeline parallel | Foundation done |
 
 ## Code Quality Gates (review checklist)
 
