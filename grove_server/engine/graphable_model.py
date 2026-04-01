@@ -85,11 +85,14 @@ class GraphableDecodeStep(nn.Module):
         model: nn.Module,
         static_cache: StaticKVCache,
         max_seq_len: int,
+        skip_layers: list[int] | None = None,
     ) -> None:
         super().__init__()
         self.model = model
         self.cache = static_cache
         self.max_seq_len = max_seq_len
+        self.skip_layers: set[int] = set(skip_layers or [])
+        self.bridge_layers: dict[int, nn.Module] = {}  # layer_idx -> BridgeModule (future use)
 
         # Detect GQA configuration
         config = model.config
@@ -122,6 +125,8 @@ class GraphableDecodeStep(nn.Module):
 
         # Run through each transformer layer
         for layer_idx, decoder_layer in enumerate(self.model.model.layers):
+            if layer_idx in self.skip_layers:
+                continue  # Pure residual passthrough — skip entirely
             hidden_states = self._run_layer(
                 layer_idx, decoder_layer, hidden_states, position_embeddings
             )
@@ -226,8 +231,9 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         model: nn.Module,
         static_cache: StaticKVCache,
         max_seq_len: int,
+        skip_layers: list[int] | None = None,
     ) -> None:
-        super().__init__(model, static_cache, max_seq_len)
+        super().__init__(model, static_cache, max_seq_len, skip_layers=skip_layers)
 
         if not fp8_available():
             # Store weights as FP8 anyway (dequant fallback at forward time)
