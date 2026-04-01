@@ -258,9 +258,14 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         fp8_max = 448.0  # E4M3 max representable value
 
         for idx, layer in enumerate(self.model.model.layers):
+            if idx in self.skip_layers:
+                continue  # Don't quantize weights for skipped layers
+
             # Attention projections
             for proj_name in ("q_proj", "k_proj", "v_proj", "o_proj"):
                 proj = getattr(layer.self_attn, proj_name)
+                if proj.weight is None:
+                    continue  # Already quantized by a previous instance
                 w = proj.weight.data  # (out_features, in_features)
                 amax = w.abs().amax()
                 scale = (amax / fp8_max).float()
@@ -275,6 +280,8 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             # MLP projections
             for proj_name in ("gate_proj", "up_proj", "down_proj"):
                 proj = getattr(layer.mlp, proj_name)
+                if proj.weight is None:
+                    continue  # Already quantized
                 w = proj.weight.data
                 amax = w.abs().amax()
                 scale = (amax / fp8_max).float()
