@@ -8,6 +8,7 @@ from typing import Iterator, Optional
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from grove_server.engine.cuda_graph import CUDAGraphRunner
 from grove_server.engine.layer_executor import execute_layer
 from grove_server.models.expert import Expert
 
@@ -54,6 +55,42 @@ class InferenceEngine:
 
         self._active_expert: Optional[Expert] = None
         self._original_forwards: dict[int, types.MethodType] = {}
+        self._graph_runner: Optional[CUDAGraphRunner] = None
+
+    def _invalidate_graph(self) -> None:
+        """Invalidate any captured CUDA graph (expert config changed)."""
+        if self._graph_runner is not None:
+            self._graph_runner.invalidate()
+            self._graph_runner = None
+
+    def _build_decode_fn(self):
+        """Build a callable that runs one decode step through the model.
+
+        Returns a function: hidden_states (1, 1, D) -> logits (1, 1, V)
+        that runs the full model forward with KV cache.
+        """
+        model = self.model
+
+        def decode_fn(input_ids_and_cache):
+            # input_ids_and_cache is just input_ids for the current token
+            outputs = model(input_ids_and_cache)
+            return outputs.logits[:, -1:, :]
+
+        return decode_fn
+
+    def _get_or_capture_graph(self, sample_input: torch.Tensor):
+        """Get existing graph runner or capture a new one.
+
+        Returns the CUDAGraphRunner (captured and ready for replay).
+        """
+        if self._graph_runner is not None and self._graph_runner.is_captured:
+            return self._graph_runner
+
+        runner = CUDAGraphRunner(device=self.device)
+        decode_fn = self._build_decode_fn()
+        runner.capture(decode_fn, sample_input)
+        self._graph_runner = runner
+        return runner
 
     def install_expert(self, expert: Expert) -> None:
         """Hook into model layers to inject expert behavior.
@@ -66,6 +103,7 @@ class InferenceEngine:
         if self._active_expert is not None:
             self.uninstall_expert()
 
+        self._invalidate_graph()
         layers = self.model.model.layers
 
         for layer_idx in range(expert.start_layer, expert.end_layer):
@@ -103,6 +141,7 @@ class InferenceEngine:
         if self._active_expert is None:
             return
 
+        self._invalidate_graph()
         layers = self.model.model.layers
         for layer_idx, original_fwd in self._original_forwards.items():
             if layer_idx < len(layers):
@@ -149,11 +188,20 @@ class InferenceEngine:
         prompt: str,
         max_tokens: int = 256,
         temperature: float = 0.7,
+        use_cuda_graph: bool = False,
     ) -> Iterator[str]:
         """Streaming generation — yield tokens as they're produced.
 
         Uses a simple loop with greedy/sampling decode to yield one token
         at a time. This avoids depending on TextIteratorStreamer threads.
+
+        Args:
+            prompt: Input text.
+            max_tokens: Maximum new tokens to generate.
+            temperature: Sampling temperature.
+            use_cuda_graph: If True, attempt to capture the decode step as a
+                CUDA graph after the first token (prefill). Only effective on
+                CUDA devices. Falls back to eager if capture fails.
         """
         inputs = self.tokenizer(prompt, return_tensors="pt")
         input_ids = inputs["input_ids"].to(self.model.device)
@@ -162,7 +210,7 @@ class InferenceEngine:
         eos_id = getattr(self.tokenizer, "eos_token_id", None)
 
         with torch.no_grad():
-            for _ in range(max_tokens):
+            for step in range(max_tokens):
                 outputs = self.model(generated)
                 logits = outputs.logits[:, -1, :]
 
