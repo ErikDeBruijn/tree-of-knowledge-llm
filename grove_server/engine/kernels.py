@@ -494,6 +494,112 @@ def fused_rmsnorm_gate(
 
 
 # ---------------------------------------------------------------------------
+# Kernel 6: fused_residual_rmsnorm
+# ---------------------------------------------------------------------------
+# Fuses residual add + RMSNorm into one pass over memory.
+# Replaces 2 kernel launches (add + norm) with 1.
+# 28 layers × 2 fuse sites = 56 fewer kernel launches per decode step.
+
+if HAS_TRITON:
+
+    @triton.jit
+    def _fused_residual_rmsnorm_kernel(
+        residual_ptr, x_ptr, weight_ptr,
+        normed_ptr, pre_norm_ptr,
+        D,
+        eps: tl.constexpr,
+        BLOCK_SIZE: tl.constexpr,
+    ):
+        """Fused: pre_norm = residual + x; normed = rmsnorm(pre_norm, weight).
+
+        One row per program instance. Two passes over the row:
+          1. Load residual + x, compute sum, store pre_norm, accumulate variance.
+          2. Load pre_norm, normalize, apply weight, store normed.
+        """
+        row = tl.program_id(0)
+        row_start = row * D
+
+        # --- Pass 1: residual add + accumulate sum of squares ---
+        sum_sq = 0.0
+        for off in range(0, D, BLOCK_SIZE):
+            cols = off + tl.arange(0, BLOCK_SIZE)
+            mask = cols < D
+
+            r = tl.load(residual_ptr + row_start + cols, mask=mask, other=0.0)
+            xv = tl.load(x_ptr + row_start + cols, mask=mask, other=0.0)
+
+            pn = r.to(tl.float32) + xv.to(tl.float32)
+            tl.store(pre_norm_ptr + row_start + cols, pn.to(r.dtype), mask=mask)
+
+            sum_sq += tl.sum(pn * pn)
+
+        rms = tl.rsqrt(sum_sq / D + eps)
+
+        # --- Pass 2: normalize + apply weight ---
+        for off in range(0, D, BLOCK_SIZE):
+            cols = off + tl.arange(0, BLOCK_SIZE)
+            mask = cols < D
+
+            pn = tl.load(pre_norm_ptr + row_start + cols, mask=mask, other=0.0)
+            w = tl.load(weight_ptr + cols, mask=mask, other=0.0)
+
+            normed = pn.to(tl.float32) * rms * w.to(tl.float32)
+            tl.store(normed_ptr + row_start + cols, normed.to(pn.dtype), mask=mask)
+
+
+def fused_residual_rmsnorm(
+    residual: torch.Tensor,
+    x: torch.Tensor,
+    weight: torch.Tensor,
+    eps: float = 1e-6,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Fused residual add + RMSNorm.
+
+    pre_norm = residual + x
+    normed = rmsnorm(pre_norm, weight, eps)
+
+    Returns (normed, pre_norm).
+
+    Args:
+        residual: (B, D) or (B, L, D) residual tensor.
+        x: Same shape as residual, tensor to add.
+        weight: (D,) RMSNorm weight.
+        eps: Epsilon for numerical stability.
+    """
+    orig_shape = residual.shape
+    D = orig_shape[-1]
+
+    # Flatten to 2D for the kernel
+    residual_flat = residual.reshape(-1, D)
+    x_flat = x.reshape(-1, D)
+    B = residual_flat.shape[0]
+
+    if not HAS_TRITON or not residual.is_cuda:
+        # PyTorch fallback
+        pre_norm = residual_flat.float() + x_flat.float()
+        rms = torch.rsqrt(pre_norm.pow(2).mean(dim=-1, keepdim=True) + eps)
+        normed = (pre_norm * rms * weight.float()).to(residual.dtype)
+        pre_norm = pre_norm.to(residual.dtype)
+        return normed.reshape(orig_shape), pre_norm.reshape(orig_shape)
+
+    assert residual_flat.is_contiguous() and x_flat.is_contiguous()
+
+    normed = torch.empty_like(residual_flat)
+    pre_norm = torch.empty_like(residual_flat)
+
+    BLOCK_SIZE = min(1024, triton.next_power_of_2(D))
+
+    _fused_residual_rmsnorm_kernel[(B,)](
+        residual_flat, x_flat, weight,
+        normed, pre_norm,
+        D,
+        eps=eps,
+        BLOCK_SIZE=BLOCK_SIZE,
+    )
+    return normed.reshape(orig_shape), pre_norm.reshape(orig_shape)
+
+
+# ---------------------------------------------------------------------------
 # Benchmarking
 # ---------------------------------------------------------------------------
 

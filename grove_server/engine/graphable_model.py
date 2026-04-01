@@ -16,6 +16,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from grove_server.engine.fp8_utils import fp8_available
+from grove_server.engine.kernels import fused_residual_rmsnorm
 from grove_server.engine.static_kv_cache import StaticKVCache
 
 
@@ -161,6 +162,7 @@ class GraphableDecodeStep(nn.Module):
         Returns:
             Output hidden states (B, seq_len, hidden_dim).
         """
+        # --- Pre-attention: RMSNorm (input_layernorm) ---
         residual = hidden_states
         hidden_states = layer.input_layernorm(hidden_states)
 
@@ -206,11 +208,14 @@ class GraphableDecodeStep(nn.Module):
         attn_out = attn_out.transpose(1, 2).reshape(B, L, self.num_heads * self.head_dim)
         attn_out = attn.o_proj(attn_out)
 
-        hidden_states = residual + attn_out
+        # --- Post-attention: fused residual add + RMSNorm ---
+        # Replaces: hidden_states = residual + attn_out; residual = hidden_states;
+        #           hidden_states = layer.post_attention_layernorm(hidden_states)
+        hidden_states, residual = fused_residual_rmsnorm(
+            residual, attn_out, layer.post_attention_layernorm.weight,
+        )
 
         # --- MLP ---
-        residual = hidden_states
-        hidden_states = layer.post_attention_layernorm(hidden_states)
         hidden_states = layer.mlp(hidden_states)
         hidden_states = residual + hidden_states
 
@@ -247,6 +252,7 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         device = next(model.parameters()).device
         self._x_scale = torch.tensor(1.0, dtype=torch.float32, device=device)
         self._precompute_fp8_weights()
+        self._precompute_layer_tables()
 
     def _precompute_fp8_weights(self) -> None:
         """Convert all linear projection weights to FP8 once at init.
@@ -292,6 +298,36 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
                 # Free original BF16 weight to reclaim VRAM
                 proj.weight = None
 
+    def _precompute_layer_tables(self) -> None:
+        """Pre-compute per-layer weight keys and norm weights as indexed lists.
+
+        Eliminates string formatting and dict lookups in the hot decode loop.
+        """
+        n_layers = len(self.model.model.layers)
+        # FP8 weight keys indexed by layer
+        self._attn_q_keys: list[str] = []
+        self._attn_k_keys: list[str] = []
+        self._attn_v_keys: list[str] = []
+        self._attn_o_keys: list[str] = []
+        self._mlp_gate_keys: list[str] = []
+        self._mlp_up_keys: list[str] = []
+        self._mlp_down_keys: list[str] = []
+        # RMSNorm weights indexed by layer
+        self._input_norm_weights: list[torch.Tensor] = []
+        self._post_attn_norm_weights: list[torch.Tensor] = []
+
+        for idx in range(n_layers):
+            self._attn_q_keys.append(f"{idx}.attn.q_proj")
+            self._attn_k_keys.append(f"{idx}.attn.k_proj")
+            self._attn_v_keys.append(f"{idx}.attn.v_proj")
+            self._attn_o_keys.append(f"{idx}.attn.o_proj")
+            self._mlp_gate_keys.append(f"{idx}.mlp.gate_proj")
+            self._mlp_up_keys.append(f"{idx}.mlp.up_proj")
+            self._mlp_down_keys.append(f"{idx}.mlp.down_proj")
+            layer = self.model.model.layers[idx]
+            self._input_norm_weights.append(layer.input_layernorm.weight)
+            self._post_attn_norm_weights.append(layer.post_attention_layernorm.weight)
+
     def _fp8_linear(self, x: torch.Tensor, key: str) -> torch.Tensor:
         """Fast FP8 matmul: x @ W^T using pre-quantized weights.
 
@@ -333,17 +369,22 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         hidden_states: torch.Tensor,
         position_embeddings: tuple[torch.Tensor, torch.Tensor],
     ) -> torch.Tensor:
-        """Run one transformer layer using FP8 matmuls for all linear projections."""
+        """Run one transformer layer using FP8 matmuls for all linear projections.
+
+        Uses fused_residual_rmsnorm to merge residual add + RMSNorm into one
+        kernel launch (saves 1 launch per fuse site, 2 per layer).
+        Uses pre-computed key lists to avoid string formatting in the hot path.
+        """
         residual = hidden_states
         hidden_states = layer.input_layernorm(hidden_states)
 
         B, L, D = hidden_states.shape
         flat = hidden_states.reshape(-1, D)
 
-        # --- Self-attention with FP8 projections ---
-        q = self._fp8_linear(flat, f"{layer_idx}.attn.q_proj").reshape(B, L, -1)
-        k = self._fp8_linear(flat, f"{layer_idx}.attn.k_proj").reshape(B, L, -1)
-        v = self._fp8_linear(flat, f"{layer_idx}.attn.v_proj").reshape(B, L, -1)
+        # --- Self-attention with FP8 projections (pre-computed keys) ---
+        q = self._fp8_linear(flat, self._attn_q_keys[layer_idx]).reshape(B, L, -1)
+        k = self._fp8_linear(flat, self._attn_k_keys[layer_idx]).reshape(B, L, -1)
+        v = self._fp8_linear(flat, self._attn_v_keys[layer_idx]).reshape(B, L, -1)
 
         q = q.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
         k = k.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
@@ -370,22 +411,25 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
 
         attn_out = attn_out.transpose(1, 2).reshape(B, L, self.num_heads * self.head_dim)
         attn_flat = attn_out.reshape(-1, attn_out.size(-1))
-        attn_out = self._fp8_linear(attn_flat, f"{layer_idx}.attn.o_proj").reshape(B, L, -1)
+        attn_out = self._fp8_linear(attn_flat, self._attn_o_keys[layer_idx]).reshape(B, L, -1)
 
-        hidden_states = residual + attn_out
+        # --- Post-attention: fused residual add + RMSNorm ---
+        # Replaces: hidden_states = residual + attn_out; residual = hidden_states;
+        #           hidden_states = layer.post_attention_layernorm(hidden_states)
+        hidden_states, residual = fused_residual_rmsnorm(
+            residual, attn_out, self._post_attn_norm_weights[layer_idx],
+        )
 
-        # --- MLP with FP8 projections ---
-        residual = hidden_states
-        hidden_states = layer.post_attention_layernorm(hidden_states)
+        # --- MLP with FP8 projections (pre-computed keys) ---
         B2, L2, D2 = hidden_states.shape
         mlp_flat = hidden_states.reshape(-1, D2)
 
-        gate = self._fp8_linear(mlp_flat, f"{layer_idx}.mlp.gate_proj")
-        up = self._fp8_linear(mlp_flat, f"{layer_idx}.mlp.up_proj")
+        gate = self._fp8_linear(mlp_flat, self._mlp_gate_keys[layer_idx])
+        up = self._fp8_linear(mlp_flat, self._mlp_up_keys[layer_idx])
         # SiLU activation on gate, element-wise multiply with up
         hidden_states = F.silu(gate) * up
         mlp_flat2 = hidden_states.reshape(-1, hidden_states.size(-1))
-        hidden_states = self._fp8_linear(mlp_flat2, f"{layer_idx}.mlp.down_proj").reshape(B2, L2, -1)
+        hidden_states = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx]).reshape(B2, L2, -1)
 
         hidden_states = residual + hidden_states
 

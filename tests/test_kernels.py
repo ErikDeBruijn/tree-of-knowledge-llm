@@ -10,6 +10,7 @@ from grove_server.engine.kernels import (
     conditional_layer_execute,
     multi_expert_gated_blend,
     fused_rmsnorm_gate,
+    fused_residual_rmsnorm,
 )
 
 
@@ -487,5 +488,104 @@ class TestFusedRMSNormGate:
 
         normed, _ = fused_rmsnorm_gate(x, weight, W_gate, b_gate)
         # RMS of normed should be ~ 1
+        rms = normed.float().pow(2).mean(dim=-1).sqrt()
+        torch.testing.assert_close(rms, torch.ones(B), atol=1e-4, rtol=1e-4)
+
+
+# ===========================================================================
+# Kernel 6: fused_residual_rmsnorm
+# ===========================================================================
+
+def _ref_residual_rmsnorm(residual, x, weight, eps=1e-6):
+    """Reference PyTorch implementation: pre_norm = residual + x; normed = rmsnorm(pre_norm)."""
+    pre_norm = residual.float() + x.float()
+    rms = torch.rsqrt(pre_norm.pow(2).mean(dim=-1, keepdim=True) + eps)
+    normed = (pre_norm * rms * weight.float()).to(residual.dtype)
+    return normed, pre_norm.to(residual.dtype)
+
+
+class TestFusedResidualRMSNorm:
+
+    def test_matches_reference(self):
+        """Fused residual+rmsnorm matches separate add + rmsnorm."""
+        torch.manual_seed(42)
+        B, D = 64, 512
+        dev = _device()
+        residual = torch.randn(B, D, device=dev)
+        x = torch.randn(B, D, device=dev)
+        weight = torch.randn(D, device=dev)
+
+        normed, pre_norm = fused_residual_rmsnorm(residual, x, weight)
+        ref_normed, ref_pre_norm = _ref_residual_rmsnorm(residual, x, weight)
+
+        torch.testing.assert_close(pre_norm, ref_pre_norm, atol=1e-4, rtol=1e-4)
+        torch.testing.assert_close(normed, ref_normed, atol=1e-4, rtol=1e-4)
+
+    def test_bf16(self):
+        """Works correctly with bfloat16 inputs."""
+        torch.manual_seed(42)
+        B, D = 32, 256
+        dev = _device()
+        dtype = torch.bfloat16
+        residual = torch.randn(B, D, device=dev, dtype=dtype)
+        x = torch.randn(B, D, device=dev, dtype=dtype)
+        weight = torch.randn(D, device=dev, dtype=dtype)
+
+        normed, pre_norm = fused_residual_rmsnorm(residual, x, weight)
+        ref_normed, ref_pre_norm = _ref_residual_rmsnorm(residual, x, weight)
+
+        torch.testing.assert_close(pre_norm, ref_pre_norm, atol=0.05, rtol=0.05)
+        torch.testing.assert_close(normed, ref_normed, atol=0.05, rtol=0.05)
+
+    def test_3d_input(self):
+        """Works with (B, L, D) shaped inputs (transformer hidden states)."""
+        torch.manual_seed(42)
+        B, L, D = 1, 1, 512
+        dev = _device()
+        residual = torch.randn(B, L, D, device=dev)
+        x = torch.randn(B, L, D, device=dev)
+        weight = torch.randn(D, device=dev)
+
+        normed, pre_norm = fused_residual_rmsnorm(residual, x, weight)
+
+        assert normed.shape == (B, L, D)
+        assert pre_norm.shape == (B, L, D)
+
+        # Compare to reference
+        ref_normed, ref_pre_norm = _ref_residual_rmsnorm(
+            residual.reshape(-1, D), x.reshape(-1, D), weight,
+        )
+        torch.testing.assert_close(
+            normed.reshape(-1, D), ref_normed, atol=1e-4, rtol=1e-4,
+        )
+
+    def test_zero_x_is_pure_rmsnorm(self):
+        """When x=0, result is just rmsnorm(residual)."""
+        torch.manual_seed(42)
+        B, D = 16, 128
+        dev = _device()
+        residual = torch.randn(B, D, device=dev) * 3
+        x = torch.zeros(B, D, device=dev)
+        weight = torch.ones(D, device=dev)
+
+        normed, pre_norm = fused_residual_rmsnorm(residual, x, weight)
+
+        # pre_norm should equal residual
+        torch.testing.assert_close(pre_norm, residual, atol=1e-5, rtol=1e-5)
+
+        # normed should have unit RMS
+        rms = normed.float().pow(2).mean(dim=-1).sqrt()
+        torch.testing.assert_close(rms, torch.ones(B), atol=1e-4, rtol=1e-4)
+
+    def test_unit_weight_unit_rms(self):
+        """With weight=1, normed output should have unit RMS."""
+        torch.manual_seed(42)
+        B, D = 32, 256
+        dev = _device()
+        residual = torch.randn(B, D, device=dev) * 5
+        x = torch.randn(B, D, device=dev) * 3
+        weight = torch.ones(D, device=dev)
+
+        normed, _ = fused_residual_rmsnorm(residual, x, weight)
         rms = normed.float().pow(2).mean(dim=-1).sqrt()
         torch.testing.assert_close(rms, torch.ones(B), atol=1e-4, rtol=1e-4)
