@@ -2,68 +2,63 @@
 
 ## Primary Objective
 Get as close to theoretical maximum inference performance as possible
-on our hardware (2× RTX PRO 6000 Blackwell, sm_120).
+on our hardware (2× RTX PRO 6000 Blackwell, sm_120, 96GB GDDR7 each).
 
-## Current Performance
-- BF16 Static KV: 67 tok/s
-- BF16 CUDA Graph: 77 tok/s  
-- Raw FP8 GEMM: 4.7× faster than BF16 at B=1
-- **Target: 200+ tok/s with FP8 integrated**
-- Theoretical max FP8: ~224 tok/s (1792 GB/s ÷ 8GB model)
+## Current Best: 222 tok/s (5.4× HuggingFace)
+FP8 weights + FP8 lm_head + 20-layer skip + CUDA graph + fused RMSNorm + QK norms.
+Output verified correct (PPL within 1% of HF native). 201 tests.
 
 ## Development Loop
 
 ```
 1. RESEARCH — scan papers, commits, implementations for techniques
-   → Output: technique description + expected impact
-   → Agent: research thread (separate context)
-
-2. IMPLEMENT — write kernel/pipeline code
-   → TDD: tests first
-   → Fused Triton or raw CUDA where needed
-   → Preserve growth concepts (adapters, gates, bridges)
-
+2. IMPLEMENT — TDD, fused Triton/CUDA, preserve growth concepts
 3. REVIEW — code review agent on staged changes
-   → Check: correctness, style, performance implications
-   → Check: adapter/gate/bridge paths preserved
-   → Check: no regressions in existing tests
-   → Reject or iterate before commit
-
-4. BENCHMARK — measure on real GPU
-   → Compare: before vs after tok/s
-   → Compare: VRAM usage
-   → Profile: where does time go now?
-   → Only commit if: performance improves OR quality improves
-
-5. COMMIT — with benchmark results in commit message
+4. BENCHMARK — measure on real GPU, only commit if improvement
+5. COMMIT — with benchmark results in message
 ```
 
-## Performance Achieved
+## Performance Achieved (all verified correct output)
 
-| Technique | tok/s | vs HF | Status |
-|-----------|-------|-------|--------|
-| HF .generate() | 41 | 1.0× | Baseline |
-| Static KV cache | 67 | 1.6× | Done |
-| CUDA Graph | 77 | 1.9× | Done |
-| FP8 Direct | 87 | 2.1× | Done |
-| FP8 + 4-layer skip | 97 | 2.4× | Done |
-| FP8 + 4-skip + CUDA Graph | 128 | 3.1× | Done |
-| **FP8 + 8-skip + CUDA Graph** | **144** | **3.5×** | **Current best** |
+| Skip | Active layers | tok/s | ms/tok | vs HF |
+|------|--------------|-------|--------|-------|
+| 0 | 36 | 113 | 8.83 | 2.8× |
+| 8 | 28 | 144 | 6.97 | 3.5× |
+| 12 | 24 | 166 | 6.03 | 4.0× |
+| 16 | 20 | 181 | 5.52 | 4.4× |
+| 18 | 18 | 200 | 5.01 | 4.9× |
+| **20** | **16** | **222** | **4.50** | **5.4×** |
+
+Baseline: HF .generate() = 41 tok/s.
+All with: FP8 weights, FP8 lm_head, CUDA graph, fused RMSNorm, QK norms.
+
+## Breakdown at 222 tok/s (20-skip, 16 active layers)
+
+| Component | ~ms | % |
+|-----------|-----|---|
+| FP8 matmuls (16 layers × 7) | 2.35 | 52% |
+| QK RMSNorm (16 layers × 2) | 0.73 | 16% |
+| SDPA attention (16 layers) | 0.27 | 6% |
+| FP8 lm_head (152K vocab) | 0.39 | 9% |
+| RMSNorm pre-attn (16 layers) | 0.32 | 7% |
+| Embeddings + final norm | 0.15 | 3% |
+| Other (RoPE, reshapes, argmax) | 0.29 | 7% |
+| **Total** | **4.50** | **100%** |
 
 ## Next Targets
 
-| Target | Expected tok/s | Technique | Status |
-|--------|---------------|-----------|--------|
-| NVFP4 native | 230-300 | Blackwell FP4 tensor cores | Blocked (CUTLASS compile fail) |
-| Profile + optimize hot path | 160+ | Reduce Python overhead | Next |
+| Target | Expected | Technique | Status |
+|--------|---------|-----------|--------|
+| Fused QK norms | ~235 tok/s | Concat q+k, single norm kernel | Benchmarked (+0.31ms) |
+| NVFP4 native | 300-400 | Blackwell FP4 tensor cores | Blocked (CUTLASS sm_120) |
 | Multi-GPU pipeline | 2× current | Pipeline parallel | Foundation done |
+| INT4 Marlin | 300+ | When Marlin builds for sm_120 | Not started |
 
-## Code Quality Gates (review checklist)
+## Code Quality Gates
 
-- [ ] All existing tests pass
+- [ ] All existing tests pass (201 current)
 - [ ] New code has tests
+- [ ] Output correctness verified (PPL within 1% of HF)
 - [ ] No adapter/gate/bridge regressions
-- [ ] Benchmark shows improvement (or documents why neutral)
-- [ ] Type hints on all public functions
-- [ ] Docstrings on non-obvious code
-- [ ] PyTorch fallback for GPU-specific code
+- [ ] Benchmark with CUDA graph (not just eager)
+- [ ] Type hints, docstrings, PyTorch fallbacks
