@@ -9,7 +9,9 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from grove_server.engine.cuda_graph import CUDAGraphRunner
+from grove_server.engine.graphable_model import GraphableDecodeStep
 from grove_server.engine.layer_executor import execute_layer
+from grove_server.engine.static_kv_cache import StaticKVCache
 from grove_server.models.expert import Expert
 
 
@@ -56,6 +58,32 @@ class InferenceEngine:
         self._active_expert: Optional[Expert] = None
         self._original_forwards: dict[int, types.MethodType] = {}
         self._graph_runner: Optional[CUDAGraphRunner] = None
+        self._graphable: Optional[GraphableDecodeStep] = None
+        self._static_cache: Optional[StaticKVCache] = None
+
+    def _build_graphable_decode(self, max_seq_len: int = 2048) -> None:
+        """Build a CUDA-graphable decode step with static KV cache.
+
+        Creates a StaticKVCache and GraphableDecodeStep that can be used
+        with CUDAGraphRunner for zero-overhead decode.
+
+        Args:
+            max_seq_len: Maximum sequence length to pre-allocate.
+        """
+        config = self.model.config
+        self._static_cache = StaticKVCache(
+            num_layers=config.num_hidden_layers,
+            num_heads=config.num_key_value_heads,
+            head_dim=config.hidden_size // config.num_attention_heads,
+            max_seq_len=max_seq_len,
+            batch_size=1,
+            dtype=next(self.model.parameters()).dtype,
+            device=self.device,
+        )
+        self._graphable = GraphableDecodeStep(
+            self.model, self._static_cache, max_seq_len=max_seq_len
+        )
+        self._graph_runner = CUDAGraphRunner(device=self.device)
 
     def _invalidate_graph(self) -> None:
         """Invalidate any captured CUDA graph (expert config changed)."""
