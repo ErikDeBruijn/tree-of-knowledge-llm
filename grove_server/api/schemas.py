@@ -28,10 +28,17 @@ class Choice(BaseModel):
     finish_reason: str = "stop"
 
 
+class TimingInfo(BaseModel):
+    prompt_eval_ms: float = 0.0
+    generation_ms: float = 0.0
+    tokens_per_second: float = 0.0
+
+
 class Usage(BaseModel):
     prompt_tokens: int = 0
     completion_tokens: int = 0
     total_tokens: int = 0
+    timing: Optional[TimingInfo] = None
 
 
 class ChatCompletionResponse(BaseModel):

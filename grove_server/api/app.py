@@ -23,6 +23,7 @@ from grove_server.api.schemas import (
     ModelInfo,
     ModelListResponse,
     StreamChoice,
+    TimingInfo,
     Usage,
 )
 from grove_server.engine.expert_registry import ExpertRegistry
@@ -92,12 +93,22 @@ async def chat_completions(
             media_type="text/event-stream",
         )
 
-    # Non-streaming
+    # Non-streaming — measure timing
+    prompt_ids = engine.tokenizer.encode(prompt)
+    prompt_tokens = len(prompt_ids)
+
+    t_start = time.time()
     text = engine.generate(
         prompt,
         max_tokens=request.max_tokens,
         temperature=request.temperature,
     )
+    t_end = time.time()
+
+    completion_ids = engine.tokenizer.encode(text)
+    completion_tokens = len(completion_ids)
+    gen_ms = (t_end - t_start) * 1000
+    tok_per_sec = completion_tokens / (t_end - t_start) if t_end > t_start else 0
 
     return ChatCompletionResponse(
         id=completion_id,
@@ -110,9 +121,13 @@ async def chat_completions(
             )
         ],
         usage=Usage(
-            prompt_tokens=len(prompt.split()),
-            completion_tokens=len(text.split()),
-            total_tokens=len(prompt.split()) + len(text.split()),
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=prompt_tokens + completion_tokens,
+            timing=TimingInfo(
+                generation_ms=round(gen_ms, 1),
+                tokens_per_second=round(tok_per_sec, 1),
+            ),
         ),
     )
 
