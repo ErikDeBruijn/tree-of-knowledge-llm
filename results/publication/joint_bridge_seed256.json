@@ -1,0 +1,72 @@
+{
+  "base": {
+    "domain_ppl": 10.364246623192162,
+    "general_ppl": 15.995393550869244
+  },
+  "joint_1_blocks": {
+    "blocks": [
+      20
+    ],
+    "domain_ppl": 8.385212751989767,
+    "general_ppl": 19.088975996005942,
+    "domain_delta": -19.094816470054795,
+    "general_delta": 19.340458459483063,
+    "compute_saved_pct": 2.7777777777777777
+  },
+  "joint_2_blocks": {
+    "blocks": [
+      20,
+      26
+    ],
+    "domain_ppl": 8.385212751989767,
+    "general_ppl": 19.088975996005942,
+    "domain_delta": -19.094816470054795,
+    "general_delta": 19.340458459483063,
+    "compute_saved_pct": 5.555555555555555
+  },
+  "joint_3_blocks": {
+    "blocks": [
+      20,
+      26,
+      30
+    ],
+    "domain_ppl": 8.385212751989767,
+    "general_ppl": 19.088975996005942,
+    "domain_delta": -19.094816470054795,
+    "general_delta": 19.340458459483063,
+    "compute_saved_pct": 8.333333333333332
+  },
+  "progressive_1_blocks": {
+    "blocks": [
+      20
+    ],
+    "domain_ppl": 7.329845678382771,
+    "general_ppl": 15.071322465928832,
+    "domain_delta": -29.2775833606592,
+    "general_delta": -5.777107527874452,
+    "compute_saved_pct": 2.7777777777777777
+  },
+  "progressive_2_blocks": {
+    "blocks": [
+      20,
+      26
+    ],
+    "domain_ppl": 7.619751646201301,
+    "general_ppl": 16.659365157859842,
+    "domain_delta": -26.480409785400916,
+    "general_delta": 4.151017634414602,
+    "compute_saved_pct": 5.555555555555555
+  },
+  "progressive_3_blocks": {
+    "blocks": [
+      20,
+      26,
+      30
+    ],
+    "domain_ppl": 8.146530281293188,
+    "general_ppl": 19.09229209078558,
+    "domain_delta": -21.397757333720442,
+    "general_delta": 19.361190020535886,
+    "compute_saved_pct": 8.333333333333332
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "seed": 256,
+  "base": {
+    "domain_ppl": 9.642579325441334,
+    "generic_ppl": 16.47111309175118
+  },
+  "a_no_gate": {
+    "domain_ppl": 6.409768688102206,
+    "generic_ppl": 14.547665024696892
+  },
+  "b_global_gate": {
+    "domain_ppl": 8.222344987283332,
+    "generic_ppl": 15.849934101019235
+  },
+  "c_perlayer_b0": {
+    "domain_ppl": 6.403862069372501,
+    "generic_ppl": 14.209273261229676
+  },
+  "d_perlayer_b-2": {
+    "domain_ppl": 6.406983971651039,
+    "generic_ppl": 14.231476111875963
+  },
+  "e_perlayer_l1": {
+    "domain_ppl": 6.405580227380969,
+    "generic_ppl": 14.240337430747013
+  },
+  "f_perlayer_drop": {
+    "domain_ppl": 6.413801819692383,
+    "generic_ppl": 14.202941214079862
+  }
+}

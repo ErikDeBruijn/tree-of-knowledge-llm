@@ -1,0 +1,21 @@
+{
+  "seed": 42,
+  "base": {
+    "domain_ppl": 9.642579325441334,
+    "general_ppl": 15.995393550869244
+  },
+  "adapter_only": {
+    "domain_ppl": 6.349756956136999,
+    "general_ppl": 13.819518290589638
+  },
+  "joint_adapter_bridge": {
+    "domain_ppl": 6.498525227170252,
+    "general_ppl": 14.342995450017334
+  },
+  "after_p1": {
+    "domain_ppl": 6.493063449440881,
+    "general_ppl": 14.91671795543548
+  },
+  "bridge_layer": 20,
+  "bridge_rank": 64
+}

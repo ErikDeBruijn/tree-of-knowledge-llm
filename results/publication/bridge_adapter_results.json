@@ -1,0 +1,92 @@
+{
+  "full_model": {
+    "domain_ppl": 6.873957769654332,
+    "general_ppl": 13.899751641409413
+  },
+  "strategies": {
+    "2": {
+      "skipped_layers": [
+        25,
+        26
+      ],
+      "naive": {
+        "domain_ppl": 6.87989687793191,
+        "general_ppl": 13.91327899663883,
+        "domain_delta": 0.08640012750436736,
+        "general_delta": 0.0973208412524242
+      },
+      "bridge": {
+        "domain_ppl": 6.885070008971382,
+        "general_ppl": 13.909314413407758,
+        "domain_delta": 0.1616570786353306,
+        "general_delta": 0.06879815010403631
+      }
+    },
+    "4": {
+      "skipped_layers": [
+        25,
+        26,
+        27,
+        30
+      ],
+      "naive": {
+        "domain_ppl": 6.893452910979214,
+        "general_ppl": 13.89922375184646,
+        "domain_delta": 0.28360868626433183,
+        "general_delta": -0.0037978344978507397
+      },
+      "bridge": {
+        "domain_ppl": 6.897702324539459,
+        "general_ppl": 13.907832080589062,
+        "domain_delta": 0.34542770963693276,
+        "general_delta": 0.058133694673909955
+      }
+    },
+    "6": {
+      "skipped_layers": [
+        25,
+        26,
+        27,
+        30,
+        13,
+        24
+      ],
+      "naive": {
+        "domain_ppl": 6.910586235381587,
+        "general_ppl": 13.907594594434181,
+        "domain_delta": 0.5328584631251865,
+        "general_delta": 0.05642513065775396
+      },
+      "bridge": {
+        "domain_ppl": 6.931630954832023,
+        "general_ppl": 13.939839678366686,
+        "domain_delta": 0.8390098849936847,
+        "general_delta": 0.2884082967198162
+      }
+    },
+    "8": {
+      "skipped_layers": [
+        25,
+        26,
+        27,
+        30,
+        13,
+        24,
+        32,
+        28
+      ],
+      "naive": {
+        "domain_ppl": 6.9563211860710235,
+        "general_ppl": 13.9214656667276,
+        "domain_delta": 1.1981949726297647,
+        "general_delta": 0.15621880072661506
+      },
+      "bridge": {
+        "domain_ppl": 6.97473180658395,
+        "general_ppl": 13.954609755637463,
+        "domain_delta": 1.4660264189357324,
+        "general_delta": 0.39466974405945504
+      }
+    }
+  }
+}

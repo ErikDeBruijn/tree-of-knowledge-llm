@@ -1,0 +1,22 @@
+{
+  "base": {
+    "domain_ppl": 9.642579325441334,
+    "general_ppl": 15.995393550869244
+  },
+  "adapter_only": {
+    "domain_ppl": 6.408375946363424,
+    "general_ppl": 13.893209681852243
+  },
+  "bridge_only": {
+    "domain_ppl": 6.838721900468678,
+    "general_ppl": 15.203849835626851
+  },
+  "adapter_bridge": {
+    "domain_ppl": 7.083085588281359,
+    "general_ppl": 17.64139106706059
+  },
+  "adapter_bridge_finetuned": {
+    "domain_ppl": 6.689268069827426,
+    "general_ppl": 16.851463331798367
+  }
+}
