@@ -186,8 +186,17 @@ class GraphableDecodeStep(nn.Module):
         B, L, _ = q.shape
 
         # Reshape for multi-head attention
-        q = q.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
-        k = k.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        q = q.view(B, L, self.num_heads, self.head_dim)
+        k = k.view(B, L, self.num_kv_heads, self.head_dim)
+
+        # Apply QK norms if present (e.g. Qwen3)
+        if hasattr(attn, "q_norm"):
+            q = attn.q_norm(q)
+        if hasattr(attn, "k_norm"):
+            k = attn.k_norm(k)
+
+        q = q.transpose(1, 2)
+        k = k.transpose(1, 2)
         v = v.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
 
         # Apply rotary position embeddings
@@ -467,12 +476,22 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         flat = hidden_states.reshape(-1, D)
 
         # --- Self-attention with FP8 projections (pre-computed keys) ---
+        attn = layer.self_attn
         q = self._fp8_linear(flat, self._attn_q_keys[layer_idx]).reshape(B, L, -1)
         k = self._fp8_linear(flat, self._attn_k_keys[layer_idx]).reshape(B, L, -1)
         v = self._fp8_linear(flat, self._attn_v_keys[layer_idx]).reshape(B, L, -1)
 
-        q = q.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
-        k = k.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        q = q.view(B, L, self.num_heads, self.head_dim)
+        k = k.view(B, L, self.num_kv_heads, self.head_dim)
+
+        # Apply QK norms if present (e.g. Qwen3)
+        if hasattr(attn, "q_norm"):
+            q = attn.q_norm(q)
+        if hasattr(attn, "k_norm"):
+            k = attn.k_norm(k)
+
+        q = q.transpose(1, 2)
+        k = k.transpose(1, 2)
         v = v.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
 
         cos, sin = position_embeddings

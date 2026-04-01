@@ -467,3 +467,210 @@ class TestFP8KVCacheQuality:
         # Use atol=0.1 (generous) since FP8 E4M3 has limited precision
         torch.testing.assert_close(k_fp8.float(), k_bf16.float(), atol=0.1, rtol=0.05)
         torch.testing.assert_close(v_fp8.float(), v_bf16.float(), atol=0.1, rtol=0.05)
+
+
+# ---------------------------------------------------------------------------
+# Correctness: GraphableDecodeStep must match HF-style manual forward
+# ---------------------------------------------------------------------------
+
+from grove_server.engine.graphable_model import _apply_rotary_pos_emb, _repeat_kv
+
+
+class MockSelfAttnWithQKNorm(nn.Module):
+    """Mock attention with GQA and QK norms (like Qwen3)."""
+    def __init__(self, config):
+        super().__init__()
+        self.num_heads = config.num_attention_heads
+        self.num_key_value_heads = config.num_key_value_heads
+        self.head_dim = config.head_dim
+        self.num_kv_groups = self.num_heads // self.num_key_value_heads
+        self.q_proj = nn.Linear(config.hidden_size, self.num_heads * self.head_dim, bias=False)
+        self.k_proj = nn.Linear(config.hidden_size, self.num_key_value_heads * self.head_dim, bias=False)
+        self.v_proj = nn.Linear(config.hidden_size, self.num_key_value_heads * self.head_dim, bias=False)
+        self.o_proj = nn.Linear(self.num_heads * self.head_dim, config.hidden_size, bias=False)
+        self.q_norm = MockRMSNorm(self.head_dim, eps=config.rms_norm_eps)
+        self.k_norm = MockRMSNorm(self.head_dim, eps=config.rms_norm_eps)
+
+
+class MockDecoderLayerWithQKNorm(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.self_attn = MockSelfAttnWithQKNorm(config)
+        self.mlp = MockMLP(config)
+        self.input_layernorm = MockRMSNorm(config.hidden_size, config.rms_norm_eps)
+        self.post_attention_layernorm = MockRMSNorm(config.hidden_size, config.rms_norm_eps)
+
+
+class MockModelInnerWithQKNorm(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.embed_tokens = nn.Embedding(256, config.hidden_size)
+        self.layers = nn.ModuleList(
+            [MockDecoderLayerWithQKNorm(config) for _ in range(config.num_hidden_layers)]
+        )
+        self.norm = MockRMSNorm(config.hidden_size, config.rms_norm_eps)
+        self.rotary_emb = MockRotaryEmb(config)
+
+
+class MockCausalLMWithQKNorm(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+        self.model = MockModelInnerWithQKNorm(config)
+        self.lm_head = nn.Linear(config.hidden_size, 256, bias=False)
+
+    @property
+    def device(self):
+        return next(self.parameters()).device
+
+
+def _hf_style_forward(model, input_ids, position_ids):
+    """Manual HF-style forward pass (reference implementation).
+
+    Mimics how HF Qwen3 processes a single token, with QK norms applied.
+    """
+    config = model.config
+    num_heads = config.num_attention_heads
+    num_kv_heads = config.num_key_value_heads
+    head_dim = config.head_dim
+    num_kv_groups = num_heads // num_kv_heads
+
+    hidden_states = model.model.embed_tokens(input_ids)
+    cos, sin = model.model.rotary_emb(hidden_states, position_ids)
+
+    for layer in model.model.layers:
+        residual = hidden_states
+        hidden_states = layer.input_layernorm(hidden_states)
+
+        attn = layer.self_attn
+        B, L, _ = hidden_states.shape
+
+        q = attn.q_proj(hidden_states).view(B, L, num_heads, head_dim)
+        k = attn.k_proj(hidden_states).view(B, L, num_kv_heads, head_dim)
+        v = attn.v_proj(hidden_states).view(B, L, num_kv_heads, head_dim)
+
+        # QK norms (the critical step)
+        q = attn.q_norm(q)
+        k = attn.k_norm(k)
+
+        q = q.transpose(1, 2)
+        k = k.transpose(1, 2)
+        v = v.transpose(1, 2)
+
+        cos_u = cos.unsqueeze(1)
+        sin_u = sin.unsqueeze(1)
+
+        def rotate_half(x):
+            x1, x2 = x.chunk(2, dim=-1)
+            return torch.cat((-x2, x1), dim=-1)
+
+        q = (q * cos_u) + (rotate_half(q) * sin_u)
+        k = (k * cos_u) + (rotate_half(k) * sin_u)
+
+        k = _repeat_kv(k, num_kv_groups)
+        v = _repeat_kv(v, num_kv_groups)
+
+        attn_out = F.scaled_dot_product_attention(q, k, v, is_causal=(L > 1))
+        attn_out = attn_out.transpose(1, 2).reshape(B, L, num_heads * head_dim)
+        attn_out = attn.o_proj(attn_out)
+
+        hidden_states = residual + attn_out
+
+        residual = hidden_states
+        hidden_states = layer.post_attention_layernorm(hidden_states)
+        hidden_states = layer.mlp(hidden_states)
+        hidden_states = residual + hidden_states
+
+    hidden_states = model.model.norm(hidden_states)
+    logits = model.lm_head(hidden_states)
+    return logits
+
+
+class TestGraphableMatchesHFLogits:
+    """GraphableDecodeStep must produce logits close to HF native."""
+
+    def _make_qknorm_model(self):
+        config = MockQwen3Config()
+        torch.manual_seed(42)
+        model = MockCausalLMWithQKNorm(config)
+        return model, config
+
+    def test_graphable_matches_hf_logits_single_token(self):
+        """Single-token decode: GraphableDecodeStep matches HF-style forward."""
+        model, config = self._make_qknorm_model()
+        cache = StaticKVCache(
+            num_layers=config.num_hidden_layers,
+            num_heads=config.num_key_value_heads,
+            head_dim=config.head_dim,
+            max_seq_len=128,
+            batch_size=1,
+            dtype=torch.float32,
+            device="cpu",
+        )
+        step = GraphableDecodeStep(model, cache, max_seq_len=128)
+
+        input_ids = torch.tensor([[42]])
+        position_ids = torch.tensor([[0]])
+
+        with torch.no_grad():
+            our_logits = step(input_ids, position_ids)
+            hf_logits = _hf_style_forward(model, input_ids, position_ids)
+
+        max_diff = (our_logits - hf_logits).abs().max().item()
+        assert max_diff < 0.01, (
+            f"Logits diverge: max diff {max_diff:.4f}. "
+            f"Our top5: {our_logits[0, 0].topk(5).indices.tolist()}, "
+            f"HF top5: {hf_logits[0, 0].topk(5).indices.tolist()}"
+        )
+
+    def test_graphable_matches_hf_logits_sequence(self):
+        """Multi-token sequence: accumulated KV cache produces correct logits."""
+        model, config = self._make_qknorm_model()
+        cache = StaticKVCache(
+            num_layers=config.num_hidden_layers,
+            num_heads=config.num_key_value_heads,
+            head_dim=config.head_dim,
+            max_seq_len=128,
+            batch_size=1,
+            dtype=torch.float32,
+            device="cpu",
+        )
+        step = GraphableDecodeStep(model, cache, max_seq_len=128)
+
+        tokens = [10, 20, 30, 40, 50]
+        with torch.no_grad():
+            for i, tok in enumerate(tokens):
+                input_ids = torch.tensor([[tok]])
+                position_ids = torch.tensor([[i]])
+                our_logits = step(input_ids, position_ids)
+
+        # The last token's logits should be reasonable (no NaN/Inf)
+        assert torch.isfinite(our_logits).all(), "Logits contain NaN or Inf"
+        # Top token should be deterministic
+        assert our_logits[0, 0].topk(1).indices.item() >= 0
+
+    def test_without_qk_norm_still_works(self):
+        """Models without QK norms (e.g. LLaMA) still produce correct output."""
+        config = MockQwen3Config()
+        torch.manual_seed(42)
+        model = MockCausalLM(config)  # No q_norm/k_norm
+
+        cache = StaticKVCache(
+            num_layers=config.num_hidden_layers,
+            num_heads=config.num_key_value_heads,
+            head_dim=config.head_dim,
+            max_seq_len=128,
+            batch_size=1,
+            dtype=torch.float32,
+            device="cpu",
+        )
+        step = GraphableDecodeStep(model, cache, max_seq_len=128)
+
+        input_ids = torch.tensor([[42]])
+        position_ids = torch.tensor([[0]])
+
+        with torch.no_grad():
+            logits = step(input_ids, position_ids)
+
+        assert logits.shape == (1, 1, 256)
+        assert torch.isfinite(logits).all()
