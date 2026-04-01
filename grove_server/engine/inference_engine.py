@@ -72,6 +72,7 @@ class InferenceEngine:
             max_seq_len: Maximum sequence length to pre-allocate.
         """
         config = self.model.config
+        use_fp8 = fp8_available()
         self._static_cache = StaticKVCache(
             num_layers=config.num_hidden_layers,
             num_heads=config.num_key_value_heads,
@@ -80,8 +81,9 @@ class InferenceEngine:
             batch_size=1,
             dtype=next(self.model.parameters()).dtype,
             device=self.device,
+            kv_dtype=torch.float8_e4m3fn if use_fp8 else None,
         )
-        if fp8_available():
+        if use_fp8:
             self._graphable = FP8GraphableDecodeStep(
                 self.model, self._static_cache, max_seq_len=max_seq_len
             )

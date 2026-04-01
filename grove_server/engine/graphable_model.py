@@ -87,12 +87,14 @@ class GraphableDecodeStep(nn.Module):
         static_cache: StaticKVCache,
         max_seq_len: int,
         skip_layers: list[int] | None = None,
+        skip_attention_layers: list[int] | None = None,
     ) -> None:
         super().__init__()
         self.model = model
         self.cache = static_cache
         self.max_seq_len = max_seq_len
         self.skip_layers: set[int] = set(skip_layers or [])
+        self.skip_attention_layers: set[int] = set(skip_attention_layers or [])
         self.bridge_layers: dict[int, nn.Module] = {}  # layer_idx -> BridgeModule (future use)
 
         # Detect GQA configuration
@@ -128,6 +130,11 @@ class GraphableDecodeStep(nn.Module):
         for layer_idx, decoder_layer in enumerate(self.model.model.layers):
             if layer_idx in self.skip_layers:
                 continue  # Pure residual passthrough — skip entirely
+            if layer_idx in self.skip_attention_layers:
+                hidden_states = self._run_layer_mlp_only(
+                    layer_idx, decoder_layer, hidden_states,
+                )
+                continue
             hidden_states = self._run_layer(
                 layer_idx, decoder_layer, hidden_states, position_embeddings
             )
@@ -186,12 +193,9 @@ class GraphableDecodeStep(nn.Module):
         # Write new K, V to static cache (before advance)
         self.cache.update(layer_idx, k, v)
 
-        # Get full cached K, V (includes what we just wrote, up to seq_len)
-        # We need seq_len + current tokens for the full view
-        full_k_cache, full_v_cache = self.cache.cache[layer_idx]
+        # Get full cached K, V (includes what we just wrote, up to seq_len + L)
         current_len = self.cache.seq_len + L
-        full_k = full_k_cache[:, :, :current_len, :]
-        full_v = full_v_cache[:, :, :current_len, :]
+        full_k, full_v = self.cache.get_up_to(layer_idx, current_len)
 
         # Expand KV heads for GQA (repeat to match query head count)
         full_k = _repeat_kv(full_k, self.num_kv_groups)
@@ -221,6 +225,38 @@ class GraphableDecodeStep(nn.Module):
 
         return hidden_states
 
+    def _run_layer_mlp_only(
+        self,
+        layer_idx: int,
+        layer: nn.Module,
+        hidden_states: torch.Tensor,
+    ) -> torch.Tensor:
+        """Run only the MLP part of a transformer layer, skip attention.
+
+        Attention (Q/K/V projection, SDPA, O projection) is skipped entirely.
+        The KV cache is not updated for this layer. The residual connection
+        passes hidden_states through to the MLP unchanged by attention.
+
+        Args:
+            layer_idx: Index of this layer.
+            layer: The decoder layer module.
+            hidden_states: Input hidden states (B, seq_len, hidden_dim).
+
+        Returns:
+            Output hidden states (B, seq_len, hidden_dim).
+        """
+        # Skip attention: residual stays as-is, no KV cache update
+        residual = hidden_states
+
+        # Post-attention norm (still needed before MLP)
+        hidden_states = layer.post_attention_layernorm(hidden_states)
+
+        # MLP
+        hidden_states = layer.mlp(hidden_states)
+        hidden_states = residual + hidden_states
+
+        return hidden_states
+
 
 class FP8GraphableDecodeStep(GraphableDecodeStep):
     """GraphableDecodeStep with FP8 weight storage for faster matmuls.
@@ -237,8 +273,13 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         static_cache: StaticKVCache,
         max_seq_len: int,
         skip_layers: list[int] | None = None,
+        skip_attention_layers: list[int] | None = None,
     ) -> None:
-        super().__init__(model, static_cache, max_seq_len, skip_layers=skip_layers)
+        super().__init__(
+            model, static_cache, max_seq_len,
+            skip_layers=skip_layers,
+            skip_attention_layers=skip_attention_layers,
+        )
 
         if not fp8_available():
             # Store weights as FP8 anyway (dequant fallback at forward time)
@@ -265,25 +306,26 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
 
         for idx, layer in enumerate(self.model.model.layers):
             if idx in self.skip_layers:
-                continue  # Don't quantize weights for skipped layers
+                continue  # Don't quantize weights for fully skipped layers
 
-            # Attention projections
-            for proj_name in ("q_proj", "k_proj", "v_proj", "o_proj"):
-                proj = getattr(layer.self_attn, proj_name)
-                if proj.weight is None:
-                    continue  # Already quantized by a previous instance
-                w = proj.weight.data  # (out_features, in_features)
-                amax = w.abs().amax()
-                scale = (amax / fp8_max).float()
-                scale = torch.where(scale > 0, scale, torch.ones_like(scale))
-                # Store as (out, in) contiguous — .t() at call time gives col-major
-                w_scaled = w.float().contiguous() / scale
-                w_fp8 = w_scaled.to(torch.float8_e4m3fn)
-                self.fp8_weights[f"{idx}.attn.{proj_name}"] = (w_fp8, scale)
-                # Free original BF16 weight to reclaim VRAM
-                proj.weight = None
+            # Attention projections (skip for attention-skipped layers)
+            if idx not in self.skip_attention_layers:
+                for proj_name in ("q_proj", "k_proj", "v_proj", "o_proj"):
+                    proj = getattr(layer.self_attn, proj_name)
+                    if proj.weight is None:
+                        continue  # Already quantized by a previous instance
+                    w = proj.weight.data  # (out_features, in_features)
+                    amax = w.abs().amax()
+                    scale = (amax / fp8_max).float()
+                    scale = torch.where(scale > 0, scale, torch.ones_like(scale))
+                    # Store as (out, in) contiguous — .t() at call time gives col-major
+                    w_scaled = w.float().contiguous() / scale
+                    w_fp8 = w_scaled.to(torch.float8_e4m3fn)
+                    self.fp8_weights[f"{idx}.attn.{proj_name}"] = (w_fp8, scale)
+                    # Free original BF16 weight to reclaim VRAM
+                    proj.weight = None
 
-            # MLP projections
+            # MLP projections (always quantized unless fully skipped)
             for proj_name in ("gate_proj", "up_proj", "down_proj"):
                 proj = getattr(layer.mlp, proj_name)
                 if proj.weight is None:
@@ -395,10 +437,8 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
 
         self.cache.update(layer_idx, k, v)
 
-        full_k_cache, full_v_cache = self.cache.cache[layer_idx]
         current_len = self.cache.seq_len + L
-        full_k = full_k_cache[:, :, :current_len, :]
-        full_v = full_v_cache[:, :, :current_len, :]
+        full_k, full_v = self.cache.get_up_to(layer_idx, current_len)
 
         full_k = _repeat_kv(full_k, self.num_kv_groups)
         full_v = _repeat_kv(full_v, self.num_kv_groups)
@@ -430,6 +470,32 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         hidden_states = F.silu(gate) * up
         mlp_flat2 = hidden_states.reshape(-1, hidden_states.size(-1))
         hidden_states = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx]).reshape(B2, L2, -1)
+
+        hidden_states = residual + hidden_states
+
+        return hidden_states
+
+    def _run_layer_mlp_only(
+        self,
+        layer_idx: int,
+        layer: nn.Module,
+        hidden_states: torch.Tensor,
+    ) -> torch.Tensor:
+        """Run only the MLP part using FP8 weights, skip attention."""
+        residual = hidden_states
+
+        # Post-attention norm (still needed before MLP)
+        hidden_states = layer.post_attention_layernorm(hidden_states)
+
+        # MLP with FP8 projections
+        B, L, D = hidden_states.shape
+        mlp_flat = hidden_states.reshape(-1, D)
+
+        gate = self._fp8_linear(mlp_flat, self._mlp_gate_keys[layer_idx])
+        up = self._fp8_linear(mlp_flat, self._mlp_up_keys[layer_idx])
+        hidden_states = F.silu(gate) * up
+        mlp_flat2 = hidden_states.reshape(-1, hidden_states.size(-1))
+        hidden_states = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx]).reshape(B, L, -1)
 
         hidden_states = residual + hidden_states
 

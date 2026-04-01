@@ -178,3 +178,122 @@ class TestGraphableWithSkipLayers:
             logits_empty = step_empty(input_ids, pos_ids)
 
         torch.testing.assert_close(logits_default, logits_empty)
+
+
+class TestAttentionSkipKeepsMLP:
+    """skip_attention_layers skips only attention, keeps MLP."""
+
+    def test_skip_attention_keeps_mlp(self):
+        """When attention is skipped, MLP still runs (output differs from full skip)."""
+        model = _make_tiny_llama(layers=4)
+        input_ids = torch.tensor([[1]])
+        pos_ids = torch.tensor([[0]])
+
+        # Full skip on layer 1: skip entire block
+        cache_full = _make_cache(num_layers=4)
+        step_full = GraphableDecodeStep(
+            model, cache_full, max_seq_len=32, skip_layers=[1],
+        )
+
+        # Attention-only skip on layer 1: skip attn, keep MLP
+        cache_attn = _make_cache(num_layers=4)
+        step_attn = GraphableDecodeStep(
+            model, cache_attn, max_seq_len=32, skip_attention_layers=[1],
+        )
+
+        with torch.no_grad():
+            logits_full = step_full(input_ids, pos_ids)
+            logits_attn = step_attn(input_ids, pos_ids)
+
+        # Both should produce valid output but they should differ
+        # because attention-skip still runs MLP
+        assert logits_full.shape == logits_attn.shape
+        assert not torch.allclose(logits_full, logits_attn), \
+            "Attention-skip should differ from full skip (MLP runs)"
+
+    def test_skip_attention_preserves_shape(self):
+        """Output shape is unchanged with skip_attention_layers."""
+        model = _make_tiny_llama(layers=4)
+        cache = _make_cache(num_layers=4)
+        step = GraphableDecodeStep(
+            model, cache, max_seq_len=32, skip_attention_layers=[0, 2],
+        )
+
+        input_ids = torch.tensor([[1]])
+        pos_ids = torch.tensor([[0]])
+
+        with torch.no_grad():
+            logits = step(input_ids, pos_ids)
+
+        assert logits.shape == (1, 1, 64)
+
+    def test_full_skip_vs_attention_skip_different(self):
+        """Full skip and attention-only skip produce different outputs."""
+        model = _make_tiny_llama(layers=4)
+        input_ids = torch.tensor([[1]])
+        pos_ids = torch.tensor([[0]])
+
+        # No skip (baseline)
+        cache_none = _make_cache(num_layers=4)
+        step_none = GraphableDecodeStep(model, cache_none, max_seq_len=32)
+
+        # Full skip layers 1,2
+        cache_full = _make_cache(num_layers=4)
+        step_full = GraphableDecodeStep(
+            model, cache_full, max_seq_len=32, skip_layers=[1, 2],
+        )
+
+        # Attention-only skip layers 1,2
+        cache_attn = _make_cache(num_layers=4)
+        step_attn = GraphableDecodeStep(
+            model, cache_attn, max_seq_len=32, skip_attention_layers=[1, 2],
+        )
+
+        with torch.no_grad():
+            logits_none = step_none(input_ids, pos_ids)
+            logits_full = step_full(input_ids, pos_ids)
+            logits_attn = step_attn(input_ids, pos_ids)
+
+        # All three should be different
+        assert not torch.allclose(logits_none, logits_full)
+        assert not torch.allclose(logits_none, logits_attn)
+        assert not torch.allclose(logits_full, logits_attn)
+
+    def test_fp8_skip_attention_keeps_mlp(self):
+        """FP8GraphableDecodeStep also supports skip_attention_layers."""
+        model = _make_tiny_llama(layers=4)
+        input_ids = torch.tensor([[1]])
+        pos_ids = torch.tensor([[0]])
+
+        cache = _make_cache(num_layers=4)
+        step = FP8GraphableDecodeStep(
+            model, cache, max_seq_len=32, skip_attention_layers=[1],
+        )
+
+        with torch.no_grad():
+            logits = step(input_ids, pos_ids)
+
+        assert logits.shape == (1, 1, 64)
+
+    def test_skip_attention_no_kv_cache_update(self):
+        """When attention is skipped, the KV cache for that layer stays zero."""
+        model = _make_tiny_llama(layers=4)
+        cache = _make_cache(num_layers=4)
+        step = GraphableDecodeStep(
+            model, cache, max_seq_len=32, skip_attention_layers=[1],
+        )
+
+        input_ids = torch.tensor([[1]])
+        pos_ids = torch.tensor([[0]])
+
+        with torch.no_grad():
+            step(input_ids, pos_ids)
+
+        # Layer 1 attention was skipped — its KV cache should be zeros
+        k1, v1 = cache.cache[1]
+        assert (k1 == 0).all(), "Skipped attention layer should not write to KV cache"
+        assert (v1 == 0).all(), "Skipped attention layer should not write to KV cache"
+
+        # Layer 0 attention ran — its KV cache should NOT be all zeros
+        k0, v0 = cache.cache[0]
+        assert not (k0[:, :, :1, :] == 0).all(), "Non-skipped layer should have KV data"

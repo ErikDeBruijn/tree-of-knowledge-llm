@@ -371,3 +371,99 @@ class TestGraphableDecodeStep:
         with torch.no_grad():
             step(torch.tensor([[20]]), torch.tensor([[1]]))
         assert cache.seq_len == 2
+
+
+# ---------------------------------------------------------------------------
+# FP8 KV Cache tests
+# ---------------------------------------------------------------------------
+
+
+class TestFP8KVCacheStoresFP8:
+    """StaticKVCache with kv_dtype=float8_e4m3fn stores data in FP8."""
+
+    def test_fp8_kv_cache_stores_fp8(self):
+        """Internal cache tensors use FP8 dtype when kv_dtype is FP8."""
+        cache = StaticKVCache(
+            num_layers=2, num_heads=4, head_dim=8,
+            max_seq_len=64, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+            kv_dtype=torch.float8_e4m3fn,
+        )
+        for k, v in cache.cache:
+            assert k.dtype == torch.float8_e4m3fn
+            assert v.dtype == torch.float8_e4m3fn
+
+    def test_fp8_kv_cache_stores_scales(self):
+        """FP8 cache maintains per-layer scale tensors."""
+        cache = StaticKVCache(
+            num_layers=2, num_heads=4, head_dim=8,
+            max_seq_len=64, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+            kv_dtype=torch.float8_e4m3fn,
+        )
+        assert len(cache.kv_scales) == 2
+        for k_scale, v_scale in cache.kv_scales:
+            assert k_scale.dtype == torch.float32
+            assert v_scale.dtype == torch.float32
+
+
+class TestFP8KVCacheGetReturnsBF16:
+    """FP8 cache get() dequantizes back to the compute dtype (BF16)."""
+
+    def test_fp8_kv_cache_get_returns_bf16(self):
+        """get() returns BF16 tensors even when internal storage is FP8."""
+        cache = StaticKVCache(
+            num_layers=1, num_heads=2, head_dim=4,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+            kv_dtype=torch.float8_e4m3fn,
+        )
+        # Write some data
+        new_k = torch.randn(1, 2, 1, 4, dtype=torch.bfloat16)
+        new_v = torch.randn(1, 2, 1, 4, dtype=torch.bfloat16)
+        cache.update(0, new_k, new_v)
+        cache.advance(1)
+
+        k_out, v_out = cache.get(0)
+        assert k_out.dtype == torch.bfloat16
+        assert v_out.dtype == torch.bfloat16
+        assert k_out.shape == (1, 2, 1, 4)
+        assert v_out.shape == (1, 2, 1, 4)
+
+
+class TestFP8KVCacheQuality:
+    """FP8 quantization introduces small but bounded error."""
+
+    def test_fp8_kv_cache_quality_close_to_bf16(self):
+        """FP8 round-trip error is small relative to BF16 baseline."""
+        torch.manual_seed(42)
+
+        # BF16 cache (reference)
+        cache_bf16 = StaticKVCache(
+            num_layers=1, num_heads=4, head_dim=8,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+        )
+        # FP8 cache
+        cache_fp8 = StaticKVCache(
+            num_layers=1, num_heads=4, head_dim=8,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+            kv_dtype=torch.float8_e4m3fn,
+        )
+
+        # Write same data to both
+        new_k = torch.randn(1, 4, 1, 8, dtype=torch.bfloat16)
+        new_v = torch.randn(1, 4, 1, 8, dtype=torch.bfloat16)
+        cache_bf16.update(0, new_k, new_v)
+        cache_bf16.advance(1)
+        cache_fp8.update(0, new_k, new_v)
+        cache_fp8.advance(1)
+
+        k_bf16, v_bf16 = cache_bf16.get(0)
+        k_fp8, v_fp8 = cache_fp8.get(0)
+
+        # FP8 E4M3 has ~2% relative error for typical values
+        # Use atol=0.1 (generous) since FP8 E4M3 has limited precision
+        torch.testing.assert_close(k_fp8.float(), k_bf16.float(), atol=0.1, rtol=0.05)
+        torch.testing.assert_close(v_fp8.float(), v_bf16.float(), atol=0.1, rtol=0.05)
