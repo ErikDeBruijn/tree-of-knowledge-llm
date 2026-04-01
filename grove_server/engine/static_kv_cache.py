@@ -114,9 +114,9 @@ class StaticKVCache:
 
         if self.kv_scales:
             k_scale, v_scale = self.kv_scales[layer_idx]
-            k_out = k_slice.to(torch.float32) * k_scale
-            v_out = v_slice.to(torch.float32) * v_scale
-            return k_out.to(self.compute_dtype), v_out.to(self.compute_dtype)
+            k_out = k_slice.to(self.compute_dtype) * k_scale.to(self.compute_dtype)
+            v_out = v_slice.to(self.compute_dtype) * v_scale.to(self.compute_dtype)
+            return k_out, v_out
 
         return k_slice, v_slice
 
@@ -139,9 +139,11 @@ class StaticKVCache:
 
         if self.kv_scales:
             k_scale, v_scale = self.kv_scales[layer_idx]
-            k_out = k_slice.to(torch.float32) * k_scale
-            v_out = v_slice.to(torch.float32) * v_scale
-            return k_out.to(self.compute_dtype), v_out.to(self.compute_dtype)
+            # Dequantize: FP8 -> compute_dtype, then scale
+            # Skip float32 intermediate to reduce memory traffic
+            k_out = k_slice.to(self.compute_dtype) * k_scale.to(self.compute_dtype)
+            v_out = v_slice.to(self.compute_dtype) * v_scale.to(self.compute_dtype)
+            return k_out, v_out
 
         return k_slice, v_slice
 
