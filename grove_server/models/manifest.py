@@ -39,9 +39,31 @@ class Manifest:
 
     @classmethod
     def from_json(cls, path: str) -> Manifest:
-        """Parse a manifest.json file into a Manifest instance."""
+        """Parse a manifest.json file into a Manifest instance.
+
+        Raises:
+            FileNotFoundError: If the manifest file does not exist.
+            ValueError: If required fields are missing or JSON is invalid.
+        """
+        import os
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"Manifest file not found: {path}")
+
         with open(path) as f:
-            data = json.load(f)
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON in manifest: {e}") from e
+
+        required_fields = [
+            "name", "domain", "base_model",
+            "expert_start_layer", "adapter_rank", "gate_bias_init",
+        ]
+        missing = [f for f in required_fields if f not in data]
+        if missing:
+            raise ValueError(
+                f"Manifest missing required fields: {', '.join(missing)}"
+            )
 
         bridge_layers = {}
         for layer_str, cfg in data.get("bridge_layers", {}).items():

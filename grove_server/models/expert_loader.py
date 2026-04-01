@@ -70,6 +70,8 @@ def load_expert(
         FileNotFoundError: If required files are missing.
     """
     expert_dir = Path(expert_dir)
+    if not expert_dir.is_dir():
+        raise FileNotFoundError(f"Expert directory does not exist: {expert_dir}")
     manifest = Manifest.from_json(str(expert_dir / "manifest.json"))
 
     start_layer = manifest.expert_start_layer

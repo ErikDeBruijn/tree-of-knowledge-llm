@@ -8,7 +8,7 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 
 from grove_server.api.schemas import (
@@ -121,6 +121,20 @@ async def _stream_response(engine, prompt, request, completion_id):
     """Yield SSE events for streaming chat completions."""
     created = int(time.time())
 
+    # First chunk: role announcement (OpenAI compat)
+    role_chunk = ChatCompletionStreamChunk(
+        id=completion_id,
+        model=request.model,
+        created=created,
+        choices=[
+            StreamChoice(
+                index=0,
+                delta=DeltaContent(role="assistant"),
+            )
+        ],
+    )
+    yield f"data: {role_chunk.model_dump_json()}\n\n"
+
     for token in engine.generate_stream(
         prompt,
         max_tokens=request.max_tokens,
@@ -181,13 +195,18 @@ async def load_expert(
     request: ExpertLoadRequest,
     registry: ExpertRegistry = Depends(get_registry),
 ):
-    registry.load(
-        name=request.name,
-        expert_dir=Path(request.path),
-        total_layers=request.total_layers,
-        hidden_dim=request.hidden_dim,
-        device=request.device,
-    )
+    try:
+        registry.load(
+            name=request.name,
+            expert_dir=Path(request.path),
+            total_layers=request.total_layers,
+            hidden_dim=request.hidden_dim,
+            device=request.device,
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     return {"status": "loaded", "name": request.name}
 
 

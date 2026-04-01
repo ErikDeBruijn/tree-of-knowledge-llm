@@ -130,10 +130,14 @@ class TestE2EStreamingChat:
         lines = resp.text.strip().split("\n")
         data_lines = [l for l in lines if l.startswith("data: ")]
 
-        # Should have content chunks + [DONE]
-        assert len(data_lines) >= 3  # at least 2 tokens + [DONE]
+        # Should have role chunk + content chunks + finish chunk + [DONE]
+        assert len(data_lines) >= 4  # role + 2 tokens + finish + [DONE]
         assert data_lines[-1] == "data: [DONE]"
 
-        # Verify first chunk has expert content
-        first_chunk = json.loads(data_lines[0].removeprefix("data: "))
-        assert first_chunk["choices"][0]["delta"]["content"] == "Expert"
+        # First chunk is role announcement (OpenAI compat)
+        role_chunk = json.loads(data_lines[0].removeprefix("data: "))
+        assert role_chunk["choices"][0]["delta"]["role"] == "assistant"
+
+        # Second chunk has first content token
+        content_chunk = json.loads(data_lines[1].removeprefix("data: "))
+        assert content_chunk["choices"][0]["delta"]["content"] == "Expert"

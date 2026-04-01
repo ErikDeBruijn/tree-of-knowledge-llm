@@ -39,6 +39,7 @@ class ChatCompletionResponse(BaseModel):
     object: str = "chat.completion"
     created: int = Field(default_factory=lambda: int(time.time()))
     model: str = ""
+    system_fingerprint: Optional[str] = None
     choices: list[Choice]
     usage: Usage = Field(default_factory=Usage)
 

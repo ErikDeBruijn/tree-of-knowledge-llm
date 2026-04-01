@@ -87,15 +87,20 @@ class TestChatCompletions:
 
         lines = resp.text.strip().split("\n")
         data_lines = [l for l in lines if l.startswith("data: ")]
-        assert len(data_lines) >= 2  # at least one chunk + [DONE]
+        assert len(data_lines) >= 3  # role chunk + content chunks + [DONE]
 
         # Last data line should be [DONE]
         assert data_lines[-1] == "data: [DONE]"
 
-        # Earlier lines should be valid JSON chunks
-        first_chunk = json.loads(data_lines[0].removeprefix("data: "))
-        assert first_chunk["object"] == "chat.completion.chunk"
-        assert "delta" in first_chunk["choices"][0]
+        # First chunk is role announcement (OpenAI compat)
+        role_chunk = json.loads(data_lines[0].removeprefix("data: "))
+        assert role_chunk["object"] == "chat.completion.chunk"
+        assert role_chunk["choices"][0]["delta"]["role"] == "assistant"
+
+        # Content chunks follow
+        content_chunk = json.loads(data_lines[1].removeprefix("data: "))
+        assert content_chunk["object"] == "chat.completion.chunk"
+        assert "delta" in content_chunk["choices"][0]
 
     def test_chat_completions_no_messages_400(self, client):
         """Missing messages field returns 400."""
