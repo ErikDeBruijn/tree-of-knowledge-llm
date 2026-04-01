@@ -74,7 +74,7 @@ class InferenceEngine:
         self._static_cache = StaticKVCache(
             num_layers=config.num_hidden_layers,
             num_heads=config.num_key_value_heads,
-            head_dim=config.hidden_size // config.num_attention_heads,
+            head_dim=getattr(config, 'head_dim', config.hidden_size // config.num_attention_heads),
             max_seq_len=max_seq_len,
             batch_size=1,
             dtype=next(self.model.parameters()).dtype,
