@@ -141,12 +141,16 @@ class GraphableDecodeStep(nn.Module):
 
         # Final norm + LM head
         hidden_states = self.model.model.norm(hidden_states)
-        logits = self.model.lm_head(hidden_states)
+        logits = self._compute_logits(hidden_states)
 
         # Advance cache position
         self.cache.advance(input_ids.size(1))
 
         return logits
+
+    def _compute_logits(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        """Compute logits from final hidden states. Override for FP8."""
+        return self.model.lm_head(hidden_states)
 
     def _run_layer(
         self,
@@ -294,6 +298,7 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         self._x_scale = torch.tensor(1.0, dtype=torch.float32, device=device)
         self._precompute_fp8_weights()
         self._precompute_layer_tables()
+        self._precompute_fp8_lm_head()
 
     def _precompute_fp8_weights(self) -> None:
         """Convert all linear projection weights to FP8 once at init.
@@ -369,6 +374,44 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             layer = self.model.model.layers[idx]
             self._input_norm_weights.append(layer.input_layernorm.weight)
             self._post_attn_norm_weights.append(layer.post_attention_layernorm.weight)
+
+    def _precompute_fp8_lm_head(self) -> None:
+        """Pre-quantize the lm_head weight to FP8."""
+        fp8_max = 448.0
+        lm_head = self.model.lm_head
+        if not hasattr(lm_head, 'weight') or lm_head.weight is None:
+            self._has_fp8_lm_head = False
+            return  # Already quantized or no weight
+        w = lm_head.weight.data  # (vocab_size, hidden_dim)
+        amax = w.abs().amax()
+        scale = (amax / fp8_max).float()
+        scale = torch.where(scale > 0, scale, torch.ones_like(scale))
+        w_fp8 = (w.float().contiguous() / scale).to(torch.float8_e4m3fn)
+        self._lm_head_fp8 = w_fp8
+        self._lm_head_scale = scale
+        self._has_fp8_lm_head = True
+        # Don't free lm_head.weight — other instances may need it
+
+    def _compute_logits(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        """Override: use FP8 lm_head when available."""
+        if getattr(self, '_has_fp8_lm_head', False):
+            return self._fp8_lm_head(hidden_states)
+        return self.model.lm_head(hidden_states)
+
+    def _fp8_lm_head(self, x: torch.Tensor) -> torch.Tensor:
+        """FP8 lm_head: x @ W^T using pre-quantized weight."""
+        if self._use_scaled_mm:
+            flat = x.reshape(-1, x.size(-1))
+            x_fp8 = flat.to(torch.float8_e4m3fn)
+            out = torch._scaled_mm(
+                x_fp8, self._lm_head_fp8.t(),
+                scale_a=self._x_scale, scale_b=self._lm_head_scale,
+                out_dtype=torch.bfloat16,
+            )
+            return out.reshape(*x.shape[:-1], -1)
+        else:
+            w_bf16 = self._lm_head_fp8.to(torch.bfloat16) * self._lm_head_scale
+            return F.linear(x, w_bf16)
 
     def _fp8_linear(self, x: torch.Tensor, key: str) -> torch.Tensor:
         """Fast FP8 matmul: x @ W^T using pre-quantized weights.
