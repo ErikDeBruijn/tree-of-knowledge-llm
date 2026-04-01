@@ -35,6 +35,15 @@ except ImportError:
 
 if HAS_TRITON:
 
+    @triton.autotune(
+        configs=[
+            triton.Config({'BLOCK_SIZE': 256}, num_warps=2),
+            triton.Config({'BLOCK_SIZE': 512}, num_warps=4),
+            triton.Config({'BLOCK_SIZE': 1024}, num_warps=4),
+            triton.Config({'BLOCK_SIZE': 2048}, num_warps=8),
+        ],
+        key=['N'],
+    )
     @triton.jit
     def _fused_sigmoid_scale_residual_kernel(
         base_ptr, delta_ptr, gate_ptr, out_ptr,
@@ -60,20 +69,20 @@ def _sigmoid_scale_residual(
 ) -> torch.Tensor:
     """Fused: base + sigmoid(gate_logit) * delta.
 
-    Uses Triton when available, otherwise pure PyTorch.
+    Uses Triton for large tensors (N >= 8192) where fusion amortizes launch
+    overhead. Falls back to PyTorch for small B where kernel launch dominates.
     """
-    if not HAS_TRITON or not base.is_cuda:
+    N = base.numel()
+    if not HAS_TRITON or not base.is_cuda or N < 8192:
         return base + torch.sigmoid(gate_logit.float()).to(base.dtype) * delta
 
     assert base.is_contiguous() and delta.is_contiguous()
     gate_logit = gate_logit.contiguous()
 
     out = torch.empty_like(base)
-    N = base.numel()
-    BLOCK_SIZE = 1024
-    grid = (triton.cdiv(N, BLOCK_SIZE),)
+    grid = lambda meta: (triton.cdiv(N, meta['BLOCK_SIZE']),)
     _fused_sigmoid_scale_residual_kernel[grid](
-        base, delta, gate_logit, out, N, BLOCK_SIZE=BLOCK_SIZE,
+        base, delta, gate_logit, out, N,
     )
     return out
 
@@ -119,9 +128,22 @@ def fused_gate_adapter(
 # Kernel 2: fused_bridge_forward
 # ---------------------------------------------------------------------------
 # output = hidden_states + GeLU(hs @ down) @ up
+#
+# The GeLU is fused into a Triton kernel. The residual add uses torch.add_
+# to avoid a second kernel launch (the separate residual kernel had more
+# overhead than gain at small B).
 
 if HAS_TRITON:
 
+    @triton.autotune(
+        configs=[
+            triton.Config({'BLOCK_SIZE': 256}, num_warps=2),
+            triton.Config({'BLOCK_SIZE': 512}, num_warps=4),
+            triton.Config({'BLOCK_SIZE': 1024}, num_warps=4),
+            triton.Config({'BLOCK_SIZE': 2048}, num_warps=8),
+        ],
+        key=['N'],
+    )
     @triton.jit
     def _fused_gelu_kernel(
         x_ptr, out_ptr,
@@ -135,43 +157,26 @@ if HAS_TRITON:
 
         x = tl.load(x_ptr + offsets, mask=mask)
         # GeLU approximation: 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
-        # Use the exact formulation for better precision
         x_f32 = x.to(tl.float32)
-        # Standard GeLU: x * 0.5 * (1 + erf(x / sqrt(2)))
-        # Triton has no erf, use tanh approximation
         k = 0.7978845608028654  # sqrt(2/pi)
         result = 0.5 * x_f32 * (1.0 + tl.extra.cuda.libdevice.tanh(k * (x_f32 + 0.044715 * x_f32 * x_f32 * x_f32)))
         tl.store(out_ptr + offsets, result.to(x.dtype), mask=mask)
 
 
 def _triton_gelu(x: torch.Tensor) -> torch.Tensor:
-    """GeLU via Triton kernel."""
-    if not HAS_TRITON or not x.is_cuda:
+    """GeLU via Triton kernel.
+
+    Falls back to PyTorch for small tensors where kernel launch overhead
+    exceeds the fusion benefit.
+    """
+    N = x.numel()
+    if not HAS_TRITON or not x.is_cuda or N < 8192:
         return F.gelu(x)
     assert x.is_contiguous()
     out = torch.empty_like(x)
-    N = x.numel()
-    BLOCK_SIZE = 1024
-    grid = (triton.cdiv(N, BLOCK_SIZE),)
-    _fused_gelu_kernel[grid](x, out, N, BLOCK_SIZE=BLOCK_SIZE)
+    grid = lambda meta: (triton.cdiv(N, meta['BLOCK_SIZE']),)
+    _fused_gelu_kernel[grid](x, out, N)
     return out
-
-
-if HAS_TRITON:
-
-    @triton.jit
-    def _fused_residual_add_kernel(
-        base_ptr, add_ptr, out_ptr,
-        N,
-        BLOCK_SIZE: tl.constexpr,
-    ):
-        """out = base + add"""
-        pid = tl.program_id(0)
-        offsets = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
-        mask = offsets < N
-        base = tl.load(base_ptr + offsets, mask=mask)
-        add = tl.load(add_ptr + offsets, mask=mask)
-        tl.store(out_ptr + offsets, base + add, mask=mask)
 
 
 def fused_bridge_forward(
@@ -197,18 +202,9 @@ def fused_bridge_forward(
     # Up project (cuBLAS)
     bridge_out = activated @ bridge_up  # (B, D)
 
-    # Residual add
-    if HAS_TRITON and hidden_states.is_cuda:
-        out = torch.empty_like(hidden_states)
-        N = hidden_states.numel()
-        BLOCK_SIZE = 1024
-        grid = (triton.cdiv(N, BLOCK_SIZE),)
-        _fused_residual_add_kernel[grid](
-            hidden_states, bridge_out, out, N, BLOCK_SIZE=BLOCK_SIZE,
-        )
-        return out
-    else:
-        return hidden_states + bridge_out
+    # Residual add — single PyTorch op avoids a separate kernel launch
+    # (benchmarked: the fused residual kernel was 0.96x due to launch overhead)
+    return hidden_states + bridge_out
 
 
 # ---------------------------------------------------------------------------
@@ -314,12 +310,20 @@ def multi_expert_gated_blend(
     # Softmax in fp32
     probs = torch.softmax(all_logits.float(), dim=-1).to(base_output.dtype)  # (B, N+1)
 
-    # Weighted sum of deltas
-    result = base_output.clone()
-    for i, delta in enumerate(expert_deltas):
-        result = result + probs[:, i:i + 1] * delta
-
-    return result
+    # Vectorized weighted sum: stack deltas into (B, N, D), multiply by probs
+    n_experts = len(expert_deltas)
+    if n_experts <= 8:
+        # For small expert counts, stacking + batched matmul is faster
+        delta_stack = torch.stack(expert_deltas, dim=1)  # (B, N, D)
+        expert_probs = probs[:, :n_experts].unsqueeze(-1)  # (B, N, 1)
+        weighted = (delta_stack * expert_probs).sum(dim=1)  # (B, D)
+        return base_output + weighted
+    else:
+        # Fallback for many experts
+        result = base_output.clone()
+        for i, delta in enumerate(expert_deltas):
+            result = result + probs[:, i:i + 1] * delta
+        return result
 
 
 # ---------------------------------------------------------------------------
@@ -346,13 +350,9 @@ if HAS_TRITON:
         row = tl.program_id(0)
         row_start = row * D
 
-        # Load first element to determine input dtype for casting back
-        first_val = tl.load(x_ptr + row_start)
-        in_dtype = first_val.dtype
-
         # --- RMSNorm ---
         # Accumulate sum of squares in fp32
-        sum_sq = tl.zeros([1], dtype=tl.float32)
+        sum_sq = 0.0
         for off in range(0, D, BLOCK_SIZE):
             cols = off + tl.arange(0, BLOCK_SIZE)
             mask = cols < D
@@ -363,7 +363,7 @@ if HAS_TRITON:
         rms = tl.rsqrt(sum_sq / D + eps)
 
         # Normalize, apply weight, compute gate dot product
-        gate_acc = tl.zeros([1], dtype=tl.float32)
+        gate_acc = 0.0
         for off in range(0, D, BLOCK_SIZE):
             cols = off + tl.arange(0, BLOCK_SIZE)
             mask = cols < D
@@ -373,16 +373,64 @@ if HAS_TRITON:
 
             normed = xv.to(tl.float32) * rms * w.to(tl.float32)
 
-            # Store normed output
-            tl.store(normed_ptr + row_start + cols, normed.to(in_dtype), mask=mask)
+            # Store normed output (cast back to input dtype)
+            tl.store(normed_ptr + row_start + cols, normed.to(tl.bfloat16), mask=mask)
 
             # Accumulate gate dot product
             gate_acc += tl.sum(normed * gw.to(tl.float32))
 
-        # Add gate bias and store
+        # Add gate bias and store as scalar
         gb = tl.load(gate_b_ptr)
         gate_val = gate_acc + gb.to(tl.float32)
-        tl.store(gate_out_ptr + row, gate_val.to(in_dtype))
+        # Store to gate_out_ptr[row] — use a single-element block store
+        row_offset = tl.arange(0, 1) + row
+        tl.store(gate_out_ptr + row_offset, gate_val.to(tl.bfloat16))
+
+    @triton.jit
+    def _fused_rmsnorm_gate_kernel_fp32(
+        x_ptr, weight_ptr, gate_w_ptr, gate_b_ptr,
+        normed_ptr, gate_out_ptr,
+        B, D,
+        eps: tl.constexpr,
+        BLOCK_SIZE: tl.constexpr,
+    ):
+        """Fused RMSNorm + gate evaluation — fp32 variant.
+
+        For each row:
+          normed = x / sqrt(mean(x^2) + eps) * weight
+          gate = dot(normed, gate_w) + gate_b
+        """
+        row = tl.program_id(0)
+        row_start = row * D
+
+        # --- RMSNorm ---
+        sum_sq = 0.0
+        for off in range(0, D, BLOCK_SIZE):
+            cols = off + tl.arange(0, BLOCK_SIZE)
+            mask = cols < D
+            xv = tl.load(x_ptr + row_start + cols, mask=mask, other=0.0)
+            sum_sq += tl.sum(xv * xv)
+
+        rms = tl.rsqrt(sum_sq / D + eps)
+
+        # Normalize, apply weight, compute gate dot product
+        gate_acc = 0.0
+        for off in range(0, D, BLOCK_SIZE):
+            cols = off + tl.arange(0, BLOCK_SIZE)
+            mask = cols < D
+            xv = tl.load(x_ptr + row_start + cols, mask=mask, other=0.0)
+            w = tl.load(weight_ptr + cols, mask=mask, other=0.0)
+            gw = tl.load(gate_w_ptr + cols, mask=mask, other=0.0)
+
+            normed = xv * rms * w
+
+            tl.store(normed_ptr + row_start + cols, normed, mask=mask)
+            gate_acc += tl.sum(normed * gw)
+
+        gb = tl.load(gate_b_ptr)
+        gate_val = gate_acc + gb
+        row_offset = tl.arange(0, 1) + row
+        tl.store(gate_out_ptr + row_offset, gate_val)
 
 
 def fused_rmsnorm_gate(
@@ -425,13 +473,23 @@ def fused_rmsnorm_gate(
     gate_w_flat = gate_W.squeeze(0).contiguous()
 
     BLOCK_SIZE = min(1024, triton.next_power_of_2(D))
-    _fused_rmsnorm_gate_kernel[(B,)](
-        x, weight, gate_w_flat, gate_b,
-        normed, gate_logit,
-        B, D,
-        eps=eps,
-        BLOCK_SIZE=BLOCK_SIZE,
-    )
+
+    if x.dtype == torch.bfloat16:
+        _fused_rmsnorm_gate_kernel[(B,)](
+            x, weight, gate_w_flat, gate_b,
+            normed, gate_logit,
+            B, D,
+            eps=eps,
+            BLOCK_SIZE=BLOCK_SIZE,
+        )
+    else:
+        _fused_rmsnorm_gate_kernel_fp32[(B,)](
+            x, weight, gate_w_flat, gate_b,
+            normed, gate_logit,
+            B, D,
+            eps=eps,
+            BLOCK_SIZE=BLOCK_SIZE,
+        )
     return normed, gate_logit
 
 
@@ -540,6 +598,49 @@ def benchmark_all(device: str = 'cuda:0', dtype: torch.dtype = torch.bfloat16):
         return normed, gl
 
     _bench("fused_rmsnorm_gate", _fused_5, _ref_5)
+
+    # -----------------------------------------------------------------------
+    # Multi-expert realistic scenario
+    # -----------------------------------------------------------------------
+    print("\n--- Multi-expert realistic scenario ---")
+
+    for scenario_B, scenario_name, n_exp, n_layers in [
+        (1, "B=1, 5 experts, 24 layers", 5, 24),
+        (32, "B=32, 3 experts, 24 layers", 3, 24),
+    ]:
+        hs_s = torch.randn(scenario_B, D, device=device, dtype=dtype)
+        base_s = torch.randn(scenario_B, D, device=device, dtype=dtype)
+        A_s = torch.randn(D, R, device=device, dtype=dtype) * 0.01
+        B_s = torch.randn(R, D, device=device, dtype=dtype) * 0.01
+        Wg_s = torch.randn(1, D, device=device, dtype=dtype) * 0.01
+        bg_s = torch.tensor([-2.0], device=device, dtype=dtype)
+        rms_s = torch.ones(D, device=device, dtype=dtype)
+
+        logits_s = [torch.randn(scenario_B, 1, device=device, dtype=dtype) for _ in range(n_exp)]
+        deltas_s = [torch.randn(scenario_B, D, device=device, dtype=dtype) * 0.01 for _ in range(n_exp)]
+
+        def _fused_multi(hs_=hs_s, base_=base_s, A_=A_s, B_=B_s, Wg_=Wg_s, bg_=bg_s,
+                         rms_=rms_s, logits_=logits_s, deltas_=deltas_s,
+                         n_l=n_layers, n_e=n_exp):
+            for _ in range(n_l):
+                normed, gl = fused_rmsnorm_gate(hs_, rms_, Wg_, bg_)
+                for e in range(n_e):
+                    _ = fused_gate_adapter(normed, base_, A_, B_, Wg_, bg_)
+
+        def _ref_multi(hs_=hs_s, base_=base_s, A_=A_s, B_=B_s, Wg_=Wg_s, bg_=bg_s,
+                       rms_=rms_s, logits_=logits_s, deltas_=deltas_s,
+                       n_l=n_layers, n_e=n_exp):
+            for _ in range(n_l):
+                x32 = hs_.float()
+                rms = torch.rsqrt(x32.pow(2).mean(-1, keepdim=True) + 1e-6)
+                normed = (x32 * rms * rms_.float()).to(dtype)
+                gl = F.linear(normed.float(), Wg_.float(), bg_.float()).to(dtype)
+                for e in range(n_e):
+                    gate = torch.sigmoid(F.linear(normed, Wg_, bg_))
+                    lora = (normed @ A_) @ B_
+                    _ = base_ + gate * (lora - base_)
+
+        _bench(scenario_name, _fused_multi, _ref_multi)
 
     print("\nDone.")
 
