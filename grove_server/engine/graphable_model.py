@@ -245,9 +245,9 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
     def _precompute_fp8_weights(self) -> None:
         """Convert all linear projection weights to FP8 once at init.
 
-        Stores weights as (in_features, out_features) — the transpose of
-        nn.Linear's (out_features, in_features) layout. This way _scaled_mm
-        sees the second argument as column-major (K, N), which cuBLAS requires.
+        Stores weights as (out_features, in_features) — same layout as
+        nn.Linear. At forward time, we pass w_fp8.t() to _scaled_mm so
+        cuBLAS sees a column-major (K, N) matrix (row-major (N, K).t()).
         """
         fp8_max = 448.0  # E4M3 max representable value
 
@@ -259,10 +259,12 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
                 amax = w.abs().amax()
                 scale = (amax / fp8_max).float()
                 scale = torch.where(scale > 0, scale, torch.ones_like(scale))
-                # Store as (in, out) for _scaled_mm column-major requirement
-                w_t = w.float().t().contiguous() / scale
-                w_fp8 = w_t.to(torch.float8_e4m3fn)
+                # Store as (out, in) contiguous — .t() at call time gives col-major
+                w_scaled = w.float().contiguous() / scale
+                w_fp8 = w_scaled.to(torch.float8_e4m3fn)
                 self.fp8_weights[f"{idx}.attn.{proj_name}"] = (w_fp8, scale)
+                # Free original BF16 weight to reclaim VRAM
+                proj.weight = None
 
             # MLP projections
             for proj_name in ("gate_proj", "up_proj", "down_proj"):
@@ -271,9 +273,11 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
                 amax = w.abs().amax()
                 scale = (amax / fp8_max).float()
                 scale = torch.where(scale > 0, scale, torch.ones_like(scale))
-                w_t = w.float().t().contiguous() / scale
-                w_fp8 = w_t.to(torch.float8_e4m3fn)
+                w_scaled = w.float().contiguous() / scale
+                w_fp8 = w_scaled.to(torch.float8_e4m3fn)
                 self.fp8_weights[f"{idx}.mlp.{proj_name}"] = (w_fp8, scale)
+                # Free original BF16 weight to reclaim VRAM
+                proj.weight = None
 
     def _fp8_linear(self, x: torch.Tensor, key: str) -> torch.Tensor:
         """Fast FP8 matmul: x @ W^T using pre-quantized weights.
@@ -294,10 +298,10 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             # Fixed input scale — avoids expensive abs().amax() reduction at B=1.
             # BF16 dynamic range is narrow enough that scale=1.0 works.
             x_fp8 = x.to(torch.float8_e4m3fn)
-            # w_fp8 is already (K, N) from _precompute — column-major for cuBLAS
+            # w_fp8 is (out, in) contiguous; .t() gives col-major (in, out) for cuBLAS
             out = torch._scaled_mm(
                 x_fp8,
-                w_fp8,
+                w_fp8.t(),
                 scale_a=self._x_scale,
                 scale_b=w_scale,
                 out_dtype=torch.bfloat16,
@@ -305,8 +309,8 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             return out
         else:
             # Dequant fallback for CPU / non-FP8 hardware
-            # w_fp8 is (K, N) = (in, out), need (out, in) for F.linear
-            w_bf16 = w_fp8.t().to(torch.bfloat16) * w_scale.to(torch.bfloat16)
+            # w_fp8 is (out, in) — same layout as nn.Linear, use directly
+            w_bf16 = w_fp8.to(torch.bfloat16) * w_scale.to(torch.bfloat16)
             return F.linear(x, w_bf16)
 
     def _run_layer(

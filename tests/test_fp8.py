@@ -276,25 +276,30 @@ class TestFP8GraphableDecodeStep:
         from grove_server.engine.static_kv_cache import StaticKVCache
 
         model = self._make_tiny_llama(layers=2)
+
+        # Run BF16 first — FP8 init frees original weights
         cache_bf16 = StaticKVCache(
             num_layers=2, num_heads=2, head_dim=32,
             max_seq_len=32, batch_size=1,
             dtype=torch.bfloat16, device="cpu",
         )
-        cache_fp8 = StaticKVCache(
-            num_layers=2, num_heads=2, head_dim=32,
-            max_seq_len=32, batch_size=1,
-            dtype=torch.bfloat16, device="cpu",
-        )
-
         bf16_step = GraphableDecodeStep(model, cache_bf16, max_seq_len=32)
-        fp8_step = FP8GraphableDecodeStep(model, cache_fp8, max_seq_len=32)
 
         input_ids = torch.tensor([[1]])
         pos_ids = torch.tensor([[0]])
 
         with torch.no_grad():
             bf16_logits = bf16_step(input_ids, pos_ids)
+
+        # Now create FP8 step (frees original weights)
+        cache_fp8 = StaticKVCache(
+            num_layers=2, num_heads=2, head_dim=32,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+        )
+        fp8_step = FP8GraphableDecodeStep(model, cache_fp8, max_seq_len=32)
+
+        with torch.no_grad():
             fp8_logits = fp8_step(input_ids, pos_ids)
 
         assert bf16_logits.shape == fp8_logits.shape
@@ -307,26 +312,27 @@ class TestFP8GraphableDecodeStep:
         from grove_server.engine.static_kv_cache import StaticKVCache
 
         model = self._make_tiny_llama(layers=1)
+
+        torch.manual_seed(99)
+        x = torch.randn(1, 128, dtype=torch.bfloat16)
+
+        # Get reference output BEFORE FP8 init frees weights
+        q_proj = model.model.layers[0].self_attn.q_proj
+        ref = q_proj(x)
+
         cache = StaticKVCache(
             num_layers=1, num_heads=2, head_dim=32,
             max_seq_len=32, batch_size=1,
             dtype=torch.bfloat16, device="cpu",
         )
         step = FP8GraphableDecodeStep(model, cache, max_seq_len=32)
-
-        torch.manual_seed(99)
-        x = torch.randn(1, 128, dtype=torch.bfloat16)
-
-        # Compare FP8 path vs original weight matmul
-        q_proj = model.model.layers[0].self_attn.q_proj
-        ref = q_proj(x)
         fp8_out = step._fp8_linear(x, "0.attn.q_proj")
 
         assert fp8_out.shape == ref.shape
         torch.testing.assert_close(fp8_out, ref, rtol=0.05, atol=0.1)
 
-    def test_fp8_graphable_does_not_quantize_original_model(self):
-        """Original model weights remain BF16 after FP8GraphableDecodeStep init."""
+    def test_fp8_graphable_frees_original_weights(self):
+        """Original model linear weights are freed after FP8 pre-quantization."""
         from grove_server.engine.graphable_model import FP8GraphableDecodeStep
         from grove_server.engine.static_kv_cache import StaticKVCache
 
@@ -338,6 +344,10 @@ class TestFP8GraphableDecodeStep:
         )
         FP8GraphableDecodeStep(model, cache, max_seq_len=32)
 
-        # Original model weights should still be BF16
-        w = model.model.layers[0].self_attn.q_proj.weight
-        assert w.dtype == torch.bfloat16
+        # Original linear weights are freed to reclaim VRAM
+        assert model.model.layers[0].self_attn.q_proj.weight is None
+        assert model.model.layers[0].mlp.gate_proj.weight is None
+        # Non-quantized parts (embed, norm, lm_head) are untouched
+        assert model.model.embed_tokens.weight is not None
+        embed_dtype = torch.bfloat16
+        assert model.model.embed_tokens.weight.dtype == embed_dtype

@@ -308,42 +308,7 @@ def main():
     print(f"  {bf16_tps:.1f} tok/s | VRAM: {bf16_vram:.0f} MB")
     print()
 
-    # --- Quantize to FP8 ---
-    print("=== Quantizing to FP8 ===")
-    torch.cuda.synchronize()
-    gc.collect()
-    torch.cuda.empty_cache()
-
-    quantize_model_to_fp8(model, min_size=4096, force=True)
-    fp8_count, linear_count = count_fp8_layers(model)
-    print(f"  FP8 layers: {fp8_count} | BF16 layers remaining: {linear_count}")
-
-    torch.cuda.synchronize()
-    gc.collect()
-    torch.cuda.empty_cache()
-    print(f"  VRAM after FP8: {get_vram_mb():.0f} MB")
-    print()
-
-    # --- FP8 benchmark ---
-    print(f"=== FP8 {'+ CUDA Graph' if use_graph else '(eager)'} ===")
-    fp8_tps, fp8_vram = bench_decode(
-        model, tokenizer, args.prompt, args.tokens, args.device, use_graph
-    )
-    print(f"  {fp8_tps:.1f} tok/s | VRAM: {fp8_vram:.0f} MB")
-    print()
-
     # --- FP8 direct (pre-quantized weights, no nn.Module wrapper) ---
-    # Reload model fresh for fair comparison
-    del model
-    torch.cuda.synchronize()
-    gc.collect()
-    torch.cuda.empty_cache()
-
-    print(f"Reloading model for FP8 direct benchmark...")
-    model = AutoModelForCausalLM.from_pretrained(
-        args.model, torch_dtype=torch.bfloat16, device_map=args.device
-    )
-
     print(f"=== FP8 Direct {'+ CUDA Graph' if use_graph else '(eager)'} ===")
     fp8d_tps, fp8d_vram = bench_decode_fp8_direct(
         model, tokenizer, args.prompt, args.tokens, args.device, use_graph
@@ -356,19 +321,16 @@ def main():
     print(f"{'Config':<25} {'tok/s':>8} {'VRAM MB':>10}")
     print("-" * 50)
     print(f"{'BF16':<25} {bf16_tps:>8.1f} {bf16_vram:>10.0f}")
-    print(f"{'FP8 (wrapper)':<25} {fp8_tps:>8.1f} {fp8_vram:>10.0f}")
     print(f"{'FP8 (direct)':<25} {fp8d_tps:>8.1f} {fp8d_vram:>10.0f}")
     print("-" * 50)
-    speedup = fp8_tps / bf16_tps if bf16_tps > 0 else 0
     speedup_d = fp8d_tps / bf16_tps if bf16_tps > 0 else 0
-    print(f"{'FP8 wrapper speedup':<25} {speedup:>8.2f}x")
     print(f"{'FP8 direct speedup':<25} {speedup_d:>8.2f}x")
     print()
 
     if fp8_available():
         theoretical = 1792 * 1000 / (8 * 1024)  # GB/s / model_size_GB (FP8)
         print(f"Theoretical max FP8: ~{theoretical:.0f} tok/s")
-        print(f"Efficiency: {fp8_tps / theoretical * 100:.0f}%")
+        print(f"Efficiency: {fp8d_tps / theoretical * 100:.0f}%")
     else:
         print("Note: FP8 used dequant fallback (no native tensor cores).")
         print("On sm_89+ hardware, expect ~2x speedup from native FP8 matmul.")
