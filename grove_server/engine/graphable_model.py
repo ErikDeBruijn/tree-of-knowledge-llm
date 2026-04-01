@@ -189,9 +189,11 @@ class GraphableDecodeStep(nn.Module):
         full_k = _repeat_kv(full_k, self.num_kv_groups)
         full_v = _repeat_kv(full_v, self.num_kv_groups)
 
-        # Scaled dot-product attention
+        # Scaled dot-product attention (ensure matching dtypes)
+        compute_dtype = q.dtype
         attn_out = F.scaled_dot_product_attention(
-            q, full_k, full_v, is_causal=(current_len == L),
+            q, full_k.to(compute_dtype), full_v.to(compute_dtype),
+            is_causal=(current_len == L),
         )
 
         # Reshape back and project
