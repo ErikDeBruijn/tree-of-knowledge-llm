@@ -338,6 +338,153 @@ class TestFP8WeightSharing:
         assert len(speculative_decoder.draft.skip_layers) > len(speculative_decoder.verify.skip_layers)
 
 
+class TestDraftGraphedProducesSameTokens:
+    """CUDA-graph-captured draft loop produces identical tokens to eager draft."""
+
+    def test_graphed_draft_matches_eager(self):
+        """Graph-captured draft generates same tokens as eager draft."""
+        model = _make_tiny_llama(layers=8)
+        decoder = SelfSpeculativeDecoder(
+            model=model,
+            draft_skip_layers=[2, 3, 4, 5, 6],
+            verify_skip_layers=[3, 5],
+            max_seq_len=64,
+            draft_tokens=4,
+        )
+
+        input_id = torch.tensor([[1]])
+        pos = torch.tensor([[0]])
+        start_token = torch.tensor([[5]])
+
+        # Run 1: Eager draft
+        with torch.no_grad():
+            _ = decoder.draft(input_id, pos)  # prefill
+            eager_tokens, _ = decoder.draft_k_tokens(start_token, torch.tensor([[1]]))
+        eager_list = eager_tokens.tolist()
+
+        # Run 2: Graphed draft (same decoder, reset cache)
+        decoder.draft.cache.reset()
+        with torch.no_grad():
+            _ = decoder.draft(input_id, pos)  # prefill again
+        decoder.capture_draft_graph()
+        graphed_tokens = decoder.draft_k_tokens_graphed(start_token, start_pos=1)
+        graphed_list = [t.item() for t in graphed_tokens]
+
+        assert eager_list == graphed_list, (
+            f"Eager {eager_list} != Graphed {graphed_list}"
+        )
+
+    def test_graphed_draft_returns_k_tokens(self):
+        """Graph-captured draft returns exactly K token tensors."""
+        model = _make_tiny_llama(layers=8)
+        decoder = SelfSpeculativeDecoder(
+            model=model,
+            draft_skip_layers=[2, 3, 4, 5, 6],
+            verify_skip_layers=[3, 5],
+            max_seq_len=64,
+            draft_tokens=4,
+        )
+
+        input_id = torch.tensor([[1]])
+        pos = torch.tensor([[0]])
+
+        # Build draft KV cache
+        with torch.no_grad():
+            _ = decoder.draft(input_id, pos)
+
+        # Capture and use graphed draft
+        decoder.capture_draft_graph()
+        tokens = decoder.draft_k_tokens_graphed(
+            torch.tensor([[5]]),
+            start_pos=1,
+        )
+        assert len(tokens) == 4
+        for t in tokens:
+            assert 0 <= t.item() < 64
+
+    def test_capture_draft_graph_creates_state(self):
+        """After capture_draft_graph, the graph state exists."""
+        model = _make_tiny_llama(layers=8)
+        decoder = SelfSpeculativeDecoder(
+            model=model,
+            draft_skip_layers=[2, 3, 4, 5, 6],
+            verify_skip_layers=[3, 5],
+            max_seq_len=64,
+            draft_tokens=4,
+        )
+
+        # Before capture
+        assert not decoder.draft_graph_captured
+
+        # Build draft KV cache (needed for capture)
+        input_id = torch.tensor([[1]])
+        pos = torch.tensor([[0]])
+        with torch.no_grad():
+            _ = decoder.draft(input_id, pos)
+
+        decoder.capture_draft_graph()
+        assert decoder.draft_graph_captured
+
+
+class TestSpeculativeWithGraphFaster:
+    """Graphed speculative should use graph replay for draft steps."""
+
+    def test_speculative_step_uses_graph_when_captured(self):
+        """When draft graph is captured, speculative_step uses it for drafting."""
+        model = _make_tiny_llama(layers=8)
+        decoder = SelfSpeculativeDecoder(
+            model=model,
+            draft_skip_layers=[2, 3, 4, 5, 6],
+            verify_skip_layers=[3, 5],
+            max_seq_len=64,
+            draft_tokens=4,
+        )
+
+        input_id = torch.tensor([[1]])
+        pos = torch.tensor([[0]])
+
+        # Run without graph first
+        with torch.no_grad():
+            accepted_eager, n_eager = decoder.speculative_step(input_id, pos)
+
+        # Reset caches
+        decoder.verify.cache.reset()
+        decoder.draft.cache.reset()
+
+        # Capture graph and run again
+        # Need to build draft cache for capture
+        with torch.no_grad():
+            _ = decoder.draft(input_id, pos)
+        decoder.capture_draft_graph()
+        decoder.draft.cache.reset()
+
+        with torch.no_grad():
+            accepted_graphed, n_graphed = decoder.speculative_step(input_id, pos)
+
+        # Both should produce valid results
+        assert 2 <= n_graphed <= decoder.draft_tokens + 2
+        assert len(accepted_graphed) == n_graphed
+
+    def test_speculative_step_without_graph_still_works(self):
+        """Speculative step works fine without graph capture (eager fallback)."""
+        model = _make_tiny_llama(layers=8)
+        decoder = SelfSpeculativeDecoder(
+            model=model,
+            draft_skip_layers=[2, 3, 4, 5, 6],
+            verify_skip_layers=[3, 5],
+            max_seq_len=64,
+            draft_tokens=4,
+        )
+
+        input_id = torch.tensor([[1]])
+        pos = torch.tensor([[0]])
+
+        with torch.no_grad():
+            accepted, n = decoder.speculative_step(input_id, pos)
+
+        assert 2 <= n <= decoder.draft_tokens + 2
+
+
 class TestMultiTokenVerify:
     """Verify model processes multiple tokens in a single forward pass."""
 

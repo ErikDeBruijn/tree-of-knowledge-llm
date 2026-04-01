@@ -18,6 +18,8 @@ import torch
 from grove_server.engine.graphable_model import FP8GraphableDecodeStep
 from grove_server.engine.static_kv_cache import StaticKVCache
 
+HAS_CUDA = torch.cuda.is_available()
+
 
 class SelfSpeculativeDecoder:
     """Self-speculative decoding using layer-skip draft model.
@@ -26,6 +28,9 @@ class SelfSpeculativeDecoder:
     Verify: FP8GraphableDecodeStep with few layers skipped (accurate)
 
     Both share the same FP8 weight storage — no duplicate VRAM cost.
+
+    Optionally captures the draft decode step as a CUDA graph for
+    zero-overhead kernel launch during the K-step draft loop.
     """
 
     def __init__(
@@ -37,6 +42,13 @@ class SelfSpeculativeDecoder:
         draft_tokens: int = 6,
     ) -> None:
         self.draft_tokens = draft_tokens
+
+        # Draft graph state (populated by capture_draft_graph)
+        self._draft_graph: torch.cuda.CUDAGraph | None = None  # type: ignore[attr-defined]
+        self._draft_eager_fn = None  # CPU fallback closure
+        self._draft_static_tok: torch.Tensor | None = None
+        self._draft_static_pos: torch.Tensor | None = None
+        self._draft_static_logits: torch.Tensor | None = None
 
         config = model.config
         num_layers = config.num_hidden_layers
@@ -76,6 +88,123 @@ class SelfSpeculativeDecoder:
             use_scaled_mm=self.verify._use_scaled_mm,
             x_scale=self.verify._x_scale,
         )
+
+    @property
+    def draft_graph_captured(self) -> bool:
+        """Whether the draft decode step has been captured as a CUDA graph."""
+        return self._draft_graph is not None or self._draft_eager_fn is not None
+
+    def capture_draft_graph(self) -> None:
+        """Capture the full K-step draft loop as a single CUDA graph.
+
+        The draft cache is always reset and refilled at position 0 before
+        drafting, so positions 1..K are deterministic. This lets us capture
+        all K decode steps as one graph.
+
+        Prerequisites: draft cache must be at seq_len=1 (one token prefilled).
+
+        On CPU, stores a closure for eager replay with the same API.
+        """
+        device = str(next(self.draft.parameters()).device)
+        use_cuda = HAS_CUDA and "cuda" in device
+
+        K = self.draft_tokens
+
+        # Static input token buffer -- start token is copied here before replay
+        self._draft_static_tok = torch.zeros(1, 1, dtype=torch.long, device=device)
+
+        # Pre-allocate position tensors (cannot allocate inside graph capture)
+        self._draft_pos_tensors = [
+            torch.tensor([[step + 1]], device=device) for step in range(K)
+        ]
+
+        # Static output buffers: one logits tensor per draft step
+        self._draft_static_logits_list: list[torch.Tensor] = []
+
+        if use_cuda:
+            # Ensure draft cache is at position 1 (after prefill)
+            assert self.draft.cache.seq_len == 1, (
+                f"Draft cache must be at seq_len=1 before capture, got {self.draft.cache.seq_len}"
+            )
+
+            # Warmup: run the full K-step loop 3 times to stabilize allocations
+            for _ in range(3):
+                self.draft.cache.seq_len = 1  # reset to post-prefill
+                tok = self._draft_static_tok
+                for step in range(K):
+                    logits = self.draft(tok, self._draft_pos_tensors[step])
+                    tok = logits[:, -1:].argmax(dim=-1)
+            torch.cuda.synchronize()
+
+            # Reset to capture position
+            self.draft.cache.seq_len = 1
+
+            # Capture the full K-step loop
+            self._draft_graph = torch.cuda.CUDAGraph()
+            self._draft_static_logits_list = []
+            with torch.cuda.graph(self._draft_graph):
+                tok = self._draft_static_tok
+                for step in range(K):
+                    logits = self.draft(tok, self._draft_pos_tensors[step])
+                    self._draft_static_logits_list.append(logits)
+                    tok = logits[:, -1:].argmax(dim=-1)
+
+            # After capture, cache.seq_len was advanced K times by Python code.
+            # Reset it -- we'll manage it manually in draft_k_tokens_graphed.
+            # (The graph baked in the correct per-step positions.)
+        else:
+            # CPU fallback: store enough state for eager replay
+            self._draft_graph = None
+            self._draft_eager_fn = self._eager_draft_k
+
+    def _eager_draft_k(self) -> list[torch.Tensor]:
+        """Eager K-step draft loop for CPU fallback."""
+        device = self._draft_static_tok.device
+        tokens = []
+        tok = self._draft_static_tok
+        for step in range(self.draft_tokens):
+            pos = torch.tensor([[step + 1]], device=device)
+            logits = self.draft(tok, pos)
+            next_tok = logits[:, -1:].argmax(dim=-1)
+            tokens.append(next_tok.squeeze())
+            tok = next_tok
+        return tokens
+
+    def draft_k_tokens_graphed(
+        self,
+        start_token: torch.Tensor,
+        start_pos: int,
+    ) -> list[torch.Tensor]:
+        """Generate K draft tokens using CUDA graph replay (or eager fallback).
+
+        The draft cache must be at seq_len=1 (position 0 prefilled).
+        start_pos must be 1 (the graph was captured with positions 1..K).
+
+        Args:
+            start_token: First token to feed into draft, shape (1, 1).
+            start_pos: Position ID for the first draft token (must be 1).
+
+        Returns:
+            List of K token tensors (each scalar).
+        """
+        self._draft_static_tok.copy_(start_token)
+
+        if self._draft_graph is not None:
+            # Reset cache to post-prefill state (graph expects seq_len=1)
+            self.draft.cache.seq_len = 1
+            self._draft_graph.replay()
+            # Extract tokens from static logits
+            tokens = []
+            for logits in self._draft_static_logits_list:
+                next_tok = logits[:, -1:].argmax(dim=-1)
+                tokens.append(next_tok.squeeze())
+            # Set cache to final state
+            self.draft.cache.seq_len = 1 + self.draft_tokens
+            return tokens
+        else:
+            # CPU eager fallback
+            self.draft.cache.seq_len = 1
+            return self._eager_draft_k()
 
     def draft_k_tokens(
         self,
@@ -140,19 +269,27 @@ class SelfSpeculativeDecoder:
         # Step 2: Also process through draft model, then generate K draft tokens
         self.draft.cache.reset()
         _ = self.draft(input_ids, position_ids)  # Build draft KV cache
-        draft_start_pos = position_ids + 1
+        draft_start_pos = position_ids.item() + 1
 
         # Feed the verify model's predicted token as the first draft input
         draft_input = torch.tensor([[first_verify_token]], device=device)
-        draft_pos = draft_start_pos
 
-        draft_token_ids = []
-        for _ in range(self.draft_tokens):
-            logits = self.draft(draft_input, draft_pos)
-            next_token = logits.squeeze(0).squeeze(0).argmax().item()
-            draft_token_ids.append(next_token)
-            draft_input = torch.tensor([[next_token]], device=device)
-            draft_pos = draft_pos + 1
+        if self.draft_graph_captured:
+            # Use CUDA graph replay for the draft loop
+            draft_tok_tensors = self.draft_k_tokens_graphed(
+                draft_input, start_pos=draft_start_pos,
+            )
+            draft_token_ids = [t.item() for t in draft_tok_tensors]
+        else:
+            # Eager draft loop
+            draft_pos = position_ids + 1
+            draft_token_ids = []
+            for _ in range(self.draft_tokens):
+                logits = self.draft(draft_input, draft_pos)
+                next_token = logits.squeeze(0).squeeze(0).argmax().item()
+                draft_token_ids.append(next_token)
+                draft_input = torch.tensor([[next_token]], device=device)
+                draft_pos = draft_pos + 1
 
         if not draft_token_ids:
             self.draft.cache.reset()

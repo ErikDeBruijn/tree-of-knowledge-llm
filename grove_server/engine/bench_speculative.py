@@ -104,8 +104,13 @@ def bench_sequential(model, tokenizer, device, dtype):
     return tps
 
 
-def bench_speculative(model, tokenizer, device, dtype, draft_skip, k, label):
-    """Speculative decode benchmark."""
+def bench_speculative(model, tokenizer, device, dtype, draft_skip, k, label,
+                      use_draft_graph: bool = False):
+    """Speculative decode benchmark.
+
+    Args:
+        use_draft_graph: If True, capture draft loop as CUDA graph before benchmarking.
+    """
     decoder = SelfSpeculativeDecoder(
         model=model,
         draft_skip_layers=draft_skip,
@@ -144,6 +149,19 @@ def bench_speculative(model, tokenizer, device, dtype, draft_skip, k, label):
             next_token = accepted[-1].item()
             pos_val += n
             total_warmup += n
+
+    # Capture draft graph after warmup (KV cache is populated)
+    if use_draft_graph:
+        # Build a fresh draft cache entry for capture
+        decoder.draft.cache.reset()
+        with torch.no_grad():
+            _ = decoder.draft(
+                torch.tensor([[next_token]], device=device),
+                torch.tensor([[0]], device=device),
+            )
+        decoder.capture_draft_graph()
+        decoder.draft.cache.reset()
+        print(f"    Draft graph captured")
 
     # Benchmark
     torch.cuda.synchronize()
@@ -207,20 +225,42 @@ def main():
         draft_skip_20, k=6, label="Spec(20-skip, K=6)",
     )
 
-    print("\n3. Self-speculative: draft=24-skip, K=8")
+    print("\n3. Self-speculative + CUDA graph draft: draft=20-skip, K=6")
     model3 = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME, torch_dtype=dtype, device_map=device,
     )
-    spec_24_8 = bench_speculative(
+    spec_20_6_graph = bench_speculative(
         model3, tokenizer, device, dtype,
+        draft_skip_20, k=6, label="Spec(20-skip, K=6, graphed)",
+        use_draft_graph=True,
+    )
+
+    print("\n4. Self-speculative: draft=24-skip, K=8")
+    model4 = AutoModelForCausalLM.from_pretrained(
+        MODEL_NAME, torch_dtype=dtype, device_map=device,
+    )
+    spec_24_8 = bench_speculative(
+        model4, tokenizer, device, dtype,
         draft_skip_24, k=8, label="Spec(24-skip, K=8)",
+    )
+
+    print("\n5. Self-speculative + CUDA graph draft: draft=24-skip, K=8")
+    model5 = AutoModelForCausalLM.from_pretrained(
+        MODEL_NAME, torch_dtype=dtype, device_map=device,
+    )
+    spec_24_8_graph = bench_speculative(
+        model5, tokenizer, device, dtype,
+        draft_skip_24, k=8, label="Spec(24-skip, K=8, graphed)",
+        use_draft_graph=True,
     )
 
     print("\n" + "=" * 60)
     print("Summary:")
-    print(f"  Baseline:          {baseline:.1f} tok/s")
-    print(f"  Spec(20-skip,K=6): {spec_20_6:.1f} tok/s ({spec_20_6/baseline:.2f}x)")
-    print(f"  Spec(24-skip,K=8): {spec_24_8:.1f} tok/s ({spec_24_8/baseline:.2f}x)")
+    print(f"  Baseline:                    {baseline:.1f} tok/s")
+    print(f"  Spec(20-skip,K=6):           {spec_20_6:.1f} tok/s ({spec_20_6/baseline:.2f}x)")
+    print(f"  Spec(20-skip,K=6,graphed):   {spec_20_6_graph:.1f} tok/s ({spec_20_6_graph/baseline:.2f}x)")
+    print(f"  Spec(24-skip,K=8):           {spec_24_8:.1f} tok/s ({spec_24_8/baseline:.2f}x)")
+    print(f"  Spec(24-skip,K=8,graphed):   {spec_24_8_graph:.1f} tok/s ({spec_24_8_graph/baseline:.2f}x)")
     print("=" * 60)
 
 
