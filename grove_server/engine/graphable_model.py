@@ -15,6 +15,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from grove_server.engine.fp8_utils import fp8_available
 from grove_server.engine.static_kv_cache import StaticKVCache
 
 
@@ -206,6 +207,169 @@ class GraphableDecodeStep(nn.Module):
         residual = hidden_states
         hidden_states = layer.post_attention_layernorm(hidden_states)
         hidden_states = layer.mlp(hidden_states)
+        hidden_states = residual + hidden_states
+
+        return hidden_states
+
+
+class FP8GraphableDecodeStep(GraphableDecodeStep):
+    """GraphableDecodeStep with FP8 weight storage for faster matmuls.
+
+    Pre-quantizes all linear layer weights to float8_e4m3fn at init.
+    Calls torch._scaled_mm directly in the forward pass — no nn.Module overhead.
+
+    Adapter, gate, and bridge weights are never touched (stay BF16).
+    """
+
+    def __init__(
+        self,
+        model: nn.Module,
+        static_cache: StaticKVCache,
+        max_seq_len: int,
+    ) -> None:
+        super().__init__(model, static_cache, max_seq_len)
+
+        if not fp8_available():
+            # Store weights as FP8 anyway (dequant fallback at forward time)
+            pass
+
+        # Pre-quantize all linear weights: key -> (weight_fp8, scale_w)
+        # weight_fp8 stored as (in_features, out_features) for cuBLAS column-major
+        self.fp8_weights: dict[str, tuple[torch.Tensor, torch.Tensor]] = {}
+        self._use_scaled_mm = fp8_available()
+        # Pre-allocate fixed input scale to avoid tensor creation in forward pass
+        device = next(model.parameters()).device
+        self._x_scale = torch.tensor(1.0, dtype=torch.float32, device=device)
+        self._precompute_fp8_weights()
+
+    def _precompute_fp8_weights(self) -> None:
+        """Convert all linear projection weights to FP8 once at init.
+
+        Stores weights as (in_features, out_features) — the transpose of
+        nn.Linear's (out_features, in_features) layout. This way _scaled_mm
+        sees the second argument as column-major (K, N), which cuBLAS requires.
+        """
+        fp8_max = 448.0  # E4M3 max representable value
+
+        for idx, layer in enumerate(self.model.model.layers):
+            # Attention projections
+            for proj_name in ("q_proj", "k_proj", "v_proj", "o_proj"):
+                proj = getattr(layer.self_attn, proj_name)
+                w = proj.weight.data  # (out_features, in_features)
+                amax = w.abs().amax()
+                scale = (amax / fp8_max).float()
+                scale = torch.where(scale > 0, scale, torch.ones_like(scale))
+                # Store as (in, out) for _scaled_mm column-major requirement
+                w_t = w.float().t().contiguous() / scale
+                w_fp8 = w_t.to(torch.float8_e4m3fn)
+                self.fp8_weights[f"{idx}.attn.{proj_name}"] = (w_fp8, scale)
+
+            # MLP projections
+            for proj_name in ("gate_proj", "up_proj", "down_proj"):
+                proj = getattr(layer.mlp, proj_name)
+                w = proj.weight.data
+                amax = w.abs().amax()
+                scale = (amax / fp8_max).float()
+                scale = torch.where(scale > 0, scale, torch.ones_like(scale))
+                w_t = w.float().t().contiguous() / scale
+                w_fp8 = w_t.to(torch.float8_e4m3fn)
+                self.fp8_weights[f"{idx}.mlp.{proj_name}"] = (w_fp8, scale)
+
+    def _fp8_linear(self, x: torch.Tensor, key: str) -> torch.Tensor:
+        """Fast FP8 matmul: x @ W^T using pre-quantized weights.
+
+        Uses torch._scaled_mm when available (Hopper/Blackwell),
+        otherwise dequantizes to BF16 for standard matmul.
+
+        Args:
+            x: Input tensor (M, K) in BF16.
+            key: Weight key like "0.attn.q_proj".
+
+        Returns:
+            Output tensor (M, N) in BF16.
+        """
+        w_fp8, w_scale = self.fp8_weights[key]
+
+        if self._use_scaled_mm:
+            # Fixed input scale — avoids expensive abs().amax() reduction at B=1.
+            # BF16 dynamic range is narrow enough that scale=1.0 works.
+            x_fp8 = x.to(torch.float8_e4m3fn)
+            # w_fp8 is already (K, N) from _precompute — column-major for cuBLAS
+            out = torch._scaled_mm(
+                x_fp8,
+                w_fp8,
+                scale_a=self._x_scale,
+                scale_b=w_scale,
+                out_dtype=torch.bfloat16,
+            )
+            return out
+        else:
+            # Dequant fallback for CPU / non-FP8 hardware
+            # w_fp8 is (K, N) = (in, out), need (out, in) for F.linear
+            w_bf16 = w_fp8.t().to(torch.bfloat16) * w_scale.to(torch.bfloat16)
+            return F.linear(x, w_bf16)
+
+    def _run_layer(
+        self,
+        layer_idx: int,
+        layer: nn.Module,
+        hidden_states: torch.Tensor,
+        position_embeddings: tuple[torch.Tensor, torch.Tensor],
+    ) -> torch.Tensor:
+        """Run one transformer layer using FP8 matmuls for all linear projections."""
+        residual = hidden_states
+        hidden_states = layer.input_layernorm(hidden_states)
+
+        B, L, D = hidden_states.shape
+        flat = hidden_states.reshape(-1, D)
+
+        # --- Self-attention with FP8 projections ---
+        q = self._fp8_linear(flat, f"{layer_idx}.attn.q_proj").reshape(B, L, -1)
+        k = self._fp8_linear(flat, f"{layer_idx}.attn.k_proj").reshape(B, L, -1)
+        v = self._fp8_linear(flat, f"{layer_idx}.attn.v_proj").reshape(B, L, -1)
+
+        q = q.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
+        k = k.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        v = v.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
+
+        cos, sin = position_embeddings
+        q, k = _apply_rotary_pos_emb(q, k, cos, sin)
+
+        self.cache.update(layer_idx, k, v)
+
+        full_k_cache, full_v_cache = self.cache.cache[layer_idx]
+        current_len = self.cache.seq_len + L
+        full_k = full_k_cache[:, :, :current_len, :]
+        full_v = full_v_cache[:, :, :current_len, :]
+
+        full_k = _repeat_kv(full_k, self.num_kv_groups)
+        full_v = _repeat_kv(full_v, self.num_kv_groups)
+
+        compute_dtype = q.dtype
+        attn_out = F.scaled_dot_product_attention(
+            q, full_k.to(compute_dtype), full_v.to(compute_dtype),
+            is_causal=(current_len == L),
+        )
+
+        attn_out = attn_out.transpose(1, 2).reshape(B, L, self.num_heads * self.head_dim)
+        attn_flat = attn_out.reshape(-1, attn_out.size(-1))
+        attn_out = self._fp8_linear(attn_flat, f"{layer_idx}.attn.o_proj").reshape(B, L, -1)
+
+        hidden_states = residual + attn_out
+
+        # --- MLP with FP8 projections ---
+        residual = hidden_states
+        hidden_states = layer.post_attention_layernorm(hidden_states)
+        B2, L2, D2 = hidden_states.shape
+        mlp_flat = hidden_states.reshape(-1, D2)
+
+        gate = self._fp8_linear(mlp_flat, f"{layer_idx}.mlp.gate_proj")
+        up = self._fp8_linear(mlp_flat, f"{layer_idx}.mlp.up_proj")
+        # SiLU activation on gate, element-wise multiply with up
+        hidden_states = F.silu(gate) * up
+        mlp_flat2 = hidden_states.reshape(-1, hidden_states.size(-1))
+        hidden_states = self._fp8_linear(mlp_flat2, f"{layer_idx}.mlp.down_proj").reshape(B2, L2, -1)
+
         hidden_states = residual + hidden_states
 
         return hidden_states

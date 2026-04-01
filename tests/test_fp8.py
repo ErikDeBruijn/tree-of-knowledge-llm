@@ -177,3 +177,167 @@ class TestFP8Availability:
             assert not isinstance(model.layer1, FP8Linear)
         else:
             pytest.skip("FP8 is available on this hardware; fallback not tested")
+
+
+class TestFP8GraphableDecodeStep:
+    """Test FP8GraphableDecodeStep with pre-quantized weights."""
+
+    def _make_tiny_llama(self, hidden=128, heads=4, kv_heads=2, layers=2, vocab=64):
+        """Build a minimal Llama-like model for testing."""
+        from unittest.mock import MagicMock
+
+        class MiniMLP(nn.Module):
+            def __init__(self, h):
+                super().__init__()
+                self.gate_proj = nn.Linear(h, h * 2, bias=False)
+                self.up_proj = nn.Linear(h, h * 2, bias=False)
+                self.down_proj = nn.Linear(h * 2, h, bias=False)
+                self.act_fn = nn.SiLU()
+
+            def forward(self, x):
+                return self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
+
+        class MiniAttn(nn.Module):
+            def __init__(self, h, nh, nkv):
+                super().__init__()
+                self.q_proj = nn.Linear(h, nh * (h // nh), bias=False)
+                self.k_proj = nn.Linear(h, nkv * (h // nh), bias=False)
+                self.v_proj = nn.Linear(h, nkv * (h // nh), bias=False)
+                self.o_proj = nn.Linear(nh * (h // nh), h, bias=False)
+
+        class MiniLayer(nn.Module):
+            def __init__(self, h, nh, nkv):
+                super().__init__()
+                self.self_attn = MiniAttn(h, nh, nkv)
+                self.mlp = MiniMLP(h)
+                self.input_layernorm = nn.RMSNorm(h)
+                self.post_attention_layernorm = nn.RMSNorm(h)
+
+        class MiniModel(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.embed_tokens = nn.Embedding(vocab, hidden)
+                self.layers = nn.ModuleList(
+                    [MiniLayer(hidden, heads, kv_heads) for _ in range(layers)]
+                )
+                self.norm = nn.RMSNorm(hidden)
+                self.rotary_emb = self._make_rotary(hidden // heads)
+
+            def _make_rotary(self, head_dim):
+                """Return a callable that produces (cos, sin) given (x, pos)."""
+                def rotary_emb(x, position_ids):
+                    B, L = position_ids.shape
+                    # Simple identity-like rotary for testing
+                    cos = torch.ones(B, L, head_dim, device=x.device, dtype=x.dtype)
+                    sin = torch.zeros(B, L, head_dim, device=x.device, dtype=x.dtype)
+                    return cos, sin
+                return rotary_emb
+
+        class MiniCausalLM(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.model = MiniModel()
+                self.lm_head = nn.Linear(hidden, vocab, bias=False)
+                self.config = MagicMock()
+                self.config.num_attention_heads = heads
+                self.config.num_key_value_heads = kv_heads
+                self.config.head_dim = hidden // heads
+                self.config.num_hidden_layers = layers
+
+        torch.manual_seed(42)
+        return MiniCausalLM().to(dtype=torch.bfloat16)
+
+    def test_fp8_graphable_init_precomputes_weights(self):
+        """FP8GraphableDecodeStep pre-quantizes all 7 projections per layer."""
+        from grove_server.engine.graphable_model import FP8GraphableDecodeStep
+        from grove_server.engine.static_kv_cache import StaticKVCache
+
+        model = self._make_tiny_llama(layers=2)
+        cache = StaticKVCache(
+            num_layers=2, num_heads=2, head_dim=32,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+        )
+        step = FP8GraphableDecodeStep(model, cache, max_seq_len=32)
+
+        # 7 projections per layer * 2 layers = 14 entries
+        assert len(step.fp8_weights) == 14
+        # Check weight dtype
+        for key, (w_fp8, scale) in step.fp8_weights.items():
+            assert w_fp8.dtype == torch.float8_e4m3fn, f"{key} not FP8"
+            assert scale.dtype == torch.float32, f"{key} scale not float32"
+
+    def test_fp8_graphable_matches_bf16(self):
+        """FP8 graphable output close to BF16 graphable output."""
+        from grove_server.engine.graphable_model import (
+            FP8GraphableDecodeStep,
+            GraphableDecodeStep,
+        )
+        from grove_server.engine.static_kv_cache import StaticKVCache
+
+        model = self._make_tiny_llama(layers=2)
+        cache_bf16 = StaticKVCache(
+            num_layers=2, num_heads=2, head_dim=32,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+        )
+        cache_fp8 = StaticKVCache(
+            num_layers=2, num_heads=2, head_dim=32,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+        )
+
+        bf16_step = GraphableDecodeStep(model, cache_bf16, max_seq_len=32)
+        fp8_step = FP8GraphableDecodeStep(model, cache_fp8, max_seq_len=32)
+
+        input_ids = torch.tensor([[1]])
+        pos_ids = torch.tensor([[0]])
+
+        with torch.no_grad():
+            bf16_logits = bf16_step(input_ids, pos_ids)
+            fp8_logits = fp8_step(input_ids, pos_ids)
+
+        assert bf16_logits.shape == fp8_logits.shape
+        # FP8 quantization introduces ~1% error
+        torch.testing.assert_close(fp8_logits, bf16_logits, rtol=0.05, atol=0.5)
+
+    def test_fp8_linear_direct(self):
+        """Direct _fp8_linear matches regular linear within tolerance."""
+        from grove_server.engine.graphable_model import FP8GraphableDecodeStep
+        from grove_server.engine.static_kv_cache import StaticKVCache
+
+        model = self._make_tiny_llama(layers=1)
+        cache = StaticKVCache(
+            num_layers=1, num_heads=2, head_dim=32,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+        )
+        step = FP8GraphableDecodeStep(model, cache, max_seq_len=32)
+
+        torch.manual_seed(99)
+        x = torch.randn(1, 128, dtype=torch.bfloat16)
+
+        # Compare FP8 path vs original weight matmul
+        q_proj = model.model.layers[0].self_attn.q_proj
+        ref = q_proj(x)
+        fp8_out = step._fp8_linear(x, "0.attn.q_proj")
+
+        assert fp8_out.shape == ref.shape
+        torch.testing.assert_close(fp8_out, ref, rtol=0.05, atol=0.1)
+
+    def test_fp8_graphable_does_not_quantize_original_model(self):
+        """Original model weights remain BF16 after FP8GraphableDecodeStep init."""
+        from grove_server.engine.graphable_model import FP8GraphableDecodeStep
+        from grove_server.engine.static_kv_cache import StaticKVCache
+
+        model = self._make_tiny_llama(layers=1)
+        cache = StaticKVCache(
+            num_layers=1, num_heads=2, head_dim=32,
+            max_seq_len=32, batch_size=1,
+            dtype=torch.bfloat16, device="cpu",
+        )
+        FP8GraphableDecodeStep(model, cache, max_seq_len=32)
+
+        # Original model weights should still be BF16
+        w = model.model.layers[0].self_attn.q_proj.weight
+        assert w.dtype == torch.bfloat16

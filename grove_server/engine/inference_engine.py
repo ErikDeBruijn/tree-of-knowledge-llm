@@ -9,7 +9,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from grove_server.engine.cuda_graph import CUDAGraphRunner
-from grove_server.engine.graphable_model import GraphableDecodeStep
+from grove_server.engine.fp8_utils import fp8_available
+from grove_server.engine.graphable_model import FP8GraphableDecodeStep, GraphableDecodeStep
 from grove_server.engine.layer_executor import execute_layer
 from grove_server.engine.static_kv_cache import StaticKVCache
 from grove_server.models.expert import Expert
@@ -80,9 +81,14 @@ class InferenceEngine:
             dtype=next(self.model.parameters()).dtype,
             device=self.device,
         )
-        self._graphable = GraphableDecodeStep(
-            self.model, self._static_cache, max_seq_len=max_seq_len
-        )
+        if fp8_available():
+            self._graphable = FP8GraphableDecodeStep(
+                self.model, self._static_cache, max_seq_len=max_seq_len
+            )
+        else:
+            self._graphable = GraphableDecodeStep(
+                self.model, self._static_cache, max_seq_len=max_seq_len
+            )
         self._graph_runner = CUDAGraphRunner(device=self.device)
 
     def _invalidate_graph(self) -> None:

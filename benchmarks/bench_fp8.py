@@ -20,7 +20,7 @@ import time
 import torch
 
 from grove_server.engine.fp8_utils import FP8Linear, fp8_available, quantize_model_to_fp8
-from grove_server.engine.graphable_model import GraphableDecodeStep
+from grove_server.engine.graphable_model import FP8GraphableDecodeStep, GraphableDecodeStep
 from grove_server.engine.static_kv_cache import StaticKVCache
 
 
@@ -155,6 +155,112 @@ def bench_decode(
     return tps, vram
 
 
+def bench_decode_fp8_direct(
+    model,
+    tokenizer,
+    prompt: str,
+    n_tokens: int,
+    device: str,
+    use_cuda_graph: bool = True,
+) -> tuple[float, float]:
+    """Benchmark decode tok/s with FP8GraphableDecodeStep (direct _scaled_mm).
+
+    Returns (tok_per_sec, vram_mb).
+    """
+    config = model.config
+    num_kv_heads = getattr(config, "num_key_value_heads", config.num_attention_heads)
+    head_dim = config.hidden_size // config.num_attention_heads
+    max_seq = 512
+
+    cache = StaticKVCache(
+        num_layers=config.num_hidden_layers,
+        num_heads=num_kv_heads,
+        head_dim=head_dim,
+        max_seq_len=max_seq,
+        batch_size=1,
+        dtype=torch.bfloat16,
+        device=device,
+    )
+    graphable = FP8GraphableDecodeStep(model, cache, max_seq_len=max_seq)
+
+    input_ids = tokenizer(prompt, return_tensors="pt")["input_ids"].to(device)
+
+    # Prefill
+    cache.reset()
+    with torch.no_grad():
+        pos = torch.arange(input_ids.size(1), device=device).unsqueeze(0)
+        logits = graphable(input_ids, pos)
+        next_token = logits[:, -1:].argmax(dim=-1)
+
+    vram = get_vram_mb()
+
+    if use_cuda_graph:
+        static_tok = next_token.clone()
+        static_pos = torch.tensor([[cache.seq_len]], device=device)
+
+        def decode_step(tok, pos):
+            return graphable(tok, pos)
+
+        for _ in range(3):
+            decode_step(static_tok, static_pos)
+        torch.cuda.synchronize()
+
+        graph = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(graph):
+            static_logits = decode_step(static_tok, static_pos)
+
+        for _ in range(5):
+            static_tok.copy_(next_token)
+            static_pos.fill_(cache.seq_len)
+            graph.replay()
+            next_token = static_logits[:, -1:].argmax(dim=-1)
+            cache.advance(1)
+        torch.cuda.synchronize()
+
+        cache.reset()
+        with torch.no_grad():
+            pos = torch.arange(input_ids.size(1), device=device).unsqueeze(0)
+            graphable(input_ids, pos)
+            next_token = logits[:, -1:].argmax(dim=-1)
+
+        torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        for _ in range(n_tokens):
+            static_tok.copy_(next_token)
+            static_pos.fill_(cache.seq_len)
+            graph.replay()
+            next_token = static_logits[:, -1:].argmax(dim=-1)
+            cache.advance(1)
+        torch.cuda.synchronize()
+        elapsed = time.perf_counter() - t0
+    else:
+        with torch.no_grad():
+            for _ in range(5):
+                pos_i = torch.tensor([[cache.seq_len]], device=device)
+                logits = graphable(next_token, pos_i)
+                next_token = logits[:, -1:].argmax(dim=-1)
+        torch.cuda.synchronize()
+
+        cache.reset()
+        with torch.no_grad():
+            pos = torch.arange(input_ids.size(1), device=device).unsqueeze(0)
+            graphable(input_ids, pos)
+            next_token = logits[:, -1:].argmax(dim=-1)
+
+        torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        with torch.no_grad():
+            for _ in range(n_tokens):
+                pos_i = torch.tensor([[cache.seq_len]], device=device)
+                logits = graphable(next_token, pos_i)
+                next_token = logits[:, -1:].argmax(dim=-1)
+        torch.cuda.synchronize()
+        elapsed = time.perf_counter() - t0
+
+    tps = n_tokens / elapsed
+    return tps, vram
+
+
 def main():
     parser = argparse.ArgumentParser(description="Benchmark FP8 inference")
     parser.add_argument("--model", default="Qwen/Qwen3-8B", help="HF model name")
@@ -173,7 +279,7 @@ def main():
     cap = torch.cuda.get_device_capability(0)
     print(f"GPU: {dev.name}")
     print(f"Compute capability: sm_{cap[0]}{cap[1]}0")
-    print(f"VRAM: {dev.total_mem / 1024**3:.1f} GB")
+    print(f"VRAM: {getattr(dev, 'total_memory', getattr(dev, 'total_mem', 0)) / 1024**3:.1f} GB")
     print(f"FP8 tensor core support: {fp8_available()}")
     print()
 
@@ -226,16 +332,37 @@ def main():
     print(f"  {fp8_tps:.1f} tok/s | VRAM: {fp8_vram:.0f} MB")
     print()
 
+    # --- FP8 direct (pre-quantized weights, no nn.Module wrapper) ---
+    # Reload model fresh for fair comparison
+    del model
+    torch.cuda.synchronize()
+    gc.collect()
+    torch.cuda.empty_cache()
+
+    print(f"Reloading model for FP8 direct benchmark...")
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model, torch_dtype=torch.bfloat16, device_map=args.device
+    )
+
+    print(f"=== FP8 Direct {'+ CUDA Graph' if use_graph else '(eager)'} ===")
+    fp8d_tps, fp8d_vram = bench_decode_fp8_direct(
+        model, tokenizer, args.prompt, args.tokens, args.device, use_graph
+    )
+    print(f"  {fp8d_tps:.1f} tok/s | VRAM: {fp8d_vram:.0f} MB")
+    print()
+
     # --- Summary ---
     print("=" * 50)
     print(f"{'Config':<25} {'tok/s':>8} {'VRAM MB':>10}")
     print("-" * 50)
     print(f"{'BF16':<25} {bf16_tps:>8.1f} {bf16_vram:>10.0f}")
-    print(f"{'FP8':<25} {fp8_tps:>8.1f} {fp8_vram:>10.0f}")
+    print(f"{'FP8 (wrapper)':<25} {fp8_tps:>8.1f} {fp8_vram:>10.0f}")
+    print(f"{'FP8 (direct)':<25} {fp8d_tps:>8.1f} {fp8d_vram:>10.0f}")
     print("-" * 50)
     speedup = fp8_tps / bf16_tps if bf16_tps > 0 else 0
-    vram_ratio = fp8_vram / bf16_vram if bf16_vram > 0 else 0
-    print(f"{'Speedup':<25} {speedup:>8.2f}x {vram_ratio:>9.1f}%")
+    speedup_d = fp8d_tps / bf16_tps if bf16_tps > 0 else 0
+    print(f"{'FP8 wrapper speedup':<25} {speedup:>8.2f}x")
+    print(f"{'FP8 direct speedup':<25} {speedup_d:>8.2f}x")
     print()
 
     if fp8_available():
