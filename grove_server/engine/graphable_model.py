@@ -70,6 +70,39 @@ def _repeat_kv(hidden_states: torch.Tensor, n_rep: int) -> torch.Tensor:
     return hidden_states.reshape(batch, num_kv_heads * n_rep, slen, head_dim)
 
 
+def _fused_qk_norm(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    fused_weight: torch.Tensor,
+    num_q_heads: int,
+    eps: float = 1e-6,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Apply RMSNorm to q and k in a single kernel launch.
+
+    Concatenates q and k on the head dimension, applies RMSNorm with
+    per-head weights, then splits. Each head is normalized independently
+    (RMSNorm reduces over head_dim only), so concatenation is exact.
+
+    Args:
+        q: (B, L, num_q_heads, head_dim)
+        k: (B, L, num_kv_heads, head_dim)
+        fused_weight: (num_q_heads + num_kv_heads, head_dim) — per-head norm weights
+        num_q_heads: Number of query heads (split point)
+        eps: RMSNorm epsilon
+
+    Returns:
+        Normalized (q, k) with same shapes as input.
+    """
+    # Cat on head dim: (B, L, num_q_heads + num_kv_heads, head_dim)
+    qk = torch.cat([q, k], dim=2)
+    # RMSNorm per head: variance over last dim (head_dim)
+    variance = qk.float().pow(2).mean(-1, keepdim=True)
+    qk = qk * torch.rsqrt(variance + eps)
+    qk = (fused_weight * qk).to(q.dtype)
+    # Split back
+    return qk[:, :, :num_q_heads, :], qk[:, :, num_q_heads:, :]
+
+
 class GraphableDecodeStep(nn.Module):
     """Wraps a HF model to produce a static-shape decode step.
 
@@ -103,6 +136,26 @@ class GraphableDecodeStep(nn.Module):
         self.num_kv_heads = config.num_key_value_heads
         self.head_dim = config.head_dim
         self.num_kv_groups = self.num_heads // self.num_kv_heads
+
+        # Pre-compute fused QK norm weights per layer (one kernel instead of two)
+        self._fused_qk_norm_weights: list[torch.Tensor | None] = []
+        self._fused_qk_norm_eps: float = 1e-6
+        for layer in model.model.layers:
+            attn = layer.self_attn
+            if hasattr(attn, "q_norm") and hasattr(attn, "k_norm"):
+                self._fused_qk_norm_eps = attn.q_norm.eps if hasattr(attn.q_norm, "eps") else 1e-6
+                # Concatenate q_norm and k_norm weights: (num_heads + num_kv_heads, head_dim)
+                # -> used as (total_heads, head_dim) RMSNorm weight
+                q_w = attn.q_norm.weight.data  # (head_dim,)
+                k_w = attn.k_norm.weight.data  # (head_dim,)
+                # Expand to per-head weights then cat
+                fused_w = torch.cat([
+                    q_w.unsqueeze(0).expand(self.num_heads, -1),
+                    k_w.unsqueeze(0).expand(self.num_kv_heads, -1),
+                ], dim=0)  # (num_heads + num_kv_heads, head_dim)
+                self._fused_qk_norm_weights.append(fused_w)
+            else:
+                self._fused_qk_norm_weights.append(None)
 
     def forward(
         self,
@@ -189,11 +242,10 @@ class GraphableDecodeStep(nn.Module):
         q = q.view(B, L, self.num_heads, self.head_dim)
         k = k.view(B, L, self.num_kv_heads, self.head_dim)
 
-        # Apply QK norms if present (e.g. Qwen3)
-        if hasattr(attn, "q_norm"):
-            q = attn.q_norm(q)
-        if hasattr(attn, "k_norm"):
-            k = attn.k_norm(k)
+        # Fused QK norm: one RMSNorm kernel over concatenated heads
+        fused_w = self._fused_qk_norm_weights[layer_idx]
+        if fused_w is not None:
+            q, k = _fused_qk_norm(q, k, fused_w, self.num_heads, self._fused_qk_norm_eps)
 
         q = q.transpose(1, 2)
         k = k.transpose(1, 2)
@@ -484,11 +536,10 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         q = q.view(B, L, self.num_heads, self.head_dim)
         k = k.view(B, L, self.num_kv_heads, self.head_dim)
 
-        # Apply QK norms if present (e.g. Qwen3)
-        if hasattr(attn, "q_norm"):
-            q = attn.q_norm(q)
-        if hasattr(attn, "k_norm"):
-            k = attn.k_norm(k)
+        # Fused QK norm: one RMSNorm kernel over concatenated heads
+        fused_w = self._fused_qk_norm_weights[layer_idx]
+        if fused_w is not None:
+            q, k = _fused_qk_norm(q, k, fused_w, self.num_heads, self._fused_qk_norm_eps)
 
         q = q.transpose(1, 2)
         k = k.transpose(1, 2)

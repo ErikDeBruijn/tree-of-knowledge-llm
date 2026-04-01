@@ -433,4 +433,21 @@ def _make_shared_fp8_step(
     # Pre-compute layer tables (string keys + norm weight references)
     step._precompute_layer_tables()
 
+    # Pre-compute fused QK norm weights (same logic as GraphableDecodeStep.__init__)
+    step._fused_qk_norm_weights = []
+    step._fused_qk_norm_eps = 1e-6
+    for layer in model.model.layers:
+        attn = layer.self_attn
+        if hasattr(attn, "q_norm") and hasattr(attn, "k_norm"):
+            step._fused_qk_norm_eps = attn.q_norm.eps if hasattr(attn.q_norm, "eps") else 1e-6
+            q_w = attn.q_norm.weight.data
+            k_w = attn.k_norm.weight.data
+            fused_w = torch.cat([
+                q_w.unsqueeze(0).expand(step.num_heads, -1),
+                k_w.unsqueeze(0).expand(step.num_kv_heads, -1),
+            ], dim=0)
+            step._fused_qk_norm_weights.append(fused_w)
+        else:
+            step._fused_qk_norm_weights.append(None)
+
     return step

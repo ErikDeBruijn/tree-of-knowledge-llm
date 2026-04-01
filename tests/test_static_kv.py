@@ -674,3 +674,101 @@ class TestGraphableMatchesHFLogits:
 
         assert logits.shape == (1, 1, 256)
         assert torch.isfinite(logits).all()
+
+
+# ---------------------------------------------------------------------------
+# Fused QK norm correctness
+# ---------------------------------------------------------------------------
+
+from grove_server.engine.graphable_model import _fused_qk_norm
+
+
+class TestFusedQKNorm:
+    """Fused QK norm must produce identical output to separate q_norm + k_norm."""
+
+    def test_fused_qk_norm_matches_separate(self):
+        """Fused cat+norm+split matches applying q_norm and k_norm individually."""
+        torch.manual_seed(123)
+        B, L, num_q_heads, num_kv_heads, head_dim = 1, 1, 4, 2, 8
+
+        q = torch.randn(B, L, num_q_heads, head_dim)
+        k = torch.randn(B, L, num_kv_heads, head_dim)
+
+        # Create separate norms with distinct weights
+        q_norm = MockRMSNorm(head_dim, eps=1e-6)
+        k_norm = MockRMSNorm(head_dim, eps=1e-6)
+        # Make weights different to test correctness
+        q_norm.weight.data = torch.randn(head_dim)
+        k_norm.weight.data = torch.randn(head_dim)
+
+        # Separate path
+        q_sep = q_norm(q.clone())
+        k_sep = k_norm(k.clone())
+
+        # Fused path: build fused weight
+        fused_w = torch.cat([
+            q_norm.weight.data.unsqueeze(0).expand(num_q_heads, -1),
+            k_norm.weight.data.unsqueeze(0).expand(num_kv_heads, -1),
+        ], dim=0)
+        q_fused, k_fused = _fused_qk_norm(q.clone(), k.clone(), fused_w, num_q_heads, eps=1e-6)
+
+        assert torch.allclose(q_fused, q_sep, atol=1e-5), (
+            f"q max diff: {(q_fused - q_sep).abs().max():.6f}"
+        )
+        assert torch.allclose(k_fused, k_sep, atol=1e-5), (
+            f"k max diff: {(k_fused - k_sep).abs().max():.6f}"
+        )
+
+    def test_fused_qk_norm_same_weights(self):
+        """When q_norm and k_norm share identical weights, fused still matches."""
+        torch.manual_seed(456)
+        B, L, num_q_heads, num_kv_heads, head_dim = 2, 3, 32, 8, 128
+
+        q = torch.randn(B, L, num_q_heads, head_dim)
+        k = torch.randn(B, L, num_kv_heads, head_dim)
+
+        shared_norm = MockRMSNorm(head_dim, eps=1e-6)
+
+        q_sep = shared_norm(q.clone())
+        k_sep = shared_norm(k.clone())
+
+        fused_w = torch.cat([
+            shared_norm.weight.data.unsqueeze(0).expand(num_q_heads, -1),
+            shared_norm.weight.data.unsqueeze(0).expand(num_kv_heads, -1),
+        ], dim=0)
+        q_fused, k_fused = _fused_qk_norm(q.clone(), k.clone(), fused_w, num_q_heads, eps=1e-6)
+
+        assert torch.allclose(q_fused, q_sep, atol=1e-5)
+        assert torch.allclose(k_fused, k_sep, atol=1e-5)
+
+    def test_graphable_with_fused_qk_norm_matches_hf(self):
+        """End-to-end: GraphableDecodeStep with fused QK norm matches HF forward."""
+        config = MockQwen3Config()
+        torch.manual_seed(42)
+        model = MockCausalLMWithQKNorm(config)
+
+        # Make q_norm and k_norm weights different per layer
+        for layer in model.model.layers:
+            layer.self_attn.q_norm.weight.data = torch.randn(config.head_dim)
+            layer.self_attn.k_norm.weight.data = torch.randn(config.head_dim)
+
+        cache = StaticKVCache(
+            num_layers=config.num_hidden_layers,
+            num_heads=config.num_key_value_heads,
+            head_dim=config.head_dim,
+            max_seq_len=128,
+            batch_size=1,
+            dtype=torch.float32,
+            device="cpu",
+        )
+        step = GraphableDecodeStep(model, cache, max_seq_len=128)
+
+        input_ids = torch.tensor([[42]])
+        position_ids = torch.tensor([[0]])
+
+        with torch.no_grad():
+            our_logits = step(input_ids, position_ids)
+            hf_logits = _hf_style_forward(model, input_ids, position_ids)
+
+        max_diff = (our_logits - hf_logits).abs().max().item()
+        assert max_diff < 0.01, f"Fused QK norm diverges from HF: max diff {max_diff:.4f}"
