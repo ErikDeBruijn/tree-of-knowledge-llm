@@ -1,0 +1,4 @@
+# Experiment results contain SHA hashes, hex strings, and model benchmark
+# data that trigger false positives. These are scientific data, not secrets.
+results/publication/
+results/**/*.json
