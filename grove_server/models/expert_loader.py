@@ -1,0 +1,140 @@
+"""Expert loader: reads manifest + safetensors from disk into an Expert."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from safetensors.torch import load_file
+
+from grove_server.models.expert import Expert
+from grove_server.models.manifest import Manifest
+
+
+class LoRAAdapter(nn.Module):
+    """Low-rank adapter: x @ A @ B."""
+
+    def __init__(self, in_dim: int, out_dim: int, rank: int):
+        super().__init__()
+        self.A = nn.Parameter(torch.zeros(in_dim, rank))
+        self.B = nn.Parameter(torch.zeros(rank, out_dim))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return x @ self.A @ self.B
+
+
+class DeltaGate(nn.Module):
+    """Per-layer gate: sigmoid(linear(x))."""
+
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        self.linear = nn.Linear(hidden_size, 1)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return torch.sigmoid(self.linear(x))
+
+
+class BlockBridge(nn.Module):
+    """Cheap surrogate for a full transformer block."""
+
+    def __init__(self, dim: int, rank: int):
+        super().__init__()
+        self.down = nn.Linear(dim, rank, bias=False)
+        self.up = nn.Linear(rank, dim, bias=False)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.up(F.gelu(self.down(x)))
+
+
+def load_expert(
+    expert_dir: Path,
+    total_layers: int = 32,
+    hidden_dim: int = 4096,
+    device: str = "cpu",
+) -> Expert:
+    """Load an expert from a directory containing manifest.json + safetensors.
+
+    Args:
+        expert_dir: Path to directory with manifest.json, adapters.safetensors,
+                    gates.safetensors, and bridge files.
+        total_layers: Total number of layers in the base model.
+        hidden_dim: Hidden dimension of the base model.
+        device: Device to load tensors onto.
+
+    Returns:
+        A fully populated Expert instance.
+
+    Raises:
+        FileNotFoundError: If required files are missing.
+    """
+    expert_dir = Path(expert_dir)
+    manifest = Manifest.from_json(str(expert_dir / "manifest.json"))
+
+    start_layer = manifest.expert_start_layer
+    end_layer = total_layers
+    rank = manifest.adapter_rank
+    skip_layers = set(manifest.skip_layers)
+    bridge_layer_configs = manifest.bridge_layers
+
+    # Determine which layers get adapters + gates
+    active_layers = set()
+    for layer_idx in range(start_layer, end_layer):
+        if layer_idx not in skip_layers:
+            active_layers.add(layer_idx)
+
+    # Load adapter weights
+    adapter_path = expert_dir / "adapters.safetensors"
+    if not adapter_path.exists():
+        raise FileNotFoundError(f"Missing adapter file: {adapter_path}")
+    adapter_weights = load_file(str(adapter_path), device=device)
+
+    # Load gate weights
+    gate_path = expert_dir / "gates.safetensors"
+    if not gate_path.exists():
+        raise FileNotFoundError(f"Missing gate file: {gate_path}")
+    gate_weights = load_file(str(gate_path), device=device)
+
+    # Build adapter modules
+    adapters: dict[int, nn.Module] = {}
+    for layer_idx in active_layers:
+        adapter = LoRAAdapter(hidden_dim, hidden_dim, rank)
+        a_key = f"layer.{layer_idx}.adapter.A"
+        b_key = f"layer.{layer_idx}.adapter.B"
+        adapter.A = nn.Parameter(adapter_weights[a_key])
+        adapter.B = nn.Parameter(adapter_weights[b_key])
+        adapters[layer_idx] = adapter.to(device)
+
+    # Build gate modules
+    gates: dict[int, nn.Module] = {}
+    for layer_idx in active_layers:
+        gate = DeltaGate(hidden_dim)
+        w_key = f"layer.{layer_idx}.gate.linear.weight"
+        b_key = f"layer.{layer_idx}.gate.linear.bias"
+        gate.linear.weight = nn.Parameter(gate_weights[w_key])
+        gate.linear.bias = nn.Parameter(gate_weights[b_key])
+        gates[layer_idx] = gate.to(device)
+
+    # Build bridge modules
+    bridges: dict[int, nn.Module] = {}
+    for layer_idx, cfg in bridge_layer_configs.items():
+        bridge_path = expert_dir / cfg.file
+        if not bridge_path.exists():
+            raise FileNotFoundError(f"Missing bridge file: {bridge_path}")
+        bridge_weights = load_file(str(bridge_path), device=device)
+        bridge = BlockBridge(hidden_dim, cfg.rank)
+        bridge.down.weight = nn.Parameter(bridge_weights["down.weight"])
+        bridge.up.weight = nn.Parameter(bridge_weights["up.weight"])
+        bridges[layer_idx] = bridge.to(device)
+
+    return Expert(
+        name=manifest.name,
+        start_layer=start_layer,
+        end_layer=end_layer,
+        skip_layers=skip_layers,
+        bridge_layers=set(bridge_layer_configs.keys()),
+        adapters=adapters,
+        gates=gates,
+        bridges=bridges,
+    )
