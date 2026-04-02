@@ -62,12 +62,19 @@ class InferenceEngine:
         self._graphable: Optional[GraphableDecodeStep] = None
         self._static_cache: Optional[StaticKVCache] = None
 
-        # Auto-build fast pipeline on CUDA
-        if "cuda" in str(self.device):
+        # Auto-build fast pipeline on CUDA when model is on a single device.
+        # device_map="auto" can split across GPUs, which GraphableDecodeStep
+        # doesn't support (all tensors must be on the same device).
+        if "cuda" in str(self.device) and self._model_on_single_device():
             try:
                 self._build_fast_pipeline()
             except Exception:
                 pass  # Fall back to naive on any build failure
+
+    def _model_on_single_device(self) -> bool:
+        """Check if all model parameters reside on the same device."""
+        devices = {str(p.device) for p in self.model.parameters()}
+        return len(devices) == 1
 
     @property
     def _fast_pipeline_available(self) -> bool:
@@ -108,13 +115,25 @@ class InferenceEngine:
     def _build_fast_pipeline(self, max_seq_len: int = 2048) -> None:
         """Build fast inference pipeline with GraphableDecodeStep + StaticKVCache.
 
-        Tries FP8 first, falls back to BF16 GraphableDecodeStep.
-        Called automatically on CUDA devices, or manually for benchmarks.
+        Uses BF16 GraphableDecodeStep for reliable inference. FP8 is available
+        via _build_graphable_decode for benchmarks that need it.
 
         Args:
             max_seq_len: Maximum sequence length to pre-allocate.
         """
-        self._build_graphable_decode(max_seq_len=max_seq_len)
+        config = self.model.config
+        self._static_cache = StaticKVCache(
+            num_layers=config.num_hidden_layers,
+            num_heads=config.num_key_value_heads,
+            head_dim=getattr(config, 'head_dim', config.hidden_size // config.num_attention_heads),
+            max_seq_len=max_seq_len,
+            batch_size=1,
+            dtype=next(self.model.parameters()).dtype,
+            device=self.device,
+        )
+        self._graphable = GraphableDecodeStep(
+            self.model, self._static_cache, max_seq_len=max_seq_len
+        )
 
     def _invalidate_graph(self) -> None:
         """Invalidate any captured CUDA graph (expert config changed)."""
