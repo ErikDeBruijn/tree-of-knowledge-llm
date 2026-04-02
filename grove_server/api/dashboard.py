@@ -266,6 +266,7 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
   <label>Max tokens <input type="number" id="max-tokens" value="200"></label>
   <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
   <label>Stream <input type="checkbox" id="stream" checked></label>
+  <label>Model <select id="model-select"><option value="qwen3-8b">qwen3-8b (base)</option></select></label>
 </div>
 <div id="chat"></div>
 <div id="input-area">
@@ -279,6 +280,22 @@ const sendBtn = document.getElementById('send');
 const messages = [];
 
 promptEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+
+// Populate model dropdown with loaded experts
+async function loadExperts() {
+  try {
+    const resp = await fetch('/v1/experts');
+    const data = await resp.json();
+    const sel = document.getElementById('model-select');
+    (data.experts || []).forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = 'qwen3-8b:' + name;
+      opt.textContent = 'qwen3-8b:' + name;
+      sel.appendChild(opt);
+    });
+  } catch(e) {}
+}
+loadExperts();
 
 function addMsg(role, content, meta) {
   const div = document.createElement('div');
@@ -304,7 +321,7 @@ async function send() {
   const useStream = document.getElementById('stream').checked;
 
   const body = {
-    model: 'qwen3-8b',
+    model: document.getElementById('model-select').value,
     messages: messages.map(m => ({role: m.role, content: m.content})),
     max_tokens: maxTokens,
     temperature: temperature,
