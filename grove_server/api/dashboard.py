@@ -280,6 +280,7 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
   .tok { display: inline; cursor: default; padding: 1px 0; border-radius: 2px;
          transition: background 0.15s; position: relative; }
   .tok:hover { outline: 1px solid #4fd1c550; }
+  .tok-thinking { color: #8b8fa3; font-style: italic; opacity: 0.7; }
 
   /* Tooltip with layer heatmap */
   .tooltip { display: none; position: fixed; background: #1a2332; border: 1px solid #2d4a6a;
@@ -506,7 +507,15 @@ async function generate() {
       const span = document.createElement('span');
       span.className = 'tok';
       span.textContent = td.token;
-      span.style.background = gateToColor(td, data.experts);
+      // Style thinking tokens differently
+      const isThinkTag = td.token.includes('<think>') || td.token.includes('</think>');
+      if (isThinkTag) {
+        span.style.background = 'rgba(107,127,163,0.3)';
+        span.style.color = '#6b7fa3';
+        span.style.fontStyle = 'italic';
+      } else {
+        span.style.background = gateToColor(td, data.experts);
+      }
       span.addEventListener('mouseenter', e => showTooltip(e, td));
       span.addEventListener('mousemove', e => {
         const x = Math.min(e.clientX + 12, window.innerWidth - 340);
@@ -622,6 +631,9 @@ CHAT_HTML = """<!DOCTYPE html>
          line-height: 1.5; white-space: pre-wrap; }
   .user { background: #1a365d; margin-left: auto; text-align: right; }
   .assistant { background: #1c2e3a; color: #e2e8f0; }
+  .thinking { background: #1a1a2e; color: #8b8fa3; border-left: 3px solid #6b7fa3;
+              padding: 8px 12px; margin-bottom: 8px; font-size: 0.85em;
+              font-style: italic; border-radius: 4px; }
   .meta { font-size: 0.75em; color: #718096; margin-top: 4px; }
   #input-area { display: flex; gap: 8px; }
   #prompt { flex: 1; padding: 10px 14px; background: #151d2b; border: 1px solid #1e2d42;
@@ -642,7 +654,7 @@ CHAT_HTML = """<!DOCTYPE html>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Chat</h1>
 <!-- NAV -->
 <div id="settings">
-  <label>Max tokens <input type="number" id="max-tokens" value="200"></label>
+  <label>Max tokens <input type="number" id="max-tokens" value="500"></label>
   <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
 </div>
 <div id="chat"></div>
@@ -719,6 +731,23 @@ async function send() {
     }
   } catch(e) { fullText = 'Error: ' + e.message; textNode.textContent = fullText; }
   div.classList.remove('streaming');
+  // Parse <think>...</think> blocks and render them visually
+  const thinkMatch = fullText.match(/<think>([\s\S]*?)<\/think>/);
+  if (thinkMatch) {
+    const thinkContent = thinkMatch[1].trim();
+    const responseContent = fullText.replace(/<think>[\s\S]*?<\/think>/, '').trim();
+    div.innerHTML = '';
+    if (thinkContent) {
+      const thinkDiv = document.createElement('div');
+      thinkDiv.className = 'thinking';
+      thinkDiv.textContent = thinkContent;
+      div.appendChild(thinkDiv);
+    }
+    const responseSpan = document.createElement('span');
+    responseSpan.textContent = responseContent;
+    div.appendChild(responseSpan);
+    fullText = responseContent; // for messages history
+  }
   const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
   const tps = tokens > 0 ? (tokens / parseFloat(elapsed)).toFixed(1) : '?';
   const metaDiv = document.createElement('div');

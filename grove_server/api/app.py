@@ -79,7 +79,7 @@ def _format_prompt(messages: list[Message], tokenizer=None) -> str:
             msg_dicts = [{"role": m.role, "content": m.content} for m in messages]
             return tokenizer.apply_chat_template(
                 msg_dicts, tokenize=False, add_generation_prompt=True,
-                enable_thinking=False,  # Qwen3 specific: disable thinking mode
+                enable_thinking=True,  # Show reasoning in output
             )
         except Exception:
             pass
