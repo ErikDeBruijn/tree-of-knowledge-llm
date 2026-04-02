@@ -30,15 +30,21 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
                         help="Steps for gate training phase (default: 1500)")
     parser.add_argument("--no-training", action="store_true", default=False,
                         help="Disable training, inference only")
+    parser.add_argument("--skip-layers", default=None,
+                        help="Comma-separated layer indices to skip (e.g. '2,15,16,17,19,20,21,28')")
     return parser.parse_args(argv)
 
 
 def create_app(args: argparse.Namespace):
     """Create and configure the FastAPI app with engine and registry."""
+    skip_layers = []
+    if args.skip_layers:
+        skip_layers = [int(x.strip()) for x in args.skip_layers.split(",")]
     engine = InferenceEngine(
         model_name=args.model,
         device=args.device,
         dtype=args.dtype,
+        skip_layers=skip_layers,
     )
     registry = ExpertRegistry()
     metrics = MetricsCollector()

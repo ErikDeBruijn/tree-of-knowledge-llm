@@ -29,6 +29,7 @@ class InferenceEngine:
         model_name: str,
         device: str = "auto",
         dtype: str = "bfloat16",
+        skip_layers: list[int] | None = None,
     ) -> None:
         """Load base model and tokenizer.
 
@@ -36,7 +37,9 @@ class InferenceEngine:
             model_name: HuggingFace model identifier.
             device: Target device ("cpu", "cuda", "auto").
             dtype: Weight dtype ("bfloat16", "float16", "float32").
+            skip_layers: Layer indices to skip (residual passthrough).
         """
+        self._skip_layers = skip_layers or []
         dtype_map = {
             "bfloat16": torch.bfloat16,
             "float16": torch.float16,
@@ -140,7 +143,8 @@ class InferenceEngine:
         if fp8_available():
             try:
                 self._graphable = FP8GraphableDecodeStep(
-                    self.model, self._static_cache, max_seq_len=max_seq_len
+                    self.model, self._static_cache, max_seq_len=max_seq_len,
+                    skip_layers=self._skip_layers,
                 )
                 # Quick sanity check: run one forward pass
                 test_ids = torch.zeros(1, 1, dtype=torch.long, device=self.device)
@@ -157,7 +161,8 @@ class InferenceEngine:
 
         # Fallback: BF16
         self._graphable = GraphableDecodeStep(
-            self.model, self._static_cache, max_seq_len=max_seq_len
+            self.model, self._static_cache, max_seq_len=max_seq_len,
+            skip_layers=self._skip_layers,
         )
 
     def _ensure_decode_graph(self, sample_token: torch.Tensor) -> None:

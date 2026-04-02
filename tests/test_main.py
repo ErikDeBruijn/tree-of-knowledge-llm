@@ -26,6 +26,12 @@ class TestParseArgs:
         assert args.experts_dir is None
         assert args.device == "auto"
         assert args.dtype == "bfloat16"
+        assert args.skip_layers is None
+
+    def test_parse_args_skip_layers(self):
+        """Skip layers parsed from comma-separated string."""
+        args = parse_args(["--model", "Qwen/Qwen3-8B", "--skip-layers", "2,15,16"])
+        assert args.skip_layers == "2,15,16"
 
 
 class TestCreateApp:
@@ -41,6 +47,7 @@ class TestCreateApp:
             model_name="Qwen/Qwen3-8B",
             device="auto",
             dtype="bfloat16",
+            skip_layers=[],
         )
 
         # The app should be the FastAPI app
