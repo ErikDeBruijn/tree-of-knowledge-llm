@@ -115,7 +115,7 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 
 ### OBSERVED (cont.)
 - PPL improvement does NOT predict generation quality (2026-04-02/03, Ruby code): Training on real Ruby code (Rails/Discourse) improves domain PPL by 27-58% but DEGRADES functional code generation. Syntax validity drops from 38% to 0-12% with standard LoRA.
-- LoRA+ improves code generation (2026-04-03, Ruby code, deterministic 20-prompt eval): LoRA+ (differential LR 16x for B, alpha scaling, dropout 0.1) with early stopping: rank 8 → 35% syntax/10% correct, rank 16 → 40% syntax/20% correct (BEST), rank 32 → 40% syntax/10% correct (overfits faster). Base: 25% syntax/0% correct.
+- LoRA+ improves code generation (2026-04-03, Ruby code, deterministic 20-prompt eval, 3 seeds for rank 16): LoRA+ (differential LR 16x for B, alpha scaling, dropout 0.1) with early stopping. Rank sweep: rank 8 → 35%/10%, rank 16 → mean 35%/15% (3 seeds: 40/20, 25/10, 40/15), rank 32 → 40%/10% (overfits). Base: 25%/0%. Improvement confirmed across seeds but optimal step varies (250-1750).
 - Gate training destroys generation quality (2026-04-03): Consistently across v4-v8, gate training drops syntax to 0%. Adapter-only with early stopping works; gate activation on code is correct but adapter output is destructive for generation.
 
 ### FALSIFIED (cont.)
