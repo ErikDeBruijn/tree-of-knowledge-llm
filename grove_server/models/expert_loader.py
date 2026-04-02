@@ -76,6 +76,62 @@ class BlockBridge(nn.Module):
         return self.up(F.gelu(self.down(x)))
 
 
+def load_expert_from_pt(
+    pt_path: Path,
+    total_layers: int = 36,
+    hidden_dim: int = 4096,
+    device: str = "cpu",
+) -> Expert:
+    """Load an expert from a training-engine .pt checkpoint.
+
+    The .pt file contains: adapter (dict), gates (dict), name, rank,
+    expert_start, has_router, router_type.
+    """
+    data = torch.load(str(pt_path), map_location="cpu", weights_only=False)
+    name = data.get("name", pt_path.stem)
+    rank = data["rank"]
+    start_layer = data["expert_start"]
+    adapter_weights = data["adapter"]
+    gate_weights = data["gates"]
+
+    adapters: dict[int, nn.Module] = {}
+    gates: dict[int, nn.Module] = {}
+
+    # Parse layer indices from gate keys
+    layer_indices = sorted({int(k.split(".")[0]) for k in gate_weights})
+
+    for layer_idx in layer_indices:
+        # Adapter (MoE format: gate_lora + up_lora)
+        ga = adapter_weights[f"{layer_idx}.gate_lora.A"]
+        gb = adapter_weights[f"{layer_idx}.gate_lora.B"]
+        ua = adapter_weights[f"{layer_idx}.up_lora.A"]
+        ub = adapter_weights[f"{layer_idx}.up_lora.B"]
+        intermediate_dim = gb.shape[1]
+        adapter = MoEMlpAdapter(hidden_dim, intermediate_dim, rank)
+        adapter.gate_lora_A = nn.Parameter(ga)
+        adapter.gate_lora_B = nn.Parameter(gb)
+        adapter.up_lora_A = nn.Parameter(ua)
+        adapter.up_lora_B = nn.Parameter(ub)
+        adapters[layer_idx] = adapter.to(device)
+
+        # Gate
+        gate = DeltaGate(hidden_dim)
+        gate.linear.weight = nn.Parameter(gate_weights[f"{layer_idx}.linear.weight"])
+        gate.linear.bias = nn.Parameter(gate_weights[f"{layer_idx}.linear.bias"])
+        gates[layer_idx] = gate.to(device)
+
+    return Expert(
+        name=name,
+        start_layer=start_layer,
+        end_layer=total_layers,
+        skip_layers=set(),
+        bridge_layers=set(),
+        adapters=adapters,
+        gates=gates,
+        bridges={},
+    )
+
+
 def load_expert(
     expert_dir: Path,
     total_layers: int = 32,
@@ -100,6 +156,12 @@ def load_expert(
     expert_dir = Path(expert_dir)
     if not expert_dir.is_dir():
         raise FileNotFoundError(f"Expert directory does not exist: {expert_dir}")
+
+    # Try .pt format first (training engine output)
+    pt_path = expert_dir / "adapter.pt"
+    if pt_path.exists():
+        return load_expert_from_pt(pt_path, total_layers, hidden_dim, device)
+
     manifest = Manifest.from_json(str(expert_dir / "manifest.json"))
 
     start_layer = manifest.expert_start_layer

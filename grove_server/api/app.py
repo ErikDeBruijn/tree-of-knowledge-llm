@@ -276,14 +276,19 @@ async def list_models(
 async def load_expert(
     request: ExpertLoadRequest,
     registry: ExpertRegistry = Depends(get_registry),
+    engine: InferenceEngine = Depends(get_engine),
 ):
+    # Use engine device so expert tensors are on the same GPU
+    device = request.device
+    if device == "cpu" and engine is not None:
+        device = engine.device
     try:
         registry.load(
             name=request.name,
             expert_dir=Path(request.path),
             total_layers=request.total_layers,
             hidden_dim=request.hidden_dim,
-            device=request.device,
+            device=device,
         )
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))

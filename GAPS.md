@@ -8,11 +8,11 @@ Last updated: 2026-04-02
 - **Remaining**: Gate-informed layer selection (only skip where gate ≈ 0)
 - **CUDA graph disabled**: KV cache uses Python int for position, not captured by graph. All decode steps wrote to same position → repetitive output. TODO: tensorize cache position.
 
-## Gap 2: Expert adapter in fast pipeline via API
-- **Status**: MoE adapter built, not connected through API
-- **What**: `/v1/experts/load` should install adapter into GraphableDecodeStep
-- **Verify**: Load adapter via API, chat with `model: "qwen3-8b:bbc_2025"`, verify domain knowledge
-- **Browser test**: Playground with expert model name
+## Gap 2: Expert adapter in fast pipeline via API — DONE
+- **Status**: Working. Expert loads via API, installs into GraphableDecodeStep, generates with gates active.
+- **Verified**: `POST /v1/experts/load` loads pubmed_quick, `model: "qwen3-8b:pubmed_quick"` routes through expert, 55.9 tok/s with expert active.
+- **Added**: `.pt` format loader for training engine checkpoints, auto-device placement on engine GPU.
+- **Note**: Playground hardcodes model name — expert routing works via API but playground always sends base model name.
 
 ## Gap 3: Train/inference switching E2E
 - **Status**: Scheduler built, untested on real GPU

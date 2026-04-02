@@ -271,6 +271,10 @@ class InferenceEngine:
 
         self._active_expert = expert
 
+        # Also install into the fast pipeline (GraphableDecodeStep)
+        if self._graphable is not None:
+            self._graphable.expert = expert
+
     def uninstall_expert(self) -> None:
         """Restore original model forwards."""
         if self._active_expert is None:
@@ -284,6 +288,10 @@ class InferenceEngine:
 
         self._original_forwards.clear()
         self._active_expert = None
+
+        # Also clear from fast pipeline
+        if self._graphable is not None:
+            self._graphable.expert = None
 
     def generate(
         self,
