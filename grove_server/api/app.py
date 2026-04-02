@@ -321,6 +321,27 @@ async def list_models(
 
 
 # ---------------------------------------------------------------------------
+# Chat template preview
+# ---------------------------------------------------------------------------
+
+
+@app.post("/v1/chat/template")
+async def chat_template(
+    request: dict,
+    engine: InferenceEngine = Depends(get_engine),
+):
+    """Return the formatted prompt for given messages (what the model actually sees).
+
+    Request: {"messages": [{"role": "user", "content": "..."}]}
+    Response: {"prompt": "<|im_start|>user\n...<|im_end|>\n<|im_start|>assistant\n"}
+    """
+    messages = [Message(**m) for m in request.get("messages", [])]
+    tokenizer = getattr(engine, 'tokenizer', None)
+    prompt = _format_prompt(messages, tokenizer)
+    return {"prompt": prompt}
+
+
+# ---------------------------------------------------------------------------
 # Expert management
 # ---------------------------------------------------------------------------
 

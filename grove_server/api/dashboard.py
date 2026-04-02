@@ -207,7 +207,7 @@ a:hover { background: #1e2d42; }
 </style></head><body>
 <div class="links">
 <h1>Grove Server</h1>
-<a href="/playground">Attribution</a>
+<a href="/playground">Completion</a>
 <a href="/playground/chat">Chat</a>
 <a href="/dashboard">Dashboard</a>
 <a href="/docs">API Docs</a>
@@ -290,7 +290,7 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
 <body>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Playground</h1>
 <nav style="margin-bottom:12px;font-size:0.85em;font-family:-apple-system,sans-serif;">
-  <a href="/playground" style="color:#4fd1c5;margin-right:16px;">Attribution</a>
+  <a href="/playground" style="color:#4fd1c5;margin-right:16px;">Completion</a>
   <a href="/playground/chat" style="color:#6b7fa3;margin-right:16px;">Chat</a>
   <a href="/dashboard" style="color:#6b7fa3;">Dashboard</a>
 </nav>
@@ -308,7 +308,7 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
 </div>
 <div id="output"></div>
 <div id="summary" style="display:none;margin-top:12px;padding:12px;background:#151d2b;border:1px solid #1e2d42;border-radius:8px;font-family:-apple-system,sans-serif;font-size:0.85em;">
-  <div style="color:#6b7fa3;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;font-size:0.8em;">Response Attribution Summary</div>
+  <div style="color:#6b7fa3;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;font-size:0.8em;">Response Completion Summary</div>
   <div id="summary-experts"></div>
   <div id="summary-heatmap"></div>
 </div>
@@ -571,6 +571,15 @@ function renderSummary(tokens, experts) {
 promptEl.addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); generate(); }
 });
+
+// Auto-fill from URL param and run
+const urlParams = new URLSearchParams(window.location.search);
+const urlPrompt = urlParams.get('prompt');
+if (urlPrompt) {
+  promptEl.value = urlPrompt;
+  // Auto-generate after experts load
+  setTimeout(() => generate(), 500);
+}
 </script>
 </body>
 </html>"""
@@ -619,7 +628,7 @@ CHAT_HTML = """<!DOCTYPE html>
 <body>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Chat</h1>
 <nav style="margin-bottom:12px;font-size:0.85em;">
-  <a href="/playground" style="color:#6b7fa3;margin-right:16px;">Attribution</a>
+  <a href="/playground" style="color:#6b7fa3;margin-right:16px;">Completion</a>
   <a href="/playground/chat" style="color:#4fd1c5;margin-right:16px;">Chat</a>
   <a href="/dashboard" style="color:#6b7fa3;">Dashboard</a>
 </nav>
@@ -705,7 +714,26 @@ async function send() {
   const tps = tokens > 0 ? (tokens / parseFloat(elapsed)).toFixed(1) : '?';
   const metaDiv = document.createElement('div');
   metaDiv.className = 'meta';
-  metaDiv.textContent = tokens + ' tokens, ' + elapsed + 's, ' + tps + ' tok/s';
+  metaDiv.textContent = tokens + ' tokens, ' + elapsed + 's, ' + tps + ' tok/s  ';
+  const viewLink = document.createElement('a');
+  viewLink.textContent = 'View in Completion';
+  viewLink.href = '#';
+  viewLink.style.cssText = 'color:#4fd1c5;text-decoration:underline;cursor:pointer;';
+  viewLink.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    // Get the full template prompt for this conversation
+    try {
+      const res = await fetch('/v1/chat/template', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ messages: messages.map(m => ({role: m.role, content: m.content})) }),
+      });
+      const data = await res.json();
+      // Navigate to completion playground with this prompt
+      window.location.href = '/playground?prompt=' + encodeURIComponent(data.prompt);
+    } catch(e) { alert('Error: ' + e.message); }
+  });
+  metaDiv.appendChild(viewLink);
   div.appendChild(metaDiv);
   messages.push({role: 'assistant', content: fullText});
   sendBtn.disabled = false;
