@@ -207,7 +207,8 @@ a:hover { background: #1e2d42; }
 </style></head><body>
 <div class="links">
 <h1>Grove Server</h1>
-<a href="/playground">Playground</a>
+<a href="/playground">Attribution</a>
+<a href="/playground/chat">Chat</a>
 <a href="/dashboard">Dashboard</a>
 <a href="/v1/health">Health</a>
 <a href="/v1/metrics">Metrics</a>
@@ -287,9 +288,17 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
 </head>
 <body>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Playground</h1>
+<nav style="margin-bottom:12px;font-size:0.85em;font-family:-apple-system,sans-serif;">
+  <a href="/playground" style="color:#4fd1c5;margin-right:16px;">Attribution</a>
+  <a href="/playground/chat" style="color:#6b7fa3;margin-right:16px;">Chat</a>
+  <a href="/dashboard" style="color:#6b7fa3;">Dashboard</a>
+</nav>
 <div id="settings">
   <label>Max tokens <input type="number" id="max-tokens" value="100"></label>
   <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
+</div>
+<div id="expert-checkboxes" style="margin-bottom:8px;font-size:0.85em;font-family:-apple-system,sans-serif;color:#6b7fa3;">
+  Experts: <span id="expert-list">loading...</span>
 </div>
 <textarea id="prompt" placeholder="Enter prompt text for completion..."></textarea>
 <div id="controls">
@@ -297,6 +306,11 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
   <span class="meta" id="status"></span>
 </div>
 <div id="output"></div>
+<div id="summary" style="display:none;margin-top:12px;padding:12px;background:#151d2b;border:1px solid #1e2d42;border-radius:8px;font-family:-apple-system,sans-serif;font-size:0.85em;">
+  <div style="color:#6b7fa3;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;font-size:0.8em;">Response Attribution Summary</div>
+  <div id="summary-experts"></div>
+  <div id="summary-heatmap"></div>
+</div>
 <div class="tooltip" id="tooltip"></div>
 
 <script>
@@ -320,6 +334,41 @@ const EXPERT_COLORS = [
 const BASE_COLOR = [30, 45, 66]; // dark blue-grey for no expert
 
 let expertNames = [];
+
+// Load expert checkboxes
+async function loadExpertCheckboxes() {
+  try {
+    const resp = await fetch('/v1/experts');
+    const data = await resp.json();
+    const container = document.getElementById('expert-list');
+    if (!data.experts || data.experts.length === 0) {
+      container.textContent = 'none loaded';
+      return;
+    }
+    container.innerHTML = '';
+    data.experts.forEach((name, i) => {
+      const label = document.createElement('label');
+      label.style.cssText = 'margin-right:12px;color:#e2e8f0;cursor:pointer;';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = true;
+      cb.value = name;
+      cb.id = 'expert-cb-' + i;
+      cb.style.cssText = 'margin-right:4px;accent-color:#4fd1c5;';
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(name));
+      container.appendChild(label);
+    });
+  } catch(e) {
+    document.getElementById('expert-list').textContent = 'error loading';
+  }
+}
+loadExpertCheckboxes();
+
+function getSelectedExperts() {
+  const cbs = document.querySelectorAll('#expert-list input[type=checkbox]');
+  return Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
+}
 
 function gateToColor(gates, experts) {
   if (!gates || Object.keys(gates).length === 0) return 'transparent';
@@ -391,17 +440,23 @@ async function generate() {
   const maxTokens = parseInt(document.getElementById('max-tokens').value) || 100;
   const temperature = parseFloat(document.getElementById('temperature').value) || 0.7;
 
+  const selectedExperts = getSelectedExperts();
+
   try {
     const res = await fetch('/v1/completions', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ prompt: text, max_tokens: maxTokens, temperature: temperature }),
+      body: JSON.stringify({
+        prompt: text, max_tokens: maxTokens, temperature: temperature,
+        experts: selectedExperts,
+      }),
     });
     const data = await res.json();
     expertNames = data.experts || [];
 
     // Render tokens with color-coded backgrounds
-    (data.tokens || []).forEach((td, idx) => {
+    const allTokenData = data.tokens || [];
+    allTokenData.forEach((td, idx) => {
       const span = document.createElement('span');
       span.className = 'tok';
       span.textContent = td.token;
@@ -417,13 +472,67 @@ async function generate() {
       outputEl.appendChild(span);
     });
 
+    // Response-level summary
+    renderSummary(allTokenData, expertNames);
+
     const t = data.timing || {};
-    statusEl.textContent = (data.tokens || []).length + ' tokens, ' +
+    statusEl.textContent = allTokenData.length + ' tokens, ' +
       (t.generation_ms / 1000).toFixed(2) + 's, ' + t.tokens_per_second + ' tok/s';
   } catch(e) {
     statusEl.textContent = 'Error: ' + e.message;
   }
   sendBtn.disabled = false;
+}
+
+function renderSummary(tokens, experts) {
+  const summaryEl = document.getElementById('summary');
+  const expertsEl = document.getElementById('summary-experts');
+  const heatmapEl = document.getElementById('summary-heatmap');
+
+  if (!tokens.length) { summaryEl.style.display = 'none'; return; }
+  summaryEl.style.display = 'block';
+
+  // Average gate per layer across all tokens
+  const layerSums = {};
+  const layerCounts = {};
+  tokens.forEach(td => {
+    Object.entries(td.layer_gates || {}).forEach(([l, v]) => {
+      layerSums[l] = (layerSums[l] || 0) + v;
+      layerCounts[l] = (layerCounts[l] || 0) + 1;
+    });
+  });
+
+  const layerAvgs = {};
+  Object.keys(layerSums).forEach(l => {
+    layerAvgs[l] = layerSums[l] / layerCounts[l];
+  });
+
+  // Overall average
+  const allVals = Object.values(layerAvgs);
+  const overallAvg = allVals.length > 0 ? allVals.reduce((a,b) => a+b, 0) / allVals.length : 0;
+
+  // Expert summary
+  const name = experts[0] || 'expert';
+  expertsEl.innerHTML = '<span style="color:#e2e8f0;font-weight:bold;">' + name +
+    '</span> <span style="color:#4fd1c5;">' + overallAvg.toFixed(3) + ' avg gate</span>' +
+    ' <span style="color:#718096;">(' + tokens.length + ' tokens)</span>';
+
+  // Heatmap
+  let html = '<div class="layer-heatmap" style="margin-top:8px;">';
+  for (let i = 0; i < 36; i++) {
+    const v = layerAvgs[i] || 0;
+    let bg;
+    if (i < 12) {
+      bg = v > 0 ? 'rgba(160,174,192,' + (v * 0.8).toFixed(2) + ')' : '#1a2332';
+    } else {
+      const c = EXPERT_COLORS[0];
+      bg = v > 0.01 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + Math.max(0.1, v * 0.9).toFixed(2) + ')' : '#1a2332';
+    }
+    html += '<div class="layer-cell" data-idx="' + i + '" style="background:' + bg + '" title="L' + i + ': ' + v.toFixed(3) + '"></div>';
+  }
+  html += '</div>';
+  html += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L12 expert →</span><span class="heatmap-label">L35</span></div>';
+  heatmapEl.innerHTML = html;
 }
 
 promptEl.addEventListener('keydown', e => {
@@ -436,5 +545,145 @@ promptEl.addEventListener('keydown', e => {
 
 @router.get("/playground", response_class=HTMLResponse)
 async def playground():
-    """Serve the chat playground."""
+    """Serve the attribution playground."""
     return PLAYGROUND_HTML
+
+
+CHAT_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grove Chat</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0a0e17; color: #c8d6e5; display: flex; flex-direction: column;
+         height: 100vh; padding: 16px; }
+  h1 { color: #4fd1c5; margin-bottom: 12px; font-size: 1.4em; }
+  #chat { flex: 1; overflow-y: auto; padding: 12px; background: #151d2b;
+          border: 1px solid #1e2d42; border-radius: 8px; margin-bottom: 12px; }
+  .msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; max-width: 80%;
+         line-height: 1.5; white-space: pre-wrap; }
+  .user { background: #1a365d; margin-left: auto; text-align: right; }
+  .assistant { background: #1c2e3a; color: #e2e8f0; }
+  .meta { font-size: 0.75em; color: #718096; margin-top: 4px; }
+  #input-area { display: flex; gap: 8px; }
+  #prompt { flex: 1; padding: 10px 14px; background: #151d2b; border: 1px solid #1e2d42;
+            border-radius: 8px; color: #e2e8f0; font-size: 1em; outline: none; }
+  #prompt:focus { border-color: #4fd1c5; }
+  button { padding: 10px 20px; background: #4fd1c5; color: #0a0e17; border: none;
+           border-radius: 8px; font-weight: bold; cursor: pointer; }
+  button:hover { background: #38b2ac; }
+  button:disabled { background: #2d3748; color: #718096; cursor: wait; }
+  .streaming { opacity: 0.7; }
+  #settings { display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.85em; }
+  #settings label { color: #6b7fa3; }
+  #settings input { background: #151d2b; border: 1px solid #1e2d42;
+    color: #e2e8f0; padding: 4px 8px; border-radius: 4px; width: 80px; }
+</style>
+</head>
+<body>
+<h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Chat</h1>
+<nav style="margin-bottom:12px;font-size:0.85em;">
+  <a href="/playground" style="color:#6b7fa3;margin-right:16px;">Attribution</a>
+  <a href="/playground/chat" style="color:#4fd1c5;margin-right:16px;">Chat</a>
+  <a href="/dashboard" style="color:#6b7fa3;">Dashboard</a>
+</nav>
+<div id="settings">
+  <label>Max tokens <input type="number" id="max-tokens" value="200"></label>
+  <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
+</div>
+<div id="chat"></div>
+<div id="input-area">
+  <input type="text" id="prompt" placeholder="Ask something..." autofocus>
+  <button id="send" onclick="send()">Send</button>
+</div>
+<script>
+const chat = document.getElementById('chat');
+const promptEl = document.getElementById('prompt');
+const sendBtn = document.getElementById('send');
+const messages = [];
+
+promptEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+
+function addMsg(role, content, meta) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = content;
+  if (meta) { const m = document.createElement('div'); m.className = 'meta'; m.textContent = meta; div.appendChild(m); }
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+async function send() {
+  const text = promptEl.value.trim();
+  if (!text) return;
+  promptEl.value = '';
+  sendBtn.disabled = true;
+
+  messages.push({role: 'user', content: text});
+  addMsg('user', text);
+
+  const maxTokens = parseInt(document.getElementById('max-tokens').value) || 200;
+  const temperature = parseFloat(document.getElementById('temperature').value) || 0.7;
+
+  const body = {
+    model: 'qwen3-8b',
+    messages: messages.map(m => ({role: m.role, content: m.content})),
+    max_tokens: maxTokens,
+    temperature: temperature,
+    stream: true,
+  };
+
+  const t0 = performance.now();
+  const div = document.createElement('div');
+  div.className = 'msg assistant streaming';
+  const textNode = document.createElement('span');
+  div.appendChild(textNode);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  let fullText = '';
+  let tokens = 0;
+  try {
+    const res = await fetch('/v1/chat/completions', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+    });
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      for (const line of chunk.split('\\n')) {
+        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+          try {
+            const data = JSON.parse(line.slice(6));
+            const c = data.choices?.[0]?.delta?.content;
+            if (c) { fullText += c; tokens++; textNode.textContent = fullText; chat.scrollTop = chat.scrollHeight; }
+          } catch(e) {}
+        }
+      }
+    }
+  } catch(e) { fullText = 'Error: ' + e.message; textNode.textContent = fullText; }
+  div.classList.remove('streaming');
+  const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+  const tps = tokens > 0 ? (tokens / parseFloat(elapsed)).toFixed(1) : '?';
+  const metaDiv = document.createElement('div');
+  metaDiv.className = 'meta';
+  metaDiv.textContent = tokens + ' tokens, ' + elapsed + 's, ' + tps + ' tok/s';
+  div.appendChild(metaDiv);
+  messages.push({role: 'assistant', content: fullText});
+  sendBtn.disabled = false;
+  promptEl.focus();
+}
+</script>
+</body>
+</html>"""
+
+
+@router.get("/playground/chat", response_class=HTMLResponse)
+async def playground_chat():
+    """Serve the streaming chat playground."""
+    return CHAT_HTML
