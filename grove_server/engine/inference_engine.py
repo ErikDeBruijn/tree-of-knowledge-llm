@@ -293,6 +293,55 @@ class InferenceEngine:
         if self._graphable is not None:
             self._graphable.expert = None
 
+    def generate_with_attribution(
+        self,
+        prompt: str,
+        max_tokens: int = 256,
+        temperature: float = 0.7,
+    ) -> list[dict]:
+        """Generate with per-token expert attribution.
+
+        Returns list of dicts: [{"token": "text", "layer_gates": {12: 0.8, ...}}]
+        Only works with fast pipeline + active expert.
+        """
+        if not self._fast_pipeline_available:
+            # Fallback: generate without attribution
+            text = self._generate_naive(prompt, max_tokens, temperature)
+            tokens = self.tokenizer.encode(text)
+            return [{"token": self.tokenizer.decode([t]), "layer_gates": {}} for t in tokens]
+
+        input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
+        self._static_cache.reset()
+        self._graphable.track_attribution = True
+
+        eos_id = getattr(self.tokenizer, "eos_token_id", None)
+        result: list[dict] = []
+
+        with torch.no_grad():
+            # Prefill
+            pos = torch.arange(input_ids.size(1), device=self.device).unsqueeze(0)
+            logits = self._graphable(input_ids, pos)
+            self._graphable.pop_attribution()  # discard prefill attribution
+
+            next_token = self._sample_token(logits[:, -1, :], temperature)
+
+            for _ in range(max_tokens):
+                tok_id = next_token.item()
+                if eos_id is not None and tok_id == eos_id:
+                    break
+
+                pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
+                logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
+                attribution = self._graphable.pop_attribution()
+
+                token_str = self.tokenizer.decode([tok_id])
+                result.append({"token": token_str, "layer_gates": attribution})
+
+                next_token = self._sample_token(logits[:, -1, :], temperature)
+
+        self._graphable.track_attribution = False
+        return result
+
     def generate(
         self,
         prompt: str,

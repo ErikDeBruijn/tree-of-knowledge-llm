@@ -234,157 +234,201 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
 <title>Grove Playground</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-         background: #0a0e17; color: #c8d6e5; display: flex; flex-direction: column;
-         height: 100vh; padding: 16px; }
-  h1 { color: #4fd1c5; margin-bottom: 12px; font-size: 1.4em; }
-  #chat { flex: 1; overflow-y: auto; padding: 12px; background: #151d2b;
-          border: 1px solid #1e2d42; border-radius: 8px; margin-bottom: 12px; }
-  .msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; max-width: 80%;
-         line-height: 1.5; white-space: pre-wrap; }
-  .user { background: #1a365d; margin-left: auto; text-align: right; }
-  .assistant { background: #1c2e3a; color: #e2e8f0; }
-  .meta { font-size: 0.75em; color: #718096; margin-top: 4px; }
-  #input-area { display: flex; gap: 8px; }
-  #prompt { flex: 1; padding: 10px 14px; background: #151d2b; border: 1px solid #1e2d42;
-            border-radius: 8px; color: #e2e8f0; font-size: 1em; outline: none; }
+  body { font-family: 'SF Mono', 'Fira Code', monospace;
+         background: #0a0e17; color: #c8d6e5; padding: 20px; }
+  h1 { color: #4fd1c5; margin-bottom: 12px; font-size: 1.4em; font-family: -apple-system, sans-serif; }
+  #settings { display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.85em;
+              font-family: -apple-system, sans-serif; }
+  #settings label { color: #6b7fa3; }
+  #settings input { background: #151d2b; border: 1px solid #1e2d42;
+    color: #e2e8f0; padding: 4px 8px; border-radius: 4px; width: 80px; }
+
+  /* Prompt area */
+  #prompt { width: 100%; min-height: 80px; padding: 12px; background: #151d2b;
+            border: 1px solid #1e2d42; border-radius: 8px; color: #e2e8f0;
+            font-family: inherit; font-size: 0.95em; resize: vertical; outline: none; }
   #prompt:focus { border-color: #4fd1c5; }
-  button { padding: 10px 20px; background: #4fd1c5; color: #0a0e17; border: none;
-           border-radius: 8px; font-weight: bold; cursor: pointer; }
+  #controls { display: flex; gap: 8px; margin: 8px 0; align-items: center; }
+  button { padding: 8px 20px; background: #4fd1c5; color: #0a0e17; border: none;
+           border-radius: 6px; font-weight: bold; cursor: pointer; font-family: -apple-system, sans-serif; }
   button:hover { background: #38b2ac; }
   button:disabled { background: #2d3748; color: #718096; cursor: wait; }
-  .streaming { opacity: 0.7; }
-  #settings { display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.85em; }
-  #settings label { color: #6b7fa3; }
-  #settings input, #settings select { background: #151d2b; border: 1px solid #1e2d42;
-    color: #e2e8f0; padding: 4px 8px; border-radius: 4px; width: 80px; }
+  .meta { font-size: 0.8em; color: #718096; font-family: -apple-system, sans-serif; }
+
+  /* Token output */
+  #output { margin-top: 12px; padding: 16px; background: #151d2b; border: 1px solid #1e2d42;
+            border-radius: 8px; min-height: 100px; line-height: 1.8; font-size: 1em; }
+  .tok { display: inline; cursor: default; padding: 1px 0; border-radius: 2px;
+         transition: background 0.15s; position: relative; }
+  .tok:hover { outline: 1px solid #4fd1c550; }
+
+  /* Tooltip with layer heatmap */
+  .tooltip { display: none; position: fixed; background: #1a2332; border: 1px solid #2d4a6a;
+             border-radius: 8px; padding: 12px; z-index: 100; pointer-events: none;
+             font-family: -apple-system, sans-serif; font-size: 0.8em;
+             box-shadow: 0 4px 20px rgba(0,0,0,0.5); max-width: 320px; }
+  .tooltip.visible { display: block; }
+  .tooltip h3 { color: #4fd1c5; font-size: 0.9em; margin-bottom: 8px; }
+  .tooltip .expert-row { margin-bottom: 4px; color: #a0aec0; }
+  .tooltip .expert-name { color: #e2e8f0; font-weight: bold; }
+  .tooltip .gate-val { color: #4fd1c5; float: right; }
+
+  /* Layer heatmap grid */
+  .layer-heatmap { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px;
+                   margin-top: 8px; }
+  .layer-cell { width: 100%; aspect-ratio: 1; border-radius: 2px; min-width: 14px;
+                min-height: 14px; position: relative; }
+  .layer-cell::after { content: attr(data-idx); position: absolute; inset: 0;
+                       display: flex; align-items: center; justify-content: center;
+                       font-size: 7px; color: rgba(255,255,255,0.4); }
+  .heatmap-label { font-size: 0.7em; color: #6b7fa3; margin-top: 4px; }
+  .heatmap-labels { display: flex; justify-content: space-between; }
 </style>
 </head>
 <body>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Playground</h1>
 <div id="settings">
-  <label>Max tokens <input type="number" id="max-tokens" value="200"></label>
+  <label>Max tokens <input type="number" id="max-tokens" value="100"></label>
   <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
-  <label>Stream <input type="checkbox" id="stream" checked></label>
-  <label>Model <select id="model-select"><option value="qwen3-8b">qwen3-8b (base)</option></select></label>
 </div>
-<div id="chat"></div>
-<div id="input-area">
-  <input type="text" id="prompt" placeholder="Ask something..." autofocus>
-  <button id="send" onclick="send()">Send</button>
+<textarea id="prompt" placeholder="Enter prompt text for completion..."></textarea>
+<div id="controls">
+  <button id="send" onclick="generate()">Complete</button>
+  <span class="meta" id="status"></span>
 </div>
+<div id="output"></div>
+<div class="tooltip" id="tooltip"></div>
+
 <script>
-const chat = document.getElementById('chat');
 const promptEl = document.getElementById('prompt');
+const outputEl = document.getElementById('output');
+const statusEl = document.getElementById('status');
 const sendBtn = document.getElementById('send');
-const messages = [];
+const tooltip = document.getElementById('tooltip');
 
-promptEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+// Expert color palette (distinct, colorblind-friendly-ish)
+const EXPERT_COLORS = [
+  [79, 209, 197],   // teal
+  [237, 137, 54],   // orange
+  [159, 122, 234],  // purple
+  [236, 201, 75],   // yellow
+  [72, 187, 120],   // green
+  [245, 101, 101],  // red
+  [99, 179, 237],   // blue
+  [237, 100, 166],  // pink
+];
+const BASE_COLOR = [30, 45, 66]; // dark blue-grey for no expert
 
-// Populate model dropdown with loaded experts
-async function loadExperts() {
-  try {
-    const resp = await fetch('/v1/experts');
-    const data = await resp.json();
-    const sel = document.getElementById('model-select');
-    (data.experts || []).forEach(name => {
-      const opt = document.createElement('option');
-      opt.value = 'qwen3-8b:' + name;
-      opt.textContent = 'qwen3-8b:' + name;
-      sel.appendChild(opt);
-    });
-  } catch(e) {}
+let expertNames = [];
+
+function gateToColor(gates, experts) {
+  if (!gates || Object.keys(gates).length === 0) return 'transparent';
+  // Average gate across all layers for this token
+  const values = Object.values(gates);
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  if (avg < 0.05) return 'transparent';
+  // Use first expert's color (TODO: blend for multi-expert)
+  const c = EXPERT_COLORS[0] || [79, 209, 197];
+  const alpha = Math.min(0.6, avg * 0.8);
+  return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha.toFixed(2) + ')';
 }
-loadExperts();
 
-function addMsg(role, content, meta) {
-  const div = document.createElement('div');
-  div.className = 'msg ' + role;
-  div.textContent = content;
-  if (meta) { const m = document.createElement('div'); m.className = 'meta'; m.textContent = meta; div.appendChild(m); }
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-  return div;
-}
+function showTooltip(e, tokenData) {
+  const gates = tokenData.layer_gates || {};
+  const layers = Object.keys(gates).map(Number).sort((a, b) => a - b);
 
-async function send() {
-  const text = promptEl.value.trim();
-  if (!text) return;
-  promptEl.value = '';
-  sendBtn.disabled = true;
+  let html = '<h3>"' + tokenData.token.replace(/</g, '&lt;') + '"</h3>';
 
-  messages.push({role: 'user', content: text});
-  addMsg('user', text);
-
-  const maxTokens = parseInt(document.getElementById('max-tokens').value) || 200;
-  const temperature = parseFloat(document.getElementById('temperature').value) || 0.7;
-  const useStream = document.getElementById('stream').checked;
-
-  const body = {
-    model: document.getElementById('model-select').value,
-    messages: messages.map(m => ({role: m.role, content: m.content})),
-    max_tokens: maxTokens,
-    temperature: temperature,
-    stream: useStream,
-  };
-
-  const t0 = performance.now();
-
-  if (useStream) {
-    const div = document.createElement('div');
-    div.className = 'msg assistant streaming';
-    const textNode = document.createElement('span');
-    div.appendChild(textNode);
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-    let fullText = '';
-    let tokens = 0;
-    try {
-      const res = await fetch('/v1/chat/completions', {
-        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
-      });
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      while (true) {
-        const {done, value} = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value);
-        for (const line of chunk.split('\\n')) {
-          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-            try {
-              const data = JSON.parse(line.slice(6));
-              const c = data.choices?.[0]?.delta?.content;
-              if (c) { fullText += c; tokens++; textNode.textContent = fullText; chat.scrollTop = chat.scrollHeight; }
-            } catch(e) {}
-          }
-        }
-      }
-    } catch(e) { fullText = 'Error: ' + e.message; textNode.textContent = fullText; }
-    div.classList.remove('streaming');
-    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
-    const tps = tokens > 0 ? (tokens / parseFloat(elapsed)).toFixed(1) : '?';
-    const metaDiv = document.createElement('div');
-    metaDiv.className = 'meta';
-    metaDiv.textContent = tokens + ' tokens, ' + elapsed + 's, ' + tps + ' tok/s';
-    div.appendChild(metaDiv);
-    messages.push({role: 'assistant', content: fullText});
+  if (layers.length === 0) {
+    html += '<div class="expert-row">No expert active (base model only)</div>';
   } else {
-    try {
-      const res = await fetch('/v1/chat/completions', {
-        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+    // Expert summary sorted by avg gate
+    const avg = layers.reduce((s, l) => s + gates[l], 0) / layers.length;
+    const name = expertNames[0] || 'expert';
+    html += '<div class="expert-row"><span class="expert-name">' + name +
+            '</span><span class="gate-val">' + avg.toFixed(3) + ' avg</span></div>';
+  }
+
+  // Layer heatmap: all 36 layers
+  html += '<div class="layer-heatmap">';
+  for (let i = 0; i < 36; i++) {
+    const v = gates[i] || 0;
+    let bg;
+    if (i < 12) {
+      // Identity layers (0-11): grey scale
+      bg = v > 0 ? 'rgba(160,174,192,' + (v * 0.8).toFixed(2) + ')' : '#1a2332';
+    } else {
+      // Expert layers (12-35): teal scale
+      const c = EXPERT_COLORS[0] || [79, 209, 197];
+      bg = v > 0.01 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + Math.max(0.1, v * 0.9).toFixed(2) + ')' : '#1a2332';
+    }
+    html += '<div class="layer-cell" data-idx="' + i + '" style="background:' + bg + '" title="L' + i + ': ' + v.toFixed(3) + '"></div>';
+  }
+  html += '</div>';
+  html += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L12 expert →</span><span class="heatmap-label">L35</span></div>';
+
+  tooltip.innerHTML = html;
+  tooltip.classList.add('visible');
+
+  // Position near cursor
+  const x = Math.min(e.clientX + 12, window.innerWidth - 340);
+  const y = Math.min(e.clientY + 12, window.innerHeight - 250);
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function hideTooltip() {
+  tooltip.classList.remove('visible');
+}
+
+async function generate() {
+  const text = promptEl.value;
+  if (!text) return;
+  sendBtn.disabled = true;
+  statusEl.textContent = 'Generating...';
+  outputEl.innerHTML = '';
+
+  const maxTokens = parseInt(document.getElementById('max-tokens').value) || 100;
+  const temperature = parseFloat(document.getElementById('temperature').value) || 0.7;
+
+  try {
+    const res = await fetch('/v1/completions', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ prompt: text, max_tokens: maxTokens, temperature: temperature }),
+    });
+    const data = await res.json();
+    expertNames = data.experts || [];
+
+    // Render tokens with color-coded backgrounds
+    (data.tokens || []).forEach((td, idx) => {
+      const span = document.createElement('span');
+      span.className = 'tok';
+      span.textContent = td.token;
+      span.style.background = gateToColor(td.layer_gates, data.experts);
+      span.addEventListener('mouseenter', e => showTooltip(e, td));
+      span.addEventListener('mousemove', e => {
+        const x = Math.min(e.clientX + 12, window.innerWidth - 340);
+        const y = Math.min(e.clientY + 12, window.innerHeight - 250);
+        tooltip.style.left = x + 'px';
+        tooltip.style.top = y + 'px';
       });
-      const data = await res.json();
-      const content = data.choices?.[0]?.message?.content || 'No response';
-      const usage = data.usage || {};
-      const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
-      const tps = usage.timing?.tokens_per_second?.toFixed(1) || '?';
-      addMsg('assistant', content, usage.completion_tokens + ' tokens, ' + elapsed + 's, ' + tps + ' tok/s');
-      messages.push({role: 'assistant', content: content});
-    } catch(e) { addMsg('assistant', 'Error: ' + e.message); }
+      span.addEventListener('mouseleave', hideTooltip);
+      outputEl.appendChild(span);
+    });
+
+    const t = data.timing || {};
+    statusEl.textContent = (data.tokens || []).length + ' tokens, ' +
+      (t.generation_ms / 1000).toFixed(2) + 's, ' + t.tokens_per_second + ' tok/s';
+  } catch(e) {
+    statusEl.textContent = 'Error: ' + e.message;
   }
   sendBtn.disabled = false;
-  promptEl.focus();
 }
+
+promptEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); generate(); }
+});
 </script>
 </body>
 </html>"""

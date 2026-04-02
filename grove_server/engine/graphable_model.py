@@ -136,6 +136,11 @@ class GraphableDecodeStep(nn.Module):
         self.bridge_layers: dict[int, nn.Module] = {}  # layer_idx -> BridgeModule (future use)
         self.expert: Optional[Expert] = expert
 
+        # Attribution tracking: per-token gate activations per layer
+        # Set track_attribution=True before generate to collect data
+        self.track_attribution: bool = False
+        self._last_gate_activations: dict[int, float] = {}  # layer_idx -> gate value (last token)
+
         # Detect GQA configuration
         config = model.config
         self.num_heads = config.num_attention_heads
@@ -206,6 +211,16 @@ class GraphableDecodeStep(nn.Module):
         self.cache.advance(input_ids.size(1))
 
         return logits
+
+    def pop_attribution(self) -> dict[int, float]:
+        """Return and clear the last token's gate activations per layer.
+
+        Returns dict mapping layer_idx -> gate value (0-1).
+        Empty dict if no expert active or tracking disabled.
+        """
+        result = dict(self._last_gate_activations)
+        self._last_gate_activations.clear()
+        return result
 
     def _compute_logits(self, hidden_states: torch.Tensor) -> torch.Tensor:
         """Compute logits from final hidden states. Override for FP8."""
@@ -332,6 +347,10 @@ class GraphableDecodeStep(nn.Module):
 
         # Gate evaluation: DeltaGate.forward() already applies sigmoid
         gate = expert.gates[layer_idx](flat_input)  # (B*L, 1), already sigmoided
+
+        # Track gate activation for attribution (last token only)
+        if self.track_attribution:
+            self._last_gate_activations[layer_idx] = gate[-1, 0].item()
 
         if layer_idx in expert.skip_layers:
             # Skip: if gate is active, zero out MLP contribution
@@ -641,6 +660,10 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
 
         if has_expert:
             gate_val = expert.gates[layer_idx](mlp_flat)  # (B*L, 1), sigmoided
+
+            # Track gate activation for attribution (last token only)
+            if self.track_attribution:
+                self._last_gate_activations[layer_idx] = gate_val[-1, 0].item()
 
             if layer_idx in expert.skip_layers:
                 activated = F.silu(gate_proj) * up_proj

@@ -253,6 +253,56 @@ async def _stream_response(engine, prompt, request, completion_id, metrics=None)
 
 
 # ---------------------------------------------------------------------------
+# Completions with attribution
+# ---------------------------------------------------------------------------
+
+
+@app.post("/v1/completions")
+async def completions(
+    request: dict,
+    engine: InferenceEngine = Depends(get_engine),
+    registry: ExpertRegistry = Depends(get_registry),
+    metrics: Optional[MetricsCollector] = Depends(get_metrics),
+):
+    """Raw text completion with per-token expert attribution.
+
+    Request: {"prompt": "...", "max_tokens": 50, "temperature": 0.7}
+    Response: {"tokens": [{"token": "word", "layer_gates": {12: 0.8, ...}}]}
+    """
+    prompt = request.get("prompt", "")
+    max_tokens = request.get("max_tokens", 100)
+    temperature = request.get("temperature", 0.7)
+
+    # Install first loaded expert for attribution (grove routing TODO)
+    expert_names = registry.list()
+    if expert_names:
+        expert = registry.get(expert_names[0])
+        if expert:
+            engine.install_expert(expert)
+
+    t_start = time.time()
+    tokens = engine.generate_with_attribution(
+        prompt, max_tokens=max_tokens, temperature=temperature,
+    )
+    t_end = time.time()
+
+    if metrics and len(tokens) > 0:
+        metrics.record_inference(len(tokens), t_end - t_start)
+
+    # Get expert names for the response
+    expert_names = registry.list()
+
+    return {
+        "tokens": tokens,
+        "experts": expert_names,
+        "timing": {
+            "generation_ms": round((t_end - t_start) * 1000, 1),
+            "tokens_per_second": round(len(tokens) / (t_end - t_start), 1) if t_end > t_start else 0,
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # Models
 # ---------------------------------------------------------------------------
 
