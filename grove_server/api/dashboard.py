@@ -50,7 +50,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>Grove Server</h1>
+<h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Server</h1>
 <div class="grid">
 
   <!-- Mode -->
@@ -261,7 +261,7 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>Grove Playground</h1>
+<h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Playground</h1>
 <div id="settings">
   <label>Max tokens <input type="number" id="max-tokens" value="200"></label>
   <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
