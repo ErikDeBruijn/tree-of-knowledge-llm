@@ -113,5 +113,10 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 - Layer skip safety (2026-04-02, Ruby code, 19 layers tested): ZERO layers safe to skip. All have catastrophic max token loss ratios (100K-10M×). Generation drift test: all layers diverge within 2-19 tokens. L22/L31 diverge at token 2. L30 shows 19.6% repetition rate. Compounding error makes layer skipping fundamentally unsafe without bridges.
 - Bridge quality degrades in deep layers (2026-04-02): MSE ranges from 0.19 (L13, good) to 12.0 (L32, poor). Rank-64 bridges inadequate for deep layers — may need higher rank or different architecture.
 
+### OBSERVED (cont.)
+- PPL improvement does NOT predict generation quality (2026-04-02/03, Ruby code): Training on real Ruby code (Rails/Discourse) improves domain PPL by 27-58% but DEGRADES functional code generation. Syntax validity drops from 38% to 0-12% with standard LoRA.
+- LoRA+ improves code generation (2026-04-03, Ruby code, deterministic 20-prompt eval): LoRA+ (differential LR 16x for B, alpha scaling, dropout 0.1) with early stopping: rank 8 → 35% syntax/10% correct, rank 16 → 40% syntax/20% correct (BEST), rank 32 → 40% syntax/10% correct (overfits faster). Base: 25% syntax/0% correct.
+- Gate training destroys generation quality (2026-04-03): Consistently across v4-v8, gate training drops syntax to 0%. Adapter-only with early stopping works; gate activation on code is correct but adapter output is destructive for generation.
+
 ### FALSIFIED (cont.)
 - Layer skipping without bridges: All 19 candidate layers produce catastrophic token-level errors even when mean PPL change is small (+1.1% to +80.7%). Autoregressive compounding makes per-token PPL insufficient as safety metric — must test actual generation quality.
