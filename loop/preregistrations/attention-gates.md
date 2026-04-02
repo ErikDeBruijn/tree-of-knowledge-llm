@@ -65,11 +65,13 @@ Can DeltaGate work on attention projections (Q/K/V/O LoRA) to learn domain-speci
 
 ## Paper relevance
 
-If H1 SUPPORTED: Section 3.1 expands — DeltaGate works for both knowledge (FFN) and relational patterns (attention). Gate is truly universal adapter controller.
+Both outcomes belong in the main body (Section 3 or 4) — this is a finding, not a limitation.
 
-If H1 FALSIFIED: Section 6 (Limitations) — domain specificity lives primarily in FFN. Attention patterns are universal. This is a clean negative result worth reporting.
+If H1 SUPPORTED: DeltaGate generalizes from FFN to attention. Domain specificity exists in both knowledge (FFN) and relational patterns (attention). Architecture section expands.
 
-Either outcome is publishable. We are not invested in a particular result.
+If H1 FALSIFIED: Domain specificity is concentrated in FFN. Attention patterns are universal across domains. This is architecturally informative — it tells us exactly where adapters need to act and where they don't. Supporting tables go in appendix, finding itself in the main text.
+
+Either outcome is a normal scientific result. We are not invested in a particular direction.
 
 ## Full design
 
