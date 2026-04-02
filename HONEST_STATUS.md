@@ -103,3 +103,8 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 
 ### OBSERVED (cont.)
 - Medical benchmark base vs adapter (2026-03-31, official benchmarks): Medicine adapter (FineWeb-Edu keyword-filtered, 500 texts) DEGRADES all 6 medical benchmarks. MedQA: 64.1%→60.1% (-4pp). MMLU Professional Medicine: 82.0%→71.3% (-10.7pp). Medical Genetics: neutral (82.0%=82.0%). Per-layer gate protects generic PPL but cannot compensate for low-quality training data. Data quality, not architecture, is the bottleneck for knowledge injection.
+
+### OBSERVED (cont.)
+- Attention-space DeltaGate shows strong selectivity (2026-04-02, Exp1, Ruby code, 1 seed): Selectivity +0.756 (domain 0.958, generic 0.203). Higher than FFN selectivity (+0.62). Per-layer: L21-23 near-perfect (>0.97), L32 lowest (0.196). Attention patterns ARE function-specific, not universal. DeltaGate generalizes from FFN (knowledge) to attention (relational patterns).
+- Combined FFN+Attention (2026-04-02, Exp2, Ruby code, 1 seed): Domain PPL identical (FFN-only 1.07, combined 1.07). But generic PPL: FFN-only +7.4% degradation, combined -1.6% (improvement over base). Attention adapters don't add domain knowledge — they protect generic capability. FFN selectivity +0.708, attention selectivity +0.558. Complementary functions, not redundant.
+- Grove Server production (2026-04-02): Fast pipeline 64 tok/s (up from 12). Multi-expert softmax routing. Per-token per-expert attribution with layer heatmaps. Auto-load experts at startup. Chat→Completion bridge. Thinking visible.
