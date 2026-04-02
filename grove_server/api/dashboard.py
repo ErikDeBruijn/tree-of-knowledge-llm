@@ -547,47 +547,66 @@ function renderSummary(tokens, experts) {
   if (!tokens.length) { summaryEl.style.display = 'none'; return; }
   summaryEl.style.display = 'block';
 
-  // Average gate per layer across all tokens
-  const layerSums = {};
-  const layerCounts = {};
+  // Collect per-expert, per-layer averages across all tokens
+  const expertData = {};  // name -> {layer -> [values]}
   tokens.forEach(td => {
-    Object.entries(td.layer_gates || {}).forEach(([l, v]) => {
-      layerSums[l] = (layerSums[l] || 0) + v;
-      layerCounts[l] = (layerCounts[l] || 0) + 1;
+    Object.entries(td.expert_gates || {}).forEach(([ename, layers]) => {
+      if (!expertData[ename]) expertData[ename] = {};
+      Object.entries(layers).forEach(([l, v]) => {
+        if (!expertData[ename][l]) expertData[ename][l] = [];
+        expertData[ename][l].push(v);
+      });
     });
   });
 
-  const layerAvgs = {};
-  Object.keys(layerSums).forEach(l => {
-    layerAvgs[l] = layerSums[l] / layerCounts[l];
+  // Build summary + heatmap per expert
+  let expertsHtml = '';
+  let heatmapHtml = '';
+  const expertNames = Object.keys(expertData);
+
+  expertNames.sort((a, b) => {
+    const avgA = Object.values(expertData[a]).reduce((s, vs) => s + vs.reduce((a,b)=>a+b,0)/vs.length, 0) / Object.keys(expertData[a]).length;
+    const avgB = Object.values(expertData[b]).reduce((s, vs) => s + vs.reduce((a,b)=>a+b,0)/vs.length, 0) / Object.keys(expertData[b]).length;
+    return avgB - avgA;
   });
 
-  // Overall average
-  const allVals = Object.values(layerAvgs);
-  const overallAvg = allVals.length > 0 ? allVals.reduce((a,b) => a+b, 0) / allVals.length : 0;
+  expertNames.forEach((ename, idx) => {
+    const layers = expertData[ename];
+    const layerAvgs = {};
+    Object.entries(layers).forEach(([l, vs]) => { layerAvgs[l] = vs.reduce((a,b)=>a+b,0)/vs.length; });
+    const allVals = Object.values(layerAvgs);
+    const avg = allVals.length > 0 ? allVals.reduce((a,b)=>a+b,0)/allVals.length : 0;
+    const c = EXPERT_COLORS[idx % EXPERT_COLORS.length];
+    const dot = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgb(' + c.join(',') + ');margin-right:6px;"></span>';
 
-  // Expert summary
-  const name = experts[0] || 'expert';
-  expertsEl.innerHTML = '<span style="color:#e2e8f0;font-weight:bold;">' + name +
-    '</span> <span style="color:#4fd1c5;">' + overallAvg.toFixed(3) + ' avg gate</span>' +
-    ' <span style="color:#718096;">(' + tokens.length + ' tokens)</span>';
+    expertsHtml += '<div style="margin-bottom:4px;">' + dot +
+      '<span style="color:#e2e8f0;font-weight:bold;">' + ename + '</span> ' +
+      '<span style="color:rgb(' + c.join(',') + ');">' + avg.toFixed(3) + ' avg gate</span>' +
+      ' <span style="color:#718096;">(' + tokens.length + ' tokens)</span></div>';
 
-  // Heatmap
-  let html = '<div class="layer-heatmap" style="margin-top:8px;">';
-  for (let i = 0; i < 36; i++) {
-    const v = layerAvgs[i] || 0;
-    let bg;
-    if (i < 12) {
-      bg = v > 0 ? 'rgba(160,174,192,' + (v * 0.8).toFixed(2) + ')' : '#1a2332';
-    } else {
-      const c = EXPERT_COLORS[0];
-      bg = v > 0.01 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + Math.max(0.1, v * 0.9).toFixed(2) + ')' : '#1a2332';
+    // Heatmap for this expert
+    heatmapHtml += '<div style="font-size:0.7em;color:rgb(' + c.join(',') + ');margin-top:6px;">' + ename + '</div>';
+    heatmapHtml += '<div class="layer-heatmap">';
+    for (let i = 0; i < 36; i++) {
+      const v = layerAvgs[i] || 0;
+      let bg;
+      if (i < 12) {
+        bg = v > 0 ? 'rgba(160,174,192,' + (v * 0.8).toFixed(2) + ')' : '#1a2332';
+      } else {
+        bg = v > 0.01 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + Math.max(0.1, v * 0.9).toFixed(2) + ')' : '#1a2332';
+      }
+      heatmapHtml += '<div class="layer-cell" data-idx="' + i + '" style="background:' + bg + '" title="L' + i + ': ' + v.toFixed(3) + '"></div>';
     }
-    html += '<div class="layer-cell" data-idx="' + i + '" style="background:' + bg + '" title="L' + i + ': ' + v.toFixed(3) + '"></div>';
+    heatmapHtml += '</div>';
+  });
+
+  if (!expertNames.length) {
+    expertsHtml = '<span style="color:#718096;">No expert active</span>';
   }
-  html += '</div>';
-  html += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L12 expert →</span><span class="heatmap-label">L35</span></div>';
-  heatmapEl.innerHTML = html;
+  heatmapHtml += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L12 expert →</span><span class="heatmap-label">L35</span></div>';
+
+  expertsEl.innerHTML = expertsHtml;
+  heatmapEl.innerHTML = heatmapHtml;
 }
 
 promptEl.addEventListener('keydown', e => {
