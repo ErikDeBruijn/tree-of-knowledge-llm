@@ -193,7 +193,183 @@ poll();
 </html>"""
 
 
+INDEX_HTML = """<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Grove Server</title>
+<style>
+body { font-family: -apple-system, sans-serif; background: #0a0e17; color: #c8d6e5;
+       display: flex; justify-content: center; align-items: center; height: 100vh; }
+.links { text-align: center; }
+h1 { color: #4fd1c5; margin-bottom: 24px; }
+a { display: inline-block; margin: 8px 16px; padding: 16px 32px; background: #151d2b;
+    border: 1px solid #1e2d42; border-radius: 8px; color: #4fd1c5; text-decoration: none;
+    font-size: 1.2em; transition: background 0.2s; }
+a:hover { background: #1e2d42; }
+</style></head><body>
+<div class="links">
+<h1>Grove Server</h1>
+<a href="/playground">Playground</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/v1/health">Health</a>
+<a href="/v1/metrics">Metrics</a>
+</div></body></html>"""
+
+
+@router.get("/", response_class=HTMLResponse)
+async def index():
+    """Landing page with links."""
+    return INDEX_HTML
+
+
 @router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
     """Serve the live dashboard."""
     return DASHBOARD_HTML
+
+
+PLAYGROUND_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grove Playground</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0a0e17; color: #c8d6e5; display: flex; flex-direction: column;
+         height: 100vh; padding: 16px; }
+  h1 { color: #4fd1c5; margin-bottom: 12px; font-size: 1.4em; }
+  #chat { flex: 1; overflow-y: auto; padding: 12px; background: #151d2b;
+          border: 1px solid #1e2d42; border-radius: 8px; margin-bottom: 12px; }
+  .msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; max-width: 80%;
+         line-height: 1.5; white-space: pre-wrap; }
+  .user { background: #1a365d; margin-left: auto; text-align: right; }
+  .assistant { background: #1c2e3a; }
+  .meta { font-size: 0.75em; color: #718096; margin-top: 4px; }
+  #input-area { display: flex; gap: 8px; }
+  #prompt { flex: 1; padding: 10px 14px; background: #151d2b; border: 1px solid #1e2d42;
+            border-radius: 8px; color: #e2e8f0; font-size: 1em; outline: none; }
+  #prompt:focus { border-color: #4fd1c5; }
+  button { padding: 10px 20px; background: #4fd1c5; color: #0a0e17; border: none;
+           border-radius: 8px; font-weight: bold; cursor: pointer; }
+  button:hover { background: #38b2ac; }
+  button:disabled { background: #2d3748; color: #718096; cursor: wait; }
+  .streaming { opacity: 0.7; }
+  #settings { display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.85em; }
+  #settings label { color: #6b7fa3; }
+  #settings input, #settings select { background: #151d2b; border: 1px solid #1e2d42;
+    color: #e2e8f0; padding: 4px 8px; border-radius: 4px; width: 80px; }
+</style>
+</head>
+<body>
+<h1>Grove Playground</h1>
+<div id="settings">
+  <label>Max tokens <input type="number" id="max-tokens" value="200"></label>
+  <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
+  <label>Stream <input type="checkbox" id="stream" checked></label>
+</div>
+<div id="chat"></div>
+<div id="input-area">
+  <input type="text" id="prompt" placeholder="Ask something..." autofocus>
+  <button id="send" onclick="send()">Send</button>
+</div>
+<script>
+const chat = document.getElementById('chat');
+const promptEl = document.getElementById('prompt');
+const sendBtn = document.getElementById('send');
+const messages = [];
+
+promptEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+
+function addMsg(role, content, meta) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = content;
+  if (meta) { const m = document.createElement('div'); m.className = 'meta'; m.textContent = meta; div.appendChild(m); }
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+async function send() {
+  const text = promptEl.value.trim();
+  if (!text) return;
+  promptEl.value = '';
+  sendBtn.disabled = true;
+
+  messages.push({role: 'user', content: text});
+  addMsg('user', text);
+
+  const maxTokens = parseInt(document.getElementById('max-tokens').value) || 200;
+  const temperature = parseFloat(document.getElementById('temperature').value) || 0.7;
+  const useStream = document.getElementById('stream').checked;
+
+  const body = {
+    model: 'qwen3-8b',
+    messages: messages.map(m => ({role: m.role, content: m.content})),
+    max_tokens: maxTokens,
+    temperature: temperature,
+    stream: useStream,
+  };
+
+  const t0 = performance.now();
+
+  if (useStream) {
+    const div = addMsg('assistant', '', '');
+    div.classList.add('streaming');
+    let fullText = '';
+    let tokens = 0;
+    try {
+      const res = await fetch('/v1/chat/completions', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+      });
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        for (const line of chunk.split('\\n')) {
+          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+            try {
+              const data = JSON.parse(line.slice(6));
+              const c = data.choices?.[0]?.delta?.content;
+              if (c) { fullText += c; tokens++; div.childNodes[0].textContent = fullText; chat.scrollTop = chat.scrollHeight; }
+            } catch(e) {}
+          }
+        }
+      }
+    } catch(e) { fullText = 'Error: ' + e.message; }
+    div.classList.remove('streaming');
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+    const tps = tokens > 0 ? (tokens / parseFloat(elapsed)).toFixed(1) : '?';
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'meta';
+    metaDiv.textContent = tokens + ' tokens, ' + elapsed + 's, ' + tps + ' tok/s';
+    div.appendChild(metaDiv);
+    messages.push({role: 'assistant', content: fullText});
+  } else {
+    try {
+      const res = await fetch('/v1/chat/completions', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      const content = data.choices?.[0]?.message?.content || 'No response';
+      const usage = data.usage || {};
+      const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+      const tps = usage.timing?.tokens_per_second?.toFixed(1) || '?';
+      addMsg('assistant', content, usage.completion_tokens + ' tokens, ' + elapsed + 's, ' + tps + ' tok/s');
+      messages.push({role: 'assistant', content: content});
+    } catch(e) { addMsg('assistant', 'Error: ' + e.message); }
+  }
+  sendBtn.disabled = false;
+  promptEl.focus();
+}
+</script>
+</body>
+</html>"""
+
+
+@router.get("/playground", response_class=HTMLResponse)
+async def playground():
+    """Serve the chat playground."""
+    return PLAYGROUND_HTML

@@ -68,8 +68,22 @@ def _parse_model_name(model: str) -> tuple[str, Optional[str]]:
     return model, None
 
 
-def _format_prompt(messages: list[Message]) -> str:
-    """Convert chat messages to a simple prompt string."""
+def _format_prompt(messages: list[Message], tokenizer=None) -> str:
+    """Convert chat messages to a prompt string.
+
+    If the tokenizer has a chat template (instruct models), use it.
+    Otherwise fall back to simple role: content format.
+    """
+    if tokenizer and hasattr(tokenizer, 'apply_chat_template'):
+        try:
+            msg_dicts = [{"role": m.role, "content": m.content} for m in messages]
+            return tokenizer.apply_chat_template(
+                msg_dicts, tokenize=False, add_generation_prompt=True,
+                enable_thinking=False,  # Qwen3 specific: disable thinking mode
+            )
+        except Exception:
+            pass
+    # Fallback for base models
     parts = []
     for msg in messages:
         parts.append(f"{msg.role}: {msg.content}")
@@ -97,7 +111,7 @@ async def chat_completions(
         if expert:
             engine.install_expert(expert)
 
-    prompt = _format_prompt(request.messages)
+    prompt = _format_prompt(request.messages, getattr(engine, 'tokenizer', None))
     completion_id = f"chatcmpl-{uuid.uuid4().hex[:12]}"
 
     if request.stream:
@@ -120,6 +134,11 @@ async def chat_completions(
 
     completion_ids = engine.tokenizer.encode(text)
     completion_tokens = len(completion_ids)
+
+    # Record metrics
+    metrics = get_metrics()
+    if metrics:
+        metrics.record_inference(completion_tokens, t_end - t_start)
     gen_ms = (t_end - t_start) * 1000
     tok_per_sec = completion_tokens / (t_end - t_start) if t_end > t_start else 0
 
