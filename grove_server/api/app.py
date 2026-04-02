@@ -182,11 +182,37 @@ async def _stream_response(engine, prompt, request, completion_id):
     )
     yield f"data: {role_chunk.model_dump_json()}\n\n"
 
-    for token in engine.generate_stream(
-        prompt,
-        max_tokens=request.max_tokens,
-        temperature=request.temperature,
-    ):
+    # Run sync generator in a thread to avoid blocking the event loop.
+    # Each token is sent to the client immediately via a queue.
+    import asyncio
+    import queue
+
+    token_queue: queue.Queue = queue.Queue()
+    _DONE = object()
+
+    def _generate():
+        try:
+            for tok in engine.generate_stream(
+                prompt,
+                max_tokens=request.max_tokens,
+                temperature=request.temperature,
+            ):
+                token_queue.put(tok)
+        finally:
+            token_queue.put(_DONE)
+
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, _generate)
+
+    while True:
+        # Poll with short timeout so we can yield promptly
+        try:
+            token = token_queue.get(timeout=0.05)
+        except queue.Empty:
+            await asyncio.sleep(0)
+            continue
+        if token is _DONE:
+            break
         chunk = ChatCompletionStreamChunk(
             id=completion_id,
             model=request.model,
