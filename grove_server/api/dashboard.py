@@ -243,7 +243,7 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
   .msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; max-width: 80%;
          line-height: 1.5; white-space: pre-wrap; }
   .user { background: #1a365d; margin-left: auto; text-align: right; }
-  .assistant { background: #1c2e3a; }
+  .assistant { background: #1c2e3a; color: #e2e8f0; }
   .meta { font-size: 0.75em; color: #718096; margin-top: 4px; }
   #input-area { display: flex; gap: 8px; }
   #prompt { flex: 1; padding: 10px 14px; background: #151d2b; border: 1px solid #1e2d42;
@@ -314,8 +314,12 @@ async function send() {
   const t0 = performance.now();
 
   if (useStream) {
-    const div = addMsg('assistant', '', '');
-    div.classList.add('streaming');
+    const div = document.createElement('div');
+    div.className = 'msg assistant streaming';
+    const textNode = document.createElement('span');
+    div.appendChild(textNode);
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
     let fullText = '';
     let tokens = 0;
     try {
@@ -333,12 +337,12 @@ async function send() {
             try {
               const data = JSON.parse(line.slice(6));
               const c = data.choices?.[0]?.delta?.content;
-              if (c) { fullText += c; tokens++; div.childNodes[0].textContent = fullText; chat.scrollTop = chat.scrollHeight; }
+              if (c) { fullText += c; tokens++; textNode.textContent = fullText; chat.scrollTop = chat.scrollHeight; }
             } catch(e) {}
           }
         }
       }
-    } catch(e) { fullText = 'Error: ' + e.message; }
+    } catch(e) { fullText = 'Error: ' + e.message; textNode.textContent = fullText; }
     div.classList.remove('streaming');
     const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
     const tps = tokens > 0 ? (tokens / parseFloat(elapsed)).toFixed(1) : '?';
