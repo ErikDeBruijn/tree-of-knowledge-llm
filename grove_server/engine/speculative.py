@@ -418,6 +418,7 @@ def _make_shared_fp8_step(
     step.skip_layers = set(skip_layers or [])
     step.skip_attention_layers = set()
     step.bridge_layers = {}
+    step.expert = None
 
     config = model.config
     step.num_heads = config.num_attention_heads

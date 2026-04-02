@@ -6,8 +6,10 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from grove_server.models.expert import Expert
+from grove_server.models.expert_loader import MoEMlpAdapter
 
 
 def execute_layer_multi(
@@ -41,6 +43,17 @@ def execute_layer_multi(
             delta = torch.zeros_like(base_output)
         elif layer_idx in expert.bridge_layers:
             delta = expert.bridges[layer_idx](hidden_states) - (base_output - hidden_states)
+        elif isinstance(expert.adapters.get(layer_idx), MoEMlpAdapter):
+            adapter = expert.adapters[layer_idx]
+            # MoE: recompute MLP with LoRA corrections for accurate delta
+            mlp = base_layer.mlp if hasattr(base_layer, 'mlp') else base_layer
+            gate_proj = mlp.gate_proj(hidden_states)
+            up_proj = mlp.up_proj(hidden_states)
+            adapted = mlp.down_proj(
+                F.silu(gate_proj + adapter.gate_correction(hidden_states))
+                * (up_proj + adapter.up_correction(hidden_states))
+            )
+            delta = adapted - base_output
         else:
             adapter_out = expert.adapters[layer_idx](hidden_states)
             delta = adapter_out - base_output
@@ -90,6 +103,18 @@ def execute_layer(
             return hidden_states + expert.bridges[layer_idx](hidden_states)
         elif layer_idx in expert.skip_layers:
             return hidden_states
+        elif isinstance(expert.adapters.get(layer_idx), MoEMlpAdapter):
+            adapter = expert.adapters[layer_idx]
+            base_out = base_layer(hidden_states)
+            mlp = base_layer.mlp if hasattr(base_layer, 'mlp') else base_layer
+            gate_proj = mlp.gate_proj(hidden_states)
+            up_proj = mlp.up_proj(hidden_states)
+            adapted = mlp.down_proj(
+                F.silu(gate_proj + adapter.gate_correction(hidden_states))
+                * (up_proj + adapter.up_correction(hidden_states))
+            )
+            delta = adapted - base_out
+            return base_out + gate_value * delta
         else:
             base_out = base_layer(hidden_states)
             adapter_out = expert.adapters[layer_idx](hidden_states)

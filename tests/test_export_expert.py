@@ -15,7 +15,7 @@ import torch
 from safetensors.torch import load_file
 
 from grove_server.tools.export_expert import export_expert
-from grove_server.models.expert_loader import load_expert
+from grove_server.models.expert_loader import load_expert, MoEMlpAdapter
 from grove_server.models.manifest import Manifest
 
 
@@ -89,8 +89,8 @@ def test_export_creates_manifest(tmp_path, training_weights, export_config):
     assert manifest.domain == "medical"
     assert manifest.base_model == "Qwen/Qwen3-8B"
     assert manifest.expert_start_layer == 12
-    # Combined rank is 2x original (gate_lora + up_lora concatenated)
-    assert manifest.adapter_rank == training_weights["rank"] * 2
+    # Rank stays as-is (gate_lora and up_lora stored separately)
+    assert manifest.adapter_rank == training_weights["rank"]
     assert manifest.gate_bias_init == -2.0
 
 
@@ -109,10 +109,12 @@ def test_export_creates_adapter_safetensors(tmp_path, training_weights, export_c
     assert adapter_path.exists()
 
     weights = load_file(str(adapter_path))
-    # Server expects layer.{i}.adapter.A and layer.{i}.adapter.B
+    # Server stores gate_lora and up_lora separately for MoE format
     for layer_idx in training_weights["layers"]:
-        assert f"layer.{layer_idx}.adapter.A" in weights
-        assert f"layer.{layer_idx}.adapter.B" in weights
+        assert f"layer.{layer_idx}.gate_lora.A" in weights
+        assert f"layer.{layer_idx}.gate_lora.B" in weights
+        assert f"layer.{layer_idx}.up_lora.A" in weights
+        assert f"layer.{layer_idx}.up_lora.B" in weights
 
 
 def test_export_creates_gate_safetensors(tmp_path, training_weights, export_config):
@@ -169,9 +171,12 @@ def test_export_roundtrip(tmp_path, training_weights, export_config):
         loaded_b = expert.gates[layer_idx].linear.bias.data
         assert torch.allclose(orig_b, loaded_b)
 
-    # Verify adapter A/B are correct shape (combined from gate_lora + up_lora)
+    # Verify adapter is MoEMlpAdapter with correct shapes
     for layer_idx in training_weights["layers"]:
         assert layer_idx in expert.adapters
         adapter = expert.adapters[layer_idx]
-        assert adapter.A.shape[0] == training_weights["hidden_dim"]
-        assert adapter.B.shape[1] == training_weights["hidden_dim"]
+        assert isinstance(adapter, MoEMlpAdapter)
+        assert adapter.gate_lora_A.shape[0] == training_weights["hidden_dim"]
+        assert adapter.gate_lora_A.shape[1] == training_weights["rank"]
+        assert adapter.up_lora_A.shape[0] == training_weights["hidden_dim"]
+        assert adapter.up_lora_A.shape[1] == training_weights["rank"]

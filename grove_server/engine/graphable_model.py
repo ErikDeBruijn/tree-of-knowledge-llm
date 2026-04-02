@@ -15,9 +15,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from typing import Optional
+
 from grove_server.engine.fp8_utils import fp8_available
 from grove_server.engine.kernels import fused_residual_rmsnorm
 from grove_server.engine.static_kv_cache import StaticKVCache
+from grove_server.models.expert import Expert
+from grove_server.models.expert_loader import MoEMlpAdapter
 
 
 def _apply_rotary_pos_emb(
@@ -121,6 +125,7 @@ class GraphableDecodeStep(nn.Module):
         max_seq_len: int,
         skip_layers: list[int] | None = None,
         skip_attention_layers: list[int] | None = None,
+        expert: Optional[Expert] = None,
     ) -> None:
         super().__init__()
         self.model = model
@@ -129,6 +134,7 @@ class GraphableDecodeStep(nn.Module):
         self.skip_layers: set[int] = set(skip_layers or [])
         self.skip_attention_layers: set[int] = set(skip_attention_layers or [])
         self.bridge_layers: dict[int, nn.Module] = {}  # layer_idx -> BridgeModule (future use)
+        self.expert: Optional[Expert] = expert
 
         # Detect GQA configuration
         config = model.config
@@ -284,11 +290,91 @@ class GraphableDecodeStep(nn.Module):
             residual, attn_out, layer.post_attention_layernorm.weight,
         )
 
-        # --- MLP ---
-        hidden_states = layer.mlp(hidden_states)
+        # --- MLP with optional expert adapter ---
+        mlp_input = hidden_states
+        hidden_states = self._run_mlp_with_expert(layer_idx, layer.mlp, hidden_states)
+
         hidden_states = residual + hidden_states
 
         return hidden_states
+
+    def _run_mlp_with_expert(
+        self,
+        layer_idx: int,
+        mlp: nn.Module,
+        hidden_states: torch.Tensor,
+    ) -> torch.Tensor:
+        """Run MLP with optional expert adapter integrated into the computation.
+
+        For MoEMlpAdapter: applies LoRA corrections inside MLP (to gate_proj/up_proj
+        outputs before activation), matching the training format exactly.
+
+        For LoRAAdapter: applies as post-MLP additive delta (legacy).
+
+        For skip/bridge layers: uses gate to blend or passthrough.
+
+        Args:
+            layer_idx: Index of this layer.
+            mlp: The MLP module (with gate_proj, up_proj, down_proj, act_fn).
+            hidden_states: Input hidden states (B, L, D).
+
+        Returns:
+            MLP output, possibly modified by expert adapter.
+        """
+        expert = self.expert
+        if expert is None or not expert.covers_layer(layer_idx):
+            return mlp(hidden_states)
+        if layer_idx not in expert.gates:
+            return mlp(hidden_states)
+
+        orig_shape = hidden_states.shape
+        flat_input = hidden_states.reshape(-1, orig_shape[-1])
+
+        # Gate evaluation: DeltaGate.forward() already applies sigmoid
+        gate = expert.gates[layer_idx](flat_input)  # (B*L, 1), already sigmoided
+
+        if layer_idx in expert.skip_layers:
+            # Skip: if gate is active, zero out MLP contribution
+            # (residual add in caller gives passthrough)
+            base_out = mlp(hidden_states).reshape(-1, orig_shape[-1])
+            result = base_out * (1.0 - gate)
+            return result.reshape(orig_shape)
+
+        if layer_idx in expert.bridge_layers and layer_idx in expert.bridges:
+            base_out = mlp(hidden_states).reshape(-1, orig_shape[-1])
+            bridge_out = expert.bridges[layer_idx](flat_input)
+            delta = bridge_out - base_out
+            result = base_out + gate * delta
+            return result.reshape(orig_shape)
+
+        adapter = expert.adapters.get(layer_idx)
+        if adapter is None:
+            return mlp(hidden_states)
+
+        if isinstance(adapter, MoEMlpAdapter):
+            # MoE format: inject LoRA corrections into MLP internals
+            gate_proj_out = mlp.gate_proj(hidden_states)
+            up_proj_out = mlp.up_proj(hidden_states)
+
+            # LoRA corrections (operate on flat input, reshape to match proj output)
+            gate_corr = adapter.gate_correction(flat_input).reshape(gate_proj_out.shape)
+            up_corr = adapter.up_correction(flat_input).reshape(up_proj_out.shape)
+
+            # Blend: base MLP + gate * (adapted MLP - base MLP)
+            base_activated = F.silu(gate_proj_out) * up_proj_out
+            adapted_activated = F.silu(gate_proj_out + gate_corr) * (up_proj_out + up_corr)
+
+            blended = base_activated + gate.reshape(*orig_shape[:-1], 1) * (adapted_activated - base_activated)
+            result = mlp.down_proj(blended)
+            return result
+        else:
+            # Legacy LoRA format: additive delta on MLP output
+            base_out = mlp(hidden_states)
+            flat_base = base_out.reshape(-1, orig_shape[-1])
+            adapter_out = adapter(flat_input)
+            delta = adapter_out - flat_base
+            result = flat_base + gate * delta
+            return result.reshape(orig_shape)
 
     def _run_layer_mlp_only(
         self,
@@ -316,8 +402,9 @@ class GraphableDecodeStep(nn.Module):
         # Post-attention norm (still needed before MLP)
         hidden_states = layer.post_attention_layernorm(hidden_states)
 
-        # MLP
-        hidden_states = layer.mlp(hidden_states)
+        # MLP with optional expert adapter
+        hidden_states = self._run_mlp_with_expert(layer_idx, layer.mlp, hidden_states)
+
         hidden_states = residual + hidden_states
 
         return hidden_states
@@ -339,11 +426,13 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         max_seq_len: int,
         skip_layers: list[int] | None = None,
         skip_attention_layers: list[int] | None = None,
+        expert: Optional[Expert] = None,
     ) -> None:
         super().__init__(
             model, static_cache, max_seq_len,
             skip_layers=skip_layers,
             skip_attention_layers=skip_attention_layers,
+            expert=expert,
         )
 
         if not fp8_available():
@@ -508,6 +597,94 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             w_bf16 = w_fp8.to(torch.bfloat16) * w_scale.to(torch.bfloat16)
             return F.linear(x, w_bf16)
 
+    def _fp8_mlp_with_expert(
+        self,
+        layer_idx: int,
+        layer: nn.Module,
+        mlp_input: torch.Tensor,
+        mlp_flat: torch.Tensor,
+        gate_proj: torch.Tensor,
+        up_proj: torch.Tensor,
+        B: int,
+        L: int,
+    ) -> torch.Tensor:
+        """Complete FP8 MLP with optional expert adapter integration.
+
+        For MoEMlpAdapter: injects LoRA corrections into gate/up projections
+        before activation, matching training format exactly.
+
+        For skip/bridge/legacy LoRA: applies gate-blended post-hoc delta.
+
+        Args:
+            layer_idx: Layer index.
+            layer: Decoder layer module (for fallback MLP access).
+            mlp_input: Pre-MLP hidden states (B, L, D).
+            mlp_flat: Flattened mlp_input (B*L, D).
+            gate_proj: FP8 gate_proj output (B*L, intermediate).
+            up_proj: FP8 up_proj output (B*L, intermediate).
+            B: Batch size.
+            L: Sequence length.
+
+        Returns:
+            MLP output (B, L, D), possibly modified by expert.
+        """
+        expert = self.expert
+        has_expert = (
+            expert is not None
+            and expert.covers_layer(layer_idx)
+            and layer_idx in expert.gates
+        )
+
+        if has_expert:
+            gate_val = expert.gates[layer_idx](mlp_flat)  # (B*L, 1), sigmoided
+
+            if layer_idx in expert.skip_layers:
+                activated = F.silu(gate_proj) * up_proj
+                mlp_flat2 = activated.reshape(-1, activated.size(-1))
+                base_out = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx]).reshape(B, L, -1)
+                flat_base = base_out.reshape(-1, base_out.size(-1))
+                result = flat_base * (1.0 - gate_val)
+                return result.reshape(B, L, -1)
+
+            if layer_idx in expert.bridge_layers and layer_idx in expert.bridges:
+                activated = F.silu(gate_proj) * up_proj
+                mlp_flat2 = activated.reshape(-1, activated.size(-1))
+                base_out = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx])
+                bridge_out = expert.bridges[layer_idx](mlp_flat)
+                delta = bridge_out - base_out
+                result = base_out + gate_val * delta
+                return result.reshape(B, L, -1)
+
+            adapter = expert.adapters.get(layer_idx)
+            if adapter is not None and isinstance(adapter, MoEMlpAdapter):
+                # MoE format: inject LoRA corrections before activation
+                gate_corr = adapter.gate_correction(mlp_flat)
+                up_corr = adapter.up_correction(mlp_flat)
+
+                base_activated = F.silu(gate_proj) * up_proj
+                adapted_activated = F.silu(gate_proj + gate_corr) * (up_proj + up_corr)
+
+                blended = base_activated + gate_val * (adapted_activated - base_activated)
+                mlp_flat2 = blended.reshape(-1, blended.size(-1))
+                result = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx])
+                return result.reshape(B, L, -1)
+
+            if adapter is not None:
+                # Legacy LoRA format
+                activated = F.silu(gate_proj) * up_proj
+                mlp_flat2 = activated.reshape(-1, activated.size(-1))
+                base_out = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx])
+                adapter_out = adapter(mlp_flat)
+                delta = adapter_out - base_out
+                result = base_out + gate_val * delta
+                return result.reshape(B, L, -1)
+
+        # No expert: standard MLP
+        activated = F.silu(gate_proj) * up_proj
+        mlp_flat2 = activated.reshape(-1, activated.size(-1))
+        result = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx])
+        return result.reshape(B, L, -1)
+
     def _run_layer(
         self,
         layer_idx: int,
@@ -573,16 +750,17 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             residual, attn_out, self._post_attn_norm_weights[layer_idx],
         )
 
-        # --- MLP with FP8 projections (pre-computed keys) ---
+        # --- MLP with FP8 projections + optional expert adapter ---
+        mlp_input = hidden_states
         B2, L2, D2 = hidden_states.shape
         mlp_flat = hidden_states.reshape(-1, D2)
 
-        gate = self._fp8_linear(mlp_flat, self._mlp_gate_keys[layer_idx])
-        up = self._fp8_linear(mlp_flat, self._mlp_up_keys[layer_idx])
-        # SiLU activation on gate, element-wise multiply with up
-        hidden_states = F.silu(gate) * up
-        mlp_flat2 = hidden_states.reshape(-1, hidden_states.size(-1))
-        hidden_states = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx]).reshape(B2, L2, -1)
+        gate_proj = self._fp8_linear(mlp_flat, self._mlp_gate_keys[layer_idx])
+        up_proj = self._fp8_linear(mlp_flat, self._mlp_up_keys[layer_idx])
+
+        hidden_states = self._fp8_mlp_with_expert(
+            layer_idx, layer, mlp_input, mlp_flat, gate_proj, up_proj, B2, L2,
+        )
 
         hidden_states = residual + hidden_states
 
@@ -600,15 +778,17 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         # Post-attention norm (still needed before MLP)
         hidden_states = layer.post_attention_layernorm(hidden_states)
 
-        # MLP with FP8 projections
+        # MLP with FP8 projections + optional expert adapter
+        mlp_input = hidden_states
         B, L, D = hidden_states.shape
         mlp_flat = hidden_states.reshape(-1, D)
 
-        gate = self._fp8_linear(mlp_flat, self._mlp_gate_keys[layer_idx])
-        up = self._fp8_linear(mlp_flat, self._mlp_up_keys[layer_idx])
-        hidden_states = F.silu(gate) * up
-        mlp_flat2 = hidden_states.reshape(-1, hidden_states.size(-1))
-        hidden_states = self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx]).reshape(B, L, -1)
+        gate_proj = self._fp8_linear(mlp_flat, self._mlp_gate_keys[layer_idx])
+        up_proj = self._fp8_linear(mlp_flat, self._mlp_up_keys[layer_idx])
+
+        hidden_states = self._fp8_mlp_with_expert(
+            layer_idx, layer, mlp_input, mlp_flat, gate_proj, up_proj, B, L,
+        )
 
         hidden_states = residual + hidden_states
 

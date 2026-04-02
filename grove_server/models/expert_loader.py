@@ -25,6 +25,34 @@ class LoRAAdapter(nn.Module):
         return x @ self.A @ self.B
 
 
+class MoEMlpAdapter(nn.Module):
+    """MLP-internal adapter: adds LoRA corrections to gate_proj and up_proj.
+
+    Training format computes:
+        down_proj(silu(gate_proj(x) + gate_lora(x)) * (up_proj(x) + up_lora(x)))
+
+    This module stores the gate_lora and up_lora pairs separately so they can
+    be applied inside the MLP computation rather than as a post-hoc delta.
+
+    Each LoRA pair has A: (hidden_dim, rank) and B: (rank, intermediate_size).
+    """
+
+    def __init__(self, hidden_dim: int, intermediate_dim: int, rank: int):
+        super().__init__()
+        self.gate_lora_A = nn.Parameter(torch.zeros(hidden_dim, rank))
+        self.gate_lora_B = nn.Parameter(torch.zeros(rank, intermediate_dim))
+        self.up_lora_A = nn.Parameter(torch.zeros(hidden_dim, rank))
+        self.up_lora_B = nn.Parameter(torch.zeros(rank, intermediate_dim))
+
+    def gate_correction(self, x: torch.Tensor) -> torch.Tensor:
+        """LoRA correction to add to gate_proj output."""
+        return x @ self.gate_lora_A @ self.gate_lora_B
+
+    def up_correction(self, x: torch.Tensor) -> torch.Tensor:
+        """LoRA correction to add to up_proj output."""
+        return x @ self.up_lora_A @ self.up_lora_B
+
+
 class DeltaGate(nn.Module):
     """Per-layer gate: sigmoid(linear(x))."""
 
@@ -98,14 +126,33 @@ def load_expert(
         raise FileNotFoundError(f"Missing gate file: {gate_path}")
     gate_weights = load_file(str(gate_path), device=device)
 
+    # Detect adapter format: MoE (split gate/up) or simple LoRA
+    has_moe_format = any(
+        k.endswith(".gate_lora.A") for k in adapter_weights
+    )
+
     # Build adapter modules
     adapters: dict[int, nn.Module] = {}
     for layer_idx in active_layers:
-        adapter = LoRAAdapter(hidden_dim, hidden_dim, rank)
-        a_key = f"layer.{layer_idx}.adapter.A"
-        b_key = f"layer.{layer_idx}.adapter.B"
-        adapter.A = nn.Parameter(adapter_weights[a_key])
-        adapter.B = nn.Parameter(adapter_weights[b_key])
+        if has_moe_format:
+            # MoE format: separate gate_lora and up_lora targeting MLP internals
+            gate_a = adapter_weights[f"layer.{layer_idx}.gate_lora.A"]
+            gate_b = adapter_weights[f"layer.{layer_idx}.gate_lora.B"]
+            up_a = adapter_weights[f"layer.{layer_idx}.up_lora.A"]
+            up_b = adapter_weights[f"layer.{layer_idx}.up_lora.B"]
+            intermediate_dim = gate_b.shape[1]
+            adapter = MoEMlpAdapter(hidden_dim, intermediate_dim, rank)
+            adapter.gate_lora_A = nn.Parameter(gate_a)
+            adapter.gate_lora_B = nn.Parameter(gate_b)
+            adapter.up_lora_A = nn.Parameter(up_a)
+            adapter.up_lora_B = nn.Parameter(up_b)
+        else:
+            # Legacy format: combined LoRA on MLP output
+            adapter = LoRAAdapter(hidden_dim, hidden_dim, rank)
+            a_key = f"layer.{layer_idx}.adapter.A"
+            b_key = f"layer.{layer_idx}.adapter.B"
+            adapter.A = nn.Parameter(adapter_weights[a_key])
+            adapter.B = nn.Parameter(adapter_weights[b_key])
         adapters[layer_idx] = adapter.to(device)
 
     # Build gate modules

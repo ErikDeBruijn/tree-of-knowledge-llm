@@ -70,8 +70,10 @@ def export_expert(
         if (m := layer_pattern.match(key))
     })
 
-    # Convert adapter weights: combine gate_lora + up_lora into single A/B
+    # Convert adapter weights: preserve gate_lora and up_lora separately
+    # so the server can apply them inside the MLP computation (before activation)
     server_adapters: dict[str, torch.Tensor] = {}
+    has_moe_format = False
     for layer_idx in adapter_layers:
         gate_a = adapter_state.get(f"layer.{layer_idx}.gate_lora.A")
         gate_b = adapter_state.get(f"layer.{layer_idx}.gate_lora.B")
@@ -79,12 +81,12 @@ def export_expert(
         up_b = adapter_state.get(f"layer.{layer_idx}.up_lora.B")
 
         if gate_a is not None and up_a is not None:
-            # Stack the two LoRA pairs: A = [gate_A | up_A], B = [gate_B; up_B]
-            # This gives a combined adapter of rank 2*original_rank
-            combined_a = torch.cat([gate_a, up_a], dim=1)  # (hidden, 2*rank)
-            combined_b = torch.cat([gate_b, up_b], dim=0)  # (2*rank, hidden)
-            server_adapters[f"layer.{layer_idx}.adapter.A"] = combined_a
-            server_adapters[f"layer.{layer_idx}.adapter.B"] = combined_b
+            # MoE format: separate gate/up LoRA targeting MLP internals
+            has_moe_format = True
+            server_adapters[f"layer.{layer_idx}.gate_lora.A"] = gate_a
+            server_adapters[f"layer.{layer_idx}.gate_lora.B"] = gate_b
+            server_adapters[f"layer.{layer_idx}.up_lora.A"] = up_a
+            server_adapters[f"layer.{layer_idx}.up_lora.B"] = up_b
         elif gate_a is not None:
             server_adapters[f"layer.{layer_idx}.adapter.A"] = gate_a
             server_adapters[f"layer.{layer_idx}.adapter.B"] = gate_b
@@ -118,11 +120,8 @@ def export_expert(
             if bridge_tensors:
                 save_file(bridge_tensors, str(bridges_dir / cfg["file"]))
 
-    # Determine effective rank (combined from gate_lora + up_lora)
-    effective_rank = adapter_rank * 2 if any(
-        f"layer.{adapter_layers[0]}.up_lora.A" in adapter_state
-        for _ in [1]  # check if up_lora exists
-    ) else adapter_rank
+    # Rank stays as-is — gate_lora and up_lora are stored separately
+    effective_rank = adapter_rank
 
     # Write manifest
     manifest = {
