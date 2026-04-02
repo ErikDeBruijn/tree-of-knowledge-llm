@@ -31,7 +31,7 @@ from grove_server.engine.expert_registry import ExpertRegistry
 from grove_server.engine.inference_engine import InferenceEngine
 from grove_server.metrics.collector import MetricsCollector
 
-app = FastAPI(title="Grove Server")
+app = FastAPI(title="Grove Server", docs_url="/api/docs", redoc_url="/api/redoc")
 app.include_router(dashboard_router)
 
 # ---------------------------------------------------------------------------

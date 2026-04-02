@@ -210,7 +210,7 @@ a:hover { background: #1e2d42; }
 <a href="/playground">Completion</a>
 <a href="/playground/chat">Chat</a>
 <a href="/dashboard">Dashboard</a>
-<a href="/docs">API Docs</a>
+<a href="/api/docs">API Docs</a>
 <a href="/v1/health">Health</a>
 <a href="/v1/metrics">Metrics</a>
 </div></body></html>"""
