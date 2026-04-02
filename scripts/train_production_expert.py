@@ -187,6 +187,82 @@ def evaluate_selectivity(model, tokenizer, gates, domain_texts, generic_texts,
     return results
 
 
+# === Skip/Bridge analysis ===
+
+def evaluate_skip_safety(model, tokenizer, layer_idx, texts, device, max_texts=50):
+    """Evaluate if skipping a layer is safe by checking PPL distribution.
+
+    Returns per-token loss distribution, not just mean.
+    A skip is safe if:
+      - Mean PPL change < 2%
+      - 95th percentile token loss change < 50%
+      - No catastrophic tokens (max loss change < 200%)
+    """
+    model.eval()
+    layer = model.model.layers[layer_idx]
+    orig_forward = layer.forward
+
+    # Collect per-token losses: baseline vs skip
+    baseline_losses = []
+    skip_losses = []
+
+    for text in texts[:max_texts]:
+        ids = tokenizer.encode(text, max_length=MAX_SEQ_LEN, truncation=True)
+        if len(ids) < 4:
+            continue
+        input_ids = torch.tensor([ids], dtype=torch.long, device=device)
+
+        with torch.no_grad():
+            # Baseline
+            out = model(input_ids)
+            base_logits = out.logits[:, :-1]
+            targets = input_ids[:, 1:]
+            base_loss_per_token = F.cross_entropy(
+                base_logits.reshape(-1, base_logits.size(-1)),
+                targets.reshape(-1), reduction='none'
+            )
+            baseline_losses.extend(base_loss_per_token.cpu().tolist())
+
+            # Skip this layer (identity / residual passthrough)
+            def skip_forward(hidden_states, **kwargs):
+                # Return input unchanged (pure residual)
+                return hidden_states
+            layer.forward = skip_forward
+            out_skip = model(input_ids)
+            skip_logits = out_skip[:, :-1] if not hasattr(out_skip, 'logits') else out_skip.logits[:, :-1]
+            skip_loss_per_token = F.cross_entropy(
+                skip_logits.reshape(-1, skip_logits.size(-1)),
+                targets.reshape(-1), reduction='none'
+            )
+            skip_losses.extend(skip_loss_per_token.cpu().tolist())
+            layer.forward = orig_forward
+
+    baseline_losses = np.array(baseline_losses)
+    skip_losses = np.array(skip_losses)
+
+    if len(baseline_losses) == 0:
+        return {"safe": False, "reason": "no data"}
+
+    # Compute distribution metrics
+    loss_ratios = skip_losses / np.maximum(baseline_losses, 1e-6)
+    mean_ratio = np.mean(loss_ratios)
+    p95_ratio = np.percentile(loss_ratios, 95)
+    max_ratio = np.max(loss_ratios)
+    mean_ppl_change = (np.exp(np.mean(skip_losses)) / np.exp(np.mean(baseline_losses)) - 1) * 100
+
+    safe = mean_ppl_change < 2.0 and p95_ratio < 1.5 and max_ratio < 3.0
+
+    return {
+        "safe": safe,
+        "mean_ppl_change_pct": mean_ppl_change,
+        "mean_loss_ratio": mean_ratio,
+        "p95_loss_ratio": p95_ratio,
+        "max_loss_ratio": max_ratio,
+        "n_tokens": len(baseline_losses),
+        "recommendation": "skip" if safe else "bridge" if mean_ppl_change < 10.0 else "keep",
+    }
+
+
 # === Bridge training ===
 
 def identify_bridge_candidates(gate_results, threshold=0.1):
@@ -392,17 +468,39 @@ def main():
     print(f"  BRIDGE ANALYSIS")
     print(f"{'='*60}")
     candidates = identify_bridge_candidates(sel_results)
-    print(f"  Bridge candidates (low generic gate, high selectivity): {candidates}")
+    print(f"  Candidates (low generic gate, high selectivity): {candidates}")
 
+    skip_layers = []
+    bridge_layers = []
     bridges = {}
     bridge_losses = {}
+    skip_analysis = {}
+
     if candidates:
-        print(f"\n  Training {len(candidates)} bridges (rank 64, {args.bridge_steps} steps each)...")
+        print(f"\n  Checking skip safety for {len(candidates)} layers...")
         for l in candidates:
-            bridge, bloss = train_bridge(model, l, domain_ids, args.device,
-                                         rank=64, steps=args.bridge_steps)
-            bridges[l] = bridge
-            bridge_losses[l] = bloss
+            safety = evaluate_skip_safety(model, tokenizer, l, generic_texts, args.device)
+            skip_analysis[l] = safety
+            rec = safety["recommendation"]
+            print(f"    L{l}: mean_ppl={safety['mean_ppl_change_pct']:+.1f}% "
+                  f"p95={safety['p95_loss_ratio']:.2f}x "
+                  f"max={safety['max_loss_ratio']:.2f}x → {rec.upper()}")
+            if rec == "skip":
+                skip_layers.append(l)
+            elif rec == "bridge":
+                bridge_layers.append(l)
+
+        print(f"\n  Skip (free): {skip_layers}")
+        print(f"  Bridge (need surrogate): {bridge_layers}")
+        print(f"  Keep (too risky): {[l for l in candidates if l not in skip_layers and l not in bridge_layers]}")
+
+        if bridge_layers:
+            print(f"\n  Training {len(bridge_layers)} bridges (rank 64, {args.bridge_steps} steps each)...")
+            for l in bridge_layers:
+                bridge, bloss = train_bridge(model, l, domain_ids, args.device,
+                                             rank=64, steps=args.bridge_steps)
+                bridges[l] = bridge
+                bridge_losses[l] = bloss
 
     # === SAVE ===
     print(f"\n{'='*60}")
@@ -445,6 +543,7 @@ def main():
             "type": "delta_gated_scalar",
             "rank": RANK,
             "expert_start": EXPERT_START,
+            "skip_layers": skip_layers,
             "bridge_layers": {str(l): {"rank": 64} for l in bridges},
         },
         "training": {
@@ -467,8 +566,10 @@ def main():
         "domain_ppl_change": (domain_ppl / base_domain - 1) * 100,
         "generic_ppl_change": (generic_ppl / base_generic - 1) * 100,
         "selectivity": sel_results,
-        "bridge_candidates": candidates,
+        "skip_layers": skip_layers,
+        "bridge_layers": list(bridges.keys()),
         "bridge_losses": {str(k): v for k, v in bridge_losses.items()},
+        "skip_analysis": {str(k): v for k, v in skip_analysis.items()},
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     with open(os.path.join(output_dir, "validation.json"), "w") as f:
@@ -479,7 +580,8 @@ def main():
     print(f"  Domain PPL: {domain_ppl:.2f} ({(domain_ppl/base_domain-1)*100:+.1f}%)")
     print(f"  Generic PPL: {generic_ppl:.2f} ({(generic_ppl/base_generic-1)*100:+.1f}%)")
     print(f"  Selectivity: {sel:+.3f}")
-    print(f"  Bridges: {len(bridges)} layers")
+    print(f"  Skip layers: {skip_layers}")
+    print(f"  Bridge layers: {list(bridges.keys())}")
     print(f"{'='*60}")
 
 
