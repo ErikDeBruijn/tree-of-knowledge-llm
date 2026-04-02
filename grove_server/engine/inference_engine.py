@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import logging
 import types
 from typing import Iterator, Optional
 
 import torch
+
+logger = logging.getLogger(__name__)
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from grove_server.engine.cuda_graph import CUDAGraphRunner
@@ -47,16 +50,25 @@ class InferenceEngine:
         }
         torch_dtype = dtype_map.get(dtype, torch.bfloat16)
 
+        # "auto" → single GPU (required for fast pipeline / CUDA graph)
+        # "auto-split" → HuggingFace auto device_map across GPUs
+        if device == "auto" and torch.cuda.is_available():
+            device_map = {"": 0}  # All on GPU 0
+        elif device == "auto":
+            device_map = "auto"
+        else:
+            device_map = None
+
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch_dtype,
-            device_map=device if device == "auto" else None,
+            device_map=device_map,
         )
-        if device != "auto":
+        if device_map is None:
             self.model = self.model.to(device)
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.device = device if device != "auto" else str(self.model.device)
+        self.device = device if device not in ("auto",) else str(self.model.device)
         self.num_layers: int = self.model.config.num_hidden_layers
 
         self._active_expert: Optional[Expert] = None
@@ -77,8 +89,9 @@ class InferenceEngine:
         if "cuda" in str(self.device) and self._model_on_single_device():
             try:
                 self._build_fast_pipeline()
-            except Exception:
-                pass  # Fall back to naive on any build failure
+                logger.info("Fast pipeline built (skip_layers=%s)", self._skip_layers)
+            except Exception as e:
+                logger.warning("Fast pipeline build failed: %s", e)
 
     def _model_on_single_device(self) -> bool:
         """Check if all model parameters reside on the same device."""
@@ -166,34 +179,13 @@ class InferenceEngine:
         )
 
     def _ensure_decode_graph(self, sample_token: torch.Tensor) -> None:
-        """Ensure persistent CUDA graph is captured. Reuses across requests."""
-        if self._decode_graph is not None:
-            return  # Already captured
+        """CUDA graph for decode is disabled — KV cache uses Python-level seq_len
+        for indexing, which is not captured by CUDA graphs. This causes all decode
+        steps to write to the same cache position, producing repetitive output.
 
-        if "cuda" not in str(self.device):
-            return
-
-        try:
-            tok = sample_token.clone()
-            if tok.dim() == 1:
-                tok = tok.unsqueeze(0)
-            pos = torch.tensor(
-                [[self._static_cache.seq_len]], device=self.device
-            )
-            self._decode_static_tok = tok
-            self._decode_static_pos = pos
-
-            # Warmup
-            for _ in range(3):
-                self._graphable(tok, pos)
-            torch.cuda.synchronize()
-
-            graph = torch.cuda.CUDAGraph()
-            with torch.cuda.graph(graph):
-                self._decode_static_logits = self._graphable(tok, pos)
-            self._decode_graph = graph
-        except Exception:
-            self._decode_graph = None
+        TODO: To re-enable, make cache position a tensor (part of the graph).
+        """
+        pass
 
     def _invalidate_graph(self) -> None:
         """Invalidate any captured CUDA graph (expert config changed)."""

@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import logging
 from typing import Optional
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
 
 from grove_server.api.app import app as fastapi_app, get_engine, get_metrics, get_registry, get_scheduler
 from grove_server.engine.expert_registry import ExpertRegistry
