@@ -253,13 +253,85 @@ def evaluate_skip_safety(model, tokenizer, layer_idx, texts, device, max_texts=5
     safe = mean_ppl_change < 2.0 and p95_ratio < 1.5 and max_ratio < 3.0
 
     return {
-        "safe": safe,
-        "mean_ppl_change_pct": mean_ppl_change,
-        "mean_loss_ratio": mean_ratio,
-        "p95_loss_ratio": p95_ratio,
-        "max_loss_ratio": max_ratio,
-        "n_tokens": len(baseline_losses),
+        "safe": bool(safe),
+        "mean_ppl_change_pct": float(mean_ppl_change),
+        "mean_loss_ratio": float(mean_ratio),
+        "p95_loss_ratio": float(p95_ratio),
+        "max_loss_ratio": float(max_ratio),
+        "n_tokens": int(len(baseline_losses)),
         "recommendation": "skip" if safe else "bridge" if mean_ppl_change < 10.0 else "keep",
+    }
+
+
+def evaluate_generation_drift(model, tokenizer, layer_idx, prompts, device,
+                              max_new_tokens=50):
+    """Measure error propagation: generate with and without layer skip.
+
+    Instead of per-token PPL (which misses compounding), generate actual
+    text and measure how quickly the skip version diverges from baseline.
+
+    Returns:
+      - divergence_step: average token position where outputs first differ
+      - ppl_at_50: PPL of skip-generated text evaluated by full model
+      - repetition_rate: fraction of 3-grams that repeat (drift indicator)
+    """
+    model.eval()
+    layer = model.model.layers[layer_idx]
+    orig_forward = layer.forward
+
+    divergences = []
+    skip_ppls = []
+    skip_repetitions = []
+
+    for prompt in prompts[:10]:
+        ids = tokenizer.encode(prompt, max_length=200, truncation=True)
+        input_ids = torch.tensor([ids], dtype=torch.long, device=device)
+
+        with torch.no_grad():
+            # Baseline generation
+            base_out = model.generate(input_ids, max_new_tokens=max_new_tokens,
+                                       do_sample=False, temperature=1.0)
+            base_tokens = base_out[0][len(ids):].tolist()
+
+            # Skip generation
+            def skip_fwd(hidden_states, **kwargs):
+                return hidden_states
+            layer.forward = skip_fwd
+            skip_out = model.generate(input_ids, max_new_tokens=max_new_tokens,
+                                       do_sample=False, temperature=1.0)
+            skip_tokens = skip_out[0][len(ids):].tolist()
+            layer.forward = orig_forward
+
+            # Divergence: first position where tokens differ
+            div_pos = max_new_tokens
+            for i in range(min(len(base_tokens), len(skip_tokens))):
+                if base_tokens[i] != skip_tokens[i]:
+                    div_pos = i
+                    break
+            divergences.append(div_pos)
+
+            # PPL of skip-generated text (does full model think it's coherent?)
+            if len(skip_tokens) > 2:
+                skip_ids = torch.tensor([ids + skip_tokens], dtype=torch.long, device=device)
+                out = model(skip_ids)
+                loss = F.cross_entropy(
+                    out.logits[0, len(ids)-1:-1].reshape(-1, out.logits.size(-1)),
+                    skip_ids[0, len(ids):].reshape(-1),
+                )
+                skip_ppls.append(torch.exp(loss).item())
+
+            # Repetition: 3-gram repetition rate
+            if len(skip_tokens) >= 3:
+                trigrams = [tuple(skip_tokens[i:i+3]) for i in range(len(skip_tokens)-2)]
+                unique = len(set(trigrams))
+                skip_repetitions.append(1.0 - unique / len(trigrams) if trigrams else 0)
+
+    return {
+        "mean_divergence_step": float(np.mean(divergences)) if divergences else 0,
+        "min_divergence_step": int(min(divergences)) if divergences else 0,
+        "mean_skip_ppl": float(np.mean(skip_ppls)) if skip_ppls else 0,
+        "mean_repetition_rate": float(np.mean(skip_repetitions)) if skip_repetitions else 0,
+        "n_prompts": len(prompts[:10]),
     }
 
 
@@ -490,6 +562,25 @@ def main():
             elif rec == "bridge":
                 bridge_layers.append(l)
 
+        # Generation drift test on skip candidates
+        drift_results = {}
+        test_prompts = domain_texts[:10]
+        print(f"\n  Generation drift test (10 prompts × 50 tokens)...")
+        for l in candidates:
+            drift = evaluate_generation_drift(model, tokenizer, l, test_prompts, args.device)
+            drift_results[l] = drift
+            div = drift["mean_divergence_step"]
+            rep = drift["mean_repetition_rate"]
+            ppl = drift["mean_skip_ppl"]
+            print(f"    L{l}: diverges at token {div:.0f}, skip_ppl={ppl:.1f}, "
+                  f"repetition={rep:.1%}")
+            # Override: if skip causes immediate divergence or high repetition, force bridge
+            if div < 3 or rep > 0.3:
+                if l in skip_layers:
+                    skip_layers.remove(l)
+                    bridge_layers.append(l)
+                    print(f"      → Overridden to BRIDGE (generation drift too fast)")
+
         print(f"\n  Skip (free): {skip_layers}")
         print(f"  Bridge (need surrogate): {bridge_layers}")
         print(f"  Keep (too risky): {[l for l in candidates if l not in skip_layers and l not in bridge_layers]}")
@@ -570,6 +661,7 @@ def main():
         "bridge_layers": list(bridges.keys()),
         "bridge_losses": {str(k): v for k, v in bridge_losses.items()},
         "skip_analysis": {str(k): v for k, v in skip_analysis.items()},
+        "generation_drift": {str(k): v for k, v in drift_results.items()} if 'drift_results' in dir() else {},
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     with open(os.path.join(output_dir, "validation.json"), "w") as f:
