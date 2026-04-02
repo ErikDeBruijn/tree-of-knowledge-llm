@@ -7,6 +7,22 @@ from fastapi.responses import HTMLResponse
 
 router = APIRouter()
 
+
+def _nav(active: str = "") -> str:
+    """Generate nav bar HTML. Active page gets teal color."""
+    links = [
+        ("Completion", "/playground"),
+        ("Chat", "/playground/chat"),
+        ("Dashboard", "/dashboard"),
+        ("API Docs", "/api/docs"),
+    ]
+    parts = []
+    for label, href in links:
+        color = "#4fd1c5" if label == active else "#6b7fa3"
+        parts.append(f'<a href="{href}" style="color:{color};margin-right:16px;">{label}</a>')
+    return f'<nav style="margin-bottom:12px;font-size:0.85em;font-family:-apple-system,sans-serif;">{"".join(parts)}</nav>'
+
+
 DASHBOARD_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +67,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 </head>
 <body>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Server</h1>
+<!-- NAV -->
 <div class="grid">
 
   <!-- Mode -->
@@ -225,7 +242,7 @@ async def index():
 @router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
     """Serve the live dashboard."""
-    return DASHBOARD_HTML
+    return DASHBOARD_HTML.replace("<!-- NAV -->", _nav("Dashboard"))
 
 
 PLAYGROUND_HTML = """<!DOCTYPE html>
@@ -289,11 +306,7 @@ PLAYGROUND_HTML = """<!DOCTYPE html>
 </head>
 <body>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Playground</h1>
-<nav style="margin-bottom:12px;font-size:0.85em;font-family:-apple-system,sans-serif;">
-  <a href="/playground" style="color:#4fd1c5;margin-right:16px;">Completion</a>
-  <a href="/playground/chat" style="color:#6b7fa3;margin-right:16px;">Chat</a>
-  <a href="/dashboard" style="color:#6b7fa3;">Dashboard</a>
-</nav>
+<!-- NAV -->
 <div id="settings">
   <label>Max tokens <input type="number" id="max-tokens" value="100"></label>
   <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
@@ -587,8 +600,8 @@ if (urlPrompt) {
 
 @router.get("/playground", response_class=HTMLResponse)
 async def playground():
-    """Serve the attribution playground."""
-    return PLAYGROUND_HTML
+    """Serve the completion playground."""
+    return PLAYGROUND_HTML.replace("<!-- NAV -->", _nav("Completion"))
 
 
 CHAT_HTML = """<!DOCTYPE html>
@@ -627,11 +640,7 @@ CHAT_HTML = """<!DOCTYPE html>
 </head>
 <body>
 <h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Chat</h1>
-<nav style="margin-bottom:12px;font-size:0.85em;">
-  <a href="/playground" style="color:#6b7fa3;margin-right:16px;">Completion</a>
-  <a href="/playground/chat" style="color:#4fd1c5;margin-right:16px;">Chat</a>
-  <a href="/dashboard" style="color:#6b7fa3;">Dashboard</a>
-</nav>
+<!-- NAV -->
 <div id="settings">
   <label>Max tokens <input type="number" id="max-tokens" value="200"></label>
   <label>Temperature <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2"></label>
@@ -747,4 +756,4 @@ async function send() {
 @router.get("/playground/chat", response_class=HTMLResponse)
 async def playground_chat():
     """Serve the streaming chat playground."""
-    return CHAT_HTML
+    return CHAT_HTML.replace("<!-- NAV -->", _nav("Chat"))
