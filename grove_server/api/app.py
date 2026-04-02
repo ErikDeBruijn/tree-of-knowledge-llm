@@ -207,7 +207,7 @@ async def _stream_response(engine, prompt, request, completion_id):
     while True:
         # Poll with short timeout so we can yield promptly
         try:
-            token = token_queue.get(timeout=0.05)
+            token = token_queue.get(timeout=0.001)
         except queue.Empty:
             await asyncio.sleep(0)
             continue
