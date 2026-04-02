@@ -62,6 +62,18 @@ class InferenceEngine:
         self._graphable: Optional[GraphableDecodeStep] = None
         self._static_cache: Optional[StaticKVCache] = None
 
+        # Auto-build fast pipeline on CUDA
+        if "cuda" in str(self.device):
+            try:
+                self._build_fast_pipeline()
+            except Exception:
+                pass  # Fall back to naive on any build failure
+
+    @property
+    def _fast_pipeline_available(self) -> bool:
+        """True when graphable decode step and static cache are ready."""
+        return self._graphable is not None and self._static_cache is not None
+
     def _build_graphable_decode(self, max_seq_len: int = 2048) -> None:
         """Build a CUDA-graphable decode step with static KV cache.
 
@@ -92,6 +104,17 @@ class InferenceEngine:
                 self.model, self._static_cache, max_seq_len=max_seq_len
             )
         self._graph_runner = CUDAGraphRunner(device=self.device)
+
+    def _build_fast_pipeline(self, max_seq_len: int = 2048) -> None:
+        """Build fast inference pipeline with GraphableDecodeStep + StaticKVCache.
+
+        Tries FP8 first, falls back to BF16 GraphableDecodeStep.
+        Called automatically on CUDA devices, or manually for benchmarks.
+
+        Args:
+            max_seq_len: Maximum sequence length to pre-allocate.
+        """
+        self._build_graphable_decode(max_seq_len=max_seq_len)
 
     def _invalidate_graph(self) -> None:
         """Invalidate any captured CUDA graph (expert config changed)."""
@@ -192,7 +215,7 @@ class InferenceEngine:
         max_tokens: int = 256,
         temperature: float = 0.7,
     ) -> str:
-        """Generate text completion.
+        """Generate text completion. Uses fast pipeline on CUDA, naive on CPU.
 
         Args:
             prompt: Input text.
@@ -202,6 +225,42 @@ class InferenceEngine:
         Returns:
             Generated text (excluding the prompt).
         """
+        if self._fast_pipeline_available:
+            return self._generate_fast(prompt, max_tokens, temperature)
+        return self._generate_naive(prompt, max_tokens, temperature)
+
+    def generate_stream(
+        self,
+        prompt: str,
+        max_tokens: int = 256,
+        temperature: float = 0.7,
+        use_cuda_graph: bool = False,
+    ) -> Iterator[str]:
+        """Streaming generation. Uses fast pipeline on CUDA, naive on CPU.
+
+        Args:
+            prompt: Input text.
+            max_tokens: Maximum new tokens to generate.
+            temperature: Sampling temperature.
+            use_cuda_graph: Legacy parameter, ignored (CUDA graphs are used
+                automatically when the fast pipeline is available).
+        """
+        if self._fast_pipeline_available:
+            yield from self._generate_stream_fast(prompt, max_tokens, temperature)
+        else:
+            yield from self._generate_stream_naive(prompt, max_tokens, temperature)
+
+    # ------------------------------------------------------------------
+    # Naive (O(n^2)) methods — CPU fallback
+    # ------------------------------------------------------------------
+
+    def _generate_naive(
+        self,
+        prompt: str,
+        max_tokens: int = 256,
+        temperature: float = 0.7,
+    ) -> str:
+        """Naive generate using HF model.generate (no KV cache optimization)."""
         inputs = self.tokenizer(prompt, return_tensors="pt")
         input_ids = inputs["input_ids"].to(self.model.device)
         prompt_len = input_ids.shape[1]
@@ -215,30 +274,16 @@ class InferenceEngine:
         with torch.no_grad():
             output_ids = self.model.generate(input_ids, **gen_kwargs)
 
-        # Decode only the generated tokens (skip prompt)
         new_ids = output_ids[0, prompt_len:]
         return self.tokenizer.decode(new_ids, skip_special_tokens=True)
 
-    def generate_stream(
+    def _generate_stream_naive(
         self,
         prompt: str,
         max_tokens: int = 256,
         temperature: float = 0.7,
-        use_cuda_graph: bool = False,
     ) -> Iterator[str]:
-        """Streaming generation — yield tokens as they're produced.
-
-        Uses a simple loop with greedy/sampling decode to yield one token
-        at a time. This avoids depending on TextIteratorStreamer threads.
-
-        Args:
-            prompt: Input text.
-            max_tokens: Maximum new tokens to generate.
-            temperature: Sampling temperature.
-            use_cuda_graph: If True, attempt to capture the decode step as a
-                CUDA graph after the first token (prefill). Only effective on
-                CUDA devices. Falls back to eager if capture fails.
-        """
+        """Naive streaming: recomputes all tokens every step (O(n^2))."""
         inputs = self.tokenizer(prompt, return_tensors="pt")
         input_ids = inputs["input_ids"].to(self.model.device)
 
@@ -265,3 +310,88 @@ class InferenceEngine:
 
                 if eos_id is not None and next_token.item() == eos_id:
                     break
+
+    # ------------------------------------------------------------------
+    # Fast methods — GraphableDecodeStep + StaticKVCache
+    # ------------------------------------------------------------------
+
+    def _generate_fast(
+        self,
+        prompt: str,
+        max_tokens: int = 256,
+        temperature: float = 0.7,
+    ) -> str:
+        """Fast generation using GraphableDecodeStep + StaticKVCache.
+
+        Prefills the KV cache with the full prompt in one pass, then decodes
+        one token at a time with constant-shape tensors (CUDA-graph safe).
+        """
+        input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
+        self._static_cache.reset()
+
+        eos_id = getattr(self.tokenizer, "eos_token_id", None)
+        tokens: list[int] = []
+
+        with torch.no_grad():
+            # Prefill: process entire prompt
+            pos = torch.arange(input_ids.size(1), device=self.device).unsqueeze(0)
+            logits = self._graphable(input_ids, pos)
+
+            # First decode token from prefill logits
+            next_token = self._sample_token(logits[:, -1, :], temperature)
+
+            for _ in range(max_tokens):
+                tok_id = next_token.item()
+                tokens.append(tok_id)
+                if eos_id is not None and tok_id == eos_id:
+                    break
+
+                # Decode step: single token
+                pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
+                logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
+                next_token = self._sample_token(logits[:, -1, :], temperature)
+
+        return self.tokenizer.decode(tokens, skip_special_tokens=True)
+
+    def _generate_stream_fast(
+        self,
+        prompt: str,
+        max_tokens: int = 256,
+        temperature: float = 0.7,
+    ) -> Iterator[str]:
+        """Fast streaming using GraphableDecodeStep + StaticKVCache.
+
+        Same as _generate_fast but yields each token as a decoded string.
+        """
+        input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
+        self._static_cache.reset()
+
+        eos_id = getattr(self.tokenizer, "eos_token_id", None)
+
+        with torch.no_grad():
+            # Prefill
+            pos = torch.arange(input_ids.size(1), device=self.device).unsqueeze(0)
+            logits = self._graphable(input_ids, pos)
+
+            next_token = self._sample_token(logits[:, -1, :], temperature)
+
+            for _ in range(max_tokens):
+                tok_id = next_token.item()
+                if eos_id is not None and tok_id == eos_id:
+                    break
+
+                token_str = self.tokenizer.decode([tok_id], skip_special_tokens=True)
+                yield token_str
+
+                # Decode step
+                pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
+                logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
+                next_token = self._sample_token(logits[:, -1, :], temperature)
+
+    @staticmethod
+    def _sample_token(logits: torch.Tensor, temperature: float) -> torch.Tensor:
+        """Sample or argmax a single token from logits (1, vocab_size)."""
+        if temperature > 0:
+            probs = torch.softmax(logits / temperature, dim=-1)
+            return torch.multinomial(probs, num_samples=1)
+        return logits.argmax(dim=-1, keepdim=True)

@@ -253,6 +253,136 @@ class TestEngineHookBehavior:
             assert call_args[1]["layer_idx"] == 1
 
 
+class TestFastPipeline:
+    """Tests for fast pipeline (GraphableDecodeStep + StaticKVCache) integration."""
+
+    def test_fast_pipeline_created_on_cuda(self):
+        """When device is cuda, _build_fast_pipeline sets _graphable and _static_cache."""
+        engine = _make_engine_with_fakes()
+        # Simulate CUDA device
+        engine.device = "cuda:0"
+        # Mock the config to have required attrs
+        engine.model.config.num_key_value_heads = 4
+        engine.model.config.num_attention_heads = 4
+        engine.model.config.head_dim = 8
+
+        with patch("grove_server.engine.inference_engine.StaticKVCache") as mock_cache_cls, \
+             patch("grove_server.engine.inference_engine.fp8_available", return_value=False), \
+             patch("grove_server.engine.inference_engine.GraphableDecodeStep") as mock_gds_cls:
+            mock_cache = MagicMock()
+            mock_cache_cls.return_value = mock_cache
+            mock_gds = MagicMock()
+            mock_gds_cls.return_value = mock_gds
+
+            engine._build_fast_pipeline()
+
+            assert engine._static_cache is mock_cache
+            assert engine._graphable is mock_gds
+
+    def test_cpu_fallback_uses_naive(self):
+        """On CPU, _fast_pipeline_available is False and generate uses naive path."""
+        engine = _make_engine_with_fakes()
+        assert engine.device == "cpu"
+        assert not engine._fast_pipeline_available
+
+        # generate should work (uses naive)
+        result = engine.generate("hello")
+        assert isinstance(result, str)
+
+    def test_fast_generate_produces_text(self):
+        """Fast generate returns non-empty string."""
+        engine = _make_engine_with_fakes()
+
+        mock_graphable = MagicMock()
+        mock_cache = MagicMock()
+        mock_cache.seq_len = 3
+
+        call_count = [0]
+
+        def mock_forward(input_ids, position_ids):
+            call_count[0] += 1
+            vocab_size = 10
+            logits = torch.randn(1, input_ids.size(1), vocab_size)
+            if call_count[0] >= 3:
+                logits[:, -1, 0] = 100.0  # eos token
+            else:
+                logits[:, -1, 0] = -100.0  # avoid eos
+                logits[:, -1, 1] = 10.0  # pick token 1
+            return logits
+
+        mock_graphable.side_effect = mock_forward
+
+        engine._graphable = mock_graphable
+        engine._static_cache = mock_cache
+        # Keep device as cpu so .to() works without CUDA
+        engine.device = "cpu"
+
+        result = engine._generate_fast("hello", max_tokens=10, temperature=0.0)
+        assert isinstance(result, str)
+        assert len(result) > 0
+
+    def test_fast_stream_yields_tokens(self):
+        """Fast streaming yields multiple string tokens."""
+        engine = _make_engine_with_fakes()
+
+        mock_graphable = MagicMock()
+        mock_cache = MagicMock()
+        mock_cache.seq_len = 3
+
+        call_count = [0]
+
+        def mock_forward(input_ids, position_ids):
+            call_count[0] += 1
+            vocab_size = 10
+            logits = torch.randn(1, input_ids.size(1), vocab_size)
+            if call_count[0] >= 4:
+                logits[:, -1, 0] = 100.0  # eos
+            else:
+                logits[:, -1, 0] = -100.0
+                logits[:, -1, 1] = 10.0
+            return logits
+
+        mock_graphable.side_effect = mock_forward
+        engine._graphable = mock_graphable
+        engine._static_cache = mock_cache
+        engine.device = "cpu"
+
+        tokens = list(engine._generate_stream_fast("hello", max_tokens=10, temperature=0.0))
+        assert len(tokens) >= 1
+        assert all(isinstance(t, str) for t in tokens)
+
+    def test_generate_dispatches_to_fast_when_available(self):
+        """generate() calls _generate_fast when pipeline is available."""
+        engine = _make_engine_with_fakes()
+        engine._graphable = MagicMock()
+        engine._static_cache = MagicMock()
+
+        with patch.object(engine, "_generate_fast", return_value="fast result") as mock_fast:
+            result = engine.generate("hello", max_tokens=10, temperature=0.5)
+            mock_fast.assert_called_once_with("hello", 10, 0.5)
+            assert result == "fast result"
+
+    def test_generate_stream_dispatches_to_fast_when_available(self):
+        """generate_stream() yields from _generate_stream_fast when pipeline is available."""
+        engine = _make_engine_with_fakes()
+        engine._graphable = MagicMock()
+        engine._static_cache = MagicMock()
+
+        with patch.object(engine, "_generate_stream_fast", return_value=iter(["a", "b"])) as mock_fast:
+            tokens = list(engine.generate_stream("hello", max_tokens=10, temperature=0.5))
+            mock_fast.assert_called_once_with("hello", 10, 0.5)
+            assert tokens == ["a", "b"]
+
+    def test_generate_falls_back_to_naive_on_cpu(self):
+        """generate() uses naive path when no fast pipeline."""
+        engine = _make_engine_with_fakes()
+        assert not engine._fast_pipeline_available
+
+        with patch.object(engine, "_generate_fast") as mock_fast:
+            engine.generate("hello")
+            mock_fast.assert_not_called()
+
+
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="no GPU")
 class TestEngineIntegration:
     """Integration tests requiring GPU + real model."""
