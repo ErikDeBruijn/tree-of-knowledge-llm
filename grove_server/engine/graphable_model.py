@@ -134,12 +134,13 @@ class GraphableDecodeStep(nn.Module):
         self.skip_layers: set[int] = set(skip_layers or [])
         self.skip_attention_layers: set[int] = set(skip_attention_layers or [])
         self.bridge_layers: dict[int, nn.Module] = {}  # layer_idx -> BridgeModule (future use)
-        self.expert: Optional[Expert] = expert
+        self.expert: Optional[Expert] = expert  # legacy single-expert
+        self.experts: list[Expert] = []  # multi-expert grove
 
-        # Attribution tracking: per-token gate activations per layer
+        # Attribution tracking: per-token gate activations per layer per expert
         # Set track_attribution=True before generate to collect data
         self.track_attribution: bool = False
-        self._last_gate_activations: dict[int, float] = {}  # layer_idx -> gate value (last token)
+        self._last_gate_activations: dict[str, dict[int, float]] = {}  # expert_name -> {layer_idx -> gate}
 
         # Detect GQA configuration
         config = model.config
@@ -212,13 +213,13 @@ class GraphableDecodeStep(nn.Module):
 
         return logits
 
-    def pop_attribution(self) -> dict[int, float]:
-        """Return and clear the last token's gate activations per layer.
+    def pop_attribution(self) -> dict[str, dict[int, float]]:
+        """Return and clear the last token's gate activations per expert per layer.
 
-        Returns dict mapping layer_idx -> gate value (0-1).
+        Returns dict mapping expert_name -> {layer_idx -> gate value (0-1)}.
         Empty dict if no expert active or tracking disabled.
         """
-        result = dict(self._last_gate_activations)
+        result = {k: dict(v) for k, v in self._last_gate_activations.items()}
         self._last_gate_activations.clear()
         return result
 
@@ -319,14 +320,12 @@ class GraphableDecodeStep(nn.Module):
         mlp: nn.Module,
         hidden_states: torch.Tensor,
     ) -> torch.Tensor:
-        """Run MLP with optional expert adapter integrated into the computation.
+        """Run MLP with multi-expert softmax routing.
 
-        For MoEMlpAdapter: applies LoRA corrections inside MLP (to gate_proj/up_proj
-        outputs before activation), matching the training format exactly.
-
-        For LoRAAdapter: applies as post-MLP additive delta (legacy).
-
-        For skip/bridge layers: uses gate to blend or passthrough.
+        When multiple experts are in self.experts, computes gate logits for
+        each expert + a "no expert" option, softmax-normalizes, and blends
+        the adapted outputs. Falls back to single-expert sigmoid when only
+        self.expert is set (legacy).
 
         Args:
             layer_idx: Index of this layer.
@@ -334,66 +333,96 @@ class GraphableDecodeStep(nn.Module):
             hidden_states: Input hidden states (B, L, D).
 
         Returns:
-            MLP output, possibly modified by expert adapter.
+            MLP output, possibly modified by expert adapter(s).
         """
-        expert = self.expert
-        if expert is None or not expert.covers_layer(layer_idx):
-            return mlp(hidden_states)
-        if layer_idx not in expert.gates:
+        # Collect active experts for this layer
+        active_experts = []
+        for exp in self.experts:
+            if exp.covers_layer(layer_idx) and layer_idx in exp.gates:
+                adapter = exp.adapters.get(layer_idx)
+                if adapter is not None:
+                    active_experts.append(exp)
+
+        # Legacy single-expert fallback
+        if not active_experts and self.expert is not None:
+            if self.expert.covers_layer(layer_idx) and layer_idx in self.expert.gates:
+                adapter = self.expert.adapters.get(layer_idx)
+                if adapter is not None:
+                    active_experts = [self.expert]
+
+        if not active_experts:
             return mlp(hidden_states)
 
         orig_shape = hidden_states.shape
         flat_input = hidden_states.reshape(-1, orig_shape[-1])
 
-        # Gate evaluation: DeltaGate.forward() already applies sigmoid
-        gate = expert.gates[layer_idx](flat_input)  # (B*L, 1), already sigmoided
+        # Compute base MLP output once (shared across experts)
+        gate_proj_out = mlp.gate_proj(hidden_states)
+        up_proj_out = mlp.up_proj(hidden_states)
+        base_activated = F.silu(gate_proj_out) * up_proj_out
 
-        # Track gate activation for attribution (last token only)
+        if len(active_experts) == 1:
+            # Single expert: use sigmoid gate (original behavior)
+            exp = active_experts[0]
+            gate_val = exp.gates[layer_idx](flat_input)  # sigmoided
+
+            if self.track_attribution:
+                if exp.name not in self._last_gate_activations:
+                    self._last_gate_activations[exp.name] = {}
+                self._last_gate_activations[exp.name][layer_idx] = gate_val[-1, 0].item()
+
+            adapter = exp.adapters[layer_idx]
+            if isinstance(adapter, MoEMlpAdapter):
+                gate_corr = adapter.gate_correction(flat_input).reshape(gate_proj_out.shape)
+                up_corr = adapter.up_correction(flat_input).reshape(up_proj_out.shape)
+                adapted_activated = F.silu(gate_proj_out + gate_corr) * (up_proj_out + up_corr)
+                blended = base_activated + gate_val.reshape(*orig_shape[:-1], 1) * (adapted_activated - base_activated)
+            else:
+                base_out = mlp.down_proj(base_activated)
+                adapter_out = adapter(flat_input).reshape(base_out.shape)
+                return base_out + gate_val.reshape(*orig_shape[:-1], 1) * (adapter_out - base_out)
+            return mlp.down_proj(blended)
+
+        # Multi-expert: softmax over gate logits + "no expert" option
+        gate_logits = []  # raw logits before sigmoid
+        expert_deltas = []  # adapted - base activations
+
+        for exp in active_experts:
+            # Get raw gate logit (before sigmoid) for softmax
+            gate_module = exp.gates[layer_idx]
+            logit = gate_module.linear(flat_input)  # (B*L, 1), raw logit
+            gate_logits.append(logit)
+
+            adapter = exp.adapters[layer_idx]
+            if isinstance(adapter, MoEMlpAdapter):
+                gate_corr = adapter.gate_correction(flat_input).reshape(gate_proj_out.shape)
+                up_corr = adapter.up_correction(flat_input).reshape(up_proj_out.shape)
+                adapted = F.silu(gate_proj_out + gate_corr) * (up_proj_out + up_corr)
+                expert_deltas.append(adapted - base_activated)
+            else:
+                base_out_flat = mlp.down_proj(base_activated).reshape(-1, orig_shape[-1])
+                adapter_out = adapter(flat_input)
+                expert_deltas.append((adapter_out - base_out_flat).reshape(base_activated.shape))
+
+        # "No expert" option: logit = 0 (neutral)
+        no_expert_logit = torch.zeros_like(gate_logits[0])
+        all_logits = torch.cat(gate_logits + [no_expert_logit], dim=-1)  # (B*L, n_experts+1)
+        probs = torch.softmax(all_logits, dim=-1)  # (B*L, n_experts+1)
+
+        # Track attribution: softmax probabilities per expert
         if self.track_attribution:
-            self._last_gate_activations[layer_idx] = gate[-1, 0].item()
+            for i, exp in enumerate(active_experts):
+                if exp.name not in self._last_gate_activations:
+                    self._last_gate_activations[exp.name] = {}
+                self._last_gate_activations[exp.name][layer_idx] = probs[-1, i].item()
 
-        if layer_idx in expert.skip_layers:
-            # Skip: if gate is active, zero out MLP contribution
-            # (residual add in caller gives passthrough)
-            base_out = mlp(hidden_states).reshape(-1, orig_shape[-1])
-            result = base_out * (1.0 - gate)
-            return result.reshape(orig_shape)
+        # Blend: base + sum(prob_i * delta_i)
+        result = base_activated
+        for i, delta in enumerate(expert_deltas):
+            prob = probs[:, i:i+1].reshape(*orig_shape[:-1], 1)
+            result = result + prob * delta
 
-        if layer_idx in expert.bridge_layers and layer_idx in expert.bridges:
-            base_out = mlp(hidden_states).reshape(-1, orig_shape[-1])
-            bridge_out = expert.bridges[layer_idx](flat_input)
-            delta = bridge_out - base_out
-            result = base_out + gate * delta
-            return result.reshape(orig_shape)
-
-        adapter = expert.adapters.get(layer_idx)
-        if adapter is None:
-            return mlp(hidden_states)
-
-        if isinstance(adapter, MoEMlpAdapter):
-            # MoE format: inject LoRA corrections into MLP internals
-            gate_proj_out = mlp.gate_proj(hidden_states)
-            up_proj_out = mlp.up_proj(hidden_states)
-
-            # LoRA corrections (operate on flat input, reshape to match proj output)
-            gate_corr = adapter.gate_correction(flat_input).reshape(gate_proj_out.shape)
-            up_corr = adapter.up_correction(flat_input).reshape(up_proj_out.shape)
-
-            # Blend: base MLP + gate * (adapted MLP - base MLP)
-            base_activated = F.silu(gate_proj_out) * up_proj_out
-            adapted_activated = F.silu(gate_proj_out + gate_corr) * (up_proj_out + up_corr)
-
-            blended = base_activated + gate.reshape(*orig_shape[:-1], 1) * (adapted_activated - base_activated)
-            result = mlp.down_proj(blended)
-            return result
-        else:
-            # Legacy LoRA format: additive delta on MLP output
-            base_out = mlp(hidden_states)
-            flat_base = base_out.reshape(-1, orig_shape[-1])
-            adapter_out = adapter(flat_input)
-            delta = adapter_out - flat_base
-            result = flat_base + gate * delta
-            return result.reshape(orig_shape)
+        return mlp.down_proj(result)
 
     def _run_layer_mlp_only(
         self,
@@ -651,19 +680,63 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         Returns:
             MLP output (B, L, D), possibly modified by expert.
         """
-        expert = self.expert
-        has_expert = (
-            expert is not None
-            and expert.covers_layer(layer_idx)
-            and layer_idx in expert.gates
-        )
+        # Check for multi-expert softmax routing
+        active_experts = [exp for exp in self.experts
+                          if exp.covers_layer(layer_idx) and layer_idx in exp.gates
+                          and exp.adapters.get(layer_idx) is not None]
+        if len(active_experts) > 1:
+            # Multi-expert FP8: softmax over gate logits + blend adapted outputs
+            base_activated = F.silu(gate_proj) * up_proj
+            gate_logits = []
+            expert_deltas = []
+
+            for exp in active_experts:
+                logit = exp.gates[layer_idx].linear(mlp_flat)  # raw logit
+                gate_logits.append(logit)
+
+                adapter = exp.adapters[layer_idx]
+                if isinstance(adapter, MoEMlpAdapter):
+                    gate_corr = adapter.gate_correction(mlp_flat)
+                    up_corr = adapter.up_correction(mlp_flat)
+                    adapted = F.silu(gate_proj + gate_corr) * (up_proj + up_corr)
+                    expert_deltas.append(adapted - base_activated)
+                else:
+                    expert_deltas.append(torch.zeros_like(base_activated))
+
+            # "No expert" option: logit = 0
+            no_expert_logit = torch.zeros_like(gate_logits[0])
+            all_logits = torch.cat(gate_logits + [no_expert_logit], dim=-1)
+            probs = torch.softmax(all_logits, dim=-1)
+
+            if self.track_attribution:
+                for i, exp in enumerate(active_experts):
+                    if exp.name not in self._last_gate_activations:
+                        self._last_gate_activations[exp.name] = {}
+                    self._last_gate_activations[exp.name][layer_idx] = probs[-1, i].item()
+
+            result = base_activated
+            for i, delta in enumerate(expert_deltas):
+                prob = probs[:, i:i+1]
+                result = result + prob * delta
+
+            mlp_flat2 = result.reshape(-1, result.size(-1))
+            return self._fp8_linear(mlp_flat2, self._mlp_down_keys[layer_idx]).reshape(B, L, -1)
+
+        # Single expert: use FP8 fast path
+        expert = active_experts[0] if active_experts else None
+        if expert is None and self.expert is not None:
+            if self.expert.covers_layer(layer_idx) and layer_idx in self.expert.gates:
+                expert = self.expert
+        has_expert = expert is not None
 
         if has_expert:
             gate_val = expert.gates[layer_idx](mlp_flat)  # (B*L, 1), sigmoided
 
             # Track gate activation for attribution (last token only)
             if self.track_attribution:
-                self._last_gate_activations[layer_idx] = gate_val[-1, 0].item()
+                if expert.name not in self._last_gate_activations:
+                    self._last_gate_activations[expert.name] = {}
+                self._last_gate_activations[expert.name][layer_idx] = gate_val[-1, 0].item()
 
             if layer_idx in expert.skip_layers:
                 activated = F.silu(gate_proj) * up_proj

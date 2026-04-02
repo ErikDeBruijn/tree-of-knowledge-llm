@@ -292,6 +292,17 @@ class InferenceEngine:
         # Also clear from fast pipeline
         if self._graphable is not None:
             self._graphable.expert = None
+            self._graphable.experts = []
+
+    def install_experts(self, experts: list[Expert]) -> None:
+        """Install multiple experts for simultaneous softmax routing.
+
+        Uses the GraphableDecodeStep multi-expert path.
+        """
+        self.uninstall_expert()
+        if self._graphable is not None:
+            self._graphable.experts = experts
+        logger.info("Installed %d experts: %s", len(experts), [e.name for e in experts])
 
     def generate_with_attribution(
         self,
@@ -299,16 +310,17 @@ class InferenceEngine:
         max_tokens: int = 256,
         temperature: float = 0.7,
     ) -> list[dict]:
-        """Generate with per-token expert attribution.
+        """Generate with per-token, per-expert attribution.
 
-        Returns list of dicts: [{"token": "text", "layer_gates": {12: 0.8, ...}}]
-        Only works with fast pipeline + active expert.
+        Returns list of dicts:
+          [{"token": "text", "expert_gates": {"pubmed": {12: 0.8, ...}, "legal": {12: 0.3, ...}}}]
+
+        When only one expert is active, also populates "layer_gates" for backwards compat.
         """
         if not self._fast_pipeline_available:
-            # Fallback: generate without attribution
             text = self._generate_naive(prompt, max_tokens, temperature)
             tokens = self.tokenizer.encode(text)
-            return [{"token": self.tokenizer.decode([t]), "layer_gates": {}} for t in tokens]
+            return [{"token": self.tokenizer.decode([t]), "layer_gates": {}, "expert_gates": {}} for t in tokens]
 
         input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
         self._static_cache.reset()
@@ -335,7 +347,17 @@ class InferenceEngine:
                 attribution = self._graphable.pop_attribution()
 
                 token_str = self.tokenizer.decode([tok_id])
-                result.append({"token": token_str, "layer_gates": attribution})
+                # attribution is now {expert_name: {layer: gate, ...}, ...}
+                # For backwards compat, flatten first expert into layer_gates
+                flat_gates = {}
+                if attribution:
+                    first_expert = next(iter(attribution.values()), {})
+                    flat_gates = first_expert
+                result.append({
+                    "token": token_str,
+                    "layer_gates": flat_gates,
+                    "expert_gates": attribution,
+                })
 
                 next_token = self._sample_token(logits[:, -1, :], temperature)
 

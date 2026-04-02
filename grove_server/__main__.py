@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import argparse
 import logging
+from pathlib import Path
 from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
+logger = logging.getLogger(__name__)
 
 from grove_server.api.app import app as fastapi_app, get_engine, get_metrics, get_registry, get_scheduler
 from grove_server.engine.expert_registry import ExpertRegistry
@@ -51,6 +53,24 @@ def create_app(args: argparse.Namespace):
     )
     registry = ExpertRegistry()
     metrics = MetricsCollector()
+
+    # Auto-load experts from --experts-dir
+    if args.experts_dir:
+        experts_path = Path(args.experts_dir)
+        if experts_path.is_dir():
+            for expert_dir in sorted(experts_path.iterdir()):
+                if expert_dir.is_dir() and (expert_dir / "adapter.pt").exists():
+                    try:
+                        registry.load(
+                            name=expert_dir.name,
+                            expert_dir=expert_dir,
+                            total_layers=engine.num_layers,
+                            hidden_dim=engine.model.config.hidden_size,
+                            device=engine.device,
+                        )
+                        logger.info("Auto-loaded expert: %s", expert_dir.name)
+                    except Exception as e:
+                        logger.warning("Failed to load expert %s: %s", expert_dir.name, e)
 
     fastapi_app.dependency_overrides[get_engine] = lambda: engine
     fastapi_app.dependency_overrides[get_registry] = lambda: registry

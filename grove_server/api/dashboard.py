@@ -371,50 +371,82 @@ function getSelectedExperts() {
   return Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
 }
 
-function gateToColor(gates, experts) {
-  if (!gates || Object.keys(gates).length === 0) return 'transparent';
-  // Average gate across all layers for this token
-  const values = Object.values(gates);
-  const avg = values.reduce((a, b) => a + b, 0) / values.length;
-  if (avg < 0.05) return 'transparent';
-  // Use first expert's color (TODO: blend for multi-expert)
-  const c = EXPERT_COLORS[0] || [79, 209, 197];
-  const alpha = Math.min(0.6, avg * 0.8);
-  return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha.toFixed(2) + ')';
+function gateToColor(tokenData, experts) {
+  const eg = tokenData.expert_gates || {};
+  const lg = tokenData.layer_gates || {};
+  // Multi-expert: blend colors by each expert's avg gate
+  const expertEntries = Object.entries(eg);
+  if (expertEntries.length === 0) {
+    // Fallback to layer_gates
+    const values = Object.values(lg);
+    if (values.length === 0) return 'transparent';
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    if (avg < 0.05) return 'transparent';
+    const c = EXPERT_COLORS[0] || [79, 209, 197];
+    return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + Math.min(0.6, avg * 0.8).toFixed(2) + ')';
+  }
+  // Blend: mix RGB weighted by each expert's average gate
+  let r = 0, g = 0, b = 0, totalWeight = 0;
+  expertEntries.forEach(([name, layers], i) => {
+    const vals = Object.values(layers);
+    if (vals.length === 0) return;
+    const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const c = EXPERT_COLORS[i % EXPERT_COLORS.length];
+    r += c[0] * avg; g += c[1] * avg; b += c[2] * avg;
+    totalWeight += avg;
+  });
+  if (totalWeight < 0.05) return 'transparent';
+  r /= totalWeight; g /= totalWeight; b /= totalWeight;
+  const alpha = Math.min(0.6, totalWeight * 0.4);
+  return 'rgba(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ',' + alpha.toFixed(2) + ')';
 }
 
 function showTooltip(e, tokenData) {
-  const gates = tokenData.layer_gates || {};
-  const layers = Object.keys(gates).map(Number).sort((a, b) => a - b);
+  const eg = tokenData.expert_gates || {};
+  const lg = tokenData.layer_gates || {};
+  const expertEntries = Object.entries(eg);
 
   let html = '<h3>"' + tokenData.token.replace(/</g, '&lt;') + '"</h3>';
 
-  if (layers.length === 0) {
+  if (expertEntries.length === 0 && Object.keys(lg).length === 0) {
     html += '<div class="expert-row">No expert active (base model only)</div>';
-  } else {
-    // Expert summary sorted by avg gate
-    const avg = layers.reduce((s, l) => s + gates[l], 0) / layers.length;
-    const name = expertNames[0] || 'expert';
-    html += '<div class="expert-row"><span class="expert-name">' + name +
-            '</span><span class="gate-val">' + avg.toFixed(3) + ' avg</span></div>';
   }
 
-  // Layer heatmap: all 36 layers
-  html += '<div class="layer-heatmap">';
-  for (let i = 0; i < 36; i++) {
-    const v = gates[i] || 0;
-    let bg;
-    if (i < 12) {
-      // Identity layers (0-11): grey scale
-      bg = v > 0 ? 'rgba(160,174,192,' + (v * 0.8).toFixed(2) + ')' : '#1a2332';
-    } else {
-      // Expert layers (12-35): teal scale
-      const c = EXPERT_COLORS[0] || [79, 209, 197];
-      bg = v > 0.01 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + Math.max(0.1, v * 0.9).toFixed(2) + ')' : '#1a2332';
+  // Show each expert with avg gate, sorted by activation
+  const expertAvgs = expertEntries.map(([name, layers], i) => {
+    const vals = Object.values(layers);
+    const avg = vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    return { name, layers, avg, colorIdx: i };
+  }).sort((a, b) => b.avg - a.avg);
+
+  expertAvgs.forEach(({ name, avg, colorIdx }) => {
+    const c = EXPERT_COLORS[colorIdx % EXPERT_COLORS.length];
+    const dot = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgb(' + c.join(',') + ');margin-right:6px;"></span>';
+    html += '<div class="expert-row">' + dot + '<span class="expert-name">' + name +
+            '</span><span class="gate-val">' + avg.toFixed(3) + '</span></div>';
+  });
+
+  // Layer heatmap per expert (or combined if single)
+  const heatmapExperts = expertAvgs.length > 0 ? expertAvgs : [{ name: 'base', layers: lg, avg: 0, colorIdx: 0 }];
+  heatmapExperts.forEach(({ name, layers, colorIdx }) => {
+    if (expertAvgs.length > 1) {
+      const c = EXPERT_COLORS[colorIdx % EXPERT_COLORS.length];
+      html += '<div style="font-size:0.7em;color:rgb(' + c.join(',') + ');margin-top:6px;">' + name + '</div>';
     }
-    html += '<div class="layer-cell" data-idx="' + i + '" style="background:' + bg + '" title="L' + i + ': ' + v.toFixed(3) + '"></div>';
-  }
-  html += '</div>';
+    html += '<div class="layer-heatmap">';
+    for (let i = 0; i < 36; i++) {
+      const v = layers[i] || 0;
+      const c = EXPERT_COLORS[colorIdx % EXPERT_COLORS.length];
+      let bg;
+      if (i < 12) {
+        bg = v > 0 ? 'rgba(160,174,192,' + (v * 0.8).toFixed(2) + ')' : '#1a2332';
+      } else {
+        bg = v > 0.01 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + Math.max(0.1, v * 0.9).toFixed(2) + ')' : '#1a2332';
+      }
+      html += '<div class="layer-cell" data-idx="' + i + '" style="background:' + bg + '" title="L' + i + ': ' + v.toFixed(3) + '"></div>';
+    }
+    html += '</div>';
+  });
   html += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L12 expert →</span><span class="heatmap-label">L35</span></div>';
 
   tooltip.innerHTML = html;
@@ -461,7 +493,7 @@ async function generate() {
       const span = document.createElement('span');
       span.className = 'tok';
       span.textContent = td.token;
-      span.style.background = gateToColor(td.layer_gates, data.experts);
+      span.style.background = gateToColor(td, data.experts);
       span.addEventListener('mouseenter', e => showTooltip(e, td));
       span.addEventListener('mousemove', e => {
         const x = Math.min(e.clientX + 12, window.innerWidth - 340);

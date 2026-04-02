@@ -274,17 +274,14 @@ async def completions(
     temperature = request.get("temperature", 0.7)
     selected_experts = request.get("experts", None)  # list of expert names, or None for all
 
-    # Install selected expert(s) for attribution
-    # TODO: multi-expert grove routing. For now, install first selected.
-    all_experts = registry.list()
-    active_experts = selected_experts if selected_experts else all_experts
-    engine.uninstall_expert()
-    if active_experts:
-        for name in active_experts:
-            expert = registry.get(name)
-            if expert:
-                engine.install_expert(expert)
-                break  # Single expert for now
+    # Install selected expert(s) for attribution with softmax routing
+    all_expert_names = registry.list()
+    active_names = selected_experts if selected_experts else all_expert_names
+    experts = [registry.get(n) for n in active_names if registry.get(n)]
+    if experts:
+        engine.install_experts(experts)
+    else:
+        engine.uninstall_expert()
 
     t_start = time.time()
     tokens = engine.generate_with_attribution(
