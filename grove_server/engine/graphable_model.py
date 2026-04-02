@@ -445,7 +445,10 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         self._use_scaled_mm = fp8_available()
         # Pre-allocate fixed input scale to avoid tensor creation in forward pass
         device = next(model.parameters()).device
-        self._x_scale = torch.tensor(1.0, dtype=torch.float32, device=device)
+        # Fixed activation scale: Qwen3-8B activations reach ~11520 at layer 6+.
+        # Scale = amax_observed / fp8_max = 11520 / 448 ≈ 25.7. Use 32 for safety margin.
+        self._x_scale = torch.tensor(32.0, dtype=torch.float32, device=device)
+        self._x_inv_scale = torch.tensor(1.0 / 32.0, dtype=torch.bfloat16, device=device)
         self._precompute_fp8_weights()
         self._precompute_layer_tables()
         self._precompute_fp8_lm_head()
@@ -579,9 +582,10 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         w_fp8, w_scale = self.fp8_weights[key]
 
         if self._use_scaled_mm:
-            # Fixed input scale — avoids expensive abs().amax() reduction at B=1.
-            # BF16 dynamic range is narrow enough that scale=1.0 works.
-            x_fp8 = x.to(torch.float8_e4m3fn)
+            # Dynamic input scale: activations can exceed FP8 E4M3 max (448).
+            # Qwen3-8B layers 6+ have activations up to 11520.
+            # Use a conservative fixed scale based on observed max (avoids per-call amax).
+            x_fp8 = (x * self._x_inv_scale).to(torch.float8_e4m3fn)
             # w_fp8 is (out, in) contiguous; .t() gives col-major (in, out) for cuBLAS
             out = torch._scaled_mm(
                 x_fp8,

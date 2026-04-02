@@ -115,8 +115,7 @@ class InferenceEngine:
     def _build_fast_pipeline(self, max_seq_len: int = 2048) -> None:
         """Build fast inference pipeline with GraphableDecodeStep + StaticKVCache.
 
-        Uses BF16 GraphableDecodeStep for reliable inference. FP8 is available
-        via _build_graphable_decode for benchmarks that need it.
+        Tries FP8 first (faster on Hopper/Blackwell), falls back to BF16.
 
         Args:
             max_seq_len: Maximum sequence length to pre-allocate.
@@ -131,6 +130,26 @@ class InferenceEngine:
             dtype=next(self.model.parameters()).dtype,
             device=self.device,
         )
+        # Try FP8 (with fixed activation scale to avoid NaN on large activations)
+        if fp8_available():
+            try:
+                self._graphable = FP8GraphableDecodeStep(
+                    self.model, self._static_cache, max_seq_len=max_seq_len
+                )
+                # Quick sanity check: run one forward pass
+                test_ids = torch.zeros(1, 1, dtype=torch.long, device=self.device)
+                pos = torch.zeros(1, 1, dtype=torch.long, device=self.device)
+                self._static_cache.reset()
+                with torch.no_grad():
+                    test_out = self._graphable(test_ids, pos)
+                if not test_out.isnan().any():
+                    return  # FP8 works!
+                # FP8 produced NaN, fall through to BF16
+                self._graphable = None
+            except Exception:
+                self._graphable = None
+
+        # Fallback: BF16
         self._graphable = GraphableDecodeStep(
             self.model, self._static_cache, max_seq_len=max_seq_len
         )
