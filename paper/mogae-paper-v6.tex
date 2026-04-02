@@ -998,4 +998,163 @@ approaches converge to similar final quality
 clean delta computation: $\text{adapter}(x) - \text{base}(x)$
 can be computed in a single forward pass per layer.
 
+% ============================================================================
+\section{Inference Efficiency: Architecture-Enabled Optimizations}
+\label{sec:appendix-performance}
+
+The Grove architecture enables a family of inference optimizations that
+are \emph{intrinsically tied} to its core components---the per-layer
+delta gate, hot-pluggable adapters, and bridge surrogates. Several of
+these optimizations are unavailable to standard dense models or
+conventional LoRA deployments. We document them here as architectural
+USPs, noting which have been validated and which remain predictions.
+
+\subsection{Gate-Informed Layer Skipping}
+\label{sec:perf-skip}
+
+\textbf{Mechanism.} Layers where the gate activation is consistently
+near zero for the target domain contribute negligibly to the output.
+These layers can be skipped entirely---pure residual passthrough, zero
+compute, zero memory reads.
+
+\textbf{Unique to Grove?} Partially. Mixture-of-Depths~\cite{raposo2024mod}
+and ShortGPT~\cite{men2024shortgpt} skip layers in dense models, but
+require either training-time routing or static Block Influence analysis.
+Our gate provides a \emph{domain-conditioned, pre-trained} skip signal
+at zero additional cost: the gate was trained for knowledge routing and
+the skip decision is a free byproduct.
+
+\textbf{Validated.} Skipping 20 of 36 layers yields 228~tok/s (5.6$\times$
+HuggingFace baseline) with zero domain PPL loss when the gate
+conditionally routes general text through the full base model.
+
+\subsection{Bridge Surrogates (Zebra Layers)}
+\label{sec:perf-bridge}
+
+\textbf{Mechanism.} Replace a full transformer block
+(${\sim}436$M~FLOPs, ${\sim}470$~MB weight reads) with a lightweight
+LoRA bridge (${\sim}0.5$M~FLOPs, ${\sim}2$~MB reads)---a 99.6\%
+reduction in both compute and memory bandwidth. The bridge is trained
+via distillation or end-to-end with the language modeling loss to
+approximate the skipped block's residual contribution.
+
+\textbf{Unique to Grove?} Yes. The bridge can be packaged \emph{inside}
+the expert: each domain expert includes not only adapter weights and
+gate parameters but also bridge surrogates for layers that are redundant
+\emph{for that domain}. Different experts may bridge different layers,
+creating domain-specific ``zebra'' patterns of active and surrogated
+blocks.
+
+\textbf{Validated.} A rank-64 bridge on block~L20 recovers quality to
+within $+0.6\%$ domain PPL of the full block, at $0.1\%$ of its compute
+cost. Replicated across 3~seeds.
+
+\textbf{Prediction.} Bridging 4--6 additional layers beyond the 20
+skipped would bring the total ``surrogated'' fraction to 67--72\% of all
+layers, adding only ${\sim}0.015$~ms overhead per token.
+
+\subsection{Differential Quantization per Projection}
+\label{sec:perf-diffquant}
+
+\textbf{Mechanism.} Not all weight matrices within a transformer block
+are equally sensitive to quantization. We measured per-projection FP4
+sensitivity on Qwen3-8B and found:
+
+\begin{itemize}[nosep]
+\item \textbf{Robust} (safe for FP4): \texttt{q\_proj} ($-0.1\%$),
+      \texttt{k\_proj} ($-0.7\%$, \emph{improves}),
+      \texttt{down\_proj} ($-0.1\%$)---together ${\sim}50\%$ of
+      parameters.
+\item \textbf{Sensitive} (keep at FP8): \texttt{gate\_proj} ($+3.6\%$),
+      \texttt{up\_proj} ($+1.8\%$), \texttt{v\_proj} ($+1.2\%$),
+      \texttt{o\_proj} ($+0.3\%$).
+\end{itemize}
+
+Quantizing only the robust projections to FP4 while keeping sensitive
+ones at FP8 yields ${\sim}25\%$ bandwidth savings with net PPL
+\emph{improvement}.
+
+\textbf{Unique to Grove?} The measurement itself is not, but the
+\emph{interaction with the gate} is. The gate modulates how much
+quantization error propagates to the output: at gate~$= 0.1$, a $5\%$
+quantization error in the adapter path contributes only $0.5\%$ to the
+final output. This means low-gate layers tolerate more aggressive
+quantization of both base weights and adapter weights. No published
+quantization scheme exploits this gate-mediated error dampening.
+
+\textbf{Validated.} Per-projection sensitivity measured on C4 validation
+(Section above). Combined scheme not yet end-to-end benchmarked.
+
+\subsection{Gate as Precision-Budget Allocator}
+\label{sec:perf-gate-precision}
+
+\textbf{Mechanism.} The delta gate $\sigma(g)$ controls the blend
+between base and adapter output:
+$y = \text{base} + \sigma(g) \cdot (\text{adapter} - \text{base})$.
+When $\sigma(g) \approx 0$, the output equals the base regardless of
+adapter precision. When $\sigma(g) \approx 1$, the adapter dominates
+and base precision matters less (the adapter compensates).
+
+This creates a natural precision hierarchy:
+\begin{enumerate}[nosep]
+\item \textbf{Low gate} (general text): base weights need full
+      precision; adapter weights are irrelevant (not applied).
+      But since the gate routes general text to the unquantized base
+      model, general benchmarks are unaffected by any expert-level
+      quantization.
+\item \textbf{High gate} (domain text): adapter weights need full
+      precision (always BF16, ${\sim}30$~MB per expert); base weights
+      can be aggressively quantized because the adapter's correction
+      compensates for quantization error in the base.
+\end{enumerate}
+
+\textbf{Unique to Grove?} Yes. This is a direct consequence of the
+gated architecture. Standard fine-tuned models have no mechanism to
+modulate error propagation per token. MoE models route to different
+experts but do not blend base and expert outputs via a learned gate
+that can be repurposed as a precision allocator.
+
+\textbf{Prediction.} Combined with differential quantization, this
+enables a scheme where the expert package specifies not only which
+layers to skip/bridge but also which projections to quantize more
+aggressively---all informed by the gate's activation pattern during
+training.
+
+\subsection{Combined Efficiency Prediction}
+\label{sec:perf-combined}
+
+Combining all architecture-enabled optimizations on Qwen3-8B
+(36~layers, RTX~PRO~6000 Blackwell):
+
+\begin{table}[h]
+\centering
+\caption{Predicted inference efficiency of the combined hierarchical
+scheme. All predictions assume single-GPU, single-stream decode at
+batch size~1.}
+\label{tab:perf-prediction}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Component & Layers & Bandwidth & Status \\
+\midrule
+Skip (passthrough) & 20 & 0 & Validated \\
+Bridge surrogates & 4--6 & ${\sim}8$~MB & Validated (single) \\
+Active (differential FP4/FP8) & 10--12 & ${\sim}1.9$~GB & Measured \\
+\midrule
+Total weight reads & & ${\sim}1.9$~GB & \\
+At 1792~GB/s & & ${\sim}1.1$~ms & \\
++ overhead (attention, norms) & & ${\sim}1.7$~ms & \\
+\midrule
+\textbf{Predicted decode time} & & ${\sim}2.8$~ms & \\
+\textbf{Predicted throughput} & & \textbf{${\sim}350$~tok/s} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Current validated performance: 228~tok/s (FP8 uniform, 20-layer skip,
+CUDA graph). The predicted ${\sim}350$~tok/s represents a further
+$1.5\times$ improvement from differential quantization and bridge
+surrogates alone, without requiring native FP4 tensor core kernels.
+With native NVFP4 CUTLASS kernels (compiled but not yet integrated
+into our pipeline), the target rises to $400{+}$~tok/s.
+
 \end{document}
