@@ -759,12 +759,14 @@ async function send() {
   viewLink.style.cssText = 'color:#4fd1c5;text-decoration:underline;cursor:pointer;';
   viewLink.addEventListener('click', async (ev) => {
     ev.preventDefault();
-    // Get the full template prompt for this conversation
+    // Send messages WITHOUT the last assistant response so completion
+    // re-generates from the same prompt point with attribution
+    const msgsForTemplate = messages.slice(0, -1);
     try {
       const res = await fetch('/v1/chat/template', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ messages: messages.map(m => ({role: m.role, content: m.content})) }),
+        body: JSON.stringify({ messages: msgsForTemplate.map(m => ({role: m.role, content: m.content})) }),
       });
       const data = await res.json();
       // Navigate to completion playground with this prompt
