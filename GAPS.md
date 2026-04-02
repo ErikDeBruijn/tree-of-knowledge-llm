@@ -2,11 +2,11 @@
 
 Last updated: 2026-04-02
 
-## Gap 1c: Layer skip in production API
-- **Status**: Code done, test passing, needs deploy + measurement
-- **What**: `--skip-layers 2,15,16,17,19,20,21,28` passed to InferenceEngine
-- **Verify**: Deploy, measure tok/s improvement vs current
-- **Browser test**: Playground chat should work with skip layers active
+## Gap 1c: Layer skip in production API — PARTIAL
+- **Status**: Code works but skip layers degrade output quality (even 3 layers)
+- **What**: Fast pipeline is the real win (11.9 → 64 tok/s). Skip layers need gate-informed selection.
+- **Remaining**: Gate-informed layer selection (only skip where gate ≈ 0)
+- **CUDA graph disabled**: KV cache uses Python int for position, not captured by graph. All decode steps wrote to same position → repetitive output. TODO: tensorize cache position.
 
 ## Gap 2: Expert adapter in fast pipeline via API
 - **Status**: MoE adapter built, not connected through API
@@ -20,11 +20,11 @@ Last updated: 2026-04-02
 - **Verify**: POST /v1/training/start, then chat, check dashboard mode indicator
 - **Browser test**: Dashboard shows "Training" mode, playground still responds
 
-## Gap 4: Dashboard training metrics flow
-- **Status**: MetricsCollector exists, training doesn't flow through it
-- **What**: Training steps, loss curve, gate heatmap should update live
-- **Verify**: Start training, watch dashboard for live updates
-- **Browser test**: Dashboard loss curve draws, step counter increments
+## Gap 4: Dashboard metrics flow — PARTIAL (inference done, training pending)
+- **Status**: Inference metrics now flow to dashboard (tok/s, request count)
+- **Done**: Streaming path records metrics via MetricsCollector
+- **Remaining**: Training metrics (loss curve, gate heatmap, step counter) need training loop wired
+- **Browser verified**: Dashboard shows 66 tok/s and inference request count
 
 ## Gap 5: Checkpoint -> Expert -> Inference pipeline
 - **Status**: Not started

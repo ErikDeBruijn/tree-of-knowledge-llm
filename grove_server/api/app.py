@@ -101,6 +101,7 @@ async def chat_completions(
     request: ChatCompletionRequest,
     engine: InferenceEngine = Depends(get_engine),
     registry: ExpertRegistry = Depends(get_registry),
+    metrics: Optional[MetricsCollector] = Depends(get_metrics),
 ):
     # Parse model name for expert selection
     base_model, expert_name = _parse_model_name(request.model)
@@ -116,7 +117,7 @@ async def chat_completions(
 
     if request.stream:
         return StreamingResponse(
-            _stream_response(engine, prompt, request, completion_id),
+            _stream_response(engine, prompt, request, completion_id, metrics),
             media_type="text/event-stream",
         )
 
@@ -164,7 +165,7 @@ async def chat_completions(
     )
 
 
-async def _stream_response(engine, prompt, request, completion_id):
+async def _stream_response(engine, prompt, request, completion_id, metrics=None):
     """Yield SSE events for streaming chat completions."""
     created = int(time.time())
 
@@ -189,6 +190,8 @@ async def _stream_response(engine, prompt, request, completion_id):
 
     token_queue: queue.Queue = queue.Queue()
     _DONE = object()
+    token_count = 0
+    t_start = time.time()
 
     def _generate():
         try:
@@ -213,6 +216,7 @@ async def _stream_response(engine, prompt, request, completion_id):
             continue
         if token is _DONE:
             break
+        token_count += 1
         chunk = ChatCompletionStreamChunk(
             id=completion_id,
             model=request.model,
@@ -225,6 +229,11 @@ async def _stream_response(engine, prompt, request, completion_id):
             ],
         )
         yield f"data: {chunk.model_dump_json()}\n\n"
+
+    # Record metrics for streaming path
+    t_end = time.time()
+    if metrics is not None and token_count > 0:
+        metrics.record_inference(token_count, t_end - t_start)
 
     # Final chunk with finish_reason
     final_chunk = ChatCompletionStreamChunk(
