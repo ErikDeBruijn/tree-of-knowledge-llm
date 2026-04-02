@@ -391,6 +391,66 @@ experimental framework. You can study reasoning (trunk) and knowledge
 expert trees that reveal the structure of what models learn.
 
 % ============================================================================
+\section{Inference Efficiency: The Gate as Universal Controller}
+
+The delta gate---originally designed to blend base and adapter
+outputs---turns out to be the single most information-dense signal in
+the system. It simultaneously encodes:
+
+\begin{enumerate}[nosep]
+\item \textbf{Routing:} domain text ($\sigma(g) \approx 1$) activates the
+      adapter; general text ($\sigma(g) \approx 0$) falls through to the
+      unmodified base.
+\item \textbf{Layer skip:} layers where $\sigma(g) < \epsilon$ across a domain
+      can be skipped entirely---zero compute, zero memory reads.
+\item \textbf{Bridge surrogates:} layers with medium gate values can be
+      replaced by a tiny LoRA ``bridge'' (rank-64, $<$2\,MB) that
+      approximates the block at 0.1\% of its compute.
+\item \textbf{Precision allocation:} the gate dampens quantization errors.
+      At $\sigma(g) = 0.1$, a 5\% quantization error contributes only 0.5\%
+      to the output. Low-gate layers tolerate aggressive quantization;
+      high-gate layers need precision on the adapter (which is tiny and
+      always full-precision) but can be aggressive on the base (the adapter
+      compensates).
+\item \textbf{Training feedback:} gate magnitude during training reveals
+      what the adapter has learned, enabling variable learning rates per layer.
+\end{enumerate}
+
+This creates a hierarchical compute scheme unique to the Grove:
+
+\paragraph{Skip + bridge + differential quantization.}
+Each expert specifies not just adapter weights but a complete
+\emph{inference recipe}: which layers to skip, which to bridge, and
+which projections to quantize at FP4 vs.\ FP8. On Qwen3-8B, this
+combination skips 20 of 36 layers, bridges 4--6 more, and applies
+per-projection differential quantization to the remainder---reducing
+weight reads from 16\,GB to under 2\,GB per token.
+
+\paragraph{Quantized training as free robustness.}
+An adapter trained on a quantized base model (FP4/FP8) implicitly learns
+to compensate for quantization artifacts: the adapter learns the
+\emph{delta} between desired and quantized-base output. When deployed on
+the same quantized base, it produces better results than an adapter
+trained on BF16 and deployed on FP4 (which encounters unexpected
+quantization noise). This eliminates the train--deploy precision gap.
+
+\paragraph{Distributed heterogeneous inference.}
+In a peer-to-peer Grove, each node runs on different hardware with
+different quantization capabilities. The gate signal enables automatic
+adaptation: nodes with FP4 hardware handle the accommodation phase
+(coarse adapter learning, high gate, precision less critical), while
+nodes with FP8/BF16 hardware handle refinement (low learning rate, fine
+adjustments, precision critical). The meta-learner aggregates
+configurations across the network: which skip/bridge/quant schemes work
+on which hardware $\times$ data combinations.
+
+This is simultaneously \emph{federated adapter learning} (sharing adapter
+weights, not model weights), \emph{NAS for runtime configuration} (not
+model architecture), and \emph{dynamic routing} (per expert, per token,
+per layer---not fixed at training time). The gate makes all three possible
+from a single learned scalar.
+
+% ============================================================================
 \section{Conclusion}
 
 Language models don't need to be monoliths. Fluid intelligence (reasoning)

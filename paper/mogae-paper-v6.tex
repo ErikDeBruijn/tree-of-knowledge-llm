@@ -1120,41 +1120,12 @@ layers to skip/bridge but also which projections to quantize more
 aggressively---all informed by the gate's activation pattern during
 training.
 
-\subsection{Combined Efficiency Prediction}
-\label{sec:perf-combined}
-
-Combining all architecture-enabled optimizations on Qwen3-8B
-(36~layers, RTX~PRO~6000 Blackwell):
-
-\begin{table}[h]
-\centering
-\caption{Predicted inference efficiency of the combined hierarchical
-scheme. All predictions assume single-GPU, single-stream decode at
-batch size~1.}
-\label{tab:perf-prediction}
-\begin{tabular}{@{}lrrl@{}}
-\toprule
-Component & Layers & Bandwidth & Status \\
-\midrule
-Skip (passthrough) & 20 & 0 & Validated \\
-Bridge surrogates & 4--6 & ${\sim}8$~MB & Validated (single) \\
-Active (differential FP4/FP8) & 10--12 & ${\sim}1.9$~GB & Measured \\
-\midrule
-Total weight reads & & ${\sim}1.9$~GB & \\
-At 1792~GB/s & & ${\sim}1.1$~ms & \\
-+ overhead (attention, norms) & & ${\sim}1.7$~ms & \\
-\midrule
-\textbf{Predicted decode time} & & ${\sim}2.8$~ms & \\
-\textbf{Predicted throughput} & & \textbf{${\sim}350$~tok/s} & \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Current validated performance: 228~tok/s (FP8 uniform, 20-layer skip,
-CUDA graph). The predicted ${\sim}350$~tok/s represents a further
-$1.5\times$ improvement from differential quantization and bridge
-surrogates alone, without requiring native FP4 tensor core kernels.
-With native NVFP4 CUTLASS kernels (compiled but not yet integrated
-into our pipeline), the target rises to $400{+}$~tok/s.
+% PREDICTION (not yet validated end-to-end — see whitepaper for vision):
+% \subsection{Combined Efficiency Prediction}
+% \label{sec:perf-combined}
+% Combining skip (20 layers) + bridge (4--6) + differential FP4/FP8:
+% predicted ~350 tok/s (currently 228 validated).
+% With native NVFP4 CUTLASS kernels: 400+ tok/s target.
+% See research/prediction-hierarchical-quantization.md for full calculation.
 
 \end{document}
