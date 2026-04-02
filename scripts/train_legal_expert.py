@@ -210,7 +210,7 @@ def main():
         )
         # L1 sparsity on gates
         for g in gates.values():
-            z = torch.zeros(1, hidden_dim, device=DEVICE)
+            z = torch.zeros(1, hidden_dim, dtype=torch.bfloat16, device=DEVICE)
             loss = loss + 0.05 * torch.sigmoid(g(z)).mean()
         optimizer2.zero_grad()
         loss.backward()

@@ -269,10 +269,24 @@ async def completions(
     Request: {"prompt": "...", "max_tokens": 50, "temperature": 0.7}
     Response: {"tokens": [{"token": "word", "layer_gates": {12: 0.8, ...}}]}
     """
-    prompt = request.get("prompt", "")
+    raw_prompt = request.get("prompt", "")
     max_tokens = request.get("max_tokens", 100)
     temperature = request.get("temperature", 0.7)
     selected_experts = request.get("experts", None)  # list of expert names, or None for all
+
+    # Wrap in chat template for instruct models (raw text loops on Qwen3)
+    tokenizer = getattr(engine, 'tokenizer', None)
+    if tokenizer and hasattr(tokenizer, 'apply_chat_template'):
+        try:
+            prompt = tokenizer.apply_chat_template(
+                [{"role": "user", "content": f"Continue this text:\n{raw_prompt}"}],
+                tokenize=False, add_generation_prompt=True,
+                enable_thinking=False,
+            )
+        except Exception:
+            prompt = raw_prompt
+    else:
+        prompt = raw_prompt
 
     # Install selected expert(s) for attribution
     # TODO: multi-expert grove routing. For now, install first selected.
