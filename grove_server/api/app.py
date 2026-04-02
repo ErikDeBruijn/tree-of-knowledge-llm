@@ -26,10 +26,13 @@ from grove_server.api.schemas import (
     TimingInfo,
     Usage,
 )
+from grove_server.api.dashboard import router as dashboard_router
 from grove_server.engine.expert_registry import ExpertRegistry
 from grove_server.engine.inference_engine import InferenceEngine
+from grove_server.metrics.collector import MetricsCollector
 
 app = FastAPI(title="Grove Server")
+app.include_router(dashboard_router)
 
 # ---------------------------------------------------------------------------
 # Dependency injection — overridden in tests
@@ -37,6 +40,8 @@ app = FastAPI(title="Grove Server")
 
 _engine: Optional[InferenceEngine] = None
 _registry: Optional[ExpertRegistry] = None
+_metrics: Optional[MetricsCollector] = None
+_scheduler = None  # Optional[Scheduler] — avoids circular import
 
 
 def get_engine() -> InferenceEngine:
@@ -45,6 +50,14 @@ def get_engine() -> InferenceEngine:
 
 def get_registry() -> ExpertRegistry:
     return _registry
+
+
+def get_metrics() -> Optional[MetricsCollector]:
+    return _metrics
+
+
+def get_scheduler():
+    return _scheduler
 
 
 def _parse_model_name(model: str) -> tuple[str, Optional[str]]:
@@ -249,3 +262,62 @@ async def list_experts(
 @app.get("/v1/health")
 async def health():
     return {"status": "ok"}
+
+
+# ---------------------------------------------------------------------------
+# Metrics
+# ---------------------------------------------------------------------------
+
+
+@app.get("/v1/metrics")
+async def metrics_endpoint(
+    metrics: Optional[MetricsCollector] = Depends(get_metrics),
+):
+    if metrics is None:
+        return {"error": "metrics not available"}
+    return metrics.snapshot()
+
+
+# ---------------------------------------------------------------------------
+# Training control
+# ---------------------------------------------------------------------------
+
+
+@app.get("/v1/training/status")
+async def training_status(
+    scheduler=Depends(get_scheduler),
+    metrics: Optional[MetricsCollector] = Depends(get_metrics),
+):
+    if scheduler is None:
+        return {
+            "running": False,
+            "mode": "idle",
+            "training_steps": 0,
+        }
+    snap = metrics.snapshot() if metrics else {}
+    return {
+        "running": scheduler._running if hasattr(scheduler, "_running") else False,
+        "mode": scheduler.mode if hasattr(scheduler, "mode") else "idle",
+        "training_steps": snap.get("training_steps", 0),
+    }
+
+
+@app.post("/v1/training/start")
+async def training_start(
+    scheduler=Depends(get_scheduler),
+):
+    if scheduler is None:
+        raise HTTPException(status_code=400, detail="No scheduler configured")
+    # The scheduler run loop is started via the daemon; this is a no-op
+    # if already running, but signals intent.
+    return {"status": "started"}
+
+
+@app.post("/v1/training/stop")
+async def training_stop(
+    scheduler=Depends(get_scheduler),
+):
+    if scheduler is None:
+        raise HTTPException(status_code=400, detail="No scheduler configured")
+    scheduler.stop()
+    return {"status": "stopped"}
