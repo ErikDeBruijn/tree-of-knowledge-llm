@@ -378,16 +378,42 @@ class InferenceEngine:
             # First decode token from prefill logits
             next_token = self._sample_token(logits[:, -1, :], temperature)
 
+            # Try CUDA graph capture for decode loop
+            use_graph = False
+            if "cuda" in str(self.device):
+                try:
+                    static_tok = next_token.clone()
+                    if static_tok.dim() == 1:
+                        static_tok = static_tok.unsqueeze(0)
+                    static_pos = torch.tensor(
+                        [[self._static_cache.seq_len]], device=self.device
+                    )
+                    for _ in range(3):
+                        self._graphable(static_tok, static_pos)
+                    torch.cuda.synchronize()
+                    graph = torch.cuda.CUDAGraph()
+                    with torch.cuda.graph(graph):
+                        static_logits = self._graphable(static_tok, static_pos)
+                    use_graph = True
+                except Exception:
+                    use_graph = False
+
             for _ in range(max_tokens):
                 tok_id = next_token.item()
                 tokens.append(tok_id)
                 if eos_id is not None and tok_id == eos_id:
                     break
 
-                # Decode step: single token
-                pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
-                logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
-                next_token = self._sample_token(logits[:, -1, :], temperature)
+                if use_graph:
+                    nt = next_token if next_token.dim() == 2 else next_token.unsqueeze(0)
+                    static_tok.copy_(nt)
+                    static_pos.fill_(self._static_cache.seq_len)
+                    graph.replay()
+                    next_token = self._sample_token(static_logits[:, -1, :], temperature)
+                else:
+                    pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
+                    logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
+                    next_token = self._sample_token(logits[:, -1, :], temperature)
 
         return self.tokenizer.decode(tokens, skip_special_tokens=True)
 
@@ -399,7 +425,9 @@ class InferenceEngine:
     ) -> Iterator[str]:
         """Fast streaming using GraphableDecodeStep + StaticKVCache.
 
-        Same as _generate_fast but yields each token as a decoded string.
+        After prefill, attempts to capture a CUDA graph for the decode step.
+        If capture succeeds, decodes via graph replay (zero CPU overhead).
+        Falls back to eager if capture fails.
         """
         input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
         self._static_cache.reset()
@@ -410,8 +438,30 @@ class InferenceEngine:
             # Prefill
             pos = torch.arange(input_ids.size(1), device=self.device).unsqueeze(0)
             logits = self._graphable(input_ids, pos)
-
             next_token = self._sample_token(logits[:, -1, :], temperature)
+
+            # Try CUDA graph capture for decode
+            use_graph = False
+            if "cuda" in str(self.device):
+                try:
+                    static_tok = next_token.clone()
+                    if static_tok.dim() == 1:
+                        static_tok = static_tok.unsqueeze(0)
+                    static_pos = torch.tensor(
+                        [[self._static_cache.seq_len]], device=self.device
+                    )
+
+                    # Warmup
+                    for _ in range(3):
+                        self._graphable(static_tok, static_pos)
+                    torch.cuda.synchronize()
+
+                    graph = torch.cuda.CUDAGraph()
+                    with torch.cuda.graph(graph):
+                        static_logits = self._graphable(static_tok, static_pos)
+                    use_graph = True
+                except Exception:
+                    use_graph = False
 
             for _ in range(max_tokens):
                 tok_id = next_token.item()
@@ -421,10 +471,21 @@ class InferenceEngine:
                 token_str = self.tokenizer.decode([tok_id], skip_special_tokens=True)
                 yield token_str
 
-                # Decode step
-                pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
-                logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
-                next_token = self._sample_token(logits[:, -1, :], temperature)
+                if use_graph:
+                    nt = next_token if next_token.dim() == 2 else next_token.unsqueeze(0)
+                    static_tok.copy_(nt)
+                    static_pos.fill_(self._static_cache.seq_len)
+                    graph.replay()
+                    next_token = self._sample_token(
+                        static_logits[:, -1, :], temperature
+                    )
+                else:
+                    pos = torch.tensor(
+                        [[self._static_cache.seq_len]], device=self.device
+                    )
+                    nt = next_token.unsqueeze(0) if next_token.dim() == 1 else next_token
+                    logits = self._graphable(nt, pos)
+                    next_token = self._sample_token(logits[:, -1, :], temperature)
 
     @staticmethod
     def _sample_token(logits: torch.Tensor, temperature: float) -> torch.Tensor:
