@@ -83,6 +83,7 @@ class TrainingEngine:
         self._optimizer: Optional[torch.optim.Optimizer] = None
         self._best_checkpoint: Optional[dict] = None
         self._best_quality: float = 0.0
+        self._fp8_step = None  # Set by daemon if FP8 graphable available
         self._setup_optimizer()
 
     def _setup_optimizer(self) -> None:
@@ -119,6 +120,8 @@ class TrainingEngine:
                 adapter=self.adapters[l],
                 gate=self.gates[l] if self.phase >= 2 else None,
                 alpha_scaling=self._alpha_scaling,
+                fp8_step=self._fp8_step,
+                layer_idx=l,
             )
         self._hooks_installed = True
 
@@ -321,7 +324,12 @@ class TrainingEngine:
 
 
 class _TrainingMLP(nn.Module):
-    """Wraps original MLP with adapter (and optionally gate) for training."""
+    """Wraps original MLP with adapter (and optionally gate) for training.
+
+    Works with both BF16 (standard nn.Linear) and FP8 (weight=None,
+    uses graphable._fp8_linear instead). The fp8_step + layer_idx
+    enable FP8-compatible training without dequantizing weights.
+    """
 
     def __init__(
         self,
@@ -329,32 +337,52 @@ class _TrainingMLP(nn.Module):
         adapter: MoEMlpAdapter,
         gate: Optional[DeltaGate] = None,
         alpha_scaling: float = 1.0,
+        fp8_step=None,
+        layer_idx: int = -1,
     ):
         super().__init__()
         self.original_mlp = original_mlp
         self.adapter = adapter
         self.gate = gate
         self.alpha_scaling = alpha_scaling
-        # Expose sub-modules so the model's attribute access still works
+        self._fp8_step = fp8_step
+        self._layer_idx = layer_idx
+        # Expose sub-modules for attribute access
         self.gate_proj = original_mlp.gate_proj
         self.up_proj = original_mlp.up_proj
         self.down_proj = original_mlp.down_proj
 
+    def _proj(self, proj_name: str, x: torch.Tensor) -> torch.Tensor:
+        """Run a projection, using FP8 matmul if weights were quantized."""
+        proj = getattr(self.original_mlp, proj_name)
+        if hasattr(proj, 'weight') and proj.weight is not None:
+            return proj(x)
+        # Weight is None → FP8 quantized. Use graphable step's FP8 matmul.
+        if self._fp8_step is not None:
+            key = f"{self._layer_idx}.mlp.{proj_name}"
+            flat = x.reshape(-1, x.size(-1))
+            out = self._fp8_step._fp8_linear(flat, key)
+            return out.reshape(*x.shape[:-1], -1)
+        raise RuntimeError(f"{proj_name}.weight is None and no FP8 step available")
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        gate_out = self.original_mlp.gate_proj(x)
-        up_out = self.original_mlp.up_proj(x)
+        gate_out = self._proj("gate_proj", x)
+        up_out = self._proj("up_proj", x)
 
         # Alpha scaling on adapter corrections (LoRA+ best practice)
         gate_corr = self.adapter.gate_correction(x) * self.alpha_scaling
         up_corr = self.adapter.up_correction(x) * self.alpha_scaling
 
-        adapted = self.original_mlp.down_proj(
-            F.silu(gate_out + gate_corr) * (up_out + up_corr)
-        )
+        activated = F.silu(gate_out + gate_corr) * (up_out + up_corr)
+        adapted = self._proj("down_proj", activated.reshape(-1, activated.size(-1)))
+        adapted = adapted.reshape(*x.shape[:-1], -1)
 
         if self.gate is not None:
-            # Phase 2: gate blends base and adapted output
-            base_out = self.original_mlp(x)
+            base_gate = self._proj("gate_proj", x)
+            base_up = self._proj("up_proj", x)
+            base_act = F.silu(base_gate) * base_up
+            base_out = self._proj("down_proj", base_act.reshape(-1, base_act.size(-1)))
+            base_out = base_out.reshape(*x.shape[:-1], -1)
             gate_value = torch.sigmoid(self.gate(x))
             return base_out + gate_value * (adapted - base_out)
 

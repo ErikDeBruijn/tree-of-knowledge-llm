@@ -40,13 +40,15 @@ class GroveDaemon:
         self.port = port
 
         # 1. Load model once via InferenceEngine
-        # INT4 packed: two INT4 registers per weight. Gate controls precision.
-        # Same code path for training and inference — no mode switch.
+        # When training: use BF16 (training needs original weights for full model forward).
+        # FP8 sets ALL proj.weight=None (attention + MLP), breaking model(input_ids).
+        # BF16 graphable gives ~20 tok/s for inference, training uses HF model forward.
+        # TODO: INT4 packed variable precision (keeps weights, no None)
         self.inference_engine = InferenceEngine(
             model_name=model_name,
             device=device,
             dtype=dtype,
-            quantization="int4_packed" if training_data is not None else None,
+            disable_fast_pipeline=training_data is not None,
         )
 
         # 2. Metrics
@@ -74,6 +76,10 @@ class GroveDaemon:
                 config=config,
                 device=self.inference_engine.device,
             )
+
+            # Wire FP8 step so training hooks can use _fp8_linear
+            if self.inference_engine._graphable is not None:
+                self.training_engine._fp8_step = self.inference_engine._graphable
 
             sources = self._build_sources(training_data)
             if sources:
