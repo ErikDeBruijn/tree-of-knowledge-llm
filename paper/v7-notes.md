@@ -25,3 +25,31 @@ A Ruby adapter doesn't just know Ruby syntax; it can *write* Ruby.
 - Layer 1 start matters for code (syntactic capability lives in early layers)
 - Attention gates are function-specific (relational capability)
 - Code generation improves with adapter (the model can DO something new)
+- Ruby: 20% → 70% correct with adapter (the model learns to WRITE Ruby, not just recognize it)
+
+## Grove vs RAG: different systems for different purposes
+
+RAG adds facts to the context — the model reads more but doesn't change.
+Grove adds capabilities to the model — it can DO more (write Ruby, reason medically).
+
+This is not a competition but a complement:
+- **Grove**: capability injection (how to write Ruby, how to reason about cardiology)
+- **RAG**: fact injection (latest drug interactions, current guidelines)
+
+A pytorch specialist doesn't need to memorize the API docs (RAG can provide those).
+It needs to understand tensor operations, autograd patterns, module composition.
+That's a capability, not a fact.
+
+## Hierarchical capability trees
+
+The grove naturally forms a tree:
+- Code expert → Ruby specialist → Rails specialist
+- Code expert → Python specialist → pandas specialist, pytorch specialist
+- Medical expert → Radiology specialist
+
+Each level learns only the DELTA from its parent. A pytorch specialist
+doesn't learn "what is a function" (code expert knows) or "what is Python"
+(Python specialist knows). It learns tensor patterns, autograd idioms.
+
+This means: adding a new language (Rust, Go) requires minimal data,
+because the shared programming foundation is already in the code expert.
