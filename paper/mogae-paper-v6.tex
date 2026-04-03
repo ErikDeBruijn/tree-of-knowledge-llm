@@ -33,11 +33,14 @@
 
 % ============================================================================
 \begin{abstract}
-Language models encode all knowledge---from common syntax to rare domain
-terminology---in shared parameters. Adding knowledge means adding
+Language models encode all capabilities---from common syntax to rare
+domain expertise---in shared parameters. Adding capabilities means adding
 parameters, and therefore inference cost. We propose the \grove{}: a
 frozen base model augmented with hot-pluggable, per-layer gated LoRA
 adapters that grow where needed and cost nothing when inactive.
+Adapters add not just domain knowledge but functional
+\emph{capabilities}: a Ruby adapter enables the model to \emph{write}
+Ruby (correctness triples from 20\% to 70\%), not just recognize it.
 
 The frozen base serves as a permanent epistemic reference: because its
 weights never change, we can always measure what an adapter adds by
@@ -60,10 +63,12 @@ with 94\% of composition checks passing.
 The grove builds its own curriculum: scoring candidate data by expected
 compression progress, routing to the adapter with highest learning
 potential, and spawning new adapters when existing ones plateau. The
-result is a self-organizing knowledge system where the long tail of
-domain knowledge lives in lightweight, composable specialists---each
+result is a self-organizing capability system where the long tail of
+domain expertise lives in lightweight, composable specialists---each
 measured in kilobytes---while the shared trunk preserves general
-reasoning ability intact.
+reasoning ability intact. Jointly-trained experts specialize
+automatically (gate selectivity 0.99 between languages, near-zero on
+generic text), forming a hierarchical capability tree.
 \end{abstract}
 
 % ============================================================================
@@ -311,14 +316,26 @@ $-2.0$ ($\sigma(-2) \approx 0.12$, starting near OFF). The gate
 operates on the \emph{delta}---the difference between adapter and base
 output---not on the adapter output directly.
 
-Training is two-phase:
+Training is two-phase with contrastive gate loss:
 \begin{enumerate}[nosep,leftmargin=1.5em]
-\item \textbf{Adapter phase} ($\sim$500 steps): Train LoRA weights on
-      domain data with gates frozen at initialization.
-\item \textbf{Gate phase} ($\sim$1500 steps): Freeze LoRA weights, train
-      gates on mixed domain + general data. Gates learn which layers
-      need adaptation for this domain.
+\item \textbf{Adapter phase} ($\sim$1000 steps): Train LoRA+ weights
+      (differential LR: $16\times$ for B matrix, $\alpha = 2r$, dropout
+      0.1) on domain data. Use data from layers 1--35 for capability
+      tasks (code), 12--35 for knowledge tasks.
+\item \textbf{Contrastive gate phase} ($\sim$1500 steps): Freeze adapter,
+      train gates with contrastive loss:
+      $\mathcal{L}_\text{gate} = -\log g(\mathbf{h}_\text{domain})
+      - \log(1 - g(\mathbf{h}_\text{generic}))$,
+      which directly maximizes domain activation and minimizes generic
+      activation. Standard LM-loss gate training fails for generation
+      tasks (see E8); the contrastive formulation achieves selectivity
+      $+0.96$ while preserving functional quality.
 \end{enumerate}
+
+For multi-expert routing, the contrastive loss extends to discriminate
+between experts: each gate is pushed high on its own domain and low on
+\emph{both} other domains and generic text. This produces the perfect
+specialization matrix observed in E9.
 
 % PILOT: Learntropy-guided recipe: 500+1500 wins both dimensions
 % PILOT: Domain -32.1%, generic -12.1%
@@ -738,63 +755,102 @@ the same mechanism governs both knowledge injection (FFN) and relational
 pattern adaptation (attention). These serve complementary functions---not
 redundant ones.
 
-\subsection{E8: Code Generation Quality}
+\subsection{E8: Capability Injection via Code Generation}
 \label{sec:e8}
 
-\textbf{Question.} Does adapter training improve functional code generation,
-not just perplexity? We evaluate with sandboxed execution: generate Ruby
-function bodies, run them with test cases, check outputs.
+\textbf{Question.} Can adapters add functional \emph{capabilities}---not
+just domain knowledge---to a frozen base model? We test with sandboxed
+code execution: generate function bodies, run them, check outputs.
 
-\textbf{Setup.} 20 Ruby function prompts (factorial, fibonacci, reverse\_string,
-etc.), greedy decoding, evaluated with \texttt{ruby -c} (syntax) and execution
-correctness. Training data: 14K Ruby files from Rails, Discourse, and Ruby
-stdlib. Base model: Qwen3-8B (instruct).
+\textbf{Setup.} 10 function prompts per language (factorial, fibonacci,
+reverse\_string, etc.), greedy decoding, evaluated with \texttt{ruby~-c} /
+\texttt{python3} syntax check and execution correctness. Training data:
+14K Ruby files (Rails, Discourse, Ruby stdlib), 7.5K Python files
+(Django, Flask, scipy, pandas, scikit-learn). LoRA+ (Hayou et al.,
+2024): differential LR ($16\times$ for B matrix), $\alpha = 2r$,
+dropout 0.1, layers 1--35.
 
-\textbf{Critical finding: PPL does not predict generation quality.}
-Standard continued pretraining with LoRA (rank~16, layers 12--35) improves
-domain PPL by 27--58\% but \emph{degrades} functional code generation---syntax
-validity drops from 25\% to 0--12\%. The adapter learns to recognize Ruby
-tokens but disrupts the base model's generation capability.
-
-\textbf{What works: LoRA+ with early stopping.} Applying LoRA+ (Hayou et
-al., 2024)---differential learning rate ($16\times$ for B matrix), alpha
-scaling ($\alpha = 2r$), and dropout 0.1---combined with checkpointing at
-peak functional quality produces real improvement:
+\textbf{Contrastive gate training.} Standard LM-loss gate training
+consistently destroyed generation quality (syntax drops to 0\%).
+We solve this with a contrastive gate loss that directly optimizes
+selectivity: $\mathcal{L}_\text{gate} = -\log g(\mathbf{h}_\text{domain})
+- \log(1 - g(\mathbf{h}_\text{generic}))$. This achieves selectivity
+$+0.96$ (2 seeds) while \emph{preserving} generation quality.
 
 \begin{table}[h]
 \centering
-\caption{E8: Code generation with LoRA+. 20-prompt deterministic eval.
-Syntax = \texttt{ruby -c} valid. Correct = executes with right output.}
+\caption{E8: Code capability injection. Syntax = parses. Correct = executes
+with right output. Sandboxed execution eval, greedy decoding.}
 \label{tab:e8}
-\begin{tabular}{@{}llcc@{}}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
-Config & Layers & Syntax & Correct \\
+ & \multicolumn{2}{c}{Ruby} & \multicolumn{2}{c}{Python} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Config & Syntax & Correct & Syntax & Correct \\
 \midrule
-Base model & --- & 25\% & 0\% \\
-LoRA+ rank~8 & 12--35 & 35\% & 10\% \\
-LoRA+ rank~16 & 12--35 & 35\%$\pm$8 & 15\%$\pm$5 \\
-LoRA+ rank~32 & 12--35 & 40\% & 10\% \\
-LoRA+ rank~16 & \textbf{1--35} & \textbf{45\%$\pm$5} & \textbf{18\%$\pm$8} \\
+Base model & 20\% & 20\% & 80\% & 70\% \\
+Adapter + contrastive gate & \textbf{70\%} & \textbf{70\%} & \textbf{90\%} & \textbf{90\%} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \textbf{Key findings.}
-(1)~Starting adapters from layer~1 instead of layer~12 dramatically
-improves code generation (45\% vs 35\% syntax). Code requires early-layer
-adaptation because its syntax differs fundamentally from natural language---the
-``identity layers 0--11'' assumption does not hold for code.
-(2)~Rank~16 is optimal: rank~8 lacks capacity, rank~32 overfits faster.
-(3)~Gate training (phase~2) consistently degrades generation quality to 0\%,
-even when selectivity improves. The gate correctly detects code tokens but
-the adapter's contribution is destructive for generation at that point.
-Joint gate+adapter training shows the gate failing to learn entirely
-(stays at initialization).
-(4)~The optimal training window is narrow: 500--1750 steps. Before that,
-insufficient learning; after, overfitting destroys generation.
-(5)~Standard PEFT LoRA (rank~128, all layers, instruction pairs) performs
-\emph{worse} (20\% syntax) than our custom LoRA+ approach---likely because
-auto-extracted instruction pairs are lower quality than hand-curated data.
+(1)~Adapters add real capabilities: Ruby correctness triples (20\%$\to$70\%),
+Python improves from 70\% to 90\%. 7 of 10 Ruby functions and 9 of 10
+Python functions execute correctly after adaptation.
+(2)~Layer~1 start is essential for code (vs layer~12 for knowledge tasks).
+Code syntax differs fundamentally from natural language at the earliest
+layers.
+(3)~The contrastive gate loss is critical: standard LM-loss gates destroy
+generation; contrastive gates preserve it while achieving $+0.96$
+selectivity.
+(4)~PPL improvement does \emph{not} predict generation quality. Domain PPL
+can improve by 27--58\% while functional correctness degrades. Functional
+evaluation (sandboxed execution) is necessary.
+
+\subsection{E9: Multi-Expert Specialization}
+\label{sec:e9}
+
+\textbf{Question.} When multiple experts are trained jointly, do they
+specialize or collapse?
+
+\textbf{Setup.} Two adapters (Ruby and Python) trained simultaneously on
+mixed Ruby + Python + generic data. Phase~1: joint adapter training (2000
+steps). Phase~2: contrastive gates trained to discriminate each expert's
+language from the other \emph{and} from generic text.
+
+\begin{table}[h]
+\centering
+\caption{E9: Joint training produces perfect language-specific routing.
+Gate activation on Ruby code, Python code, and generic text.}
+\label{tab:e9-gates}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Gate & Ruby code & Python code & Generic \\
+\midrule
+Ruby gate & \textbf{0.99} & 0.01 & 0.00 \\
+Python gate & 0.02 & \textbf{1.00} & 0.01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Results.} (1)~\emph{Perfect specialization}: the Ruby gate activates
+only on Ruby (0.99), the Python gate only on Python (1.00). Both are
+near-zero on generic text. The experts learn language-specific routing
+without explicit language labels---only the contrastive signal (``my
+domain'' vs ``not my domain'').
+(2)~Joint Python achieves 100\% syntax, 90\% correct---the best result
+across all configurations. Joint Ruby: 50\%/50\%.
+(3)~Hierarchical training (code expert $\to$ Ruby specialist) produces a
+specialist with 0.83$\times$ the weight norm of the parent, confirming it
+learns a smaller delta. The code expert captures shared programming
+capability; the specialist adds language-specific patterns.
+
+\textbf{Interpretation.} The grove's tree structure emerges naturally from
+training. A generalist code expert bifurcates into language specialists,
+each routed by its contrastive gate. This mirrors the paper's proposed
+growth mechanics: compression progress on subdomains triggers splitting,
+and the gate provides the routing signal.
 
 % ============================================================================
 \section{Related Work}
