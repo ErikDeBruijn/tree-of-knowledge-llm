@@ -13,6 +13,7 @@ def _nav(active: str = "") -> str:
     links = [
         ("Completion", "/playground"),
         ("Chat", "/playground/chat"),
+        ("Gates", "/playground/gates"),
         ("Dashboard", "/dashboard"),
         ("API Docs", "/api/docs"),
     ]
@@ -807,3 +808,167 @@ async function send() {
 async def playground_chat():
     """Serve the streaming chat playground."""
     return CHAT_HTML.replace("<!-- NAV -->", _nav("Chat"))
+
+
+GATES_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grove Gate Explorer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, sans-serif; background: #0a0e17; color: #c8d6e5; padding: 20px; }
+  h1 { color: #4fd1c5; margin-bottom: 8px; font-size: 1.4em; }
+  h2 { color: #6b7fa3; font-size: 0.9em; text-transform: uppercase; margin: 16px 0 8px; }
+  textarea { width: 100%; height: 60px; padding: 8px; background: #151d2b; border: 1px solid #1e2d42;
+             border-radius: 6px; color: #e2e8f0; font-family: monospace; font-size: 0.9em; resize: vertical; }
+  button { padding: 8px 20px; background: #4fd1c5; color: #0a0e17; border: none; border-radius: 6px;
+           font-weight: bold; cursor: pointer; margin: 8px 0; }
+  button:hover { background: #38b2ac; }
+  button:disabled { background: #2d3748; color: #718096; }
+  .meta { font-size: 0.8em; color: #718096; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+  .panel { background: #151d2b; border: 1px solid #1e2d42; border-radius: 8px; padding: 12px; }
+  .panel h3 { color: #a0aec0; font-size: 0.85em; margin-bottom: 8px; }
+  .expert-row { margin: 8px 0; }
+  .expert-name { font-weight: bold; color: #e2e8f0; }
+  .bar-container { display: inline-block; width: 200px; height: 14px; background: #1a2332;
+                   border-radius: 3px; vertical-align: middle; margin: 0 8px; }
+  .bar { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .gate-val { font-size: 0.85em; color: #4fd1c5; }
+  .heatmap { display: grid; grid-template-columns: repeat(36, 1fr); gap: 1px; margin-top: 4px; }
+  .hcell { aspect-ratio: 1; border-radius: 2px; min-height: 12px; }
+  .legend { font-size: 0.7em; color: #6b7fa3; display: flex; justify-content: space-between; margin-top: 2px; }
+</style>
+</head>
+<body>
+<h1><a href="/" style="color:#4fd1c5;text-decoration:none">Grove</a> Gate Explorer</h1>
+<!-- NAV -->
+<p class="meta">Compare expert gate activations on different inputs. Which expert activates where?</p>
+
+<div class="compare">
+  <div class="panel">
+    <h3>Input A (e.g., code)</h3>
+    <textarea id="prompt-a">class ShoppingCart
+  def add_item(name, price)
+    @items << { name: name, price: price }
+  end
+end</textarea>
+  </div>
+  <div class="panel">
+    <h3>Input B (e.g., generic text)</h3>
+    <textarea id="prompt-b">The patient was diagnosed with type 2 diabetes and prescribed metformin for blood sugar management.</textarea>
+  </div>
+</div>
+<button onclick="compare()">Compare Gate Activations</button>
+<span class="meta" id="status"></span>
+
+<div id="results"></div>
+
+<script>
+const COLORS = [
+  [79, 209, 197], [237, 137, 54], [159, 122, 234], [236, 201, 75],
+  [72, 187, 120], [245, 101, 101], [99, 179, 237], [237, 100, 166],
+];
+
+async function getGates(prompt) {
+  const res = await fetch('/v1/completions', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ prompt: prompt, max_tokens: 10, temperature: 0.3 }),
+  });
+  const data = await res.json();
+  // Average gate per expert across all tokens
+  const expertAvgs = {};
+  const expertLayers = {};
+  (data.tokens || []).forEach(td => {
+    Object.entries(td.expert_gates || {}).forEach(([ename, layers]) => {
+      if (!expertAvgs[ename]) { expertAvgs[ename] = []; expertLayers[ename] = {}; }
+      const vals = Object.values(layers);
+      if (vals.length > 0) expertAvgs[ename].push(vals.reduce((a,b)=>a+b,0)/vals.length);
+      Object.entries(layers).forEach(([l, v]) => {
+        if (!expertLayers[ename][l]) expertLayers[ename][l] = [];
+        expertLayers[ename][l].push(v);
+      });
+    });
+  });
+  // Compute means
+  const result = {};
+  Object.entries(expertAvgs).forEach(([ename, vals]) => {
+    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const layerAvgs = {};
+    Object.entries(expertLayers[ename]).forEach(([l, vs]) => {
+      layerAvgs[l] = vs.reduce((a,b)=>a+b,0)/vs.length;
+    });
+    result[ename] = { avg: avg, layers: layerAvgs };
+  });
+  return result;
+}
+
+async function compare() {
+  const promptA = document.getElementById('prompt-a').value;
+  const promptB = document.getElementById('prompt-b').value;
+  document.getElementById('status').textContent = 'Loading...';
+
+  const [gatesA, gatesB] = await Promise.all([getGates(promptA), getGates(promptB)]);
+
+  const experts = [...new Set([...Object.keys(gatesA), ...Object.keys(gatesB)])];
+  experts.sort((a, b) => {
+    const diff_a = (gatesA[a]?.avg || 0) - (gatesB[a]?.avg || 0);
+    const diff_b = (gatesA[b]?.avg || 0) - (gatesB[b]?.avg || 0);
+    return Math.abs(diff_b) - Math.abs(diff_a); // Sort by selectivity
+  });
+
+  let html = '<h2>Expert Gate Comparison</h2>';
+  experts.forEach((ename, idx) => {
+    const c = COLORS[idx % COLORS.length];
+    const avgA = gatesA[ename]?.avg || 0;
+    const avgB = gatesB[ename]?.avg || 0;
+    const selectivity = avgA - avgB;
+    const selColor = Math.abs(selectivity) > 0.1 ? '#4fd1c5' : '#718096';
+
+    html += '<div class="expert-row">';
+    html += '<span class="expert-name" style="color:rgb(' + c.join(',') + ')">' + ename + '</span>';
+    html += ' <span class="gate-val">selectivity: <span style="color:' + selColor + '">' + (selectivity > 0 ? '+' : '') + selectivity.toFixed(3) + '</span></span>';
+    html += '<div style="display:flex;gap:16px;margin-top:4px;">';
+
+    // Input A bar + heatmap
+    html += '<div style="flex:1"><div class="meta">Input A: ' + avgA.toFixed(3) + '</div>';
+    html += '<div class="bar-container"><div class="bar" style="width:' + (avgA*100) + '%;background:rgb(' + c.join(',') + ')"></div></div>';
+    html += '<div class="heatmap">';
+    for (let l = 0; l < 36; l++) {
+      const v = gatesA[ename]?.layers?.[l] || 0;
+      const alpha = v > 0.01 ? Math.max(0.1, v * 0.9) : 0;
+      const bg = alpha > 0 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha.toFixed(2) + ')' : '#1a2332';
+      html += '<div class="hcell" style="background:' + bg + '" title="L' + l + ': ' + v.toFixed(3) + '"></div>';
+    }
+    html += '</div><div class="legend"><span>L0</span><span>L12</span><span>L35</span></div></div>';
+
+    // Input B bar + heatmap
+    html += '<div style="flex:1"><div class="meta">Input B: ' + avgB.toFixed(3) + '</div>';
+    html += '<div class="bar-container"><div class="bar" style="width:' + (avgB*100) + '%;background:rgb(' + c.join(',') + ')"></div></div>';
+    html += '<div class="heatmap">';
+    for (let l = 0; l < 36; l++) {
+      const v = gatesB[ename]?.layers?.[l] || 0;
+      const alpha = v > 0.01 ? Math.max(0.1, v * 0.9) : 0;
+      const bg = alpha > 0 ? 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha.toFixed(2) + ')' : '#1a2332';
+      html += '<div class="hcell" style="background:' + bg + '" title="L' + l + ': ' + v.toFixed(3) + '"></div>';
+    }
+    html += '</div><div class="legend"><span>L0</span><span>L12</span><span>L35</span></div></div>';
+
+    html += '</div></div><hr style="border-color:#1e2d42;margin:8px 0;">';
+  });
+
+  document.getElementById('results').innerHTML = html;
+  document.getElementById('status').textContent = '';
+}
+</script>
+</body>
+</html>"""
+
+
+@router.get("/playground/gates", response_class=HTMLResponse)
+async def playground_gates():
+    """Serve the gate explorer."""
+    return GATES_HTML.replace("<!-- NAV -->", _nav("Gates"))
