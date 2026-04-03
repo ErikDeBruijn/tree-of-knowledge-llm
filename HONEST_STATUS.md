@@ -106,7 +106,7 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 
 ### OBSERVED (cont.)
 - Attention-space DeltaGate shows strong selectivity (2026-04-02/03, Exp1, Ruby code, 2 seeds): Mean selectivity +0.749 (seed 42: +0.756, seed 123: +0.742). Domain gate 0.950, generic 0.202. SUPPORTED. Per-layer: L21-23 near-perfect (>0.97). Attention patterns ARE function-specific, not universal.
-- Combined FFN+Attention (2026-04-02, Exp2, Ruby code, 1 seed): Domain PPL identical (FFN-only 1.07, combined 1.07). But generic PPL: FFN-only +7.4% degradation, combined -1.6% (improvement over base). Attention adapters don't add domain knowledge — they protect generic capability. FFN selectivity +0.708, attention selectivity +0.558. Complementary functions, not redundant.
+- Combined FFN+Attention (2026-04-02/03, Exp2, Ruby code, 2 seeds): Domain PPL identical across conditions. Generic PPL: FFN-only +6.8% mean degradation, combined -1.5% mean (improvement over base). SUPPORTED. Attention adapters protect generic capability — complementary to FFN knowledge injection.
 - Grove Server production (2026-04-02): Fast pipeline 64 tok/s (up from 12). Multi-expert softmax routing. Per-token per-expert attribution with layer heatmaps. Auto-load experts at startup. Chat→Completion bridge. Thinking visible.
 - Q/K vs V/O decomposition (2026-04-02, Exp3, Ruby code, 1 seed): Q/K selectivity +0.773, V/O +0.768. Virtually identical — all attention components equally function-specific.
 - down_proj ablation (2026-04-02, Exp4, Ruby code, 1 seed): gate+up (12.6M params) and gate+up+down (18.9M) produce identical domain PPL (1.07). down_proj adds 50% params for no quality gain. Current architecture is optimal.
