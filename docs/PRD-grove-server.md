@@ -451,15 +451,16 @@ Experts are lightweight (~30MB each) and can be distributed via:
 
 ## 9. Milestones
 
-| Phase | Deliverable | Timeline | Status |
-|-------|------------|----------|--------|
-| 0. Prototype | HF Transformers-based server, single expert | 1 week | **DONE** (6 sprints, 71 tests, 47-59 tok/s) |
-| 1. Expert Integration | Load real trained experts, verify domain PPL | 1 week | Next |
-| 2. Skip/Bridge | Conditional layer skipping + bridge execution | 1 week | — |
-| 3. Multi-expert | Softmax routing, expert auto-detect | 1 week | — |
-| 4. Quantization | INT4 support, memory optimization | 1 week | — |
-| 5. Production | vLLM migration, batching, monitoring | 2 weeks | — |
-| 6. Community | Expert packaging tools, distribution | 2 weeks | — |
+| Phase | Deliverable | Status |
+|-------|------------|--------|
+| 0. Prototype | Server, single expert, 64 tok/s | **DONE** |
+| 1. Expert Integration | Load experts, multi-expert routing, attribution UI | **DONE** |
+| 2. Capability Injection | Ruby 20→70%, Python 70→90% correct (sandboxed eval) | **DONE** |
+| 3. Contrastive Gate | Selectivity +0.96, generation preserved, multi-expert specialization | **DONE** |
+| 4. Joint Training | Perfect routing matrix (0.99/0.01), hierarchical experts | **DONE** |
+| 5. Autonomous Loop | Learntropy-driven training during idle cycles, auto-split | **SPEC READY** |
+| 6. Production Hardening | Quantization, batching, monitoring | — |
+| 7. Community | Expert packaging, distribution, contribution tools | — |
 
 ### Phase 0 Completion Summary (2026-04-01)
 - 6 TDD sprints, 71 tests (1 skipped GPU), 1145 LOC production + 1786 LOC tests
