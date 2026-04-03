@@ -87,14 +87,18 @@ class InferenceEngine:
         # Auto-build fast pipeline on CUDA when model is on a single device.
         # device_map="auto" can split across GPUs, which GraphableDecodeStep
         # doesn't support (all tensors must be on the same device).
-        if not disable_fast_pipeline and "cuda" in str(self.device) and self._model_on_single_device():
+        if "cuda" in str(self.device) and self._model_on_single_device():
             try:
-                self._build_fast_pipeline()
-                logger.info("Fast pipeline built (skip_layers=%s)", self._skip_layers)
+                if disable_fast_pipeline:
+                    # Training mode: use BF16 graphable (preserves original weights)
+                    # FP8 sets proj.weight = None to save VRAM, breaking training hooks.
+                    self._build_bf16_pipeline()
+                    logger.info("BF16 fast pipeline built (training-compatible)")
+                else:
+                    self._build_fast_pipeline()
+                    logger.info("Fast pipeline built (skip_layers=%s)", self._skip_layers)
             except Exception as e:
                 logger.warning("Fast pipeline build failed: %s", e)
-        elif disable_fast_pipeline:
-            logger.info("Fast pipeline disabled (training mode)")
 
     def _model_on_single_device(self) -> bool:
         """Check if all model parameters reside on the same device."""
@@ -136,6 +140,28 @@ class InferenceEngine:
                 self.model, self._static_cache, max_seq_len=max_seq_len
             )
         self._graph_runner = CUDAGraphRunner(device=self.device)
+
+    def _build_bf16_pipeline(self, max_seq_len: int = 2048) -> None:
+        """Build BF16 fast pipeline that preserves original weights.
+
+        Used when training is active — FP8 sets proj.weight=None to save VRAM
+        which breaks training hooks. BF16 graphable step is slower than FP8
+        but still faster than naive HF forward, and keeps weights intact.
+        """
+        config = self.model.config
+        self._static_cache = StaticKVCache(
+            num_layers=config.num_hidden_layers,
+            num_heads=config.num_key_value_heads,
+            head_dim=getattr(config, 'head_dim', config.hidden_size // config.num_attention_heads),
+            max_seq_len=max_seq_len,
+            batch_size=1,
+            dtype=next(self.model.parameters()).dtype,
+            device=self.device,
+        )
+        self._graphable = GraphableDecodeStep(
+            self.model, self._static_cache, max_seq_len=max_seq_len,
+            skip_layers=self._skip_layers,
+        )
 
     def _build_fast_pipeline(self, max_seq_len: int = 2048) -> None:
         """Build fast inference pipeline with GraphableDecodeStep + StaticKVCache.

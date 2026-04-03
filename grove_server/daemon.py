@@ -40,8 +40,9 @@ class GroveDaemon:
         self.port = port
 
         # 1. Load model once via InferenceEngine
-        # Disable fast pipeline when training is enabled — training hooks
-        # need the original MLP weights, which FP8 graphable step strips.
+        # When training: use BF16 fast pipeline (preserves weights for hooks).
+        # FP8 sets proj.weight=None to save VRAM, breaking training hooks.
+        # BF16 graphable is slower than FP8 but still faster than naive HF.
         self.inference_engine = InferenceEngine(
             model_name=model_name,
             device=device,
