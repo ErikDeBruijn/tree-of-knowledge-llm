@@ -40,9 +40,10 @@ class GroveDaemon:
         self.port = port
 
         # 1. Load model once via InferenceEngine
-        # When training: use BF16 fast pipeline (preserves weights for hooks).
-        # FP8 sets proj.weight=None to save VRAM, breaking training hooks.
-        # BF16 graphable is slower than FP8 but still faster than naive HF.
+        # Training mode: BF16 graphable (preserves weights for hooks).
+        # TODO: gate-informed variable precision per layer (INT4 on low-gate,
+        # INT8/BF16 on high-gate layers). Memory = constant (INT4 packed),
+        # compute = proportional to gate activation.
         self.inference_engine = InferenceEngine(
             model_name=model_name,
             device=device,

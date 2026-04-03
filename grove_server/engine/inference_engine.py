@@ -34,6 +34,7 @@ class InferenceEngine:
         dtype: str = "bfloat16",
         skip_layers: list[int] | None = None,
         disable_fast_pipeline: bool = False,
+        quantization: str | None = None,
     ) -> None:
         """Load base model and tokenizer.
 
@@ -52,19 +53,26 @@ class InferenceEngine:
         torch_dtype = dtype_map.get(dtype, torch.bfloat16)
 
         # "auto" → single GPU (required for fast pipeline / CUDA graph)
-        # "auto-split" → HuggingFace auto device_map across GPUs
         if device == "auto" and torch.cuda.is_available():
-            device_map = {"": 0}  # All on GPU 0
+            device_map = {"": 0}
         elif device == "auto":
             device_map = "auto"
         else:
             device_map = None
 
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            torch_dtype=torch_dtype,
-            device_map=device_map,
-        )
+        load_kwargs = {"device_map": device_map}
+        if quantization == "nf4":
+            from transformers import BitsAndBytesConfig
+            load_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch_dtype,
+            )
+            logger.info("Loading model in NF4 quantization")
+        else:
+            load_kwargs["torch_dtype"] = torch_dtype
+
+        self.model = AutoModelForCausalLM.from_pretrained(model_name, **load_kwargs)
         if device_map is None:
             self.model = self.model.to(device)
 
@@ -87,11 +95,12 @@ class InferenceEngine:
         # Auto-build fast pipeline on CUDA when model is on a single device.
         # device_map="auto" can split across GPUs, which GraphableDecodeStep
         # doesn't support (all tensors must be on the same device).
-        if "cuda" in str(self.device) and self._model_on_single_device():
+        if quantization:
+            # Quantized models use HF generate directly — no graphable step needed
+            logger.info("Using HF generate (quantization=%s, no graphable step)", quantization)
+        elif "cuda" in str(self.device) and self._model_on_single_device():
             try:
                 if disable_fast_pipeline:
-                    # Training mode: use BF16 graphable (preserves original weights)
-                    # FP8 sets proj.weight = None to save VRAM, breaking training hooks.
                     self._build_bf16_pipeline()
                     logger.info("BF16 fast pipeline built (training-compatible)")
                 else:
