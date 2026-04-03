@@ -28,10 +28,46 @@ This spec covers the full autonomous loop:
 | Training Engine | `training_engine.py` | Built, 276 LOC | Add contrastive gate phase |
 | Workload Selector | `workload_selector.py` | Built, 141 LOC | Add learntropy scoring |
 | Checkpoint Manager | `checkpoint_manager.py` | Built, 119 LOC | Add functional eval trigger |
-| **Contrastive Gate Trainer** | NEW | — | Implement from A2 experiment |
+| **Contrastive Gate Trainer** | NEW → done in training_engine.py | — | `contrastive_gate_step()` added |
 | **Split Detector** | NEW | — | Gate variance monitoring |
-| **Functional Evaluator** | NEW | — | Sandboxed execution eval |
+| **Eval Registry** | NEW | — | External eval dispatch (see below) |
 | **Expert Deployer** | NEW | — | Auto-register in ExpertRegistry |
+
+### Evaluation Architecture
+
+Evaluation is **external** to the daemon. The daemon doesn't know HOW to evaluate —
+it only knows WHERE to send requests. This keeps the daemon simple and allows
+any evaluation strategy: sandboxed code execution, medical benchmarks, LLM-as-judge,
+or human review.
+
+```
+Daemon → Eval Registry → [CLI command | HTTP endpoint | local function]
+```
+
+Eval registry entry:
+```yaml
+evaluators:
+  ruby_code:
+    type: cli
+    command: "ruby -c {file} && ruby {file}"
+    prompts: /path/to/ruby_eval_prompts.json
+  python_code:
+    type: cli
+    command: "python3 {file}"
+    prompts: /path/to/python_eval_prompts.json
+  medical_qa:
+    type: http
+    url: http://localhost:9001/v1/eval/medical
+  custom:
+    type: http
+    url: http://eval-service:8080/evaluate
+```
+
+The daemon:
+1. Generates completions from eval prompts
+2. Sends them to the registered evaluator
+3. Gets back a score (0.0 to 1.0)
+4. Checkpoints if score improves
 
 ---
 

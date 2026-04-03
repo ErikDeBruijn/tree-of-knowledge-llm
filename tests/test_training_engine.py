@@ -101,10 +101,11 @@ def tiny_model():
 def training_config():
     return TrainingConfig(
         adapter_rank=4,
+        adapter_alpha=8,
         expert_start_layer=2,  # layers 2,3 of the 4-layer model
-        lr=1e-3,
+        lr_a=1e-3,
+        lr_b=1.6e-2,
         gate_lr=5e-3,
-        l1_lambda=0.05,
         gate_bias_init=-2.0,
         phase1_steps=500,
         phase2_steps=1500,
