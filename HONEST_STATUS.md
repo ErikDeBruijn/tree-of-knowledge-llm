@@ -121,7 +121,10 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 - Joint gate training: gate frozen (2026-04-03, v11 bias=-3, v12 bias=-1): Gate value stays exactly at sigmoid(init_bias) throughout training. Adapter absorbs all gradient signal.
 - A1 implicit gate (adapter output norm): WEAK — ratio domain/generic only 1.1x. Adapter norm depends on input complexity, not domain relevance. Not a viable gate mechanism.
 - A2 contrastive gate: SUPPORTED (2026-04-03, 2 seeds + definitive run). Selectivity +0.962. With fixed eval: Ruby base 20%→adapter 70%→gated 70% correct (7/10 functions). Gate preserves generation fully while achieving near-perfect selectivity. Contrastive loss solves the gate training problem.
-- EVAL FIX (2026-04-03): Previous eval included extra generated functions, severely underestimating quality. Fixed eval extracts only target function. Ruby base: 20% correct (was reported as 0-25%). Ruby adapter: 70% correct (was reported as 10-25%). All previous absolute numbers unreliable.
+- EVAL FIX (2026-04-03): Previous eval included extra generated functions, severely underestimating quality. Fixed eval extracts only target function. All previous absolute numbers unreliable.
+- Definitive Ruby (2026-04-03, fixed eval): Base 20%/20% → Adapter+contrastive gate 70%/70%. 3.5x improvement. 7/10 Ruby functions execute correctly.
+- Definitive Python (2026-04-03, fixed eval): Base 80%/70% → Adapter+contrastive gate 90%/90%. Gate improves even strong capabilities. 9/10 Python functions execute correctly.
+- Contrastive gate works on both weak (Ruby) and strong (Python) capabilities. Selectivity +0.94-0.96 in both cases.
 
 ### FALSIFIED (cont.)
 - Layer skipping without bridges: All 19 candidate layers produce catastrophic token-level errors even when mean PPL change is small (+1.1% to +80.7%). Autoregressive compounding makes per-token PPL insufficient as safety metric — must test actual generation quality.
