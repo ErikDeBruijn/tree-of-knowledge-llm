@@ -30,10 +30,11 @@ def tiny_model():
 def training_config():
     return TrainingConfig(
         adapter_rank=4,
+        adapter_alpha=8,
         expert_start_layer=2,
-        lr=1e-3,
+        lr_a=1e-3,
+        lr_b=1.6e-2,
         gate_lr=5e-3,
-        l1_lambda=0.05,
         gate_bias_init=-2.0,
         max_seq_len=32,
     )
