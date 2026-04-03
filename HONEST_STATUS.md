@@ -125,7 +125,8 @@ Last updated: 2026-03-30 (full session: cycles 1-7, distributed MVP, science ada
 - Definitive Ruby (2026-04-03, fixed eval): Base 20%/20% → Adapter+contrastive gate 70%/70%. 3.5x improvement. 7/10 Ruby functions execute correctly.
 - Definitive Python (2026-04-03, fixed eval): Base 80%/70% → Adapter+contrastive gate 90%/90%. Gate improves even strong capabilities. 9/10 Python functions execute correctly.
 - Contrastive gate works on both weak (Ruby) and strong (Python) capabilities. Selectivity +0.94-0.96 in both cases.
-- Joint training: PERFECT expert specialization (2026-04-03). Two adapters trained simultaneously with contrastive gates. Gate matrix: ruby_gate(rb=0.99,py=0.01,gen=0.00), python_gate(rb=0.02,py=1.00,gen=0.01). Python 100%/90% (best ever), Ruby 50%/50%. Experts specialize, not blend. Demonstrates bifurcation/splitting from the paper architecture.
+- Joint training: PERFECT expert specialization (2026-04-03). Gate matrix: ruby_gate(rb=0.99,py=0.01,gen=0.00), python_gate(rb=0.02,py=1.00,gen=0.01). Python 100%/90% (best ever), Ruby 50%/50%. Experts specialize, not blend.
+- Hierarchical experts (2026-04-03): Code expert (L0, all code) → Ruby specialist (L1). Code expert alone: Ruby 50%. +Specialist: Ruby 60%. Specialist weight norm 0.83x code expert (H7 confirmed — learns smaller delta). Hierarchy adds value but flat approach (70%) currently ahead.
 
 ### FALSIFIED (cont.)
 - Layer skipping without bridges: All 19 candidate layers produce catastrophic token-level errors even when mean PPL change is small (+1.1% to +80.7%). Autoregressive compounding makes per-token PPL insufficient as safety metric — must test actual generation quality.
