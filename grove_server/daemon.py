@@ -30,10 +30,12 @@ class GroveDaemon:
         device: str = "auto",
         dtype: str = "bfloat16",
         training_data: Optional[str] = None,
-        adapter_dir: Optional[str] = None,
+        experts_dir: Optional[str] = None,
         port: int = 8000,
-        phase1_steps: int = 500,
+        phase1_steps: int = 1000,
         phase2_steps: int = 1500,
+        expert_start_layer: int = 1,
+        evaluator=None,
     ) -> None:
         self.port = port
 
@@ -47,12 +49,19 @@ class GroveDaemon:
         # 2. Metrics
         self.metrics = MetricsCollector()
 
-        # 3. Training engine (optional)
+        # 3. Registry + auto-load existing experts
+        self.registry = ExpertRegistry()
+        self._experts_dir = Path(experts_dir) if experts_dir else None
+        if self._experts_dir and self._experts_dir.is_dir():
+            self._autoload_experts()
+
+        # 4. Training engine (optional)
         self.training_engine: Optional[TrainingEngine] = None
         self.workload_selector: Optional[WorkloadSelector] = None
 
         if training_data is not None:
             config = TrainingConfig(
+                expert_start_layer=expert_start_layer,
                 phase1_steps=phase1_steps,
                 phase2_steps=phase2_steps,
             )
@@ -63,7 +72,6 @@ class GroveDaemon:
                 device=self.inference_engine.device,
             )
 
-            # Build data sources from path
             sources = self._build_sources(training_data)
             if sources:
                 self.workload_selector = WorkloadSelector(
@@ -73,16 +81,16 @@ class GroveDaemon:
                     device=self.inference_engine.device,
                 )
 
-        # 4. Scheduler
+        # 5. Scheduler with full autonomous loop
         self.scheduler = Scheduler(
             inference_engine=self.inference_engine,
             training_engine=self.training_engine,
             metrics=self.metrics,
             workload_selector=self.workload_selector,
+            registry=self.registry,
+            experts_dir=self._experts_dir,
+            evaluator=evaluator,
         )
-
-        # 5. Registry
-        self.registry = ExpertRegistry()
 
         # 6. Wire FastAPI
         fastapi_app.dependency_overrides[get_engine] = lambda: self.inference_engine
@@ -91,6 +99,24 @@ class GroveDaemon:
         fastapi_app.dependency_overrides[get_scheduler] = lambda: self.scheduler
 
         self.app = fastapi_app
+
+    def _autoload_experts(self) -> None:
+        """Load all experts from experts_dir at startup."""
+        import logging
+        logger = logging.getLogger(__name__)
+        for expert_dir in sorted(self._experts_dir.iterdir()):
+            if expert_dir.is_dir() and (expert_dir / "adapter.pt").exists():
+                try:
+                    self.registry.load(
+                        name=expert_dir.name,
+                        expert_dir=expert_dir,
+                        total_layers=self.inference_engine.num_layers,
+                        hidden_dim=self.inference_engine.model.config.hidden_size,
+                        device=self.inference_engine.device,
+                    )
+                    logger.info("Auto-loaded expert: %s", expert_dir.name)
+                except Exception as e:
+                    logger.warning("Failed to load expert %s: %s", expert_dir.name, e)
 
     @staticmethod
     def _build_sources(training_data: str) -> list[DataSource]:
