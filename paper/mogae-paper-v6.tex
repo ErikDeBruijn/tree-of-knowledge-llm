@@ -1265,37 +1265,49 @@ quantization scheme exploits this gate-mediated error dampening.
 \subsection{Gate as Precision-Budget Allocator}
 \label{sec:perf-gate-precision}
 
-\textbf{Mechanism.} The delta gate $\sigma(g)$ controls the blend
-between base and adapter output:
-$y = \text{base} + \sigma(g) \cdot (\text{adapter} - \text{base})$.
-When $\sigma(g) \approx 0$, the output equals the base regardless of
-adapter precision. When $\sigma(g) \approx 1$, the adapter dominates
-and base precision matters less (the adapter compensates).
+\textbf{Mechanism.} Each weight is stored as two packed INT4
+registers occupying 8~bits total:
+\begin{itemize}[nosep]
+\item \textbf{Register A} (low 4~bits): coarse approximation of the weight.
+\item \textbf{Register B} (high 4~bits): residual that, combined with A,
+      recovers INT8 precision.
+\end{itemize}
 
-This creates a natural precision hierarchy:
-\begin{enumerate}[nosep]
-\item \textbf{Low gate} (general text): base weights need full
-      precision; adapter weights are irrelevant (not applied).
-      But since the gate routes general text to the unquantized base
-      model, general benchmarks are unaffected by any expert-level
-      quantization.
-\item \textbf{High gate} (domain text): adapter weights need full
-      precision (always BF16, ${\sim}30$~MB per expert); base weights
-      can be aggressively quantized because the adapter's correction
-      compensates for quantization error in the base.
-\end{enumerate}
+The gate controls which registers are read per layer:
+\begin{equation}
+\label{eq:variable-precision}
+W_{\text{eff}} = \begin{cases}
+\text{dequant}(A) & \text{if } \sigma(g) < \tau \text{ (INT4, half bandwidth)} \\
+\text{dequant}(A, B) & \text{if } \sigma(g) \geq \tau \text{ (INT8, full precision)}
+\end{cases}
+\end{equation}
 
-\textbf{Unique to Grove?} Yes. This is a direct consequence of the
-gated architecture. Standard fine-tuned models have no mechanism to
-modulate error propagation per token. MoE models route to different
-experts but do not blend base and expert outputs via a learned gate
-that can be repurposed as a precision allocator.
+Memory footprint is constant (8~bits per weight, same as INT8).
+Memory \emph{bandwidth} scales with the gate: low-gate layers read
+4~bits per weight (register~A only), high-gate layers read 8~bits
+(both registers). On bandwidth-bound hardware, this halves the cost
+of non-critical layers.
 
-\textbf{Prediction.} Combined with differential quantization, this
-enables a scheme where the expert package specifies not only which
-layers to skip/bridge but also which projections to quantize more
-aggressively---all informed by the gate's activation pattern during
-training.
+\textbf{Training and inference share the same code path.} The forward
+pass is identical: read INT4 or INT8 per layer based on the gate. For
+training, the backward pass follows the same precision allocation---
+low-gate layers receive approximate gradients (INT4), high-gate layers
+receive precise gradients (INT8). LoRA adapter parameters are always in
+BF16. The base model weights never change; only the adapter is updated.
+This means training imposes \emph{zero overhead} on the inference path.
+
+\textbf{Unique to Grove?} Yes. The gate simultaneously controls three
+resources with one learned signal: (1)~expert routing, (2)~forward
+precision, (3)~backward precision. Standard quantized models use
+uniform precision. MoE models route but do not modulate precision.
+Only the gated architecture enables per-layer, per-token, dynamic
+precision allocation.
+
+\textbf{Prediction.} With INT4-only layers at 50\% of the model,
+effective memory bandwidth drops by 25\%, yielding a corresponding
+throughput increase on bandwidth-bound hardware (Blackwell: 1792~GB/s).
+Combined with layer skipping and bridges, predicted throughput exceeds
+350~tok/s.
 
 % PREDICTION (not yet validated end-to-end — see whitepaper for vision):
 % \subsection{Combined Efficiency Prediction}
