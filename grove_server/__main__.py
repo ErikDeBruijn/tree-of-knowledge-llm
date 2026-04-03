@@ -93,7 +93,7 @@ def main() -> None:
             device=args.device,
             dtype=args.dtype,
             training_data=args.training_data,
-            adapter_dir=args.adapter_dir,
+            experts_dir=args.adapter_dir,
             port=args.port,
             phase1_steps=args.phase1_steps,
             phase2_steps=args.phase2_steps,

@@ -66,12 +66,15 @@ class TrainingEngine:
             nn.init.normal_(adapter.up_lora_A, std=0.01)
             nn.init.zeros_(adapter.gate_lora_B)
             nn.init.zeros_(adapter.up_lora_B)
-            self.adapters[l] = adapter.to(device)
+            # Match model dtype (BF16 on GPU)
+            model_dtype = next(model.parameters()).dtype
+            self.adapters[l] = adapter.to(device=device, dtype=model_dtype)
 
             gate = DeltaGate(hidden_dim)
             nn.init.zeros_(gate.linear.weight)
             nn.init.constant_(gate.linear.bias, config.gate_bias_init)
-            self.gates[l] = gate.to(device)
+            model_dtype = next(model.parameters()).dtype
+            self.gates[l] = gate.to(device=device, dtype=model_dtype)
 
         self.step: int = 0
         self.phase: int = 1  # 1=adapter, 2=gate, 3=contrastive gate

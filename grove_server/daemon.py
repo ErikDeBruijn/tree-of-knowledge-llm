@@ -40,10 +40,13 @@ class GroveDaemon:
         self.port = port
 
         # 1. Load model once via InferenceEngine
+        # Disable fast pipeline when training is enabled — training hooks
+        # need the original MLP weights, which FP8 graphable step strips.
         self.inference_engine = InferenceEngine(
             model_name=model_name,
             device=device,
             dtype=dtype,
+            disable_fast_pipeline=training_data is not None,
         )
 
         # 2. Metrics

@@ -33,6 +33,7 @@ class InferenceEngine:
         device: str = "auto",
         dtype: str = "bfloat16",
         skip_layers: list[int] | None = None,
+        disable_fast_pipeline: bool = False,
     ) -> None:
         """Load base model and tokenizer.
 
@@ -86,12 +87,14 @@ class InferenceEngine:
         # Auto-build fast pipeline on CUDA when model is on a single device.
         # device_map="auto" can split across GPUs, which GraphableDecodeStep
         # doesn't support (all tensors must be on the same device).
-        if "cuda" in str(self.device) and self._model_on_single_device():
+        if not disable_fast_pipeline and "cuda" in str(self.device) and self._model_on_single_device():
             try:
                 self._build_fast_pipeline()
                 logger.info("Fast pipeline built (skip_layers=%s)", self._skip_layers)
             except Exception as e:
                 logger.warning("Fast pipeline build failed: %s", e)
+        elif disable_fast_pipeline:
+            logger.info("Fast pipeline disabled (training mode)")
 
     def _model_on_single_device(self) -> bool:
         """Check if all model parameters reside on the same device."""
