@@ -67,25 +67,25 @@ if HAS_TRITON:
         for k_start in range(0, K, BLOCK_K):
             offs_k = k_start + tl.arange(0, BLOCK_K)
 
-            # Load x block (INT8 → INT32 for accumulation)
+            # Load x and w as-is (INT8) — cast to BF16 for tl.dot
+            # tl.dot requires float types; INT8→BF16 cast is inside the kernel
+            # (no Python-level dequant, cast happens in registers)
             x_mask = (offs_m[:, None] < M) & (offs_k[None, :] < K)
             x_block = tl.load(x_ptr + offs_m[:, None] * stride_xm + offs_k[None, :] * stride_xk,
-                              mask=x_mask, other=0).to(tl.int32)
+                              mask=x_mask, other=0).to(tl.bfloat16)
 
-            # Load w block (INT8 → INT32)
             w_mask = (offs_n[:, None] < N) & (offs_k[None, :] < K)
             w_block = tl.load(w_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk,
-                              mask=w_mask, other=0).to(tl.int32)
+                              mask=w_mask, other=0).to(tl.bfloat16)
 
-            # Per-group scale for this k range
+            # Per-group scale
             group_idx = k_start // GROUP_SIZE
             s_mask = offs_n < N
             scale_block = tl.load(scales_ptr + offs_n * stride_sm + group_idx * stride_sg,
                                    mask=s_mask, other=1.0)
 
-            # INT32 matmul: acc += x @ w^T * scale
-            # x: (BLOCK_M, BLOCK_K), w: (BLOCK_N, BLOCK_K) → need w transposed
-            dot = tl.dot(x_block, tl.trans(w_block))  # (BLOCK_M, BLOCK_N) in INT32
+            # BF16 dot: x @ w^T, then scale
+            dot = tl.dot(x_block, tl.trans(w_block))
             acc += dot.to(tl.float32) * scale_block[None, :]
 
         # Store as BF16
@@ -225,11 +225,40 @@ class Int4PackedLinear(nn.Module):
         self._gate_value = gate_value
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward with native integer matmul — no BF16 dequant before multiply."""
+        """Forward: try Triton kernel → torch._int_mm → cached dequant fallback."""
+        if HAS_TRITON and x.is_cuda:
+            return self._triton_forward(x)
         if _HAS_INT_MM and x.is_cuda:
             return self._int_forward(x)
-        # CPU fallback: dequant (slower but works)
         return self._fallback_forward(x)
+
+    def _triton_forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Fused Triton INT8 matmul with per-group scaling."""
+        if self._gate_value < self._precision_threshold:
+            w_int = self.reg_a
+            group_scales = self.low4_scales
+        else:
+            w_int = self.reg_b
+            group_scales = self.scales
+
+        orig_shape = x.shape
+        x_flat = x.reshape(-1, self.in_features)
+
+        # Quantize input to INT8
+        x_float = x_flat.float()
+        x_amax = x_float.abs().amax().clamp(min=1e-10)
+        x_scale = x_amax / 127.0
+        x_int8 = (x_float / x_scale).round().clamp(-127, 127).to(torch.int8)
+
+        # Multiply group_scales by x_scale to get combined scale
+        combined_scales = group_scales * x_scale  # (N, n_groups)
+
+        out = _triton_int8_matmul_grouped(x_int8, w_int, combined_scales, self._group_size)
+        out = out.reshape(*orig_shape[:-1], self.out_features)
+
+        if self.bias is not None:
+            out = out + self.bias
+        return out
 
     def _int_forward(self, x: torch.Tensor) -> torch.Tensor:
         """Native INT8 matmul with per-group scaling — single matmul.
