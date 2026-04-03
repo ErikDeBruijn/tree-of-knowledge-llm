@@ -462,7 +462,7 @@ function showTooltip(e, tokenData) {
     }
     html += '</div>';
   });
-  html += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L12 expert →</span><span class="heatmap-label">L35</span></div>';
+  html += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L18</span><span class="heatmap-label">L35</span></div>';
 
   tooltip.innerHTML = html;
   tooltip.classList.add('visible');
@@ -604,7 +604,7 @@ function renderSummary(tokens, experts) {
   if (!expertNames.length) {
     expertsHtml = '<span style="color:#718096;">No expert active</span>';
   }
-  heatmapHtml += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L12 expert →</span><span class="heatmap-label">L35</span></div>';
+  heatmapHtml += '<div class="heatmap-labels"><span class="heatmap-label">L0 identity</span><span class="heatmap-label">L18</span><span class="heatmap-label">L35</span></div>';
 
   expertsEl.innerHTML = expertsHtml;
   heatmapEl.innerHTML = heatmapHtml;
