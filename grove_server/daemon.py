@@ -40,15 +40,13 @@ class GroveDaemon:
         self.port = port
 
         # 1. Load model once via InferenceEngine
-        # Training mode: BF16 graphable (preserves weights for hooks).
-        # TODO: gate-informed variable precision per layer (INT4 on low-gate,
-        # INT8/BF16 on high-gate layers). Memory = constant (INT4 packed),
-        # compute = proportional to gate activation.
+        # INT4 packed: two INT4 registers per weight. Gate controls precision.
+        # Same code path for training and inference — no mode switch.
         self.inference_engine = InferenceEngine(
             model_name=model_name,
             device=device,
             dtype=dtype,
-            disable_fast_pipeline=training_data is not None,
+            quantization="int4_packed" if training_data is not None else None,
         )
 
         # 2. Metrics

@@ -14,6 +14,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from grove_server.engine.cuda_graph import CUDAGraphRunner
 from grove_server.engine.fp8_utils import fp8_available
 from grove_server.engine.graphable_model import FP8GraphableDecodeStep, GraphableDecodeStep
+from grove_server.engine.int4_layer import Int4PackedLinear, quantize_model, set_all_precision
 from grove_server.engine.layer_executor import execute_layer
 from grove_server.engine.static_kv_cache import StaticKVCache
 from grove_server.models.expert import Expert
@@ -95,10 +96,16 @@ class InferenceEngine:
         # Auto-build fast pipeline on CUDA when model is on a single device.
         # device_map="auto" can split across GPUs, which GraphableDecodeStep
         # doesn't support (all tensors must be on the same device).
-        if quantization:
-            # Quantized models use HF generate directly — no graphable step needed
+        # INT4 packed quantization: gate-informed variable precision
+        self._int4_registry: dict | None = None
+        if quantization == "int4_packed":
+            self._int4_registry = quantize_model(self.model, start_layer=0)
+            logger.info("INT4 packed quantization: %d layers, gate-informed precision",
+                        len(self._int4_registry))
+        elif quantization:
             logger.info("Using HF generate (quantization=%s, no graphable step)", quantization)
-        elif "cuda" in str(self.device) and self._model_on_single_device():
+
+        if not quantization and "cuda" in str(self.device) and self._model_on_single_device():
             try:
                 if disable_fast_pipeline:
                     self._build_bf16_pipeline()
