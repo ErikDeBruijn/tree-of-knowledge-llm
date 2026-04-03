@@ -528,8 +528,8 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
                     w_scaled = w.float().contiguous() / scale
                     w_fp8 = w_scaled.to(torch.float8_e4m3fn)
                     self.fp8_weights[f"{idx}.attn.{proj_name}"] = (w_fp8, scale)
-                    # Free original BF16 weight to reclaim VRAM
-                    proj.weight = None
+                    # Keep original BF16 weight for training hooks
+                    # (FP8 uses its own dict; training uses layer.mlp/self_attn)
 
             # MLP projections (always quantized unless fully skipped)
             for proj_name in ("gate_proj", "up_proj", "down_proj"):
@@ -543,8 +543,7 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
                 w_scaled = w.float().contiguous() / scale
                 w_fp8 = w_scaled.to(torch.float8_e4m3fn)
                 self.fp8_weights[f"{idx}.mlp.{proj_name}"] = (w_fp8, scale)
-                # Free original BF16 weight to reclaim VRAM
-                proj.weight = None
+                # Keep original BF16 weight for training hooks
 
     def _precompute_layer_tables(self) -> None:
         """Pre-compute per-layer weight keys and norm weights as indexed lists.

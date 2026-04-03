@@ -40,14 +40,13 @@ class GroveDaemon:
         self.port = port
 
         # 1. Load model once via InferenceEngine
-        # INT4 packed quantization: weights stay as INT8 tensors (not None!),
-        # per-group scaling, cached dequant. 49 tok/s, training compatible.
-        # FP8 sets weight=None → breaks training. INT4 packed preserves weights.
+        # FP8 fast pipeline (113 tok/s) + BF16 weights kept for training.
+        # FP8 graphable uses its own weight dict; original nn.Linear weights
+        # stay intact for training hooks. More VRAM but both paths work.
         self.inference_engine = InferenceEngine(
             model_name=model_name,
             device=device,
             dtype=dtype,
-            quantization="int4_packed" if training_data is not None else None,
         )
 
         # 2. Metrics
