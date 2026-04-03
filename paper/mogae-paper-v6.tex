@@ -1296,18 +1296,43 @@ receive precise gradients (INT8). LoRA adapter parameters are always in
 BF16. The base model weights never change; only the adapter is updated.
 This means training imposes \emph{zero overhead} on the inference path.
 
-\textbf{Unique to Grove?} Yes. The gate simultaneously controls three
-resources with one learned signal: (1)~expert routing, (2)~forward
-precision, (3)~backward precision. Standard quantized models use
-uniform precision. MoE models route but do not modulate precision.
-Only the gated architecture enables per-layer, per-token, dynamic
-precision allocation.
+\textbf{Combined with bridges.} For layers where the gate is near zero,
+the full transformer block can be replaced by a bridge surrogate
+(rank-64 LoRA, 0.1\% of compute). Unlike layer skipping---which we
+showed causes compounding error in autoregressive generation (all 19
+tested layers diverge within 2--19 tokens)---bridges produce real
+output and avoid error propagation. The gate controls both precision
+\emph{and} compute budget:
 
-\textbf{Prediction.} With INT4-only layers at 50\% of the model,
-effective memory bandwidth drops by 25\%, yielding a corresponding
-throughput increase on bandwidth-bound hardware (Blackwell: 1792~GB/s).
-Combined with layer skipping and bridges, predicted throughput exceeds
-350~tok/s.
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Gate & Precision & Compute & Bandwidth \\
+\midrule
+$\approx 0$ & INT4 & Bridge (0.5M FLOPs) & 4 bits/weight \\
+$\approx 0.5$ & INT8 & Full layer (300M FLOPs) & 8 bits/weight \\
+$\approx 1$ & INT8 & Full layer + adapter & 8 bits/weight \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Unique to Grove?} Yes. The gate simultaneously controls four
+resources with one learned signal: (1)~expert routing, (2)~forward
+precision, (3)~compute budget (full vs bridge), (4)~backward precision
+for training. Standard quantized models use uniform precision. MoE
+models route but do not modulate precision or compute. Only the gated
+architecture enables per-layer, per-token, dynamic resource allocation.
+
+\textbf{Training and inference share the same code path.} The base model
+weights are always in INT4-packed format. No mode switch between training
+and inference. Training adds only the backward pass for adapter parameters;
+the forward pass is identical.
+
+\textbf{Validated.} INT8 (both registers) produces coherent output
+matching BF16 quality. INT4 requires per-group quantization (groups of
+128) for viable quality. Bridges validated at $+0.6\%$ PPL at $0.1\%$
+compute. Reference: 113~tok/s (FP8, all 36 layers). Layer skipping
+(228~tok/s) abandoned due to compounding error in generation.
 
 % PREDICTION (not yet validated end-to-end — see whitepaper for vision):
 % \subsection{Combined Efficiency Prediction}
