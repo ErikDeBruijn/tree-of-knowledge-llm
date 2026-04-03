@@ -104,16 +104,22 @@ def load_expert_from_pt(
         # Adapter (MoE format: gate_lora + up_lora, or compact gl/ul)
         # Support both naming conventions
         def get_weight(prefix, suffix):
-            key = f"{layer_idx}.{prefix}.{suffix}"
-            if key in adapter_weights:
-                return adapter_weights[key]
-            # Try compact names (gl→gate_lora, ul→up_lora)
+            # Try all naming conventions:
+            # 1. "layer.gate_lora.A" (submodule style)
+            # 2. "layer.gate_lora_A" (parameter style, from named_parameters())
+            # 3. "layer.gl.A" (compact style)
+            candidates = [
+                f"{layer_idx}.{prefix}.{suffix}",
+                f"{layer_idx}.{prefix}_{suffix}",
+            ]
             compact = {"gate_lora": "gl", "up_lora": "ul"}
             if prefix in compact:
-                alt_key = f"{layer_idx}.{compact[prefix]}.{suffix}"
-                if alt_key in adapter_weights:
-                    return adapter_weights[alt_key]
-            raise KeyError(f"Neither {key} nor compact variant found")
+                candidates.append(f"{layer_idx}.{compact[prefix]}.{suffix}")
+                candidates.append(f"{layer_idx}.{compact[prefix]}_{suffix}")
+            for key in candidates:
+                if key in adapter_weights:
+                    return adapter_weights[key]
+            raise KeyError(f"No key found for layer {layer_idx} {prefix} {suffix}. Tried: {candidates}")
 
         ga = get_weight("gate_lora", "A")
         gb = get_weight("gate_lora", "B")
