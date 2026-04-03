@@ -101,11 +101,24 @@ def load_expert_from_pt(
     layer_indices = sorted({int(k.split(".")[0]) for k in gate_weights})
 
     for layer_idx in layer_indices:
-        # Adapter (MoE format: gate_lora + up_lora)
-        ga = adapter_weights[f"{layer_idx}.gate_lora.A"]
-        gb = adapter_weights[f"{layer_idx}.gate_lora.B"]
-        ua = adapter_weights[f"{layer_idx}.up_lora.A"]
-        ub = adapter_weights[f"{layer_idx}.up_lora.B"]
+        # Adapter (MoE format: gate_lora + up_lora, or compact gl/ul)
+        # Support both naming conventions
+        def get_weight(prefix, suffix):
+            key = f"{layer_idx}.{prefix}.{suffix}"
+            if key in adapter_weights:
+                return adapter_weights[key]
+            # Try compact names (gl→gate_lora, ul→up_lora)
+            compact = {"gate_lora": "gl", "up_lora": "ul"}
+            if prefix in compact:
+                alt_key = f"{layer_idx}.{compact[prefix]}.{suffix}"
+                if alt_key in adapter_weights:
+                    return adapter_weights[alt_key]
+            raise KeyError(f"Neither {key} nor compact variant found")
+
+        ga = get_weight("gate_lora", "A")
+        gb = get_weight("gate_lora", "B")
+        ua = get_weight("up_lora", "A")
+        ub = get_weight("up_lora", "B")
         intermediate_dim = gb.shape[1]
         adapter = MoEMlpAdapter(hidden_dim, intermediate_dim, rank)
         adapter.gate_lora_A = nn.Parameter(ga)
