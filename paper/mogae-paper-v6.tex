@@ -722,11 +722,12 @@ FFN gate+up only (Exp 4) & $+0.786$ & $1.07$ & $15.74$ \\
 \end{tabular}
 \end{table}
 
-\textbf{Results.} (1)~Attention gates show strong selectivity ($+0.756$),
-even exceeding FFN ($+0.62$). Attention patterns \emph{are}
-function-specific. (2)~Combined FFN+attention does not improve domain PPL
+\textbf{Results.} (1)~Attention gates show strong selectivity (mean
+$+0.749$, 2 seeds: $+0.756$ and $+0.742$), exceeding FFN ($+0.62$).
+Attention patterns \emph{are} function-specific. (2)~Combined FFN+attention does not improve domain PPL
 ($1.07$ in both cases), but attention gates \emph{protect} generic
-capability: degradation drops from $+7.4\%$ to $-1.6\%$. FFN provides
+capability: degradation drops from $+6.8\%$ (mean, 2 seeds)
+to $-1.5\%$ (improvement over base). FFN provides
 knowledge; attention preserves generic structure. (3)~Q/K (search) and
 V/O (delivery) are equally function-specific ($+0.773$ vs $+0.768$).
 (4)~Adding \texttt{down\_proj} LoRA to FFN increases parameters by $50\%$
@@ -736,6 +737,64 @@ with no quality improvement. The gate+up architecture is optimal.
 the same mechanism governs both knowledge injection (FFN) and relational
 pattern adaptation (attention). These serve complementary functions---not
 redundant ones.
+
+\subsection{E8: Code Generation Quality}
+\label{sec:e8}
+
+\textbf{Question.} Does adapter training improve functional code generation,
+not just perplexity? We evaluate with sandboxed execution: generate Ruby
+function bodies, run them with test cases, check outputs.
+
+\textbf{Setup.} 20 Ruby function prompts (factorial, fibonacci, reverse\_string,
+etc.), greedy decoding, evaluated with \texttt{ruby -c} (syntax) and execution
+correctness. Training data: 14K Ruby files from Rails, Discourse, and Ruby
+stdlib. Base model: Qwen3-8B (instruct).
+
+\textbf{Critical finding: PPL does not predict generation quality.}
+Standard continued pretraining with LoRA (rank~16, layers 12--35) improves
+domain PPL by 27--58\% but \emph{degrades} functional code generation---syntax
+validity drops from 25\% to 0--12\%. The adapter learns to recognize Ruby
+tokens but disrupts the base model's generation capability.
+
+\textbf{What works: LoRA+ with early stopping.} Applying LoRA+ (Hayou et
+al., 2024)---differential learning rate ($16\times$ for B matrix), alpha
+scaling ($\alpha = 2r$), and dropout 0.1---combined with checkpointing at
+peak functional quality produces real improvement:
+
+\begin{table}[h]
+\centering
+\caption{E8: Code generation with LoRA+. 20-prompt deterministic eval.
+Syntax = \texttt{ruby -c} valid. Correct = executes with right output.}
+\label{tab:e8}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Config & Layers & Syntax & Correct \\
+\midrule
+Base model & --- & 25\% & 0\% \\
+LoRA+ rank~8 & 12--35 & 35\% & 10\% \\
+LoRA+ rank~16 & 12--35 & 35\%$\pm$8 & 15\%$\pm$5 \\
+LoRA+ rank~32 & 12--35 & 40\% & 10\% \\
+LoRA+ rank~16 & \textbf{1--35} & \textbf{45\%$\pm$5} & \textbf{18\%$\pm$8} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key findings.}
+(1)~Starting adapters from layer~1 instead of layer~12 dramatically
+improves code generation (45\% vs 35\% syntax). Code requires early-layer
+adaptation because its syntax differs fundamentally from natural language---the
+``identity layers 0--11'' assumption does not hold for code.
+(2)~Rank~16 is optimal: rank~8 lacks capacity, rank~32 overfits faster.
+(3)~Gate training (phase~2) consistently degrades generation quality to 0\%,
+even when selectivity improves. The gate correctly detects code tokens but
+the adapter's contribution is destructive for generation at that point.
+Joint gate+adapter training shows the gate failing to learn entirely
+(stays at initialization).
+(4)~The optimal training window is narrow: 500--1750 steps. Before that,
+insufficient learning; after, overfitting destroys generation.
+(5)~Standard PEFT LoRA (rank~128, all layers, instruction pairs) performs
+\emph{worse} (20\% syntax) than our custom LoRA+ approach---likely because
+auto-extracted instruction pairs are lower quality than hand-curated data.
 
 % ============================================================================
 \section{Related Work}
