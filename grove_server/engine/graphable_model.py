@@ -605,6 +605,8 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         if not all_experts and self.expert is not None:
             all_experts = [self.expert]
 
+        self._routing_ready = True
+
         for layer_idx in range(n_layers):
             active = [e for e in all_experts
                       if e.covers_layer(layer_idx) and layer_idx in e.gates
@@ -697,7 +699,7 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             # Split: gate logit | gate_mid | up_mid
             gate_val = torch.sigmoid(fused_out[:, :1] + routing["gate_bias"])
 
-            # B-side: 2 matmuls
+            # B-side: 2 matmuls (bmm tested, slower due to reshape/permute overhead)
             s = routing["scaling"]
             gate_corr = torch.mm(fused_out[:, 1:1+r], routing["gate_b"]) * s
             up_corr = torch.mm(fused_out[:, 1+r:], routing["up_b"]) * s
@@ -1014,8 +1016,8 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         gate_proj = self._fp8_linear(mlp_flat, self._mlp_gate_keys[layer_idx])
         up_proj = self._fp8_linear(mlp_flat, self._mlp_up_keys[layer_idx])
 
-        # Use fast path if routing table is pre-computed
-        if self._expert_routing[layer_idx] is not None or not (self.experts or self.expert):
+        # Use fast path if routing table has been pre-computed
+        if hasattr(self, '_routing_ready') and self._routing_ready:
             hidden_states = self._fp8_mlp_with_expert_fast(
                 layer_idx, mlp_flat, gate_proj, up_proj, B2, L2,
             )
