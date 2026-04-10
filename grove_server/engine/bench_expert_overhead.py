@@ -79,6 +79,53 @@ def create_decode_step(model, mode: str = "auto", max_seq_len: int = 2048):
         return GraphableDecodeStep(model, cache, max_seq_len), cache
 
 
+class DecodeGraphRunner:
+    """Captures the decode step as a CUDA graph for zero-overhead replay.
+
+    Pre-allocates static input/output buffers. On replay: copy input_ids
+    and position_ids into static buffers, replay graph, read logits.
+
+    cache.advance() happens INSIDE the graph (in-place tensor add).
+    """
+
+    def __init__(self, graphable, cache, device):
+        self.graphable = graphable
+        self.cache = cache
+        self.device = device
+        self.graph = None
+        # Static buffers (allocated during capture)
+        self.static_input_ids = torch.zeros(1, 1, dtype=torch.long, device=device)
+        self.static_position_ids = torch.zeros(1, 1, dtype=torch.long, device=device)
+        self.static_logits = None
+
+    def capture(self):
+        """Capture the decode step as a CUDA graph.
+
+        Must be called AFTER prefill and at least 1 eager decode step.
+        """
+        # Warmup runs (to stabilize CUDA memory allocator)
+        for _ in range(3):
+            self.static_position_ids.copy_(self.cache.seq_len.reshape(1, 1))
+            self.graphable(self.static_input_ids, self.static_position_ids)
+        torch.cuda.synchronize()
+
+        # Capture
+        self.graph = torch.cuda.CUDAGraph()
+        self.static_position_ids.copy_(self.cache.seq_len.reshape(1, 1))
+        with torch.cuda.graph(self.graph):
+            self.static_logits = self.graphable(
+                self.static_input_ids, self.static_position_ids,
+            )
+        torch.cuda.synchronize()
+
+    def replay(self, input_ids, position_ids):
+        """Replay the graph with new input values."""
+        self.static_input_ids.copy_(input_ids)
+        self.static_position_ids.copy_(position_ids)
+        self.graph.replay()
+        return self.static_logits
+
+
 @torch.no_grad()
 def benchmark_generate(
     graphable: GraphableDecodeStep,
@@ -89,6 +136,7 @@ def benchmark_generate(
     num_tokens: int = 200,
     warmup_tokens: int = 20,
     temperature: float = 0.0,
+    **kwargs,
 ) -> dict:
     """Benchmark token generation speed.
 
@@ -111,11 +159,23 @@ def benchmark_generate(
     # Get first token
     next_token = logits[:, -1, :].argmax(dim=-1, keepdim=True)
 
-    # Warmup decode
+    # Warmup decode (eager)
     for _ in range(warmup_tokens):
         pos = cache.seq_len.reshape(1, 1)
         logits = graphable(next_token, pos)
         next_token = logits[:, -1, :].argmax(dim=-1, keepdim=True)
+
+    # Try CUDA graph capture if requested
+    use_graph = kwargs.get("use_graph", False)
+    graph_runner = None
+    if use_graph and torch.cuda.is_available():
+        try:
+            graph_runner = DecodeGraphRunner(graphable, cache, next_token.device)
+            graph_runner.capture()
+            print("    [CUDA graph captured]")
+        except Exception as e:
+            print(f"    [CUDA graph capture failed: {e}]")
+            graph_runner = None
 
     torch.cuda.synchronize()
 
@@ -124,7 +184,10 @@ def benchmark_generate(
     generated_tokens = []
     for _ in range(num_tokens):
         pos = cache.seq_len.reshape(1, 1)
-        logits = graphable(next_token, pos)
+        if graph_runner is not None:
+            logits = graph_runner.replay(next_token, pos)
+        else:
+            logits = graphable(next_token, pos)
         next_token = logits[:, -1, :].argmax(dim=-1, keepdim=True)
         generated_tokens.append(next_token.item())
 
@@ -177,6 +240,7 @@ def run_benchmark(args):
             r = benchmark_generate(
                 graphable, cache, model, tokenizer, prompt,
                 num_tokens=args.tokens, warmup_tokens=args.warmup,
+                use_graph=args.graph,
             )
             base_results.append(r)
             print(f"  Run {run+1}: {r['tok_s']:.1f} tok/s ({r['ms_per_token']:.2f} ms/tok)")
@@ -221,6 +285,7 @@ def run_benchmark(args):
                 r = benchmark_generate(
                     graphable, cache, model, tokenizer, prompt,
                     num_tokens=args.tokens, warmup_tokens=args.warmup,
+                    use_graph=args.graph,
                 )
                 expert_results.append(r)
                 print(f"  Run {run+1}: {r['tok_s']:.1f} tok/s ({r['ms_per_token']:.2f} ms/tok)")
@@ -306,5 +371,6 @@ if __name__ == "__main__":
     parser.add_argument("--runs", type=int, default=5, help="Number of runs per config")
     parser.add_argument("--max-seq-len", type=int, default=2048)
     parser.add_argument("--output", default=None, help="Output JSON path")
+    parser.add_argument("--graph", action="store_true", help="Enable CUDA graph capture for decode")
     args = parser.parse_args()
     run_benchmark(args)

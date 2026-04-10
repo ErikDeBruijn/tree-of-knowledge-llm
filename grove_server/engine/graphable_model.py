@@ -199,10 +199,15 @@ class GraphableDecodeStep(nn.Module):
             hidden_states, position_ids
         )
 
-        # Compute current cache position once (avoids per-layer .item() GPU sync)
+        # Cache position: use tensor path (graph-safe) when flash_attn available,
+        # otherwise fall back to .item() (1 GPU sync per token, not per layer)
         n_tokens = input_ids.size(1)
-        cache_pos = self.cache.seq_len_value  # single .item() call per token
-        current_cache_len = cache_pos + n_tokens
+        if HAS_FLASH_ATTN_KVCACHE:
+            cache_pos = -1  # not used in flash_attn path
+            current_cache_len = -1  # not used in flash_attn path
+        else:
+            cache_pos = self.cache.seq_len_value
+            current_cache_len = cache_pos + n_tokens
 
         # Run through each transformer layer
         for layer_idx, decoder_layer in enumerate(self.model.model.layers):
