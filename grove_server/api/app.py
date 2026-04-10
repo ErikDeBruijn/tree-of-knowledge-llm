@@ -102,6 +102,7 @@ async def chat_completions(
     engine: InferenceEngine = Depends(get_engine),
     registry: ExpertRegistry = Depends(get_registry),
     metrics: Optional[MetricsCollector] = Depends(get_metrics),
+    scheduler=Depends(get_scheduler),
 ):
     # Parse model name for expert selection
     base_model, expert_name = _parse_model_name(request.model)
@@ -121,16 +122,25 @@ async def chat_completions(
             media_type="text/event-stream",
         )
 
-    # Non-streaming — measure timing
+    # Non-streaming — acquire GPU lock to pause training
+    gpu_lock = scheduler.gpu_lock if scheduler else None
     prompt_ids = engine.tokenizer.encode(prompt)
     prompt_tokens = len(prompt_ids)
 
     t_start = time.time()
-    text = engine.generate(
-        prompt,
-        max_tokens=request.max_tokens,
-        temperature=request.temperature,
-    )
+    if gpu_lock:
+        with gpu_lock:
+            text = engine.generate(
+                prompt,
+                max_tokens=request.max_tokens,
+                temperature=request.temperature,
+            )
+    else:
+        text = engine.generate(
+            prompt,
+            max_tokens=request.max_tokens,
+            temperature=request.temperature,
+        )
     t_end = time.time()
 
     completion_ids = engine.tokenizer.encode(text)
@@ -263,6 +273,7 @@ async def completions(
     engine: InferenceEngine = Depends(get_engine),
     registry: ExpertRegistry = Depends(get_registry),
     metrics: Optional[MetricsCollector] = Depends(get_metrics),
+    scheduler=Depends(get_scheduler),
 ):
     """Raw text completion with per-token expert attribution.
 
@@ -283,10 +294,18 @@ async def completions(
     else:
         engine.uninstall_expert()
 
+    # Acquire GPU lock to pause training during inference
+    gpu_lock = scheduler.gpu_lock if scheduler else None
     t_start = time.time()
-    tokens = engine.generate_with_attribution(
-        prompt, max_tokens=max_tokens, temperature=temperature,
-    )
+    if gpu_lock:
+        with gpu_lock:
+            tokens = engine.generate_with_attribution(
+                prompt, max_tokens=max_tokens, temperature=temperature,
+            )
+    else:
+        tokens = engine.generate_with_attribution(
+            prompt, max_tokens=max_tokens, temperature=temperature,
+        )
     t_end = time.time()
 
     if metrics and len(tokens) > 0:
@@ -432,6 +451,8 @@ async def training_status(
         "running": scheduler._running if hasattr(scheduler, "_running") else False,
         "mode": scheduler.mode if hasattr(scheduler, "mode") else "idle",
         "training_steps": snap.get("training_steps", 0),
+        "training_budget": scheduler.training_budget if hasattr(scheduler, "training_budget") else 1.0,
+        "other_gpu_procs": scheduler._other_gpu_procs if hasattr(scheduler, "_other_gpu_procs") else False,
     }
 
 
@@ -454,3 +475,20 @@ async def training_stop(
         raise HTTPException(status_code=400, detail="No scheduler configured")
     scheduler.stop()
     return {"status": "stopped"}
+
+
+@app.post("/v1/training/budget")
+async def training_budget(
+    request: dict,
+    scheduler=Depends(get_scheduler),
+):
+    """Set training GPU budget (0.0 = paused, 1.0 = full speed).
+
+    When other GPU processes are detected, training automatically throttles.
+    This slider controls the maximum training intensity.
+    """
+    if scheduler is None:
+        raise HTTPException(status_code=400, detail="No scheduler configured")
+    budget = request.get("budget", 1.0)
+    scheduler.training_budget = float(budget)
+    return {"budget": scheduler.training_budget}

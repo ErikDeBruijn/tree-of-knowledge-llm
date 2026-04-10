@@ -62,6 +62,29 @@ def read_text(path: Path) -> str | None:
         return None
 
 
+import re
+
+# Patterns to strip from Ruby training data.
+_RUBOCOP_LINE = re.compile(r"^\s*#\s*rubocop:(enable|disable)\b.*$", re.MULTILINE)
+_FROZEN_LITERAL = re.compile(r"^\s*#\s*frozen_string_literal:.*$", re.MULTILINE)
+_MAGIC_COMMENT = re.compile(r"^\s*#\s*(encoding|warn_indent|typed):.*$", re.MULTILINE)
+_YARD_TAG = re.compile(r"^\s*#\s*@(param|return|raise|example|option|yield|see|note|api|deprecated)\b.*$", re.MULTILINE)
+_BLANK_COMMENT = re.compile(r"^\s*#\s*$", re.MULTILINE)
+# Consecutive blank lines → single blank line.
+_MULTI_BLANK = re.compile(r"\n{3,}")
+
+
+def scrub_ruby(text: str) -> str:
+    """Remove noise that pollutes training signal without losing logic."""
+    text = _RUBOCOP_LINE.sub("", text)
+    text = _FROZEN_LITERAL.sub("", text)
+    text = _MAGIC_COMMENT.sub("", text)
+    text = _YARD_TAG.sub("", text)
+    text = _BLANK_COMMENT.sub("", text)
+    text = _MULTI_BLANK.sub("\n\n", text)
+    return text.strip()
+
+
 def good_content(text: str) -> bool:
     if not (MIN_LEN <= len(text) <= MAX_LEN):
         return False
@@ -73,6 +96,12 @@ def good_content(text: str) -> bool:
     lines = text.count("\n")
     if lines < 3:
         return False
+    # Reject files that are mostly comments (>40% of non-blank lines).
+    all_lines = [l for l in text.split("\n") if l.strip()]
+    if all_lines:
+        comment_lines = sum(1 for l in all_lines if l.strip().startswith("#"))
+        if comment_lines / len(all_lines) > 0.4:
+            return False
     return True
 
 
@@ -100,6 +129,7 @@ def main() -> int:
             text = read_text(path)
             if text is None:
                 continue
+            text = scrub_ruby(text)
             if not good_content(text):
                 continue
             h = hashlib.sha1(text.encode("utf-8")).hexdigest()

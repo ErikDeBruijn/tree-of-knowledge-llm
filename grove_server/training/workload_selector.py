@@ -132,6 +132,20 @@ class WorkloadSelector:
 
         return self._tokenize(text)
 
+    def next_domain_batch(self) -> torch.Tensor:
+        """Return tokenized domain text."""
+        text = self._next_domain_text()
+        if text is None:
+            return torch.zeros((1, self.max_seq_len), dtype=torch.long, device=self.device)
+        return self._tokenize(text)
+
+    def next_generic_batch(self) -> torch.Tensor:
+        """Return tokenized generic text."""
+        text = self._next_generic_text()
+        if text is None:
+            return torch.zeros((1, self.max_seq_len), dtype=torch.long, device=self.device)
+        return self._tokenize(text)
+
     def record_loss(self, source_name: str, loss: float) -> None:
         """Track loss per source for future priority scoring."""
         self._losses[source_name].append(loss)

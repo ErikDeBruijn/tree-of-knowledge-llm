@@ -82,12 +82,14 @@ def _opens_block(line: str) -> bool:
     return False
 
 
-def extract_ruby_body(generated: str) -> str:
+def extract_ruby_body(generated: str) -> tuple[str, bool]:
     """Walk lines, tracking block depth from an implicit `def` opener.
 
     The prompt stub ends with `def xxx(...)\\n` so we start inside one
     open block (depth=1). We stop right after the `end` that brings
     depth back to 0.
+
+    Returns (body, complete) where complete=True means depth reached 0.
     """
     depth = 1
     out: list[str] = []
@@ -96,11 +98,11 @@ def extract_ruby_body(generated: str) -> str:
         if _END_LINE.match(line):
             depth -= 1
             if depth == 0:
-                break
+                return "\n".join(out), True
             continue
         if _opens_block(line):
             depth += 1
-    return "\n".join(out)
+    return "\n".join(out), False
 
 
 def run_ruby(full_code: str, timeout: float = 5.0) -> dict:
@@ -127,6 +129,30 @@ def run_ruby(full_code: str, timeout: float = 5.0) -> dict:
     return result
 
 
+def _output_matches(actual: str, expected: str) -> bool:
+    """Compare outputs with tolerance for float/int equivalence.
+
+    '20.0' matches '20', '5.0' matches '5.0', 'true' matches 'true'.
+    Compares line-by-line so multi-line outputs work.
+    """
+    a_lines = actual.strip().split("\n")
+    e_lines = expected.strip().split("\n")
+    if len(a_lines) != len(e_lines):
+        return False
+    for a, e in zip(a_lines, e_lines):
+        a, e = a.strip(), e.strip()
+        if a == e:
+            continue
+        # Try numeric comparison (handles 20.0 == 20, 5.0 == 5.0)
+        try:
+            if float(a) == float(e):
+                continue
+        except ValueError:
+            pass
+        return False
+    return True
+
+
 def eval_prompt(server: str, expert_label: str, experts: list[str],
                 prompt: dict) -> dict:
     """Generate + evaluate one (expert, prompt) pair."""
@@ -134,14 +160,14 @@ def eval_prompt(server: str, expert_label: str, experts: list[str],
     test = prompt["t"]
     expected = prompt["e"]
     try:
-        gen = complete(server, stub, experts, max_tokens=150)
+        gen = complete(server, stub, experts, max_tokens=500)
     except Exception as e:
         return {"error": f"API: {e}"}
 
-    body = extract_ruby_body(gen["text"])
+    body, body_closed = extract_ruby_body(gen["text"])
     full_code = stub + body + "\n" + test
     run = run_ruby(full_code)
-    correct = run["exec"] and run["stdout"] == expected.strip()
+    correct = run["exec"] and _output_matches(run["stdout"], expected)
 
     return {
         "expert": expert_label,
@@ -149,6 +175,7 @@ def eval_prompt(server: str, expert_label: str, experts: list[str],
         "generation_ms": gen["generation_ms"],
         "tokens_per_second": gen["tokens_per_second"],
         "n_tokens": gen["n_tokens"],
+        "body_complete": body_closed,
         "syntax_ok": run["syntax"],
         "exec_ok": run["exec"],
         "correct": correct,
@@ -197,6 +224,8 @@ def main() -> int:
                 status = f"✓   {res.get('tokens_per_second', '?')} tok/s"
             elif res["exec_ok"]:
                 status = f"✗   runs but wrong: {res['stdout'][:30]!r}"
+            elif not res.get("body_complete"):
+                status = f"✗   INCOMPLETE (depth>0 at {res['n_tokens']} tokens)"
             elif res["syntax_ok"]:
                 status = f"✗   exec fail"
             else:
@@ -214,6 +243,7 @@ def main() -> int:
         syntax = sum(1 for r in ok if r["syntax_ok"])
         exec_ok = sum(1 for r in ok if r["exec_ok"])
         correct = sum(1 for r in ok if r["correct"])
+        incomplete = sum(1 for r in ok if not r.get("body_complete", True))
         tps = [r["tokens_per_second"] for r in ok if r.get("tokens_per_second")]
         summary[lbl] = {
             "n_prompts": n,
@@ -221,6 +251,7 @@ def main() -> int:
             "syntax_rate": syntax / n if n else 0,
             "exec_rate": exec_ok / n if n else 0,
             "correct_rate": correct / n if n else 0,
+            "incomplete": incomplete,
             "avg_tokens_per_second": sum(tps) / len(tps) if tps else None,
         }
 

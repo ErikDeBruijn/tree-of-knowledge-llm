@@ -35,22 +35,26 @@ class MoEMlpAdapter(nn.Module):
     be applied inside the MLP computation rather than as a post-hoc delta.
 
     Each LoRA pair has A: (hidden_dim, rank) and B: (rank, intermediate_size).
+    Alpha scaling (alpha/rank) is applied to match training-time magnitude.
     """
 
-    def __init__(self, hidden_dim: int, intermediate_dim: int, rank: int):
+    def __init__(self, hidden_dim: int, intermediate_dim: int, rank: int,
+                 alpha: int = 0):
         super().__init__()
         self.gate_lora_A = nn.Parameter(torch.zeros(hidden_dim, rank))
         self.gate_lora_B = nn.Parameter(torch.zeros(rank, intermediate_dim))
         self.up_lora_A = nn.Parameter(torch.zeros(hidden_dim, rank))
         self.up_lora_B = nn.Parameter(torch.zeros(rank, intermediate_dim))
+        # Default alpha = 2*rank (standard LoRA convention)
+        self.scaling = (alpha if alpha > 0 else 2 * rank) / rank
 
     def gate_correction(self, x: torch.Tensor) -> torch.Tensor:
         """LoRA correction to add to gate_proj output."""
-        return x @ self.gate_lora_A @ self.gate_lora_B
+        return x @ self.gate_lora_A @ self.gate_lora_B * self.scaling
 
     def up_correction(self, x: torch.Tensor) -> torch.Tensor:
         """LoRA correction to add to up_proj output."""
-        return x @ self.up_lora_A @ self.up_lora_B
+        return x @ self.up_lora_A @ self.up_lora_B * self.scaling
 
 
 class DeltaGate(nn.Module):
@@ -90,6 +94,7 @@ def load_expert_from_pt(
     data = torch.load(str(pt_path), map_location="cpu", weights_only=False)
     name = data.get("name", pt_path.stem)
     rank = data["rank"]
+    alpha = data.get("alpha", 2 * rank)  # Default: alpha = 2*rank
     start_layer = data["expert_start"]
     adapter_weights = data["adapter"]
     gate_weights = data["gates"]
@@ -126,7 +131,7 @@ def load_expert_from_pt(
         ua = get_weight("up_lora", "A")
         ub = get_weight("up_lora", "B")
         intermediate_dim = gb.shape[1]
-        adapter = MoEMlpAdapter(hidden_dim, intermediate_dim, rank)
+        adapter = MoEMlpAdapter(hidden_dim, intermediate_dim, rank, alpha=alpha)
         adapter.gate_lora_A = nn.Parameter(ga)
         adapter.gate_lora_B = nn.Parameter(gb)
         adapter.up_lora_A = nn.Parameter(ua)

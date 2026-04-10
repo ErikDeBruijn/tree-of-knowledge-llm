@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -70,10 +72,92 @@ class Scheduler:
         self._split_detector = SplitDetector()
         self._training_step_count: int = 0
         self._expert_version: int = 0
+        # GPU sharing: training yields to inference and other GPU processes
+        self._gpu_lock = threading.Lock()
+        self._training_budget = 1.0  # 0.0 = paused, 1.0 = full speed
+        self._other_gpu_procs = False
+        self._gpu_check_interval = 2.0
+        self._last_gpu_check = 0.0
+        self._our_pid = os.getpid()
+        # Hysteresis: prevent oscillation between waiting/training
+        self._gpu_idle_since = 0.0  # timestamp when GPU became idle
+        self._gpu_idle_cooldown = 10.0  # must be idle for 10s before resuming
+        self._training_commit_steps = 20  # once started, do at least N steps
+        self._steps_since_resume = 0
 
     @property
     def mode(self) -> str:
         return self._mode
+
+    def _set_mode(self, new_mode: str) -> None:
+        if self._mode != new_mode:
+            self._mode = new_mode
+            if self._metrics:
+                self._metrics.record_mode_switch(new_mode)
+
+    @property
+    def training_budget(self) -> float:
+        return self._training_budget
+
+    @training_budget.setter
+    def training_budget(self, value: float) -> None:
+        self._training_budget = max(0.0, min(1.0, value))
+
+    @property
+    def gpu_lock(self) -> threading.Lock:
+        return self._gpu_lock
+
+    def _check_gpu_busy(self) -> bool:
+        """Check if GPU is busy by sampling utilization AFTER a brief pause.
+
+        Waits 200ms before sampling to let our own training step's GPU util
+        drain. Then takes 3 samples 100ms apart. If majority are > 30%,
+        something else is actively computing.
+        """
+        now = time.time()
+        if now - self._last_gpu_check < self._gpu_check_interval:
+            return self._other_gpu_procs
+        self._last_gpu_check = now
+        try:
+            import subprocess
+            # Brief pause to let our own step's util drain
+            time.sleep(0.2)
+            samples = []
+            for _ in range(3):
+                result = subprocess.run(
+                    ["nvidia-smi", "--query-gpu=utilization.gpu",
+                     "--format=csv,noheader,nounits",
+                     f"--id={os.environ.get('CUDA_VISIBLE_DEVICES', '0')}"],
+                    capture_output=True, text=True, timeout=2)
+                samples.append(int(result.stdout.strip()))
+                time.sleep(0.1)
+            # Majority vote: busy if 2+ of 3 samples > 30%
+            busy_count = sum(1 for s in samples if s > 30)
+            self._other_gpu_procs = busy_count >= 2
+        except Exception:
+            self._other_gpu_procs = False
+        return self._other_gpu_procs
+
+    def _compute_training_sleep(self, step_duration: float) -> float:
+        """Compute sleep to achieve target GPU duty cycle.
+
+        For budget B and step duration D:
+          duty_cycle = D / (D + sleep)  →  sleep = D * (1/B - 1)
+
+        At budget=0.5 and step=20ms: sleep = 20ms → 50% duty cycle.
+        At budget=0.25 and step=20ms: sleep = 60ms → 25% duty cycle.
+        """
+        if self._training_budget <= 0:
+            return 1.0  # Paused
+        others = self._check_gpu_busy()
+        if not others and self._training_budget >= 1.0:
+            return 0.0  # Full speed, no contention
+        # Budget always applies — user explicitly set it
+        # Other procs only add additional throttle on top
+        target = self._training_budget
+        if target >= 1.0:
+            return 0.0
+        return step_duration * (1.0 / target - 1.0)
 
     async def submit_inference(
         self,
@@ -115,10 +199,10 @@ class Scheduler:
                     and self._workload_selector is not None
                 ):
                     self._switch_to_training()
-                    # Run training step in executor
+                    # Run training step in executor with GPU lock
                     await loop.run_in_executor(
                         self._executor,
-                        self._do_training_step,
+                        self._do_training_step_throttled,
                     )
                 else:
                     await asyncio.sleep(0.01)
@@ -128,19 +212,64 @@ class Scheduler:
         self._running = False
 
     def _do_inference(self, request: InferenceRequest) -> str:
-        """Execute inference (runs in thread pool)."""
-        t_start = time.time()
-        result = self._inference_engine.generate(
-            request.prompt,
-            max_tokens=request.max_tokens,
-            temperature=request.temperature,
-        )
-        t_end = time.time()
+        """Execute inference (runs in thread pool). Acquires GPU lock."""
+        with self._gpu_lock:
+            t_start = time.time()
+            result = self._inference_engine.generate(
+                request.prompt,
+                max_tokens=request.max_tokens,
+                temperature=request.temperature,
+            )
+            t_end = time.time()
         if self._metrics:
-            # Estimate tokens from result length (rough)
             tokens = len(result.split())
             self._metrics.record_inference(tokens, t_end - t_start)
         return result
+
+    def _do_training_step_throttled(self) -> None:
+        """Training step with GPU lock + proportional throttle.
+
+        Checks GPU utilization BEFORE training to detect external load.
+        The check happens during the sleep window when we're NOT computing,
+        so high util means someone else is using the GPU.
+        """
+        if self._training_budget <= 0:
+            self._set_mode("paused")
+            time.sleep(1.0)
+            return
+
+        gpu_busy = self._check_gpu_busy()
+
+        if gpu_busy:
+            self._gpu_idle_since = 0.0
+            self._steps_since_resume = 0
+            # Still within committed batch? Keep going.
+            # Otherwise wait.
+            self._set_mode("waiting")
+            time.sleep(1.0)
+            return
+
+        # GPU is idle — but for long enough?
+        now = time.time()
+        if self._gpu_idle_since == 0.0:
+            self._gpu_idle_since = now
+        idle_duration = now - self._gpu_idle_since
+
+        if idle_duration < self._gpu_idle_cooldown and self._steps_since_resume == 0:
+            # Not idle long enough yet, keep waiting
+            self._set_mode("waiting")
+            time.sleep(1.0)
+            return
+
+        self._set_mode("training")
+        self._steps_since_resume += 1
+        t0 = time.perf_counter()
+        with self._gpu_lock:
+            self._do_training_step()
+        step_duration = time.perf_counter() - t0
+        sleep_time = self._compute_training_sleep(step_duration)
+        if sleep_time > 0:
+            time.sleep(sleep_time)
 
     def _do_training_step(self) -> None:
         """Execute one training step in the autonomous loop.
@@ -182,8 +311,8 @@ class Scheduler:
 
         elif phase == 2:
             # Contrastive gate training
-            domain_batch = ws.next_batch(phase=1)  # domain data
-            generic_batch = ws.next_batch(phase=2)  # generic data
+            domain_batch = ws.next_domain_batch()
+            generic_batch = ws.next_generic_batch()
             result = te.contrastive_gate_step(domain_batch, generic_batch)
 
             selectivity = result.get("selectivity", 0)

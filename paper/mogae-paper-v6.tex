@@ -922,6 +922,23 @@ connections), but we have not validated on other model families.
 Generalization to Llama, Mistral, or encoder-decoder architectures
 remains untested.
 
+\paragraph{Base model selection.}
+We selected Qwen3-8B as a capable general-purpose model, but the grove
+architecture raises a deeper question: what properties make an
+\emph{ideal} base model for adapter-based specialization?
+Recent work on pre-pre-training with neural cellular
+automata~\cite{lee2026nca} shows that training on simple synthetic
+patterns before language data produces attention layers with stronger
+structural priors and 1.4--1.6$\times$ faster convergence---using
+10$\times$ fewer tokens than natural language pre-pre-training. Since our
+E7 results (Section~\ref{sec:e7}) demonstrate that attention layers
+carry the generic structural capability while FFN layers carry domain
+knowledge, a base model with stronger attention priors and ``emptier''
+FFN layers could be a better receiver for grove adapters. A
+developmental training curriculum---simple pattern recognition first,
+language second---may produce base models purpose-built for later
+specialization. We leave this exploration to future work.
+
 \paragraph{Data quality is the bottleneck.}
 The gate protects general capability regardless of training data quality,
 but domain improvement requires high-quality, curated data. Pilot
@@ -1047,6 +1064,12 @@ without human curation.
 \bibitem{pathak2017icm} D. Pathak et al. Curiosity-driven Exploration by Self-Supervised Prediction. \textit{ICML}, 2017.
 
 \bibitem{xie2023dsir} S. M. Xie et al. Data Selection with Importance Resampling. \textit{NeurIPS}, 2023.
+
+\bibitem{lee2026nca} D. Lee, S. Han, A. Kumar, P. Agrawal. Training Language Models via Neural Cellular Automata. \textit{arXiv:2603.10055}, 2026.
+
+\bibitem{speculative2022} Y. Leviathan, M. Kalman, Y. Matias. Fast Inference from Transformers via Speculative Decoding. \textit{arXiv:2211.17192}, 2022.
+
+\bibitem{speculative2023} C. Chen, S. Borgeaud, et al. Accelerating Large Language Model Decoding with Speculative Sampling. \textit{arXiv:2302.01318}, 2023.
 
 \end{thebibliography}
 
@@ -1265,36 +1288,50 @@ quantization scheme exploits this gate-mediated error dampening.
 \subsection{Gate as Precision-Budget Allocator}
 \label{sec:perf-gate-precision}
 
-\textbf{Mechanism.} Each weight is stored as two packed INT4
-registers occupying 8~bits total:
+\textbf{Mechanism.} A naive approach would pack weights as multiple
+INT4 registers (e.g., four INT4 values recovering INT16). However,
+integer formats lack the dynamic range needed for gradient computation
+during training. Since the grove uses the same memory layout for both
+training and inference, we propose \emph{segmented mantissa} storage:
+each weight retains its sign and exponent at full precision, while the
+mantissa is split into segments that can be read incrementally.
+
 \begin{itemize}[nosep]
-\item \textbf{Register A} (low 4~bits): coarse approximation of the weight.
-\item \textbf{Register B} (high 4~bits): residual that, combined with A,
-      recovers INT8 precision.
+\item \textbf{Sign + exponent} (6~bits): always read. Preserves the
+      full dynamic range of floating point at every precision level.
+\item \textbf{Mantissa segment~A} (2~bits): coarse magnitude.
+      Combined with sign+exponent, yields a minimal FP8-like
+      representation.
+\item \textbf{Mantissa segments~B, C} (4~bits each): successive
+      refinements. All segments together recover the full 10-bit
+      mantissa (FP16 precision).
 \end{itemize}
 
-The gate controls which registers are read per layer:
+The gate controls how many mantissa segments are read per layer:
 \begin{equation}
 \label{eq:variable-precision}
 W_{\text{eff}} = \begin{cases}
-\text{dequant}(A) & \text{if } \sigma(g) < \tau \text{ (INT4, half bandwidth)} \\
-\text{dequant}(A, B) & \text{if } \sigma(g) \geq \tau \text{ (INT8, full precision)}
+\text{FP}(s, e, m_A) & \text{if } \sigma(g) < \tau_1 \text{ (8 bits, \nicefrac{1}{2} bandwidth)} \\
+\text{FP}(s, e, m_A, m_B) & \text{if } \tau_1 \leq \sigma(g) < \tau_2 \text{ (12 bits)} \\
+\text{FP}(s, e, m_A, m_B, m_C) & \text{if } \sigma(g) \geq \tau_2 \text{ (16 bits, full precision)}
 \end{cases}
 \end{equation}
 
-Memory footprint is constant (8~bits per weight, same as INT8).
+Memory footprint is constant (16~bits per weight).
 Memory \emph{bandwidth} scales with the gate: low-gate layers read
-4~bits per weight (register~A only), high-gate layers read 8~bits
-(both registers). On bandwidth-bound hardware, this halves the cost
-of non-critical layers.
+8~bits per weight (sign + exponent + segment~A), high-gate layers read
+all 16~bits. On bandwidth-bound hardware, this halves the cost of
+non-critical layers while maintaining floating-point semantics at every
+precision level---critical for gradient computation during training.
 
-\textbf{Training and inference share the same code path.} The forward
-pass is identical: read INT4 or INT8 per layer based on the gate. For
-training, the backward pass follows the same precision allocation---
-low-gate layers receive approximate gradients (INT4), high-gate layers
-receive precise gradients (INT8). LoRA adapter parameters are always in
-BF16. The base model weights never change; only the adapter is updated.
-This means training imposes \emph{zero overhead} on the inference path.
+\textbf{Why segmented mantissa, not packed integers?}
+Training requires floating-point gradients. Integer-packed formats
+(e.g., four INT4 registers) would need dequantization before any
+gradient computation, destroying the shared code path between training
+and inference. With segmented mantissa, every precision level is natively
+floating-point: the sign and exponent are always present, only the
+mantissa resolution varies. The backward pass can use the same
+variable-precision weights as the forward pass without format conversion.
 
 \textbf{Combined with bridges.} For layers where the gate is near zero,
 the full transformer block can be replaced by a bridge surrogate
@@ -1309,9 +1346,9 @@ output and avoid error propagation. The gate controls both precision
 \toprule
 Gate & Precision & Compute & Bandwidth \\
 \midrule
-$\approx 0$ & INT4 & Bridge (0.5M FLOPs) & 4 bits/weight \\
-$\approx 0.5$ & INT8 & Full layer (300M FLOPs) & 8 bits/weight \\
-$\approx 1$ & INT8 & Full layer + adapter & 8 bits/weight \\
+$\approx 0$ & FP8 ($s{+}e{+}m_A$) & Bridge (0.5M FLOPs) & 8 bits/weight \\
+$\approx 0.5$ & FP12 ($s{+}e{+}m_{AB}$) & Full layer (300M FLOPs) & 12 bits/weight \\
+$\approx 1$ & FP16 ($s{+}e{+}m_{ABC}$) & Full layer + adapter & 16 bits/weight \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1324,11 +1361,15 @@ models route but do not modulate precision or compute. Only the gated
 architecture enables per-layer, per-token, dynamic resource allocation.
 
 \textbf{Training and inference share the same code path.} The base model
-weights are always in INT4-packed format. No mode switch between training
-and inference. Training adds only the backward pass for adapter parameters;
-the forward pass is identical.
+weights are stored in segmented FP16 format. No mode switch between
+training and inference. Both the forward and backward pass use the same
+variable-precision read controlled by the gate. LoRA adapter parameters
+are always in BF16. The base model weights never change; only the
+adapter is updated.
 
-\textbf{Validated.} INT8 (both registers) produces coherent output
+\textbf{Not yet validated.} The segmented mantissa format requires
+custom CUDA kernels for variable-width memory reads. INT8 (both
+registers of an earlier packed-INT4 prototype) produced coherent output
 matching BF16 quality. INT4 requires per-group quantization (groups of
 128) for viable quality. Bridges validated at $+0.6\%$ PPL at $0.1\%$
 compute. Reference: 113~tok/s (FP8, all 36 layers). Layer skipping
@@ -1341,5 +1382,84 @@ compute. Reference: 113~tok/s (FP8, all 36 layers). Layer skipping
 % predicted ~350 tok/s (currently 228 validated).
 % With native NVFP4 CUTLASS kernels: 400+ tok/s target.
 % See research/prediction-hierarchical-quantization.md for full calculation.
+
+\subsection{Gate-Informed Speculative Decoding}
+\label{sec:perf-speculative}
+
+\textbf{Problem.} The variable-precision and bridge mechanisms
+(Sections~\ref{sec:perf-gate-precision}--\ref{sec:perf-bridge}) provide
+significant speedups, but at a small PPL cost that compounds over long
+sequences. After $N$ tokens of autoregressive generation, accumulated
+drift can degrade coherence---a fundamental limitation of any
+approximate inference path.
+
+\textbf{Mechanism.} We propose using the grove's own architecture
+for speculative decoding~\cite{speculative2022,speculative2023}:
+
+\begin{itemize}[nosep,leftmargin=1.5em]
+\item \textbf{Draft path:} FP8 (mantissa segment~A only) with bridge
+      surrogates for low-gate layers ($\sigma(g) < \tau$). This is the
+      fast, approximate path already described above.
+\item \textbf{Verification path:} Full FP16 precision (all mantissa
+      segments) with real transformer blocks and active adapters. This
+      produces the exact target distribution.
+\end{itemize}
+
+The draft generates $k$ candidate tokens; the verifier scores all $k$ in
+a single parallel forward pass using standard rejection
+sampling~\cite{speculative2022} to guarantee the output distribution is
+identical to the full-precision model.
+
+\textbf{Why the grove architecture is uniquely suited:}
+
+\begin{enumerate}[nosep,leftmargin=1.5em]
+\item \textbf{No extra model.} Standard speculative decoding requires a
+      separate draft model in memory. Here, draft and verifier are the
+      same weights read at different mantissa resolution---zero
+      additional VRAM.
+\item \textbf{Gate as acceptance oracle.} The gate predicts where the
+      draft will fail: low gate $\rightarrow$ base model suffices
+      $\rightarrow$ high acceptance rate. High gate $\rightarrow$ adapter
+      needed $\rightarrow$ likely rejection. This enables adaptive
+      speculation window sizing: speculate more aggressively when gates
+      are low, verify sooner when gates rise.
+\item \textbf{Per-layer selective verification.} Unlike standard
+      speculative decoding which runs the entire verifier, only layers
+      where $\sigma(g) \geq \tau$ need full-precision verification.
+      Low-gate layers remain in INT4 even during the verification pass.
+\item \textbf{Bridges and $2\times$ bandwidth ratio amplify the speedup.}
+      The draft reads sign + exponent + mantissa segment~A
+      (8~bits/weight); the verifier reads all segments
+      (16~bits/weight)---a $2\times$ bandwidth reduction before
+      considering bridges. With bridges replacing 20 of 36 layers at
+      $0.1\%$ compute, the draft path is estimated at $3$--$5\times$
+      faster than the verification path.
+\item \textbf{Compounding error is eliminated.} Rejection sampling
+      resets the distribution to the exact target at every rejection
+      point. Drift never accumulates beyond the speculation window of
+      $k$ tokens.
+\end{enumerate}
+
+\textbf{Not yet validated.} This mechanism requires implementing the
+rejection sampling loop and measuring end-to-end throughput including
+acceptance rates. The key empirical question is whether the acceptance
+rate on low-gate tokens is high enough ($> 80\%$) to justify the
+speculation overhead.
+
+% PILOT: Subtractive expert experiments (2026-04-04):
+% Per-token KL divergence is bimodal: 41% tokens KL<0.1 (99.4% top-1 match),
+% 78% tokens KL<1.0. Gate-selective verification at KL<0.5: 98% effective
+% agreement, 2.6x theoretical speedup. Bridge-as-draft FALSIFIED: only 1.1x
+% faster (MLP replacement insufficient). Need dedicated draft head.
+%
+% INSIGHT FROM PARALLEL SESSION: Deep analysis of DART (2601.19278),
+% DFlash (2602.06036), and FastEagle (2509.20416) shows DFlash's
+% bidirectional block attention + KV injection achieves tau=6.5
+% (vs EAGLE-3 tau=3.0) with 6.1x speedup. DFlash's KV injection
+% architecture maps directly to our bridge surrogates. The DeltaGate
+% as adaptive block size selector (large blocks when gate low,
+% small blocks when gate high) is a novel contribution not present
+% in any of these papers. Recommended upgrade path: EAGLE-3 head
+% first (validate), then DFlash-style with gate-informed block sizing.
 
 \end{document}

@@ -44,6 +44,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   /* Mode indicator */
   #current-mode { font-size: 2em; font-weight: bold; }
   .mode-training { color: #48bb78; }
+  .mode-waiting { color: #f6ad55; }
+  .mode-paused { color: #fc8181; }
   .mode-inference { color: #4299e1; }
   .mode-idle { color: #718096; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
@@ -75,6 +77,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <div class="card">
     <h2>Mode</h2>
     <div id="current-mode" class="mode-idle">Idle</div>
+    <div id="mode-subtext" style="font-size:0.8rem;color:#718096;margin-top:4px"></div>
     <div id="contributing"></div>
   </div>
 
@@ -91,6 +94,16 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     <div class="stat"><div class="value" id="inf-count">0</div><div class="label">inference requests</div></div>
     <div class="stat"><div class="value" id="train-steps">0</div><div class="label">training steps</div></div>
     <div class="stat"><div class="value" id="switches">0</div><div class="label">mode switches</div></div>
+  </div>
+
+  <!-- Training GPU Budget -->
+  <div class="card">
+    <h2>Training GPU Budget</h2>
+    <div style="display:flex;align-items:center;gap:10px;margin:8px 0">
+      <input type="range" id="budget-slider" min="0" max="100" value="100" style="flex:1">
+      <span id="budget-val" style="font-weight:bold;min-width:40px">100%</span>
+    </div>
+    <div class="stat"><div class="value" id="gpu-other" style="font-size:0.9rem">-</div><div class="label">other GPU procs</div></div>
   </div>
 
   <!-- Loss -->
@@ -172,9 +185,22 @@ async function poll() {
     // Mode
     const modeEl = document.getElementById('current-mode');
     const mode = d.current_mode || 'idle';
-    modeEl.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+    const modeLabels = {
+      'training': 'Training',
+      'waiting': 'Waiting',
+      'paused': 'Paused',
+      'idle': 'Idle',
+      'inference': 'Inference'
+    };
+    const modeSubtext = {
+      'waiting': 'waiting for GPU to be free again',
+      'paused': 'training paused (budget 0%)',
+    };
+    modeEl.textContent = modeLabels[mode] || mode;
     modeEl.className = 'mode-' + mode;
     if (mode === 'training') modeEl.classList.add('pulse');
+    const subEl = document.getElementById('mode-subtext');
+    if (subEl) subEl.textContent = modeSubtext[mode] || '';
 
     // Contributing
     const contrib = document.getElementById('contributing');
@@ -204,8 +230,43 @@ async function poll() {
   } catch (e) { /* retry next tick */ }
 }
 
+// Budget slider
+const budgetSlider = document.getElementById('budget-slider');
+const budgetVal = document.getElementById('budget-val');
+let budgetDebounce = null;
+budgetSlider.addEventListener('input', function() {
+  budgetVal.textContent = this.value + '%';
+  clearTimeout(budgetDebounce);
+  budgetDebounce = setTimeout(() => {
+    fetch('/v1/training/budget', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({budget: this.value / 100.0})
+    });
+  }, 300);
+});
+
+// Poll training status for budget + GPU info
+async function pollTraining() {
+  try {
+    const resp = await fetch('/v1/training/status');
+    const d = await resp.json();
+    const b = Math.round((d.training_budget || 1.0) * 100);
+    if (document.activeElement !== budgetSlider) {
+      budgetSlider.value = b;
+      budgetVal.textContent = b + '%';
+    }
+    document.getElementById('gpu-other').textContent =
+      d.other_gpu_procs ? 'Active (throttling)' : 'None';
+    document.getElementById('gpu-other').style.color =
+      d.other_gpu_procs ? '#f6ad55' : '#48bb78';
+  } catch(e) {}
+}
+
 setInterval(poll, 1000);
+setInterval(pollTraining, 2000);
 poll();
+pollTraining();
 </script>
 </body>
 </html>"""

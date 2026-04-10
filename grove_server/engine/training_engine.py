@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -11,6 +12,40 @@ import torch.nn.functional as F
 
 from grove_server.models.expert import Expert
 from grove_server.models.expert_loader import DeltaGate, MoEMlpAdapter
+
+logger = logging.getLogger(__name__)
+
+
+class _FP8ForwardBF16Backward(torch.autograd.Function):
+    """FP8 matmul forward, BF16 matmul backward.
+
+    Forward: x_fp8 @ W_fp8^T via torch._scaled_mm (tensor core speed)
+    Backward: grad_output @ W_bf16 for grad_x (standard BF16 matmul)
+
+    Base weights are frozen — no grad_W needed.
+    """
+
+    @staticmethod
+    def forward(ctx, x, w_fp8, w_scale, x_scale, x_inv_scale, w_bf16):
+        # Save BF16 weight for backward (frozen, no grad needed for it)
+        ctx.save_for_backward(w_bf16)
+        flat = x.reshape(-1, x.size(-1))
+        x_fp8 = (flat * x_inv_scale).to(torch.float8_e4m3fn)
+        out = torch._scaled_mm(
+            x_fp8, w_fp8.t(),
+            scale_a=x_scale, scale_b=w_scale,
+            out_dtype=torch.bfloat16,
+        )
+        return out.reshape(*x.shape[:-1], -1)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        (w_bf16,) = ctx.saved_tensors
+        flat_grad = grad_output.reshape(-1, grad_output.size(-1))
+        # grad_x = grad_output @ W  (W is out×in, so grad @ W gives (..., in))
+        grad_x = flat_grad @ w_bf16
+        grad_x = grad_x.reshape(*grad_output.shape[:-1], -1)
+        return grad_x, None, None, None, None, None
 
 
 @dataclass
@@ -60,7 +95,8 @@ class TrainingEngine:
         self._alpha_scaling = config.adapter_alpha / config.adapter_rank
 
         for l in range(config.expert_start_layer, num_layers):
-            adapter = MoEMlpAdapter(hidden_dim, intermediate_dim, config.adapter_rank)
+            adapter = MoEMlpAdapter(hidden_dim, intermediate_dim, config.adapter_rank,
+                                    alpha=config.adapter_alpha)
             # LoRA init: small random A, zero B
             nn.init.normal_(adapter.gate_lora_A, std=0.01)
             nn.init.normal_(adapter.up_lora_A, std=0.01)
@@ -201,8 +237,9 @@ class TrainingEngine:
             d_hs = d_out.hidden_states[l].reshape(-1, HS).detach()
             g_hs = g_out.hidden_states[l].reshape(-1, HS).detach()
 
-            d_gate = torch.sigmoid(self.gates[l](d_hs))
-            g_gate = torch.sigmoid(self.gates[l](g_hs))
+            # DeltaGate.forward() already applies sigmoid — don't double-sigmoid
+            d_gate = self.gates[l](d_hs)
+            g_gate = self.gates[l](g_hs)
 
             contrastive_loss = contrastive_loss + (
                 -torch.log(d_gate + 1e-8).mean()
@@ -353,25 +390,23 @@ class _TrainingMLP(nn.Module):
         self.down_proj = original_mlp.down_proj
 
     def _proj(self, proj_name: str, x: torch.Tensor) -> torch.Tensor:
-        """Run a projection, using FP8 matmul if weights were quantized."""
+        """Run a projection using standard BF16 nn.Linear.
+
+        FP8 training forward (_FP8ForwardBF16Backward) is disabled: the graphable
+        step now uses row-wise scaling which is incompatible with the per-tensor
+        autograd function. BF16 training is correct and the adapter weights are
+        BF16 regardless.
+        """
         proj = getattr(self.original_mlp, proj_name)
-        if hasattr(proj, 'weight') and proj.weight is not None:
-            return proj(x)
-        # Weight is None → FP8 quantized. Use graphable step's FP8 matmul.
-        if self._fp8_step is not None:
-            key = f"{self._layer_idx}.mlp.{proj_name}"
-            flat = x.reshape(-1, x.size(-1))
-            out = self._fp8_step._fp8_linear(flat, key)
-            return out.reshape(*x.shape[:-1], -1)
-        raise RuntimeError(f"{proj_name}.weight is None and no FP8 step available")
+        return proj(x)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_out = self._proj("gate_proj", x)
         up_out = self._proj("up_proj", x)
 
-        # Alpha scaling on adapter corrections (LoRA+ best practice)
-        gate_corr = self.adapter.gate_correction(x) * self.alpha_scaling
-        up_corr = self.adapter.up_correction(x) * self.alpha_scaling
+        # Scaling is handled inside MoEMlpAdapter (alpha/rank)
+        gate_corr = self.adapter.gate_correction(x)
+        up_corr = self.adapter.up_correction(x)
 
         activated = F.silu(gate_out + gate_corr) * (up_out + up_corr)
         adapted = self._proj("down_proj", activated.reshape(-1, activated.size(-1)))
