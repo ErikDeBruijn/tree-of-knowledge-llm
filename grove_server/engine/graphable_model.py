@@ -25,6 +25,12 @@ from grove_server.engine.static_kv_cache import StaticKVCache
 from grove_server.models.expert import Expert
 from grove_server.models.expert_loader import MoEMlpAdapter
 
+try:
+    from flash_attn import flash_attn_with_kvcache
+    HAS_FLASH_ATTN_KVCACHE = True
+except ImportError:
+    HAS_FLASH_ATTN_KVCACHE = False
+
 
 def _apply_rotary_pos_emb(
     q: torch.Tensor,
@@ -970,7 +976,7 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         B, L, D = hidden_states.shape
         flat = hidden_states.reshape(-1, D)
 
-        # --- Self-attention with FP8 projections (pre-computed keys) ---
+        # --- Self-attention with FP8 projections ---
         attn = layer.self_attn
         q = self._fp8_linear(flat, self._attn_q_keys[layer_idx]).reshape(B, L, -1)
         k = self._fp8_linear(flat, self._attn_k_keys[layer_idx]).reshape(B, L, -1)
@@ -979,32 +985,60 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         q = q.view(B, L, self.num_heads, self.head_dim)
         k = k.view(B, L, self.num_kv_heads, self.head_dim)
 
-        # Fused QK norm: one RMSNorm kernel over concatenated heads
+        # Fused QK norm
         fused_w = self._fused_qk_norm_weights[layer_idx]
         if fused_w is not None:
             q, k = _fused_qk_norm(q, k, fused_w, self.num_heads, self._fused_qk_norm_eps)
 
-        q = q.transpose(1, 2)
-        k = k.transpose(1, 2)
-        v = v.view(B, L, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        v = v.view(B, L, self.num_kv_heads, self.head_dim)
 
-        cos, sin = position_embeddings
-        q, k = _apply_rotary_pos_emb(q, k, cos, sin)
+        if HAS_FLASH_ATTN_KVCACHE:
+            # flash_attn_with_kvcache: cache write + attention in 1 kernel
+            # Handles RoPE internally if provided, but we apply it manually
+            # since we need the fused QK norm first.
+            # Input: q (B, L, H, D), k/v (B, L, H_kv, D)
+            # k_cache/v_cache: (B, S, H_kv, D) — raw cache buffers
+            cos, sin = position_embeddings
 
-        self.cache.update(layer_idx, k, v, pos=cache_pos)
+            # Apply RoPE manually (flash_attn expects pre-rotated Q/K
+            # when QK norm is used)
+            q_rope = q.transpose(1, 2)  # (B, H, L, D) for RoPE
+            k_rope = k.transpose(1, 2)  # (B, H_kv, L, D) for RoPE
+            q_rope, k_rope = _apply_rotary_pos_emb(q_rope, k_rope, cos, sin)
+            q = q_rope.transpose(1, 2)  # back to (B, L, H, D)
+            k = k_rope.transpose(1, 2)  # back to (B, L, H_kv, D)
 
-        full_k, full_v = self.cache.get_up_to(layer_idx, current_cache_len)
+            k_cache, v_cache = self.cache.get_raw(layer_idx)
+            attn_out = flash_attn_with_kvcache(
+                q, k_cache, v_cache,
+                k=k, v=v,
+                cache_seqlens=self.cache.cache_seqlens,
+                causal=True,
+            )
+            # attn_out: (B, L, H, D) → reshape to (B, L, H*D)
+            attn_out = attn_out.reshape(B, L, self.num_heads * self.head_dim)
+        else:
+            # Fallback: SDPA with manual cache management
+            q = q.transpose(1, 2)
+            k = k.transpose(1, 2)
+            v = v.transpose(1, 2)
 
-        full_k = _repeat_kv(full_k, self.num_kv_groups)
-        full_v = _repeat_kv(full_v, self.num_kv_groups)
+            cos, sin = position_embeddings
+            q, k = _apply_rotary_pos_emb(q, k, cos, sin)
 
-        compute_dtype = q.dtype
-        attn_out = F.scaled_dot_product_attention(
-            q, full_k.to(compute_dtype), full_v.to(compute_dtype),
-            is_causal=(current_cache_len == L),
-        )
+            self.cache.update(layer_idx, k, v, pos=cache_pos)
 
-        attn_out = attn_out.transpose(1, 2).reshape(B, L, self.num_heads * self.head_dim)
+            full_k, full_v = self.cache.get_up_to(layer_idx, current_cache_len)
+            full_k = _repeat_kv(full_k, self.num_kv_groups)
+            full_v = _repeat_kv(full_v, self.num_kv_groups)
+
+            compute_dtype = q.dtype
+            attn_out = F.scaled_dot_product_attention(
+                q, full_k.to(compute_dtype), full_v.to(compute_dtype),
+                is_causal=(current_cache_len == L),
+            )
+            attn_out = attn_out.transpose(1, 2).reshape(B, L, self.num_heads * self.head_dim)
+
         attn_flat = attn_out.reshape(-1, attn_out.size(-1))
         attn_out = self._fp8_linear(attn_flat, self._attn_o_keys[layer_idx]).reshape(B, L, -1)
 

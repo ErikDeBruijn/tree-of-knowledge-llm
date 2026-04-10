@@ -43,15 +43,18 @@ class StaticKVCache:
 
         storage_dtype = kv_dtype if kv_dtype is not None else dtype
 
+        # KV cache in (B, S, H, D) layout for flash_attn_with_kvcache compatibility
         self.cache: list[tuple[torch.Tensor, torch.Tensor]] = []
+        # Legacy (B, H, S, D) layout for SDPA compatibility (populated on demand)
+        self._legacy_cache: list[tuple[torch.Tensor, torch.Tensor]] | None = None
         self.kv_scales: list[tuple[torch.Tensor, torch.Tensor]] = []
         for _ in range(num_layers):
             k = torch.zeros(
-                batch_size, num_heads, max_seq_len, head_dim,
+                batch_size, max_seq_len, num_heads, head_dim,
                 dtype=storage_dtype, device=device,
             )
             v = torch.zeros(
-                batch_size, num_heads, max_seq_len, head_dim,
+                batch_size, max_seq_len, num_heads, head_dim,
                 dtype=storage_dtype, device=device,
             )
             self.cache.append((k, v))
@@ -62,6 +65,10 @@ class StaticKVCache:
 
         # Position counter as GPU tensor — enables torch.compile and CUDA graphs
         self.seq_len = torch.tensor(0, dtype=torch.long, device=device)
+
+        # cache_seqlens for flash_attn_with_kvcache: (batch_size,), int32
+        # Tracks current sequence length per batch element
+        self.cache_seqlens = torch.zeros(batch_size, dtype=torch.int32, device=device)
 
         # Additive attention mask: 0 for valid positions, -inf for invalid.
         # Shape (1, 1, 1, max_seq_len) broadcasts across batch, heads, query positions.
@@ -91,19 +98,23 @@ class StaticKVCache:
             pos = self.seq_len_value
         n_new = new_key.size(2)
 
+        # Transpose from (B, H, n, D) to (B, n, H, D) for cache layout
+        new_key_t = new_key.transpose(1, 2)
+        new_value_t = new_value.transpose(1, 2)
+
         if self.kv_scales:
             k_scale, v_scale = self.kv_scales[layer_idx]
-            k_amax = new_key.float().abs().amax()
+            k_amax = new_key_t.float().abs().amax()
             k_s = (k_amax / self._fp8_max).clamp(min=1e-12)
             k_scale.fill_(k_s.item() if isinstance(k_s, torch.Tensor) else k_s)
-            k[:, :, pos:pos + n_new, :] = (new_key.float() / k_s).to(self.kv_dtype)
-            v_amax = new_value.float().abs().amax()
+            k[:, pos:pos + n_new, :, :] = (new_key_t.float() / k_s).to(self.kv_dtype)
+            v_amax = new_value_t.float().abs().amax()
             v_s = (v_amax / self._fp8_max).clamp(min=1e-12)
             v_scale.fill_(v_s.item() if isinstance(v_s, torch.Tensor) else v_s)
-            v[:, :, pos:pos + n_new, :] = (new_value.float() / v_s).to(self.kv_dtype)
+            v[:, pos:pos + n_new, :, :] = (new_value_t.float() / v_s).to(self.kv_dtype)
         else:
-            k[:, :, pos:pos + n_new, :] = new_key
-            v[:, :, pos:pos + n_new, :] = new_value
+            k[:, pos:pos + n_new, :, :] = new_key_t
+            v[:, pos:pos + n_new, :, :] = new_value_t
 
     def unmask_step(self, n_tokens: int = 1) -> None:
         """Unmask the next n_tokens positions in the attention mask.
@@ -124,6 +135,7 @@ class StaticKVCache:
         In-place tensor add (CUDA-graph safe).
         """
         self.seq_len.add_(n_tokens)
+        self.cache_seqlens.add_(n_tokens)
 
     def get_full(self, layer_idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         """Get the full cache buffer for a layer.
@@ -144,33 +156,23 @@ class StaticKVCache:
         return k, v
 
     def get(self, layer_idx: int) -> tuple[torch.Tensor, torch.Tensor]:
-        """Get cache up to current position (non-graph path).
+        """Get cache up to current position in (B, H, S, D) format.
 
-        Uses Python int slicing. For graph-safe access, use get_full() + attn_mask.
+        Uses Python int slicing. For graph-safe access, use get_raw().
         """
-        k, v = self.cache[layer_idx]
-        pos = self.seq_len_value
-        k_slice = k[:, :, :pos, :]
-        v_slice = v[:, :, :pos, :]
-
-        if self.kv_scales:
-            k_scale, v_scale = self.kv_scales[layer_idx]
-            k_out = k_slice.to(self.compute_dtype) * k_scale.to(self.compute_dtype)
-            v_out = v_slice.to(self.compute_dtype) * v_scale.to(self.compute_dtype)
-            return k_out, v_out
-
-        return k_slice, v_slice
+        return self.get_up_to(layer_idx, self.seq_len_value)
 
     def get_up_to(self, layer_idx: int, length: int) -> tuple[torch.Tensor, torch.Tensor]:
-        """Get cache up to a specific length (non-graph path).
+        """Get cache up to a specific length in (B, H, S, D) format.
 
-        Uses Python int slicing. For graph-safe access, use get_full() + attn_mask.
+        Transposes from internal (B, S, H, D) layout.
         """
         if isinstance(length, torch.Tensor):
             length = length.item()
         k, v = self.cache[layer_idx]
-        k_slice = k[:, :, :length, :]
-        v_slice = v[:, :, :length, :]
+        # Cache is (B, S, H, D), transpose to (B, H, S, D) for SDPA
+        k_slice = k[:, :length, :, :].transpose(1, 2)
+        v_slice = v[:, :length, :, :].transpose(1, 2)
 
         if self.kv_scales:
             k_scale, v_scale = self.kv_scales[layer_idx]
@@ -179,6 +181,14 @@ class StaticKVCache:
             return k_out, v_out
 
         return k_slice, v_slice
+
+    def get_raw(self, layer_idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+        """Get raw cache buffers in (B, S, H, D) format for flash_attn_with_kvcache.
+
+        Returns the full pre-allocated buffers (static shape). Use cache_seqlens
+        with flash_attn to control how much is read.
+        """
+        return self.cache[layer_idx]
 
     def reset(self) -> None:
         """Reset for a new sequence. Zeros caches, resets position and mask."""
@@ -186,4 +196,5 @@ class StaticKVCache:
             k.zero_()
             v.zero_()
         self.seq_len.fill_(0)
+        self.cache_seqlens.fill_(0)
         self.attn_mask.fill_(float('-inf'))
