@@ -140,10 +140,47 @@ After each change:
 3. Verify correctness: generate same prompt with and without optimization,
    compare logits (should be bitwise identical or cos > 0.9999)
 
-## Success criteria
+## Results (2026-04-10)
 
-| Metric | Current | Target | Stretch |
-|--------|---------|--------|---------|
-| Expert tok/s | 41 | 58 | 100 |
-| Overhead vs base | 33% | <5% | <10% of theoretical |
-| Correctness | — | cos ≥ 0.9999 | bitwise identical |
+### What worked
+| Optimization | Impact | Status |
+|-------------|--------|--------|
+| Pre-computed routing table | -3% overhead | ✅ Committed |
+| Fused A-side matmul (5→3/layer) | -3% overhead | ✅ Committed |
+| Remove .item() GPU sync | Critical bugfix | ✅ Committed |
+| Fix routing condition (all layers fast) | -1% overhead | ✅ Committed |
+
+### What didn't work
+| Attempt | Why | Status |
+|---------|-----|--------|
+| torch.compile | cache.seq_len recompilation (integer treated as static) | ❌ Needs StaticKVCache refactor |
+| Triton fused_moe_blend | N=12288 too small, launch overhead > savings | ❌ Available for batch>1 |
+| bmm B-side fusion | reshape/permute overhead > savings at batch=1 | ❌ Reverted |
+
+### Numbers
+| Metric | Baseline | Optimized | Change |
+|--------|----------|-----------|--------|
+| Base tok/s | 59.6 | 59.3 | — |
+| Expert tok/s | 47.9 | 51.5 | **+7.5%** |
+| Overhead | 19.6% | 13.2% | **-33% relative** |
+
+### Remaining overhead analysis (13.2% = ~2.5 ms/token)
+- 3 BF16 matmuls/layer (LoRA A-fused + 2×B): ~0.4 ms (inherent to LoRA)
+- 7 element-wise ops/layer (2×silu, 2×mul, sub, scale, add): ~1.0 ms
+- FP8 re-quantization of blended tensor: ~0.3 ms
+- Python dict access + conditions: ~0.5 ms
+- Misc tensor allocation: ~0.3 ms
+
+### Path to <5% overhead
+Would require one of:
+1. **Weight merging at inference** — 0% overhead but loses dynamic switching
+2. **StaticKVCache refactor** → enables torch.compile → eliminates Python overhead
+3. **Architecture change** — post-activation LoRA instead of MoEMlpAdapter
+
+## Original success criteria
+
+| Metric | Original Target | Achieved |
+|--------|---------|--------|
+| Expert tok/s | 58 | 51.5 (partial) |
+| Overhead vs base | <5% | 13.2% (partial) |
+| Correctness | cos ≥ 0.9999 | Not measured (TODO) |
