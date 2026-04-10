@@ -699,7 +699,7 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
             # Split: gate logit | gate_mid | up_mid
             gate_val = torch.sigmoid(fused_out[:, :1] + routing["gate_bias"])
 
-            # B-side: 2 matmuls (bmm tested, slower due to reshape/permute overhead)
+            # B-side: 2 matmuls
             s = routing["scaling"]
             gate_corr = torch.mm(fused_out[:, 1:1+r], routing["gate_b"]) * s
             up_corr = torch.mm(fused_out[:, 1+r:], routing["up_b"]) * s
