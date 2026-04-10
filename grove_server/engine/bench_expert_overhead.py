@@ -113,7 +113,7 @@ def benchmark_generate(
 
     # Warmup decode
     for _ in range(warmup_tokens):
-        pos = torch.tensor([[cache.seq_len]], device=next_token.device)
+        pos = cache.seq_len.reshape(1, 1)
         logits = graphable(next_token, pos)
         next_token = logits[:, -1, :].argmax(dim=-1, keepdim=True)
 
@@ -123,7 +123,7 @@ def benchmark_generate(
     t_start = time.time()
     generated_tokens = []
     for _ in range(num_tokens):
-        pos = torch.tensor([[cache.seq_len]], device=next_token.device)
+        pos = cache.seq_len.reshape(1, 1)
         logits = graphable(next_token, pos)
         next_token = logits[:, -1, :].argmax(dim=-1, keepdim=True)
         generated_tokens.append(next_token.item())

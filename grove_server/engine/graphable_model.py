@@ -193,6 +193,11 @@ class GraphableDecodeStep(nn.Module):
             hidden_states, position_ids
         )
 
+        # Compute current cache position once (avoids per-layer .item() GPU sync)
+        n_tokens = input_ids.size(1)
+        cache_pos = self.cache.seq_len_value  # single .item() call per token
+        current_cache_len = cache_pos + n_tokens
+
         # Run through each transformer layer
         for layer_idx, decoder_layer in enumerate(self.model.model.layers):
             if layer_idx in self.skip_layers:
@@ -203,7 +208,8 @@ class GraphableDecodeStep(nn.Module):
                 )
                 continue
             hidden_states = self._run_layer(
-                layer_idx, decoder_layer, hidden_states, position_embeddings
+                layer_idx, decoder_layer, hidden_states, position_embeddings,
+                current_cache_len, cache_pos,
             )
 
         # Final norm + LM head
@@ -235,17 +241,18 @@ class GraphableDecodeStep(nn.Module):
         layer: nn.Module,
         hidden_states: torch.Tensor,
         position_embeddings: tuple[torch.Tensor, torch.Tensor],
+        current_cache_len: int = 0,
+        cache_pos: int = 0,
     ) -> torch.Tensor:
         """Run one transformer layer using the static KV cache.
-
-        Manually implements the layer forward pass to avoid HF's dynamic
-        tensor operations (torch.cat on KV cache).
 
         Args:
             layer_idx: Index of this layer.
             layer: The decoder layer module.
             hidden_states: Input hidden states (B, seq_len, hidden_dim).
             position_embeddings: (cos, sin) from rotary embedding.
+            current_cache_len: Pre-computed cache length (seq_len + L).
+            cache_pos: Pre-computed cache write position (seq_len as int).
 
         Returns:
             Output hidden states (B, seq_len, hidden_dim).
@@ -280,21 +287,20 @@ class GraphableDecodeStep(nn.Module):
         q, k = _apply_rotary_pos_emb(q, k, cos, sin)
 
         # Write new K, V to static cache (before advance)
-        self.cache.update(layer_idx, k, v)
+        self.cache.update(layer_idx, k, v, pos=cache_pos)
 
-        # Get full cached K, V (includes what we just wrote, up to seq_len + L)
-        current_len = self.cache.seq_len + L
-        full_k, full_v = self.cache.get_up_to(layer_idx, current_len)
+        # Get cached K, V up to current position (sliced for efficient attention)
+        full_k, full_v = self.cache.get_up_to(layer_idx, current_cache_len)
 
         # Expand KV heads for GQA (repeat to match query head count)
         full_k = _repeat_kv(full_k, self.num_kv_groups)
         full_v = _repeat_kv(full_v, self.num_kv_groups)
 
-        # Scaled dot-product attention (ensure matching dtypes)
+        # Scaled dot-product attention
         compute_dtype = q.dtype
         attn_out = F.scaled_dot_product_attention(
             q, full_k.to(compute_dtype), full_v.to(compute_dtype),
-            is_causal=(current_len == L),
+            is_causal=(current_cache_len == L),
         )
 
         # Reshape back and project
@@ -949,6 +955,8 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         layer: nn.Module,
         hidden_states: torch.Tensor,
         position_embeddings: tuple[torch.Tensor, torch.Tensor],
+        current_cache_len: int = 0,
+        cache_pos: int = 0,
     ) -> torch.Tensor:
         """Run one transformer layer using FP8 matmuls for all linear projections.
 
@@ -983,10 +991,9 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         cos, sin = position_embeddings
         q, k = _apply_rotary_pos_emb(q, k, cos, sin)
 
-        self.cache.update(layer_idx, k, v)
+        self.cache.update(layer_idx, k, v, pos=cache_pos)
 
-        current_len = self.cache.seq_len + L
-        full_k, full_v = self.cache.get_up_to(layer_idx, current_len)
+        full_k, full_v = self.cache.get_up_to(layer_idx, current_cache_len)
 
         full_k = _repeat_kv(full_k, self.num_kv_groups)
         full_v = _repeat_kv(full_v, self.num_kv_groups)
@@ -994,7 +1001,7 @@ class FP8GraphableDecodeStep(GraphableDecodeStep):
         compute_dtype = q.dtype
         attn_out = F.scaled_dot_product_attention(
             q, full_k.to(compute_dtype), full_v.to(compute_dtype),
-            is_causal=(current_len == L),
+            is_causal=(current_cache_len == L),
         )
 
         attn_out = attn_out.transpose(1, 2).reshape(B, L, self.num_heads * self.head_dim)
@@ -1095,11 +1102,13 @@ class FusedBF16GraphableDecodeStep(GraphableDecodeStep):
         layer: nn.Module,
         hidden_states: torch.Tensor,
         position_embeddings: tuple[torch.Tensor, torch.Tensor],
+        current_cache_len: int = 0,
+        cache_pos: int = 0,
     ) -> torch.Tensor:
         """Run one transformer layer with fused BF16 projections."""
         fused = self._fused.get(layer_idx)
         if fused is None:
-            return super()._run_layer(layer_idx, layer, hidden_states, position_embeddings)
+            return super()._run_layer(layer_idx, layer, hidden_states, position_embeddings, current_cache_len, cache_pos)
 
         residual = hidden_states
         hidden_states = layer.input_layernorm(hidden_states)
@@ -1123,15 +1132,14 @@ class FusedBF16GraphableDecodeStep(GraphableDecodeStep):
         cos, sin = position_embeddings
         q, k = _apply_rotary_pos_emb(q, k, cos, sin)
 
-        self.cache.update(layer_idx, k, v)
-        current_len = self.cache.seq_len + L
-        full_k, full_v = self.cache.get_up_to(layer_idx, current_len)
+        self.cache.update(layer_idx, k, v, pos=cache_pos)
+        full_k, full_v = self.cache.get_up_to(layer_idx, current_cache_len)
         full_k = _repeat_kv(full_k, self.num_kv_groups)
         full_v = _repeat_kv(full_v, self.num_kv_groups)
 
         attn_out = F.scaled_dot_product_attention(
             q, full_k.to(q.dtype), full_v.to(q.dtype),
-            is_causal=(current_len == L),
+            is_causal=(current_cache_len == L),
         )
 
         attn_out = attn_out.transpose(1, 2).reshape(B, L, self.num_heads * self.head_dim)

@@ -13,7 +13,9 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from grove_server.engine.cuda_graph import CUDAGraphRunner
 from grove_server.engine.fp8_utils import fp8_available
-from grove_server.engine.graphable_model import FP8GraphableDecodeStep, GraphableDecodeStep
+from grove_server.engine.graphable_model import (
+    FP8GraphableDecodeStep, FusedBF16GraphableDecodeStep, GraphableDecodeStep,
+)
 from grove_server.engine.int4_layer import Int4PackedLinear, quantize_model, set_all_precision
 from grove_server.engine.layer_executor import execute_layer
 from grove_server.engine.static_kv_cache import StaticKVCache
@@ -351,7 +353,8 @@ class InferenceEngine:
     def install_experts(self, experts: list[Expert]) -> None:
         """Install multiple experts for simultaneous softmax routing.
 
-        Uses the GraphableDecodeStep multi-expert path.
+        FP8 per-group Triton kernel gives cosine 1.000 per matmul — no need
+        to fall back to BF16. Experts work directly on the FP8 graphable step.
         """
         self.uninstall_expert()
         if self._graphable is not None:
@@ -396,7 +399,7 @@ class InferenceEngine:
                 if eos_id is not None and tok_id == eos_id:
                     break
 
-                pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
+                pos = self._static_cache.seq_len.reshape(1, 1)
                 logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
                 attribution = self._graphable.pop_attribution()
 
@@ -561,11 +564,11 @@ class InferenceEngine:
                 if self._decode_graph is not None:
                     nt = next_token if next_token.dim() == 2 else next_token.unsqueeze(0)
                     self._decode_static_tok.copy_(nt)
-                    self._decode_static_pos.fill_(self._static_cache.seq_len)
+                    self._decode_static_pos.copy_(self._static_cache.seq_len.reshape(1, 1))
                     self._decode_graph.replay()
                     next_token = self._sample_token(self._decode_static_logits[:, -1, :], temperature)
                 else:
-                    pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
+                    pos = self._static_cache.seq_len.reshape(1, 1)
                     logits = self._graphable(next_token.unsqueeze(0) if next_token.dim() == 1 else next_token, pos)
                     next_token = self._sample_token(logits[:, -1, :], temperature)
 
@@ -608,11 +611,11 @@ class InferenceEngine:
                 if self._decode_graph is not None:
                     nt = next_token if next_token.dim() == 2 else next_token.unsqueeze(0)
                     self._decode_static_tok.copy_(nt)
-                    self._decode_static_pos.fill_(self._static_cache.seq_len)
+                    self._decode_static_pos.copy_(self._static_cache.seq_len.reshape(1, 1))
                     self._decode_graph.replay()
                     next_token = self._sample_token(self._decode_static_logits[:, -1, :], temperature)
                 else:
-                    pos = torch.tensor([[self._static_cache.seq_len]], device=self.device)
+                    pos = self._static_cache.seq_len.reshape(1, 1)
                     nt = next_token.unsqueeze(0) if next_token.dim() == 1 else next_token
                     logits = self._graphable(nt, pos)
                     next_token = self._sample_token(logits[:, -1, :], temperature)
