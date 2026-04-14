@@ -65,8 +65,9 @@ compression progress, routing to the adapter with highest learning
 potential, and spawning new adapters when existing ones plateau. The
 result is a self-organizing capability system where the long tail of
 domain expertise lives in lightweight, composable specialists---each
-measured in kilobytes---while the shared trunk preserves general
-reasoning ability intact. Jointly-trained experts specialize
+measured in megabytes rather than the gigabytes required by full MoE
+experts---while the shared trunk preserves general reasoning ability
+intact. Jointly-trained experts specialize
 automatically (gate selectivity 0.99 between languages, near-zero on
 generic text), forming a hierarchical capability tree.
 \end{abstract}
@@ -960,6 +961,19 @@ selection, Goldilocks zone detection) but not as an integrated pipeline
 on large data pools. Scaling from pilot experiments (500 documents) to
 publication-scale data (50K+ documents) may reveal new failure modes.
 
+\paragraph{Quantized base without active adapter.}
+When no domain adapter is active (generic text, all gates near zero),
+the INT4 base model runs unassisted and exhibits degraded tail-token
+quality (P95 PPL 4$\times$ worse than FP16). Two solutions are under
+investigation: (a)~a dedicated quantization-correction adapter trained
+via distillation from the FP16 model, always active as the default
+expert; (b)~relying on each domain adapter to learn quantization
+correction implicitly alongside domain specialization. Whether a shared
+correction adapter is more training-efficient than per-domain implicit
+correction---i.e., whether the correction ``wastes'' rank capacity that
+could otherwise serve domain specialization---is an open empirical
+question.
+
 \paragraph{No negative results from scaled experiments yet.}
 The pilot results in this paper come from experiments on 500--5000
 documents. We report them honestly as pilots, not as definitive findings.
@@ -1368,12 +1382,42 @@ are always in BF16. The base model weights never change; only the
 adapter is updated.
 
 \textbf{Not yet validated.} The segmented mantissa format requires
-custom CUDA kernels for variable-width memory reads. INT8 (both
-registers of an earlier packed-INT4 prototype) produced coherent output
-matching BF16 quality. INT4 requires per-group quantization (groups of
-128) for viable quality. Bridges validated at $+0.6\%$ PPL at $0.1\%$
-compute. Reference: 113~tok/s (FP8, all 36 layers). Layer skipping
-(228~tok/s) abandoned due to compounding error in generation.
+custom CUDA kernels for variable-width memory reads. INT4 requires
+per-group quantization (groups of 128) for viable quality. Bridges
+validated at $+0.6\%$ PPL at $0.1\%$ compute.
+
+\textbf{Inference performance (validated).} With FP8 base weights,
+pre-computed expert routing, and CUDA graph capture of the full decode
+step (enabled by \texttt{flash\_attn\_with\_kvcache} with tensor-based
+\texttt{cache\_seqlens}), the grove achieves 81.6~tok/s base and
+69.6~tok/s with an active expert on a single RTX~PRO~6000 Blackwell
+(75\% and 64\% of the 109~tok/s theoretical bandwidth limit). Expert
+adapter overhead is 14.7\%, dominated by the LoRA matmul compute
+($<$1\% of FLOPs) rather than kernel launch overhead (eliminated by
+CUDA graphs).
+
+\textbf{Quantization damages the lens, not the crystal.} Mean PPL
+masks a critical effect: INT4 quantization increases the 95th-percentile
+per-token loss by 4$\times$ while mean PPL rises only 3--5\%. The
+worst-case tokens---precisely the decision points where coherent
+generation depends on accurate next-token probabilities---are
+disproportionately affected. Multiple-choice accuracy (factual recall)
+remains 100\% at INT4, confirming that \emph{declarative knowledge}
+(crystal) survives quantization while \emph{generative coherence}
+(lens) degrades. This distinction is invisible to standard PPL
+reporting.
+
+\textbf{Adapters restore the lens on quantized models.} A rank-16
+DeltaGated adapter trained on an INT4 base model reduces the
+tail-loss ratio (P95/mean) from 1026$\times$ to 6.1$\times$---compared
+to 4.4$\times$ on the FP16 base. Gate selectivity is identical
+regardless of base model precision (measured at $-0.015$ on both FP16
+and INT4), indicating that the gate learns the same routing pattern on
+either substrate. The base model can therefore be aggressively
+quantized; the adapters restore the coherence that quantization
+removed. This has a practical implication: an INT4 base model
+(4~GB) with 100~adapters (${\sim}$2.8~GB) gives a 100-domain system
+in under 7~GB of VRAM.
 
 % PREDICTION (not yet validated end-to-end — see whitepaper for vision):
 % \subsection{Combined Efficiency Prediction}
