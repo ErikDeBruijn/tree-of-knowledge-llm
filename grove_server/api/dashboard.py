@@ -106,6 +106,23 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     <div class="stat"><div class="value" id="gpu-other" style="font-size:0.9rem">-</div><div class="label">other GPU procs</div></div>
   </div>
 
+  <!-- Training Data -->
+  <div class="card full-width">
+    <h2>Training Data</h2>
+    <div style="display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap">
+      <div id="training-data-sources" style="font-size:0.8em;color:#a0aec0;flex:1"></div>
+      <div style="display:flex;gap:12px;font-size:0.85em">
+        <span id="td-batch" style="font-weight:bold;color:#f6ad55"></span>
+        <span id="td-vram" style="color:#a0aec0"></span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:6px">
+      <span id="td-phase" style="font-size:0.85em;font-weight:bold;color:#63b3ed"></span>
+      <span id="td-type" style="font-size:0.85em;padding:2px 8px;border-radius:4px"></span>
+    </div>
+    <pre id="td-sample" style="font-size:0.75em;max-height:200px;overflow-y:auto;background:#1a202c;padding:8px;border-radius:4px;white-space:pre-wrap;word-break:break-all;color:#e2e8f0;margin:0"></pre>
+  </div>
+
   <!-- Loss -->
   <div class="card">
     <h2>Loss (avg)</h2>
@@ -260,6 +277,27 @@ async function pollTraining() {
       d.other_gpu_procs ? 'Active (throttling)' : 'None';
     document.getElementById('gpu-other').style.color =
       d.other_gpu_procs ? '#f6ad55' : '#48bb78';
+
+    // Training data visibility
+    if (d.data) {
+      const src = d.data.sources || [];
+      const srcHtml = src.map(s =>
+        '<span style="color:' + (s.type === 'domain' ? '#63b3ed' : '#68d391') + '">' +
+        s.name + ' (' + s.type + ')</span>'
+      ).join(' · ');
+      document.getElementById('training-data-sources').innerHTML =
+        srcHtml + ' — ' + (d.data.domain_texts||0) + ' domain / ' + (d.data.generic_texts||0) + ' generic texts';
+      const phase = d.phase || '?';
+      document.getElementById('td-phase').textContent = 'Phase ' + phase + ' · Step ' + (d.phase_step || 0);
+      const typeEl = document.getElementById('td-type');
+      const stype = d.data.last_sample_type || '';
+      typeEl.textContent = stype || 'waiting';
+      typeEl.style.background = stype === 'domain' ? '#2b6cb0' : stype === 'generic' ? '#276749' : '#4a5568';
+      document.getElementById('td-batch').textContent = 'batch=' + (d.data.batch_size || 1);
+      document.getElementById('td-vram').textContent =
+        (d.data.vram_used_gb || '?') + ' / ' + (d.data.vram_total_gb || '?') + ' GB VRAM';
+      document.getElementById('td-sample').textContent = d.data.last_sample_preview || '(no sample yet)';
+    }
   } catch(e) {}
 }
 

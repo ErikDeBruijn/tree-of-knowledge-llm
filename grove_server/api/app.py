@@ -447,13 +447,20 @@ async def training_status(
             "training_steps": 0,
         }
     snap = metrics.snapshot() if metrics else {}
-    return {
+    te = scheduler._training_engine if hasattr(scheduler, "_training_engine") else None
+    ws = scheduler._workload_selector if hasattr(scheduler, "_workload_selector") else None
+    result = {
         "running": scheduler._running if hasattr(scheduler, "_running") else False,
         "mode": scheduler.mode if hasattr(scheduler, "mode") else "idle",
         "training_steps": snap.get("training_steps", 0),
         "training_budget": scheduler.training_budget if hasattr(scheduler, "training_budget") else 1.0,
         "other_gpu_procs": scheduler._other_gpu_procs if hasattr(scheduler, "_other_gpu_procs") else False,
+        "phase": te.phase if te and hasattr(te, "phase") else None,
+        "phase_step": te.step if te and hasattr(te, "step") else None,
     }
+    if ws and hasattr(ws, "training_info"):
+        result["data"] = ws.training_info
+    return result
 
 
 @app.post("/v1/training/start")

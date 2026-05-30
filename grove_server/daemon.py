@@ -88,6 +88,10 @@ class GroveDaemon:
                     device=self.inference_engine.device,
                 )
 
+        # 4b. Auto-detect training batch size
+        if self.workload_selector is not None:
+            self.workload_selector.detect_batch_size(self.inference_engine.model)
+
         # 5. Scheduler with full autonomous loop
         self.scheduler = Scheduler(
             inference_engine=self.inference_engine,

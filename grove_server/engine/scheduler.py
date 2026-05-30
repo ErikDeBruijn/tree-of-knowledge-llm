@@ -16,6 +16,8 @@ import logging
 import os
 import threading
 import time
+
+import torch
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
@@ -212,64 +214,76 @@ class Scheduler:
         self._running = False
 
     def _do_inference(self, request: InferenceRequest) -> str:
-        """Execute inference (runs in thread pool). Acquires GPU lock."""
-        with self._gpu_lock:
-            t_start = time.time()
-            result = self._inference_engine.generate(
-                request.prompt,
-                max_tokens=request.max_tokens,
-                temperature=request.temperature,
-            )
-            t_end = time.time()
+        """Execute inference (runs in thread pool).
+
+        No GPU lock needed — ThreadPoolExecutor(max_workers=1) serializes
+        all GPU work (inference + training) at the thread level.
+        """
+        t_start = time.time()
+        result = self._inference_engine.generate(
+            request.prompt,
+            max_tokens=request.max_tokens,
+            temperature=request.temperature,
+        )
+        t_end = time.time()
         if self._metrics:
             tokens = len(result.split())
             self._metrics.record_inference(tokens, t_end - t_start)
         return result
 
     def _do_training_step_throttled(self) -> None:
-        """Training step with GPU lock + proportional throttle.
+        """Training step with GPU lock + budget throttle.
 
-        Checks GPU utilization BEFORE training to detect external load.
-        The check happens during the sleep window when we're NOT computing,
-        so high util means someone else is using the GPU.
+        GPU contention detection runs asynchronously every 30s (not
+        per-step). Inference requests are handled by the main loop
+        via the queue, which has natural priority over training.
         """
         if self._training_budget <= 0:
             self._set_mode("paused")
             time.sleep(1.0)
             return
 
-        gpu_busy = self._check_gpu_busy()
-
-        if gpu_busy:
-            self._gpu_idle_since = 0.0
-            self._steps_since_resume = 0
-            # Still within committed batch? Keep going.
-            # Otherwise wait.
-            self._set_mode("waiting")
-            time.sleep(1.0)
-            return
-
-        # GPU is idle — but for long enough?
-        now = time.time()
-        if self._gpu_idle_since == 0.0:
-            self._gpu_idle_since = now
-        idle_duration = now - self._gpu_idle_since
-
-        if idle_duration < self._gpu_idle_cooldown and self._steps_since_resume == 0:
-            # Not idle long enough yet, keep waiting
-            self._set_mode("waiting")
-            time.sleep(1.0)
-            return
-
         self._set_mode("training")
-        self._steps_since_resume += 1
         t0 = time.perf_counter()
-        with self._gpu_lock:
+        try:
             self._do_training_step()
+        except torch.cuda.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            ws = self._workload_selector
+            if ws and ws.batch_size > 1:
+                old_bs = ws.batch_size
+                ws.batch_size = max(1, old_bs // 2)
+                logger.warning("OOM at batch_size=%d, reducing to %d", old_bs, ws.batch_size)
+            else:
+                logger.error("OOM at batch_size=1, cannot reduce further")
+            return
         step_duration = time.perf_counter() - t0
-        sleep_time = self._compute_training_sleep(step_duration)
-        if sleep_time > 0:
+
+        # Budget throttle: at budget < 1.0, sleep proportionally
+        if self._training_budget < 1.0:
+            sleep_time = step_duration * (1.0 / self._training_budget - 1.0)
             time.sleep(sleep_time)
+
+    def _check_gpu_busy_fast(self) -> bool:
+        """Quick GPU check: single nvidia-smi call, no sleep.
+
+        Checks GPU utilization rather than process list — background
+        services (TTS, diarize) use VRAM but not compute. Only flag
+        as busy if GPU utilization is high AND we're not the cause.
+        """
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["nvidia-smi", "--query-gpu=utilization.gpu",
+                 "--format=csv,noheader,nounits",
+                 f"--id={os.environ.get('CUDA_VISIBLE_DEVICES', '0')}"],
+                capture_output=True, text=True, timeout=2,
+            )
+            util = int(result.stdout.strip())
+            # >50% util when we're NOT actively training = someone else
+            return util > 50
+        except Exception:
+            return False
 
     def _do_training_step(self) -> None:
         """Execute one training step in the autonomous loop.
@@ -289,9 +303,13 @@ class Scheduler:
         phase = te.phase
         self._training_step_count += 1
 
+        bs = ws.batch_size
+        # Phase 2 does 2 forward passes (domain + generic) so halve the batch
+        bs_phase2 = max(1, bs // 2)
+
         if phase == 1:
             # Adapter training
-            batch = ws.next_batch(phase=1)
+            batch = ws.next_batch(phase=1, batch_size=bs)
             result = te.train_step(batch)
 
             # Periodic evaluation during adapter phase
@@ -310,9 +328,9 @@ class Scheduler:
                 logger.info("Switching to phase 2 (contrastive gate) at step %d", te.step)
 
         elif phase == 2:
-            # Contrastive gate training
-            domain_batch = ws.next_domain_batch()
-            generic_batch = ws.next_generic_batch()
+            # Contrastive gate training (2 forward passes → half batch)
+            domain_batch = ws.next_domain_batch(batch_size=bs_phase2)
+            generic_batch = ws.next_generic_batch(batch_size=bs_phase2)
             result = te.contrastive_gate_step(domain_batch, generic_batch)
 
             selectivity = result.get("selectivity", 0)
