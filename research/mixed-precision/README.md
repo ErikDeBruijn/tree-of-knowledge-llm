@@ -38,11 +38,20 @@ the three regimes found in weight matrices (top 5% fractal/clustered,
 - Gate selectivity: identical (-0.015 on both) — gate learns same pattern regardless of base precision
 - **Conclusion: the base model can be aggressively quantized; the adapters restore coherence**
 
+### 6. Generic distillation adapter does NOT fix tail tokens (Observed, 2026-04-14)
+- Trained correction adapter via KL distillation (FP16 teacher → INT4 student) on C4
+- KL divergence reduced 44% (11.5 → 6.5) — average tokens improved
+- **P95 PPL: UNCHANGED (14221)** — tail tokens not corrected at all
+- The distillation loss optimizes the average, not the worst-case
+- Domain adapters with LM loss DO fix tail tokens (P95/mean 1026× → 6.1×)
+- **Conclusion: no generic correction adapter needed. Domain adapters are the solution.**
+  Each domain has its own critical tokens; the adapter learns them implicitly.
+
 ## Open Questions
 
-1. How much further can we push quantization (INT3? INT2?) before adapters can't compensate?
+1. How much further can we push quantization (INT3? INT2?) before domain adapters can't compensate?
 2. Does the gate already serve as a per-layer precision allocator?
-3. Would training-aware quantization (quantize-then-train vs train-then-quantize) be even better?
+3. Would a tail-weighted distillation loss (penalize P95 errors more) fix the correction adapter?
 
 ## Files
 
